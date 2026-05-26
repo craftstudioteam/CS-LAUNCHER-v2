@@ -1,16 +1,12 @@
-name: 🚀 CS Launcher Auto Build
+name: 🚀 CS Launcher Manual Release Build
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+  workflow_dispatch: # Ab yeh sirf tumhare manually button dabane par hi chalega
     inputs:
-      arch:
-        description: "Architecture (all/arm/arm64/x86/x86_64)"
-        required: false
-        default: "all"
+      tag_name:
+        description: 'Release Version Tag (e.g., v2.0)'
+        required: true
+        default: 'v2.0'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,16 +14,10 @@ concurrency:
 
 jobs:
   BuildCS:
-    name: 🔨 CS Launcher Build (${{ matrix.arch }})
+    name: 🔨 CS Launcher Manual Build
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        arch: [ "all", "arm64" ]
-      fail-fast: false
-
     steps:
-
       - name: 📥 Checkout
         uses: actions/checkout@v4
         with:
@@ -54,12 +44,11 @@ jobs:
 
       - name: 📋 Build Info
         run: |
-          echo "### 🚀 CS Launcher Build" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 CS Launcher Manual Release" >> $GITHUB_STEP_SUMMARY
           echo "| Key | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Arch | ${{ matrix.arch }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Run | #${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ github.event.inputs.tag_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Triggered By | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
 
       - name: 🧩 Build JRE Components
         run: |
@@ -69,19 +58,27 @@ jobs:
             --parallel \
             --build-cache
 
-      - name: 📦 Build Debug APK (${{ matrix.arch }})
+      - name: 📦 Build Debug APK
         run: |
           ./gradlew CS-Launcher:assembleDebug \
-            -Darch=${{ matrix.arch }} \
+            -Darch=all \
             --no-daemon \
             --parallel \
             --build-cache \
             --stacktrace
 
-      - name: 📤 Upload APK
-        uses: actions/upload-artifact@v4
+      # ACTIONS MEIN UPLOAD NAHI HOGA. SEEDHA OFFICIAL RELEASE MEIN JAYEGA.
+      - name: 🚀 Create Release & Upload APK
+        uses: softprops/action-gh-release@v2
         with:
-          name: CS-Launcher-${{ matrix.arch }}-#${{ github.run_number }}
-          path: CS-Launcher/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
-          retention-days: 14
+          files: CS-Launcher/build/outputs/apk/debug/*.apk
+          tag_name: ${{ github.event.inputs.tag_name }}
+          name: CS Launcher Release ${{ github.event.inputs.tag_name }}
+          body: |
+            ### CS Launcher Official Release
+            * Ultra-optimized Minecraft Client.
+            * Engineered for maximum FPS and stable RAM performance.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
