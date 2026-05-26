@@ -444,14 +444,10 @@ public class LauncherActivity extends BaseActivity {
                 Tools.backToMainMenu(this);
             }
         });
-        binding.appTitleText.setText(InfoDistributor.APP_NAME);
-        binding.appTitleText.setOnClickListener(v -> {
-            String shiftedString = StringUtils.shiftString(binding.appTitleText.getText().toString(), ShiftDirection.RIGHT, 1);
-            if (new Random().nextInt(100) < 20 && shiftedString.equals(InfoDistributor.APP_NAME)) {
+        binding.appTitleImage.setOnClickListener(v -> {
+            if (new Random().nextInt(100) < 5) {
                 ErrorActivity.showEasterEgg(this);
-                return;
             }
-            binding.appTitleText.setText(shiftedString);
         });
 
         binding.progressLayout.observe(ProgressLayout.DOWNLOAD_MINECRAFT);
@@ -603,7 +599,6 @@ public class LauncherActivity extends BaseActivity {
                         palette.getDarkMutedColor(0xFFFFFFFF);
 
                 ColorStateList colorStateList = ColorStateList.valueOf(mutedColor);
-                binding.appTitleText.setTextColor(mutedColor);
                 binding.downloadButton.setImageTintList(colorStateList);
                 binding.settingButton.setImageTintList(colorStateList);
 
@@ -611,7 +606,6 @@ public class LauncherActivity extends BaseActivity {
             }
         }
         binding.topLayout.setBackgroundColor(backgroundMenuTop);
-        binding.appTitleText.setTextColor(ContextCompat.getColor(this, R.color.menu_bar_text));
         ColorStateList colorStateList = ColorStateList.valueOf(0xFFFFFFFF);
         binding.downloadButton.setImageTintList(colorStateList);
         binding.settingButton.setImageTintList(colorStateList);

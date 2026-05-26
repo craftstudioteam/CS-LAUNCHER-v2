@@ -52,7 +52,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void applyAccentTheme() {
-        String accent = AppearanceSettingsFragment.Companion.getAccentColor(this);
+        String accent = AppearanceSettingsFragment.getAccentColor(this);
         int themeResId;
         switch (accent) {
             case "#FFA500":

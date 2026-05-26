@@ -41,21 +41,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- App Title -->
-        <com.craftstudio.launcher.ui.view.AnimTextView
-            android:id="@+id/app_title_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:background="?android:attr/selectableItemBackground"
-            android:textColor="#FFB74D"
-            android:textSize="@dimen/_16ssp"
-            android:textStyle="bold"
-            android:letterSpacing="0.05"
+        <!-- App Title Image (Centered) -->
+        <ImageView
+            android:id="@+id/app_title_image"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_32sdp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/app_name_title"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/app_logo"
-            app:layout_constraintEnd_toStartOf="@id/download_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Download Button -->
