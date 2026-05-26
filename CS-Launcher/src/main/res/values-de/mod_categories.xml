@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mod -->
+    <string name="category_worldgen">Weltelemente</string>
+    <string name="category_biomes">Biome</string>
+    <string name="category_dimensions">Dimensionen</string>
+    <string name="category_ores_resources">Erze &amp; Ressourcen</string>
+    <string name="category_structures">Strukturen</string>
+    <string name="category_technology">Technologie</string>
+    <string name="category_item_fluid_energy_transport">Rohre &amp; Logistik</string>
+    <string name="category_automation">Automatisierung</string>
+    <string name="category_energy">Energie</string>
+    <string name="category_redstone">Redstone</string>
+    <string name="category_food">Essen &amp; Kochen</string>
+    <string name="category_farming">Landwirtschaft</string>
+    <string name="category_transport">Transport</string>
+    <string name="category_storage">Lagerung</string>
+    <string name="category_magic">Magie</string>
+    <string name="category_adventure">Abenteuer</string>
+    <string name="category_decoration">Dekoration</string>
+    <string name="category_mobs">Kreaturen</string>
+    <string name="category_equipment">Ausrüstung</string>
+    <string name="category_information">Information</string>
+    <string name="category_social">Server</string>
+    <string name="category_utility">Utility</string>
+    <string name="category_library">Bibliothek</string>
+    <string name="category_game_mechanics">Spielmechaniken</string>
+    <string name="category_optimization">Optimierung</string>
+    <!-- Modpack -->
+    <string name="category_multiplayer">Mehrspieler</string>
+    <string name="category_challenging">Hardcore</string>
+    <string name="category_combat">Kampf</string>
+    <string name="category_quests">Quests</string>
+    <string name="category_exploration">Erkundung</string>
+    <string name="category_mini_game">Mini-Spiele</string>
+    <string name="category_sci_fi">Sci-Fi</string>
+    <string name="category_skyblock">Skyblock</string>
+    <string name="category_vanilla">Vanilla-Erweiterungen</string>
+    <string name="category_map_based">Kartenbasiert</string>
+    <string name="category_lightweight">Leichtgewichtig</string>
+    <string name="category_extra_large">Extra Groß</string>
+    <string name="category_kitchen_sink">Küchenspüle</string>
+    <!-- Resource Pack -->
+    <string name="category_traditional">Traditionell</string>
+    <string name="category_steampunk">Steampunk</string>
+    <string name="category_modern">Modern</string>
+    <string name="category_photo_realistic">Fotorealistisch</string>
+    <string name="category_animated">Animiert</string>
+    <string name="category_mod_support">Mod-Unterstützung</string>
+    <string name="category_miscellaneous">Verschiedenes</string>
+    <string name="category_512x">512x und Höher</string>
+    <!-- World -->
+    <string name="category_world_adventure">Abenteuermodus</string>
+    <string name="category_survival">Überlebensmodus</string>
+    <string name="category_creation">Kreativmodus</string>
+    <string name="category_game_map">Spielherausforderungen</string>
+    <string name="category_modded_world">Modifizierte Karten</string>
+    <string name="category_parkour">Parkour</string>
+    <string name="category_puzzle">Rätsel</string>
+    <!-- Shader -->
+    <string name="category_cartoon">Cartoon</string>
+    <string name="category_cursed">Verflucht</string>
+    <string name="category_fantasy">Fantasy</string>
+    <string name="category_semi_realistic">Halb-realistisch</string>
+    <string name="category_atmosphere">Atmosphäre</string>
+    <string name="category_bloom">Bloom</string>
+    <string name="category_colored_lighting">Farbige Beleuchtung</string>
+    <string name="category_foliage">Laub</string>
+    <string name="category_path_tracing">Pfadverfolgung</string>
+    <string name="category_reflections">Reflexionen</string>
+    <string name="category_shadows">Schatten</string>
+    <string name="category_configuration_potato">"Kartoffel"-Konfiguration</string>
+    <string name="category_configuration_low">Niedrig-Konfiguration</string>
+    <string name="category_configuration_medium">Mittel-Konfiguration</string>
+    <string name="category_configuration_high">Hoch-Konfiguration</string>
+    <string name="category_screenshot">Screenshot</string>
+</resources>

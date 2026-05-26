@@ -1,0 +1,1002 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="HardcodedText,NestedWeights,TooManyViews,ContentDescription,SmallSp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/operate_layout">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_250sdp"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_8sdp"
+                android:scrollbars="none">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:minWidth="1050dp">
+
+                    <LinearLayout
+                        android:id="@+id/layout_1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/layout_2"
+                        app:layout_constraintHorizontal_weight="1.85"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_esc"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="Esc" />
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f1"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F1" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f2"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F2" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f3"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F3" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f4"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F4" />
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.5" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f5"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F5" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f6"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F6" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f7"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F7" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f8"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F8" />
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.5" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f9"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F9" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f10"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F10" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f11"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F11" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f12"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F12" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_grave"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="11sp"
+                                android:text="~\n`" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_1"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text="!\n1" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_2"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text="\@\n2" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_3"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text="#\n3" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_4"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text="$\n4" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_5"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text="%\n5" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_6"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text="^\n6" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_7"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text="&amp;\n7" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_8"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text="*\n8" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_9"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text="(\n9" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_0"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text=")\n0" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_minus"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="10sp"
+                                android:text="_\n-" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_equals"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="10sp"
+                                android:text="+\n=" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_backspace"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.9"
+                                android:textSize="11sp"
+                                android:text="backspace" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_tab"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.2"
+                                android:text="tab" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_q"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="Q" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_w"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="W" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_e"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="E" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_r"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="R" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_t"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="T" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_y"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="Y" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_u"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="U" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_i"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="I" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_o"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="O" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_p"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="P" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_left_bracket"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text="{\n[" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_right_bracket"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="9.6sp"
+                                android:text="}\n]" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_backslash"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.2"
+                                android:textSize="9.6sp"
+                                android:text="|\n\\" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_capslock"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.4"
+                                android:textSize="10sp"
+                                android:text="Caps Lock" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_a"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="A" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_s"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="S" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_d"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="D" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_f"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="F" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_g"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="G" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_h"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="H" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_j"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="J" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_k"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="K" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_l"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="L" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_semicolon"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="10sp"
+                                android:text=":\n;" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_apostrophe"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="10sp"
+                                android:text="&quot;\n'" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_enter"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2.1"
+                                android:text="Enter" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_left_shift"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2.3"
+                                android:text="Shift" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_z"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="Z" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_x"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="X" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_c"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="C" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_v"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="V" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_b"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="B" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_n"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="N" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_m"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="M" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_comma"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="10sp"
+                                android:text="&lt;\n," />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_period"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="10sp"
+                                android:text="&gt;\n." />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_slash"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textSize="10sp"
+                                android:text="\?\n/" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_right_shift"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.2"
+                                android:text="Shift" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_left_ctrl"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.05"
+                                android:text="Ctrl" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_left_alt"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.05"
+                                android:text="Alt" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_space"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="7"
+                                android:text="Space" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_right_alt"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.05"
+                                android:text="Alt" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_right_ctrl"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.05"
+                                android:text="Ctrl" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_2"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_weight="0.95"
+                        app:layout_constraintStart_toEndOf="@id/layout_1"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_pause"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:textSize="8.6sp"
+                                    android:text="Pause" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_insert"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:textSize="8.6sp"
+                                    android:text="Insert" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_home"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:textSize="8.6sp"
+                                    android:text="Home" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_end"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:textSize="8.6sp"
+                                    android:text="End" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_page_up"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:textSize="8.6sp"
+                                    android:text="PGUp" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_page_down"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:textSize="8.6sp"
+                                    android:text="PGDn" />
+                            </LinearLayout>
+
+                            <Space
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="2" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <Space
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_up"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="↑" />
+
+                                <Space
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_left"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="←" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_down"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="↓" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_right"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="→" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_12sdp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <Space
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_num_lock"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:textSize="9sp"
+                                    android:text="Num Lock" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_divide"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="/" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_multiply"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="*" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_7"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="7" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_8"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="8" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_9"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="9" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_4"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="4" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_5"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="5" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_6"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="6" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_1"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="1" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_2"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="2" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_3"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="3" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_0"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="2"
+                                    android:text="0" />
+
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/keyboard_kp_decimal"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:text="." />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.344"
+                            android:orientation="vertical">
+
+                            <Space
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_kp_subract"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:text="-" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_kp_add"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="2"
+                                android:text="+" />
+
+                            <com.craftstudio.launcher.ui.view.AnimButton
+                                android:id="@+id/keyboard_kp_enter"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="2"
+                                android:textSize="9sp"
+                                android:text="Enter" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </HorizontalScrollView>
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/special_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:orientation="horizontal"
+                app:alignItems="flex_start"
+                app:flexDirection="row"
+                app:flexWrap="wrap"
+                app:justifyContent="flex_start" />
+        </LinearLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/operate_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.craftstudio.launcher.ui.view.AnimButton
+            android:id="@+id/close1"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_alignParentStart="true"
+            android:text="@string/generic_close"
+            tools:ignore="RelativeOverlap" />
+
+        <com.craftstudio.launcher.ui.view.AnimButton
+            android:id="@+id/send"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_alignParentEnd="true"
+            android:text="@string/generic_confirm"
+            tools:ignore="RelativeOverlap" />
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/close"
+        android:layout_width="@dimen/_18sdp"
+        android:layout_height="@dimen/_18sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

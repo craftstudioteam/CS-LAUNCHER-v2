@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cursor_studio_bg"
+    android:orientation="vertical">
+
+    <!-- ═══ TOP BAR ═══ -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/cursor_studio_panel"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp">
+
+        <!-- Branding: Logo + Text -->
+        <LinearLayout
+            android:id="@+id/branding_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_cs_launcher_logo"
+                android:contentDescription="@null" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cursor_studio_brand"
+                    android:textColor="@color/cursor_studio_accent"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cursor_studio_title"
+                    android:textColor="@color/cursor_studio_text"
+                    android:textSize="9sp"
+                    android:letterSpacing="0.15" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Center Title -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cursor_studio_title"
+                android:textColor="@color/cursor_studio_text"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"
+                android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cursor_studio_subtitle"
+                android:textColor="@color/cursor_studio_accent"
+                android:textSize="9sp"
+                android:letterSpacing="0.2" />
+        </LinearLayout>
+
+        <!-- Back Button -->
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:padding="6dp"
+            android:src="@drawable/ic_close"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/cursor_studio_text"
+            android:contentDescription="@null" />
+    </RelativeLayout>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <!-- ═══ LEFT TOOL PANEL ═══ -->
+        <LinearLayout
+            android:id="@+id/tool_panel"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_cursor_studio_panel"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="6dp">
+
+            <!-- Pencil -->
+            <LinearLayout
+                android:id="@+id/tool_pencil"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/bg_cursor_studio_tool_active"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cursor_pencil"
+                    android:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PEN"
+                    android:textColor="@color/cursor_studio_text_dim"
+                    android:textSize="7sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <!-- Eraser -->
+            <LinearLayout
+                android:id="@+id/tool_eraser"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/bg_cursor_studio_tool_inactive"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cursor_eraser"
+                    android:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ERASE"
+                    android:textColor="@color/cursor_studio_text_dim"
+                    android:textSize="7sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <!-- Eyedropper -->
+            <LinearLayout
+                android:id="@+id/tool_eyedropper"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/bg_cursor_studio_tool_inactive"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cursor_eyedropper"
+                    android:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PICK"
+                    android:textColor="@color/cursor_studio_text_dim"
+                    android:textSize="7sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="30dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:background="@color/cursor_studio_panel_border" />
+
+            <!-- Undo -->
+            <LinearLayout
+                android:id="@+id/tool_undo"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/bg_cursor_studio_tool_inactive"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_undo"
+                    android:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="UNDO"
+                    android:textColor="@color/cursor_studio_text_dim"
+                    android:textSize="7sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <!-- Redo -->
+            <LinearLayout
+                android:id="@+id/tool_redo"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/bg_cursor_studio_tool_inactive"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_redo"
+                    android:tint="#FFFFFF"
+                    android:contentDescription="@null" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="REDO"
+                    android:textColor="@color/cursor_studio_text_dim"
+                    android:textSize="7sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="30dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:background="@color/cursor_studio_panel_border" />
+
+            <!-- Clear -->
+            <LinearLayout
+                android:id="@+id/tool_clear"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_cursor_studio_tool_inactive"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_cursor_clear"
+                    android:tint="#FF5252"
+                    android:contentDescription="@null" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CLEAR"
+                    android:textColor="#FF5252"
+                    android:textSize="7sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ═══ CENTER: CANVAS + WATERMARK ═══ -->
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp">
+
+            <com.craftstudio.launcher.ui.view.PixelCanvasView
+                android:id="@+id/pixel_canvas"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <!-- Watermark -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="4dp"
+                android:text="@string/cursor_studio_watermark"
+                android:textColor="@color/cursor_studio_watermark"
+                android:textSize="10sp"
+                android:letterSpacing="0.1" />
+        </FrameLayout>
+
+        <!-- ═══ RIGHT PANEL: PREVIEW + GRID TOGGLE ═══ -->
+        <LinearLayout
+            android:layout_width="140dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_cursor_studio_panel"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <!-- Preview Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cursor_studio_preview"
+                android:textColor="@color/cursor_studio_accent"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.15"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Preview on Light -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cursor_studio_preview_light"
+                android:textColor="@color/cursor_studio_text_dim"
+                android:textSize="8sp" />
+
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/cursor_studio_preview_light">
+
+                <ImageView
+                    android:id="@+id/preview_light"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null" />
+            </FrameLayout>
+
+            <!-- Preview on Dark -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cursor_studio_preview_dark"
+                android:textColor="@color/cursor_studio_text_dim"
+                android:textSize="8sp" />
+
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:background="@color/cursor_studio_preview_dark">
+
+                <ImageView
+                    android:id="@+id/preview_dark"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null" />
+            </FrameLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/cursor_studio_panel_border" />
+
+            <!-- Grid Size Toggle -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/cursor_studio_grid_size"
+                android:textColor="@color/cursor_studio_accent"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/grid_16"
+                    android:layout_width="0dp"
+                    android:layout_height="28dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/bg_cursor_studio_grid_toggle_inactive"
+                    android:gravity="center"
+                    android:text="16x16"
+                    android:textColor="@color/cursor_studio_text_dim"
+                    android:textSize="10sp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/grid_32"
+                    android:layout_width="0dp"
+                    android:layout_height="28dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/bg_cursor_studio_grid_toggle_active"
+                    android:gravity="center"
+                    android:text="32x32"
+                    android:textColor="#FFFFFF"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </LinearLayout>
+
+            <!-- Current Color Display -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="CURRENT"
+                android:textColor="@color/cursor_studio_accent"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
+
+            <View
+                android:id="@+id/current_color_display"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="4dp"
+                android:background="#000000" />
+
+            <!-- Watermark -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cursor_studio_brand"
+                android:textColor="@color/cursor_studio_watermark"
+                android:textSize="8sp"
+                android:letterSpacing="0.1" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ═══ BOTTOM: COLORS + SAVE ═══ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cursor_studio_panel"
+        android:orientation="vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="8dp">
+
+        <!-- Color Palette -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_marginBottom="6dp">
+
+            <LinearLayout
+                android:id="@+id/color_palette"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <!-- Save Button -->
+        <TextView
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_cursor_studio_button"
+            android:gravity="center"
+            android:text="@string/cursor_studio_save"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+</LinearLayout>

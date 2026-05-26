@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/decelerate_interpolator">
+
+    <!-- 1. Smooth Fade In -->
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="400" />
+
+    <!-- 2. Halka sa niche se upar aana (Slide up) -->
+    <translate
+        android:fromYDelta="10%"
+        android:toYDelta="0"
+        android:duration="400" />
+</set>

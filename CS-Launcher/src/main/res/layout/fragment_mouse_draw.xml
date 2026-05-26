@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A1A">
+
+    <TextView
+        android:id="@+id/draw_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:text="@string/custom_mouse_draw_title"
+        android:textColor="#FFB74D"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.craftstudio.launcher.ui.view.DrawingCanvasView
+        android:id="@+id/drawing_canvas"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/_8sdp"
+        app:layout_constraintBottom_toTopOf="@+id/tools_container"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/draw_title"
+        app:layout_constraintWidth_max="300dp" />
+
+    <HorizontalScrollView
+        android:id="@+id/tools_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_8sdp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@+id/colors_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/btn_pencil"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_tool_button"
+                android:contentDescription="@string/custom_mouse_pencil"
+                android:src="@drawable/ic_pencil"
+                app:tint="#FFB74D" />
+
+            <ImageButton
+                android:id="@+id/btn_eraser"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_tool_button"
+                android:contentDescription="@string/custom_mouse_eraser"
+                android:src="@drawable/ic_eraser"
+                app:tint="#888888" />
+
+            <ImageButton
+                android:id="@+id/btn_undo"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_tool_button"
+                android:contentDescription="@string/custom_mouse_undo"
+                android:src="@drawable/ic_undo"
+                app:tint="#888888" />
+
+            <ImageButton
+                android:id="@+id/btn_redo"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_tool_button"
+                android:contentDescription="@string/custom_mouse_redo"
+                android:src="@drawable/ic_redo"
+                app:tint="#888888" />
+
+            <ImageButton
+                android:id="@+id/btn_clear"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_tool_button"
+                android:contentDescription="@string/custom_mouse_clear"
+                android:src="@drawable/ic_clear"
+                app:tint="#FF5252" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:background="#444444" />
+
+            <TextView
+                android:id="@+id/grid_size_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/custom_mouse_grid_size"
+                android:textColor="#888888"
+                android:textSize="@dimen/_10ssp" />
+
+            <Spinner
+                android:id="@+id/spinner_grid_size"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_32sdp"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:background="@drawable/bg_spinner"
+                android:entries="@array/grid_sizes"
+                android:popupBackground="#2A2A2A" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/colors_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@+id/save_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/color_preview"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:background="@drawable/bg_color_preview"
+                tools:ignore="ContentDescription" />
+
+            <Button
+                android:id="@+id/btn_color_picker"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:background="@drawable/bg_color_button"
+                android:text="+"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/_18ssp" />
+
+            <View
+                android:id="@+id/color_black"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#000000" />
+
+            <View
+                android:id="@+id/color_white"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#FFFFFF" />
+
+            <View
+                android:id="@+id/color_red"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#FF5252" />
+
+            <View
+                android:id="@+id/color_orange"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#FF9800" />
+
+            <View
+                android:id="@+id/color_yellow"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#FFEB3B" />
+
+            <View
+                android:id="@+id/color_green"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#4CAF50" />
+
+            <View
+                android:id="@+id/color_blue"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#2196F3" />
+
+            <View
+                android:id="@+id/color_purple"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#9C27B0" />
+
+            <View
+                android:id="@+id/color_pink"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_color_circle"
+                android:backgroundTint="#E91E63" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/save_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_16sdp"
+        android:text="@string/custom_mouse_save_apply"
+        android:textColor="#151520"
+        app:backgroundTint="#FFB74D"
+        app:cornerRadius="@dimen/_8sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

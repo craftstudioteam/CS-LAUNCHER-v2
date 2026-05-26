@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <path
+        android:fillColor="#000000"
+        android:pathData="M0,0h200v200h-200z" />
+
+    <path
+        android:fillColor="#24B538"
+        android:fillAlpha="0.08"
+        android:pathData="M24,24h152v152h-152z" />
+
+    <path
+        android:fillColor="#24B538"
+        android:fillAlpha="0.16"
+        android:pathData="M40,40h120v120h-120z" />
+
+    <path
+        android:fillColor="#24B538"
+        android:fillAlpha="0.36"
+        android:pathData="M52,52h1v96h-1zM64,52h1v96h-1zM76,52h1v96h-1zM88,52h1v96h-1zM100,52h1v96h-1zM112,52h1v96h-1zM124,52h1v96h-1zM136,52h1v96h-1zM148,52h1v96h-1zM52,52h96v1h-96zM52,64h96v1h-96zM52,76h96v1h-96zM52,88h96v1h-96zM52,100h96v1h-96zM52,112h96v1h-96zM52,124h96v1h-96zM52,136h96v1h-96zM52,148h96v1h-96z" />
+
+    <path
+        android:fillColor="#24B538"
+        android:fillAlpha="0.96"
+        android:pathData="M100,42c-19,0 -34,21 -34,46c0,25 15,46 34,46s34,-21 34,-46c0,-25 -15,-46 -34,-46z" />
+
+    <path
+        android:fillColor="#000000"
+        android:pathData="M100,52c-8,0 -14,8 -14,18s6,18 14,18s14,-8 14,-18s-6,-18 -14,-18z" />
+
+    <path
+        android:fillColor="#24B538"
+        android:fillAlpha="0.48"
+        android:pathData="M99,52h2v36h-2z" />
+
+    <path
+        android:fillColor="#F2F4F8"
+        android:pathData="M145,124l-19,-7l-5,14l-10,-31l30,18l-12,4z" />
+
+    <path
+        android:fillColor="#24B538"
+        android:fillAlpha="0.76"
+        android:pathData="M142,101l-16,-15l6,-8l-16,-1l8,15l6,-8z" />
+
+    <path
+        android:fillColor="#24B538"
+        android:fillAlpha="0.22"
+        android:pathData="M152,138c-8,7 -18,13 -29,18c-9,4 -19,7 -29,8c12,-5 22,-10 30,-17c9,-8 15,-17 18,-27c-9,8 -18,14 -27,17c-7,2 -14,3 -21,3c4,-5 7,-9 11,-13c-1,-2 -2,-4 -3,-6c9,-1 17,-4 25,-8c8,-4 15,-10 22,-17c-1,8 -3,16 -6,23c8,-4 15,-10 20,-18c-2,11 -8,22 -11,30z" />
+
+</vector>

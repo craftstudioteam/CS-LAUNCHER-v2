@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:statusBarColor">@color/background_status_bar</item>
+        <item name="android:navigationBarColor">@color/background_app</item>
+        <item name="android:scrollbarThumbHorizontal">@color/background_menu_element</item>
+        <item name="android:scrollbarThumbVertical">@color/background_menu_element</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
+    </style>
+
+    <style name="CustomDialogStyle" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+        <item name="android:scrollbarThumbHorizontal">@color/background_menu_element</item>
+        <item name="android:scrollbarThumbVertical">@color/background_menu_element</item>
+    </style>
+
+    <style name="CustomAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+        <item name="android:scrollbarThumbHorizontal">@color/background_menu_element</item>
+        <item name="android:scrollbarThumbVertical">@color/background_menu_element</item>
+    </style>
+</resources>

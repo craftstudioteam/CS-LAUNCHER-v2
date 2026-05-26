@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/_240sdp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background_card"
+    android:padding="@dimen/_8sdp"
+    android:orientation="horizontal"
+    android:elevation="@dimen/_8sdp"
+    android:translationZ="4dp"
+    tools:ignore="ContentDescription">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
+        android:layout_marginStart="@dimen/_4sdp"
+        android:layout_gravity="center_vertical"/>
+
+    <com.craftstudio.launcher.ui.view.AnimTextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/background_item"
+        android:gravity="center_horizontal"
+        android:paddingVertical="@dimen/_12sdp"
+        android:paddingHorizontal="@dimen/_20sdp"
+        app:ripple_for_text="true"/>
+
+</LinearLayout>

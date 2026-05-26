@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Amber glow border -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="14dp" />
+            <gradient
+                android:angle="135"
+                android:startColor="#33FFB300"
+                android:centerColor="#1AFF8F00"
+                android:endColor="#0AFFB300"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- Inner dark fill (1dp inset to show border) -->
+    <item
+        android:left="1dp"
+        android:top="1dp"
+        android:right="1dp"
+        android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="13dp" />
+            <solid android:color="#111111" />
+        </shape>
+    </item>
+
+</layer-list>

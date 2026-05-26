@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Hexagon border -->
+    <path
+        android:pathData="M24,2 L42,12.5 L42,35.5 L24,46 L6,35.5 L6,12.5 Z"
+        android:strokeColor="#FFAA00"
+        android:strokeWidth="2"
+        android:fillColor="#1AFFAA00" />
+
+    <!-- Cube top face -->
+    <path
+        android:pathData="M24,13 L32,18 L24,23 L16,18 Z"
+        android:fillColor="#FFAA00"
+        android:fillAlpha="0.9" />
+
+    <!-- Cube left face -->
+    <path
+        android:pathData="M16,18 L16,28 L24,33 L24,23 Z"
+        android:fillColor="#FFAA00"
+        android:fillAlpha="0.5" />
+
+    <!-- Cube right face -->
+    <path
+        android:pathData="M32,18 L32,28 L24,33 L24,23 Z"
+        android:fillColor="#FFAA00"
+        android:fillAlpha="0.7" />
+
+</vector>

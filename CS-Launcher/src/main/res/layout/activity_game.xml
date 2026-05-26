@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_drawer_options"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentEnd="true"
+    android:background="@drawable/no_focus_shown"
+    android:keepScreenOn="true">
+
+    <ImageView
+        android:id="@+id/background_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:translationZ="-2dp"
+        tools:ignore="ContentDescription" />
+
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/game_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:background="@drawable/background_item"
+            android:text="@string/game_tip"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:padding="@dimen/_8sdp"/>
+
+        <com.craftstudio.launcher.customcontrols.ControlLayout
+            android:id="@+id/main_control_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.craftstudio.launcher.MinecraftGLSurface
+                android:id="@+id/main_game_render_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:defaultFocusHighlightEnabled="false"
+                tools:ignore="UnusedAttribute" />
+
+            <com.craftstudio.launcher.customcontrols.mouse.Touchpad
+                android:id="@+id/main_touchpad"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusable="false"
+                android:orientation="vertical"
+                android:translationZ="2dp"
+                android:visibility="gone" />
+
+            <com.craftstudio.launcher.customcontrols.keyboard.TouchCharInput
+                android:id="@+id/mainTouchCharInput"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:ems="10"
+                android:imeOptions="flagNoFullscreen|flagNoExtractUi|flagNoPersonalizedLearning|actionDone"
+                android:inputType="textFilter|textImeMultiLine|textAutoComplete|textAutoCorrect"
+                tools:ignore="TouchTargetSizeCheck" />
+
+        </com.craftstudio.launcher.customcontrols.ControlLayout>
+
+        <com.craftstudio.launcher.customcontrols.mouse.HotbarView
+            android:id="@+id/hotbar_view"
+            android:layout_width="0px"
+            android:layout_height="0px"/>
+
+        <com.kdt.LoggerView
+            android:id="@+id/mainLoggerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/input_preview_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/background_card"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_4sdp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="@string/input_preview_tip"
+                android:textSize="@dimen/_9sdp"/>
+
+            <TextView
+                android:id="@+id/input_preview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/main_navigation_view"
+        android:layout_width="@dimen/_260sdp"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/_12sdp"
+        android:layout_gravity="end"
+        android:elevation="@dimen/_8sdp"
+        android:translationZ="4dp"
+        android:fitsSystemWindows="false" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
+

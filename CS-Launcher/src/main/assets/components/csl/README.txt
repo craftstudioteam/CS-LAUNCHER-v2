@@ -1,0 +1,1 @@
+Place CustomSkinLoader.jar here. The launcher copies it into the active mods directory for local accounts.

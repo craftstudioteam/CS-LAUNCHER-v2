@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS Launcher Firebase Admin Panel</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050505;
+      --bg2: #0b0b0b;
+      --card: rgba(10, 10, 10, 0.88);
+      --card-strong: #090909;
+      --line: rgba(36, 181, 56, 0.22);
+      --line-strong: rgba(36, 181, 56, 0.38);
+      --text: #eaf2ec;
+      --muted: #a3b5a8;
+      --green: #24b538;
+      --green-2: #7dff8e;
+      --danger: #ff6b6b;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(36, 181, 56, 0.16), transparent 24%),
+        radial-gradient(circle at 85% 15%, rgba(36, 181, 56, 0.10), transparent 20%),
+        linear-gradient(180deg, #040404 0%, #0a0a0a 60%, #050505 100%);
+    }
+
+    .shell {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .hero-card,
+    .panel {
+      background: linear-gradient(180deg, rgba(13, 13, 13, 0.96), rgba(7, 7, 7, 0.96));
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-card {
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -35% auto;
+      width: 360px;
+      height: 360px;
+      background: radial-gradient(circle, rgba(36, 181, 56, 0.18), transparent 68%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border: 1px solid rgba(36, 181, 56, 0.35);
+      border-radius: 999px;
+      background: rgba(36, 181, 56, 0.08);
+      color: var(--green-2);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+    }
+
+    .stat-label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--green-2);
+      overflow-wrap: anywhere;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .panel-header small {
+      color: var(--muted);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.span-2 {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.52);
+      color: var(--text);
+      padding: 13px 14px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 160px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: rgba(36, 181, 56, 0.65);
+      box-shadow: 0 0 0 4px rgba(36, 181, 56, 0.12);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .toggle-row input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green);
+      margin: 0;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .primary {
+      background: linear-gradient(180deg, #34d14a, #1f972f);
+      color: #031006;
+      box-shadow: 0 10px 24px rgba(36, 181, 56, 0.22);
+    }
+
+    .secondary {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .danger {
+      background: rgba(255, 107, 107, 0.12);
+      color: #ffcaca;
+      border: 1px solid rgba(255, 107, 107, 0.18);
+    }
+
+    .status {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      line-height: 1.55;
+      white-space: pre-wrap;
+      min-height: 48px;
+    }
+
+    .raw {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(36, 181, 56, 0.10);
+      border: 1px solid rgba(36, 181, 56, 0.28);
+      color: var(--green-2);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 980px) {
+      .hero, .grid, .raw, .form-grid, .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .shell {
+        padding: 16px 12px 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">CS Launcher Firebase Admin Panel</div>
+        <h1>Announcement and Force-Update Control Center</h1>
+        <p class="subtitle">
+          Update the launcher banner, publish HTML-supported announcements, and enforce mandatory updates from a single Firebase Realtime Database record.
+          This page writes to the same schema used by the launcher runtime.
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Database Path</span>
+            <div class="stat-value" id="pathLabel">launcher</div>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Announcement</span>
+            <div class="stat-value" id="announcementState">Unknown</div>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Force Update</span>
+            <div class="stat-value" id="updateState">Unknown</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Firebase Connection</h2>
+            <small>Stored locally in your browser</small>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field span-2">
+            <label for="databaseUrl">Database URL</label>
+            <input id="databaseUrl" placeholder="https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app" />
+          </div>
+          <div class="field">
+            <label for="apiKey">API Key</label>
+            <input id="apiKey" placeholder="AIza..." />
+          </div>
+          <div class="field">
+            <label for="appId">App ID</label>
+            <input id="appId" placeholder="1:1234567890:web:abc123" />
+          </div>
+          <div class="field">
+            <label for="projectId">Project ID</label>
+            <input id="projectId" placeholder="your-firebase-project" />
+          </div>
+          <div class="field">
+            <label for="pathName">Launcher Path</label>
+            <input id="pathName" value="launcher" />
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" id="connectBtn">Connect</button>
+          <button class="secondary" id="loadBtn">Load Remote Data</button>
+          <button class="secondary" id="saveConfigBtn">Save Config</button>
+        </div>
+        <div class="status" id="connectionStatus">Not connected.</div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel full">
+        <div class="panel-header">
+          <div>
+            <h2>Announcement Editor</h2>
+            <small>HTML is supported in the title and body.</small>
+          </div>
+          <div class="chip-row">
+            <span class="chip" data-fill-title="&lt;b&gt;New build available&lt;/b&gt;">Quick title</span>
+            <span class="chip" data-fill-body="&lt;p&gt;We have posted a new launcher build. Please update to continue.&lt;/p&gt;">Quick body</span>
+            <span class="chip" data-fill-body="&lt;p&gt;Maintenance complete. The launcher is back online.&lt;/p&gt;">Status body</span>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="announcementVisible">Visible</label>
+            <div class="toggle-row">
+              <input type="checkbox" id="announcementVisible" />
+              <span>Show this announcement inside the launcher</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="announcementDate">Date Label</label>
+            <input id="announcementDate" placeholder="2026-05-24" />
+          </div>
+          <div class="field span-2">
+            <label for="announcementTitle">Announcement Title HTML</label>
+            <input id="announcementTitle" placeholder="<b>Launcher Update</b>" />
+          </div>
+          <div class="field span-2">
+            <label for="announcementBody">Announcement Body HTML</label>
+            <textarea id="announcementBody" placeholder="<p>Paste formatted HTML here.</p>"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Force Update</h2>
+            <small>Blocks outdated launcher versions.</small>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="minimumVersionCode">Minimum Version Code</label>
+            <input id="minimumVersionCode" type="number" min="0" step="1" placeholder="100" />
+          </div>
+          <div class="field">
+            <label for="downloadUrl">Download URL</label>
+            <input id="downloadUrl" placeholder="https://.../latest.apk" />
+          </div>
+          <div class="field span-2">
+            <label for="forceUpdateMessage">Force Update Message HTML</label>
+            <textarea id="forceUpdateMessage" placeholder="<p>Please install the latest version to continue.</p>"></textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" id="saveBtn">Save to Firebase</button>
+          <button class="secondary" id="refreshBtn">Refresh Preview</button>
+          <button class="danger" id="clearBtn">Clear Remote Fields</button>
+        </div>
+        <div class="status" id="saveStatus">Ready.</div>
+      </div>
+
+      <div class="panel full">
+        <div class="panel-header">
+          <div>
+            <h2>Raw Payload Preview</h2>
+            <small>Matches the launcher schema exactly.</small>
+          </div>
+        </div>
+        <div class="raw">
+          <div class="field">
+            <label for="payloadPreview">Preview JSON</label>
+            <textarea id="payloadPreview" readonly></textarea>
+          </div>
+          <div class="field">
+            <label for="remoteSnapshot">Remote Snapshot</label>
+            <textarea id="remoteSnapshot" readonly></textarea>
+          </div>
+        </div>
+        <div class="note">
+          Schema:
+          <code>launcher/announcement_visible</code>, <code>launcher/announcement_title_html</code>, <code>launcher/announcement_body_html</code>,
+          <code>launcher/announcement_date</code>, <code>launcher/minimum_version_code</code>, <code>launcher/download_url</code>, <code>launcher/force_update_message_html</code>.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+    import { getDatabase, ref, set, update, onValue, remove, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js';
+
+    const els = {
+      apiKey: document.getElementById('apiKey'),
+      appId: document.getElementById('appId'),
+      projectId: document.getElementById('projectId'),
+      databaseUrl: document.getElementById('databaseUrl'),
+      pathName: document.getElementById('pathName'),
+      connectBtn: document.getElementById('connectBtn'),
+      loadBtn: document.getElementById('loadBtn'),
+      saveConfigBtn: document.getElementById('saveConfigBtn'),
+      announcementVisible: document.getElementById('announcementVisible'),
+      announcementDate: document.getElementById('announcementDate'),
+      announcementTitle: document.getElementById('announcementTitle'),
+      announcementBody: document.getElementById('announcementBody'),
+      minimumVersionCode: document.getElementById('minimumVersionCode'),
+      downloadUrl: document.getElementById('downloadUrl'),
+      forceUpdateMessage: document.getElementById('forceUpdateMessage'),
+      payloadPreview: document.getElementById('payloadPreview'),
+      remoteSnapshot: document.getElementById('remoteSnapshot'),
+      saveBtn: document.getElementById('saveBtn'),
+      refreshBtn: document.getElementById('refreshBtn'),
+      clearBtn: document.getElementById('clearBtn'),
+      connectionStatus: document.getElementById('connectionStatus'),
+      saveStatus: document.getElementById('saveStatus'),
+      announcementState: document.getElementById('announcementState'),
+      updateState: document.getElementById('updateState'),
+      pathLabel: document.getElementById('pathLabel'),
+    };
+
+    const defaultConfig = {
+      apiKey: '',
+      appId: '',
+      projectId: '',
+      databaseUrl: '',
+      pathName: 'launcher',
+    };
+
+    const storageKey = 'cs-launcher-firebase-admin-config-v1';
+    const fieldKeyMap = {
+      apiKey: els.apiKey,
+      appId: els.appId,
+      projectId: els.projectId,
+      databaseUrl: els.databaseUrl,
+      pathName: els.pathName,
+    };
+
+    let app = null;
+    let db = null;
+    let unsub = null;
+    let remoteCache = null;
+
+    function loadConfig() {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        const config = raw ? { ...defaultConfig, ...JSON.parse(raw) } : defaultConfig;
+        Object.entries(fieldKeyMap).forEach(([key, input]) => {
+          input.value = config[key] ?? defaultConfig[key];
+        });
+      } catch {
+        Object.entries(fieldKeyMap).forEach(([key, input]) => {
+          input.value = defaultConfig[key];
+        });
+      }
+    }
+
+    function saveConfig() {
+      const config = readConfig();
+      localStorage.setItem(storageKey, JSON.stringify(config));
+      els.connectionStatus.textContent = 'Config saved locally.';
+    }
+
+    function readConfig() {
+      return {
+        apiKey: els.apiKey.value.trim(),
+        appId: els.appId.value.trim(),
+        projectId: els.projectId.value.trim(),
+        databaseUrl: els.databaseUrl.value.trim(),
+        pathName: els.pathName.value.trim() || 'launcher',
+      };
+    }
+
+    function setStatus(message) {
+      els.connectionStatus.textContent = message;
+    }
+
+    function setSaveStatus(message) {
+      els.saveStatus.textContent = message;
+    }
+
+    function buildPayload() {
+      return {
+        announcement_visible: els.announcementVisible.checked,
+        announcement_title_html: els.announcementTitle.value.trim(),
+        announcement_body_html: els.announcementBody.value.trim(),
+        announcement_date: els.announcementDate.value.trim(),
+        minimum_version_code: Number.parseInt(els.minimumVersionCode.value || '0', 10) || 0,
+        download_url: els.downloadUrl.value.trim(),
+        force_update_message_html: els.forceUpdateMessage.value.trim(),
+        updated_at: serverTimestamp(),
+      };
+    }
+
+    function updatePreview() {
+      const payload = buildPayload();
+      els.payloadPreview.value = JSON.stringify(payload, null, 2);
+      els.announcementState.textContent = payload.announcement_visible ? 'Visible' : 'Hidden';
+      els.updateState.textContent = payload.minimum_version_code > 0 ? `Forced at ${payload.minimum_version_code}` : 'Disabled';
+      els.pathLabel.textContent = els.pathName.value.trim() || 'launcher';
+    }
+
+    function bindQuickFill() {
+      document.querySelectorAll('.chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          const title = chip.getAttribute('data-fill-title');
+          const body = chip.getAttribute('data-fill-body');
+          if (title) els.announcementTitle.value = title;
+          if (body) els.announcementBody.value = body;
+          updatePreview();
+        });
+      });
+    }
+
+    function connectFirebase() {
+      const config = readConfig();
+      if (!config.apiKey || !config.appId || !config.projectId || !config.databaseUrl) {
+        setStatus('Fill in the Firebase connection fields first.');
+        return;
+      }
+
+      try {
+        app = initializeApp({
+          apiKey: config.apiKey,
+          appId: config.appId,
+          projectId: config.projectId,
+          databaseURL: config.databaseUrl,
+        }, 'admin-panel');
+        db = getDatabase(app);
+        setStatus(`Connected to ${config.projectId}. Listening on /${config.pathName}`);
+        subscribeRemote(config.pathName);
+      } catch (error) {
+        setStatus(`Connection error: ${error.message}`);
+      }
+    }
+
+    function subscribeRemote(pathName) {
+      if (!db) return;
+      if (unsub) unsub();
+      const targetRef = ref(db, pathName);
+      unsub = onValue(targetRef, (snapshot) => {
+        remoteCache = snapshot.val();
+        els.remoteSnapshot.value = JSON.stringify(remoteCache ?? {}, null, 2);
+      }, (error) => {
+        setStatus(`Listen error: ${error.message}`);
+      });
+    }
+
+    async function saveToFirebase() {
+      if (!db) {
+        setSaveStatus('Connect to Firebase first.');
+        return;
+      }
+
+      const config = readConfig();
+      const payload = buildPayload();
+      try {
+        await update(ref(db, config.pathName), payload);
+        setSaveStatus(`Saved to /${config.pathName} at ${new Date().toLocaleString()}`);
+      } catch (error) {
+        setSaveStatus(`Save failed: ${error.message}`);
+      }
+    }
+
+    async function clearRemoteFields() {
+      if (!db) {
+        setSaveStatus('Connect to Firebase first.');
+        return;
+      }
+
+      const config = readConfig();
+      try {
+        await update(ref(db, config.pathName), {
+          announcement_visible: false,
+          announcement_title_html: '',
+          announcement_body_html: '',
+          announcement_date: '',
+          minimum_version_code: 0,
+          download_url: '',
+          force_update_message_html: '',
+          updated_at: serverTimestamp(),
+        });
+        setSaveStatus('Remote fields cleared.');
+      } catch (error) {
+        setSaveStatus(`Clear failed: ${error.message}`);
+      }
+    }
+
+    async function loadRemote() {
+      if (!db) {
+        setSaveStatus('Connect to Firebase first.');
+        return;
+      }
+
+      const config = readConfig();
+      try {
+        setSaveStatus(`Loading /${config.pathName}...`);
+        const snapRef = ref(db, config.pathName);
+        onValue(snapRef, (snapshot) => {
+          const data = snapshot.val() || {};
+          els.announcementVisible.checked = Boolean(data.announcement_visible);
+          els.announcementTitle.value = data.announcement_title_html || '';
+          els.announcementBody.value = data.announcement_body_html || '';
+          els.announcementDate.value = data.announcement_date || '';
+          els.minimumVersionCode.value = data.minimum_version_code ?? 0;
+          els.downloadUrl.value = data.download_url || '';
+          els.forceUpdateMessage.value = data.force_update_message_html || '';
+          els.remoteSnapshot.value = JSON.stringify(data, null, 2);
+          updatePreview();
+          setSaveStatus(`Loaded /${config.pathName}.`);
+        }, { onlyOnce: true });
+      } catch (error) {
+        setSaveStatus(`Load failed: ${error.message}`);
+      }
+    }
+
+    Object.values(fieldKeyMap).forEach((input) => input.addEventListener('input', updatePreview));
+    els.announcementVisible.addEventListener('change', updatePreview);
+    els.saveConfigBtn.addEventListener('click', saveConfig);
+    els.connectBtn.addEventListener('click', connectFirebase);
+    els.loadBtn.addEventListener('click', loadRemote);
+    els.saveBtn.addEventListener('click', saveToFirebase);
+    els.refreshBtn.addEventListener('click', updatePreview);
+    els.clearBtn.addEventListener('click', clearRemoteFields);
+    els.pathName.addEventListener('input', () => {
+      updatePreview();
+      if (db) subscribeRemote(els.pathName.value.trim() || 'launcher');
+    });
+
+    loadConfig();
+    bindQuickFill();
+    updatePreview();
+  </script>
+</body>
+</html>

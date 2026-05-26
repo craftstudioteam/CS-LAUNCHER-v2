@@ -1,0 +1,971 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🚀 APP INFO                       -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="app_name">CS Launcher</string>
+    <string name="app_name_short">CS Launcher</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🔘 GENERIC / COMMON               -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="generic_open">Open</string>
+    <string name="generic_close">Close</string>
+    <string name="generic_return">Return</string>
+    <string name="generic_edit">Edit</string>
+    <string name="generic_share">Share</string>
+    <string name="generic_move">Move</string>
+    <string name="generic_clone">Clone</string>
+    <string name="generic_paste">Paste</string>
+    <string name="generic_delete">Delete</string>
+    <string name="generic_refresh">Refresh</string>
+    <string name="generic_rename">Rename</string>
+    <string name="generic_more">More</string>
+    <string name="generic_search">Search</string>
+    <string name="generic_tip">Tip</string>
+    <string name="generic_confirm">Confirm</string>
+    <string name="generic_unknown">Unknown</string>
+    <string name="generic_warning">Warning</string>
+    <string name="generic_confirm_delete">Are you sure you want to delete %s?</string>
+    <string name="generic_confirm_delete_multiple">Are you sure you want to delete %d mods?</string>
+    <string name="generic_ok">OK</string>
+    <string name="generic_error">Error</string>
+    <string name="generic_load">Load</string>
+    <string name="generic_name">Name</string>
+    <string name="generic_restart">Restart</string>
+    <string name="generic_reset">Reset</string>
+    <string name="generic_save">Save</string>
+    <string name="generic_cancel">Cancel</string>
+    <string name="generic_yes">Yes</string>
+    <string name="generic_no">No</string>
+    <string name="generic_retry">Retry</string>
+    <string name="announcements_title">Announcements</string>
+    <string name="force_update_title">Update Required</string>
+    <string name="force_update_message">This version is no longer supported. Please update before continuing.</string>
+    <string name="force_update_action">Update Now</string>
+    <string name="force_update_unavailable">Update information is unavailable. Please try again later.</string>
+    <string name="generic_skip">Skip</string>
+    <string name="generic_unpacking">Unpacking %s</string>
+    <string name="generic_error_field_empty">This field cannot be empty</string>
+    <string name="generic_keyboard">Keyboard</string>
+    <string name="generic_waiting">Please wait</string>
+    <string name="generic_select">Select</string>
+    <string name="generic_default">Default</string>
+    <string name="generic_loading">Loading</string>
+    <string name="generic_optional">Optional</string>
+    <string name="generic_required">Required</string>
+    <string name="generic_all">All</string>
+    <string name="generic_select_all">Select All</string>
+    <string name="generic_wan">Ten Thousand</string>
+    <string name="generic_yi">Billion</string>
+    <string name="generic_login">Login</string>
+    <string name="generic_wrong_tip">Something went wrong</string>
+    <string name="generic_no_more_reminders">No more reminders</string>
+    <string name="generic_no_network">Not connected to the internet. Please check your device\'s network connection!</string>
+    <string name="generic_input_invalid">The input is invalid, please try again</string>
+    <string name="generic_input_invalid_character">The name contains an invalid character: "%s"</string>
+    <string name="generic_input_too_small">The value is too small, it must be at least %s</string>
+    <string name="generic_input_too_big">The value is too big, it can be at most %s</string>
+    <string name="generic_copied">Copied</string>
+    <string name="generic_saved">Saved</string>
+    <string name="generic_release">Release</string>
+    <string name="generic_debug">Debug</string>
+    <string name="generic_pre_release">Pre-release</string>
+    <string name="generic_beta">Beta</string>
+    <string name="generic_alpha">Alpha</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          📋 VERSION MANAGER SUBTITLES      -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="shortcuts_subtitle">Quick access to important locations</string>
+    <string name="manage_subtitle">Manage and organize your version</string>
+    <string name="mods_subtitle">Manage your mods</string>
+    <string name="game_path_subtitle">Open the version folder</string>
+    <string name="resource_path_subtitle">Open resource packs folder</string>
+    <string name="world_path_subtitle">Open worlds folder</string>
+    <string name="shader_path_subtitle">Open shader packs folder</string>
+    <string name="screenshot_path_subtitle">Open screenshots folder</string>
+    <string name="logs_path_subtitle">Open logs folder</string>
+    <string name="crash_report_subtitle">Open crash reports folder</string>
+    <string name="version_settings_subtitle">Configure version settings</string>
+    <string name="rename_subtitle">Rename the selected version</string>
+    <string name="copy_subtitle">Create a copy of this version</string>
+    <string name="delete_subtitle">Delete the selected version</string>
+    <string name="versions_title">VERSIONS</string>
+    <string name="versions_subtitle">Manage your game versions</string>
+    <string name="actions_title">ACTIONS</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ❌ ERROR MESSAGES                  -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="error_fatal">CS Launcher crashed unexpectedly</string>
+    <string name="error_no_version">No version selected!</string>
+    <string name="error_show_more">Show details</string>
+    <string name="error_show_less">Hide details</string>
+    <string name="error_launch_failed">Failed to launch game</string>
+    <string name="error_download_failed">Download failed, please retry</string>
+    <string name="error_unknown">An unknown error occurred</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ⚙️ IN-GAME OPTIONS                -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="option_category_debug">Debug</string>
+    <string name="option_category_control">Control</string>
+    <string name="option_category_hotbar">Hotbar Detection Box</string>
+    <string name="option_force_close">Force Close</string>
+    <string name="option_log_out">Log Output</string>
+    <string name="option_send_custom_key">Send Custom Key Code</string>
+    <string name="option_edit_controls">Edit Control Layout</string>
+    <string name="option_hotbar_type">Hotbar Detection Mode</string>
+    <string name="option_hotbar_type_auto">Adaptive (may be inaccurate)</string>
+    <string name="option_hotbar_type_manually">Manual Adjustment</string>
+    <string name="option_hotbar_width">Detection Box Width</string>
+    <string name="option_hotbar_height">Detection Box Height</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🎮 CONTROL EDITOR                 -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="customctrl_editor_exit_title">Exit Editor?</string>
+    <string name="customctrl_editor_exit_msg">Current modifications will not be saved. Are you sure you want to exit?</string>
+    <string name="customctrl_editor_exit">Exit Editor</string>
+    <string name="global_save_and_exit">Save and Exit</string>
+    <string name="customctrl_toggle">Toggleable</string>
+    <string name="customctrl_size">Size</string>
+    <string name="customctrl_mapping">Mapping</string>
+    <string name="customctrl_orientation">Orientation</string>
+    <string name="customctrl_background_color">Background Color</string>
+    <string name="customctrl_corner_radius">Corner Radius</string>
+    <string name="customctrl_stroke_width">Stroke Width</string>
+    <string name="customctrl_stroke_color">Stroke Color</string>
+    <string name="customctrl_button_opacity">Button Opacity</string>
+    <string name="customctrl_addbutton">Add Button</string>
+    <string name="customctrl_addbutton_drawer">Add Drawer</string>
+    <string name="customctrl_addbutton_joystick">Add Joystick</string>
+    <string name="customctrl_addsubbutton">Add Sub-Button</string>
+    <string name="customctrl_selectdefault">Select Default Control Layout</string>
+    <string name="customctrl_export">Save and Share</string>
+    <string name="customctrl_passthru">Mouse Passthrough</string>
+    <string name="customctrl_swipeable">Swipeable</string>
+    <string name="customctrl_forward_lock">Forward Lock</string>
+    <string name="customctrl_absolute_tracking">Force Finger Tracking</string>
+    <string name="custom_control_title">CS Control Management</string>
+    <string name="replacement_customcontrol">Replace Layout</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🕹️ CONTROLS                       -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="control_primary">Left Click</string>
+    <string name="control_secondary">Right Click</string>
+    <string name="control_mouse">Mouse</string>
+    <string name="control_mouseoff">Mouse: Off</string>
+    <string name="control_mouseon">Mouse: On</string>
+    <string name="controls_tip">Tap Gear icon ⚙ to open CS Controls Menu</string>
+    <string name="controls_add_control_button">Button</string>
+    <string name="controls_add_control_drawer">Drawer</string>
+    <string name="controls_visibility">Visibility</string>
+    <string name="controls_in_game">In-Game</string>
+    <string name="controls_in_menu">In-Menu</string>
+    <string name="controls_orientation_up">Up</string>
+    <string name="controls_orientation_down">Down</string>
+    <string name="controls_orientation_left">Left</string>
+    <string name="controls_orientation_right">Right</string>
+    <string name="controls_orientation_free">Free</string>
+    <string name="controls_load_failed">Load Failed!</string>
+    <string name="controls_unsupported_layout_version">Unsupported control layout version!</string>
+    <string name="controls_create_new">Create New Layout</string>
+    <string name="controls_import_control">Import Layout</string>
+    <string name="controls_settings_button_snapping">Button Snapping</string>
+    <string name="controls_settings_button_snapping_distance">Snapping Distance</string>
+    <string name="controls_info_file_name">File Name:</string>
+    <string name="controls_info_name">Layout Name:</string>
+    <string name="controls_info_version">Layout Version:</string>
+    <string name="controls_info_author">Author:</string>
+    <string name="controls_info_desc">Description:</string>
+    <string name="controls_info_more">More Info</string>
+    <string name="controls_info_view">View Info</string>
+    <string name="controls_info_no_info">No description available…</string>
+    <string name="controls_info_invalid">Invalid File:</string>
+    <string name="controls_info_default_title">Default CS Layout</string>
+    <string name="controls_info_default_desc">This is the default CS Launcher control layout.</string>
+    <string name="controls_set_default_message">Set this layout as default for CS Launcher?</string>
+    <string name="controls_nothing">No layouts found. Restart CS Launcher to generate default.</string>
+    <string name="controls_tip_set_default">Long press layout to set as default!</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--      🎮 CONTROLLER BUTTONS                 -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="controller_button_a" translatable="false">A</string>
+    <string name="controller_button_b" translatable="false">B</string>
+    <string name="controller_button_x" translatable="false">X</string>
+    <string name="controller_button_y" translatable="false">Y</string>
+    <string name="controller_button_start">Start</string>
+    <string name="controller_button_trigger_left">Left Trigger</string>
+    <string name="controller_button_trigger_right">Right Trigger</string>
+    <string name="controller_button_shoulder_left">Left Shoulder</string>
+    <string name="controller_button_shoulder_right">Right Shoulder</string>
+    <string name="controller_direction_forward">Joystick Up</string>
+    <string name="controller_direction_backward">Joystick Down</string>
+    <string name="controller_direction_left">Joystick Left</string>
+    <string name="controller_direction_right">Joystick Right</string>
+    <string name="controller_stick_press_l">Left Stick (Press)</string>
+    <string name="controller_stick_press_r">Right Stick (Press)</string>
+    <string name="controller_dpad_up">D-Pad Up</string>
+    <string name="controller_dpad_down">D-Pad Down</string>
+    <string name="controller_dpad_left">D-Pad Left</string>
+    <string name="controller_dpad_right">D-Pad Right</string>
+    <string name="controller_remapper_operating_mode">Current Mode</string>
+    <string name="controller_remapper_expand_entry">Expand to change key code</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          📦 VERSION MANAGER                -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="version_snapshot">Snapshot</string>
+    <string name="version_alpha">Alpha</string>
+    <string name="version_beta">Beta</string>
+    <string name="version_manager_title">CS Version Management</string>
+    <string name="version_no_versions">No versions installed</string>
+    <string name="version_install_new">Install New Version</string>
+    <string name="version_install_new_modloader">Install %s for new version</string>
+    <string name="version_install_not_install">Do not install</string>
+    <string name="version_install_incompatible">Incompatible with %s</string>
+    <string name="version_install_exists">Version name already exists!</string>
+    <string name="version_install_no_versions">No versions available!</string>
+    <string name="version_install_cannot_use_mc_name">Please use a unique name!</string>
+    <string name="version_install_type_version">Install as Version</string>
+    <string name="version_install_type_mod">Install as Mod</string>
+    <string name="version_install_optifine_and_forge">OptiFine might crash with Forge versions.</string>
+    <string name="version_install_log_flood_warning">Close logs if device lags during install.</string>
+    <string name="version_manager_shortcuts">Shortcuts</string>
+    <string name="version_manager_shortcuts_mods">Mod Management</string>
+    <string name="version_manager_shortcuts_version_path">Game Path</string>
+    <string name="version_manager_shortcuts_resource_path">Resource Pack Path</string>
+    <string name="version_manager_shortcuts_world_path">World Path</string>
+    <string name="version_manager_shortcuts_shader_path">Shader Path</string>
+    <string name="version_manager_shortcuts_screenshot_path">Screenshot Path</string>
+    <string name="version_manager_shortcuts_logs_path">Log Path</string>
+    <string name="version_manager_shortcuts_crash_report_path">Crash Report Path</string>
+    <string name="version_manager_rename">Rename Version</string>
+    <string name="version_manager_copy">Copy Version</string>
+    <string name="version_manager_copy_tip">Copy version with isolation enabled.</string>
+    <string name="version_manager_copy_all">Copy All Files</string>
+    <string name="version_manager_delete">Delete Version</string>
+    <string name="version_manager_delete_tip">Deleting will remove all version files. Backup recommended!</string>
+    <string name="version_manager_delete_tip_invalid">Invalid version JSON. Delete to fix.</string>
+    <string name="version_manager_task_in_progress">Task in progress…</string>
+    <string name="version_manager_invalid">This version is invalid</string>
+    <string name="version_manager_no_installed_version">No Minecraft versions found!</string>
+    <string name="version_manager_isolation_type_follow_global">Follow CS Global Settings</string>
+    <string name="version_manager_favorites_add_category">Add Favorite</string>
+    <string name="version_manager_favorites_remove_folder_title">Remove Favorite</string>
+    <string name="version_manager_favorites_remove_folder_message">Remove this favorite? Info will be cleared.</string>
+    <string name="version_manager_favorites_write_folder_name">Name Favorite</string>
+    <string name="version_manager_favorites_dialog_title">Add to Favorites</string>
+    <string name="version_manager_favorites_dialog_no_folders">No favorites yet!</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🔔 NOTIFICATIONS                  -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="notif_channel_name">CS Launcher General</string>
+    <string name="lazy_service_default_title">CS Launcher Background Service</string>
+    <string name="progresslayout_tasks_in_progress">%d tasks in progress</string>
+    <string name="notification_terminate">Terminate</string>
+    <string name="notification_game_runs">Game is running!</string>
+    <string name="notif_error_occured">An error occurred</string>
+    <string name="notif_error_occured_desc">Tap to view details</string>
+    <string name="notif_download_finished">Game is ready to launch</string>
+    <string name="notif_download_finished_desc">Tap to open CS Launcher</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          📥 DOWNLOAD / TASKS               -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="tasks_ongoing">Tasks executing, please wait</string>
+    <string name="mc_download_failed">Failed to download Minecraft! Check your connection.</string>
+    <string name="microsoft_login_retry_later">Too many attempts. Please try again later.</string>
+    <string name="newdl_starting">Reading metadata…</string>
+    <string name="newdl_downloading_metadata">Downloading metadata (%s)</string>
+    <string name="newdl_downloading_game_files" formatted="false">Downloading files… (%d/%d, %.2f MB)</string>
+    <string name="newdl_downloading_game_files_size" formatted="false">Downloading… (%.2f/%.2f MB, %.2f MB/s)</string>
+    <string name="newdl_extracting_native_libraries">Extracting native libraries (%d/%d)</string>
+    <string name="mod_download_progress">Downloading installer for %s</string>
+    <string name="mod_forge_searching">Searching for Forge version</string>
+    <string name="mod_neoforge_searching">Searching for NeoForge version</string>
+    <string name="mod_forge_custom_version">Modifying version name</string>
+    <string name="mod_failed_to_load_list">Failed to load version list!</string>
+    <string name="mod_optifine_progress">Downloading %s</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🔍 MOD CHECKER                    -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="mod_check_dialog_title">CS Mod Compatibility Report</string>
+    <string name="mod_check_progress_message" formatted="false">Checking mods (%d / %d)</string>
+    <string name="mod_check_touch_controller">Touch Controller (%s) detected, enabling CS proxy.</string>
+    <string name="mod_check_sodium_or_embeddium">Sodium/Embeddium (%s) detected. Applying Android crash fix.</string>
+    <string name="mod_check_physics">Physics mod (%s) unpatched — fix required for arm64.</string>
+    <string name="mod_check_mcef">MCEF (%s) is not compatible with Android.</string>
+    <string name="mod_check_valkyrien_skies">Valkyrien Skies (%s) requires a separate server.</string>
+    <string name="mod_check_yes_steve_model">Yes Steve Model (%s) is incompatible with Android.</string>
+    <string name="mod_check_imblocker">IMBlocker (%s) will crash Android on startup.</string>
+    <string name="mod_check_replay_mod">ReplayMod (%s) requires the FFmpeg plugin.</string>
+    <string name="mod_check_borderlesswindow">Borderless Window (%s) is incompatible with Android.</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🔐 PERMISSIONS                    -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="permissions_manage_external_storage">CS Launcher requires file management permission.</string>
+    <string name="permissions_write_external_storage">CS Launcher requires storage permission to save game files.</string>
+    <string name="permissions_storage_for_renderer_config">Renderer plugin %s requires storage access for settings.</string>
+    <string name="storage_required">CS Launcher requires external storage permission to function.</string>
+    <string name="notification_permission_dialog_title">Notification Permission</string>
+    <string name="notification_permission_dialog_text">CS Launcher needs notification permission to maintain background downloads.</string>
+    <string name="notification_permission_toast">Change this in System Settings</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          📂 PATH MANAGEMENT                -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="profiles_path_title">CS Path Management</string>
+    <string name="profiles_path_default">Default Path</string>
+    <string name="profiles_path_settings">Open Path Settings</string>
+    <string name="profiles_path_settings_goto">Open Directory</string>
+    <string name="profiles_path_create_new">Add New Path</string>
+    <string name="profiles_path_create_new_title">Name This Path</string>
+    <string name="profiles_path_delete_title">Delete Path</string>
+    <string name="profiles_path_delete_message">CS Launcher will remove the path entry but not the actual files.</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ✏️ PROFILE EDITOR                 -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="pedit_isolation_enabled">Enable Version Isolation</string>
+    <string name="pedit_reset_icon">Reset custom icon?</string>
+    <string name="pedit_unsaved_tip">Modifications will be lost. Exit anyway?</string>
+    <string name="pedit_control">Control Layout</string>
+    <string name="pedit_custom_path">Custom Path</string>
+    <string name="pedit_default">(Use CS global default)</string>
+    <string name="profile_mods_download_mod">Download Mod</string>
+    <string name="profile_mods_download_mod_release_version">Show official versions only</string>
+    <string name="profile_mods_add_mod">Add Mod</string>
+    <string name="mod_installed_successfully">Mod installed successfully!</string>
+    <string name="profile_mods_disable">Disable</string>
+    <string name="profile_mods_enable">Enable</string>
+    <string name="profile_mods_disable_or_enable">Disable / Enable</string>
+    <string name="manage_mods">Manage Mods</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🎮 MOD MANAGER                    -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="mods_manager_title">Mod Manager</string>
+    <string name="mods_total_count">Total Mods: %d</string>
+    <string name="mods_enabled_count">Enabled: %d</string>
+    <string name="mods_disabled_count">Disabled: %d</string>
+    <string name="mods_enable_selected">Enable Selected</string>
+    <string name="mods_disable_selected">Disable Selected</string>
+    <string name="mods_empty_state">No mods found. Add mods or download from the internet.</string>
+    <string name="mods_enable">Enable Mod</string>
+    <string name="mods_disable">Disable Mod</string>
+    <string name="mods_delete">Delete Mod</string>
+    <string name="mods_info_title">Mod Information</string>
+    <string name="mods_info_name">Name: %s</string>
+    <string name="mods_info_version">Version: %s</string>
+    <string name="mods_info_author">Author: %s</string>
+    <string name="mods_info_description">Description: %s</string>
+    <string name="mods_info_size">Size: %s</string>
+    <string name="mods_info_file">File: %s</string>
+    <string name="mods_refresh_failed">Failed to refresh mods</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          👤 ACCOUNT                        -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="account_login_done">Login Complete</string>
+    <string name="account_add">Add Account</string>
+    <string name="account_no_saved_accounts">No Saved Accounts</string>
+    <string name="account_remove">Remove this account from CS Launcher?</string>
+    <string name="account_remove_login_type_title">Remove Login Method: %s</string>
+    <string name="account_remove_login_type_message">Remove this login method from CS Launcher?</string>
+    <string name="account_microsoft_account">Microsoft Account</string>
+    <string name="account_microsoft_xerr_unauthorized">Microsoft token expired. Please re-login.</string>
+    <string name="account_local_account">CS Offline Account</string>
+    <string name="account_local_account_empty">Username required!</string>
+    <string name="account_local_account_invalid">Invalid username. Use 3–16 alphanumeric characters.</string>
+    <string name="account_login_local_name">Username</string>
+    <string name="account_login_start">Start Login</string>
+    <string name="account_login_microsoft_progress">Microsoft Login: %s</string>
+    <string name="account_login_progress_access_token">Fetching access token…</string>
+    <string name="account_login_progress_xbl_token">Fetching XBL token…</string>
+    <string name="account_login_progress_xsts_token">Fetching XSTS token…</string>
+    <string name="account_login_progress_minecraft_token">Fetching Minecraft token…</string>
+    <string name="account_login_progress_checking">Verifying token…</string>
+    <string name="account_login_no_network">Offline mode — skipping login!</string>
+    <string name="account_login_skip">Login failed. Continue in offline mode?</string>
+    <string name="account_no_microsoft_account">A premium Microsoft account is recommended for CS Launcher.</string>
+    <string name="account_no_microsoft_account_local">Offline accounts are for backup use only.</string>
+    <string name="account_no_microsoft_account_other">Using a third-party login without premium?</string>
+    <string name="account_no_microsoft_account_continue">Ignore and continue</string>
+    <string name="account_continue_to_launch_the_game">Launch Game</string>
+    <string name="account_purchase_minecraft_account">Purchase Minecraft Account</string>
+    <string name="account_purchase_minecraft_account_tip">Purchase on the official minecraft.net site.</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🔑 XBOX / MINECRAFT AUTH ERRORS   -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="xerr_unknown">Unknown Xbox Live API error %d</string>
+    <string name="xerr_no_account">It seems you don\'t have an Xbox Live account</string>
+    <string name="xerr_adult_verification">Adult verification required for your account</string>
+    <string name="xerr_child">Your account is a child account, needs family access</string>
+    <string name="xerr_not_available">Xbox Live is not available in your country/region</string>
+    <string name="minecraft_not_owned">Minecraft profile not found</string>
+    <string name="no_minecraft_purchase">Please ensure you have purchased Minecraft and try again</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ☕ JRE / RUNTIME                  -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="install_select_jre_environment">Select JRE Environment</string>
+    <string name="install_recommend_use_jre8">Use JRE 8 for best stability</string>
+    <string name="install_auto_select">Let CS Launcher decide</string>
+    <string name="multirt_runtime_corrupt">Java Runtime Environment Corrupted</string>
+    <string name="multirt_runtime_incompatiblearch">Incompatible architecture: %s</string>
+    <string name="multirt_config_title">Java Runtime Environment</string>
+    <string name="multirt_progress_caching">Caching…</string>
+    <string name="multirt_config_setdefault">Set as Default</string>
+    <string name="multirt_nocompatiblert">No compatible JRE found. Requires Java %d or later</string>
+    <string name="multirt_nojava8rt">Java 8 not found. Install Java 8 to use this option</string>
+    <string name="multirt_delete_runtime">Delete Runtime Environment</string>
+    <string name="multirt_import">Import Runtime Environment</string>
+    <string name="multirt_swap_setdefault">Select Default Environment</string>
+    <string name="multirt_provided_by_launcher">Built-in</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🖱️ VIRTUAL MOUSE                  -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="mouse_settings_speed_name">Virtual Mouse Speed</string>
+    <string name="mouse_settings_scale_name">Virtual Mouse Scale</string>
+    <string name="custom_mouse_add">Add Virtual Mouse</string>
+    <string name="custom_mouse_added">Successfully set virtual mouse:</string>
+    <string name="custom_mouse_default">Default Virtual Mouse</string>
+    <string name="custom_mouse_title">Custom Virtual Mouse</string>
+    <string name="custom_mouse_dialog" formatted="false">Add mouse images in (CS Settings - %s - %s)</string>
+    <string name="custom_mouse_desc">Open virtual mouse management to add custom mouse icons</string>
+    <string name="custom_mouse_message_default">Default virtual mouse — share, rename, and delete not supported</string>
+    <string name="custom_mouse_tab_import">Import Image</string>
+    <string name="custom_mouse_tab_draw">Draw Cursor</string>
+    <string name="custom_mouse_preview">Preview</string>
+    <string name="custom_mouse_draw_title">Draw Your Cursor</string>
+    <string name="custom_mouse_pencil">Pencil</string>
+    <string name="custom_mouse_eraser">Eraser</string>
+    <string name="custom_mouse_undo">Undo</string>
+    <string name="custom_mouse_redo">Redo</string>
+    <string name="custom_mouse_clear">Clear Canvas</string>
+    <string name="custom_mouse_grid_size">Grid:</string>
+    <string name="custom_mouse_save_apply">Save &amp; Apply</string>
+    <string name="custom_mouse_color_picker">Color Picker</string>
+    <string name="custom_mouse_enter_hex">Enter hex color code</string>
+    <string name="custom_mouse_invalid_color">Invalid color code</string>
+    <string name="custom_mouse_saved">Custom cursor saved and applied!</string>
+    <string name="custom_mouse_save_failed">Failed to save cursor</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--        🎨 CURSOR STUDIO                    -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="cursor_studio_brand">CS Launcher V2</string>
+    <string name="cursor_studio_title">CURSOR CUSTOMIZATION STUDIO</string>
+    <string name="cursor_studio_subtitle">PIXEL ART EDITION</string>
+    <string name="cursor_studio_watermark">CS Launcher V2 Cursor Studio</string>
+    <string name="cursor_studio_pencil">Pixel Pencil</string>
+    <string name="cursor_studio_eraser">Eraser</string>
+    <string name="cursor_studio_eyedropper">Color Picker</string>
+    <string name="cursor_studio_undo">Undo</string>
+    <string name="cursor_studio_redo">Redo</string>
+    <string name="cursor_studio_clear">Clear Canvas</string>
+    <string name="cursor_studio_preview">CURSOR PREVIEW</string>
+    <string name="cursor_studio_preview_light">On Light</string>
+    <string name="cursor_studio_preview_dark">On Dark</string>
+    <string name="cursor_studio_grid_size">Grid Size</string>
+    <string name="cursor_studio_colors">COLORS</string>
+    <string name="cursor_studio_custom_color">Custom Color</string>
+    <string name="cursor_studio_save">SAVE &amp; APPLY CUSTOM CURSOR</string>
+    <string name="cursor_studio_clear_confirm">Clear the entire canvas?</string>
+    <string name="cursor_studio_grid_change_confirm">Changing grid size will clear the canvas. Continue?</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🖼️ CUSTOM BACKGROUND              -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="custom_background_add">Add Background Image</string>
+    <string name="custom_background_title">Custom CS Launcher Background</string>
+    <string name="custom_background_desc">Manage background images for different CS Launcher interfaces</string>
+    <string name="custom_background_main_menu">Main Menu</string>
+    <string name="custom_background_in_game">In-Game Interface</string>
+    <string name="custom_background_dialog_message">Tap "Select" to set this image as background for %s</string>
+    <string name="custom_background_selected">Background set for %s:</string>
+    <string name="custom_background_reset">Reset background for %s</string>
+    <string name="custom_background_nothing">No background images found. Please add some first!</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          📁 FILE MANAGER                   -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="file_folder_dialog_insert_name">Enter folder name</string>
+    <string name="file_create_folder">Create Folder</string>
+    <string name="file_select_folder">Select Folder</string>
+    <string name="file_add_file">Add File</string>
+    <string name="file_add_file_tip">Please select a file with extension %s</string>
+    <string name="file_does_not_exist">This folder (or file) does not exist</string>
+    <string name="file_tips">Operate this file</string>
+    <string name="file_folder_tips">Operate this folder</string>
+    <string name="file_message">Select operation for this file</string>
+    <string name="file_folder_message">Select operation for this folder</string>
+    <string name="file_added">File added successfully</string>
+    <string name="file_delete">Are you sure you want to delete this file?</string>
+    <string name="file_delete_dir">Are you sure you want to delete this folder?</string>
+    <string name="file_delete_dir_message">Deleting this folder will also delete all files inside. Cancel if it contains important files!</string>
+    <string name="file_delete_multiple_items_title">Delete selected items?</string>
+    <string name="file_delete_multiple_items_message">This will permanently delete all selected items. Proceed with caution!</string>
+    <string name="file_rename_exitis">File name conflicts with an existing file!</string>
+    <string name="file_external_storage">External storage directory</string>
+    <string name="file_software_private">App private directory</string>
+    <string name="file_multi_select_mode">Enable multi-select mode</string>
+    <string name="file_multi_select_mode_title">Multi-select items</string>
+    <string name="file_multi_select_mode_message">Currently selected %d items</string>
+    <string name="file_operation_file" formatted="false">Operating file… (%s / %s, %d)</string>
+    <string name="file_jump_to_path">Jump to path</string>
+    <string name="file_nothing">No files found!</string>
+    <string name="file_invalid_length" formatted="false">Name too long! (Current: %d, Max: %d)</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🔎 SEARCH VIEW                    -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="search_case_sensitive">Case sensitive</string>
+    <string name="search_only_show_results">Show only search results</string>
+    <string name="search_count">%d search results</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          💦 SPLASH SCREEN                  -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="splash_screen_desc">CS Launcher needs to extract essential game libraries. Tap below to begin.</string>
+    <string name="splash_screen_installing">CS Launcher is extracting components. Opening main interface soon…</string>
+    <string name="splash_screen_lwjgl">LWJGL — Minecraft rendering engine dependency.</string>
+    <string name="splash_screen_cacio">Portable GUI backend for OpenJDK.</string>
+    <string name="splash_screen_authlib_injector">Enables external server authentication.</string>
+    <string name="splash_screen_components">Essential CS Launcher core components.</string>
+    <string name="splash_screen_jre8">Java 8 (Minecraft 1.16 and below)</string>
+    <string name="splash_screen_jre17">Java 17 (Minecraft 1.17+)</string>
+    <string name="splash_screen_jre21">Java 21 (Minecraft 1.20.5+)</string>
+    <string name="splash_screen_jre25">Java 25 (Minecraft 26.1+)</string>
+    <string name="splash_screen_apply">Agree and Install</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ℹ️ ABOUT SCREEN                   -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="about_title">About CS Launcher</string>
+    <string name="about_tab">About CS Launcher</string>
+    <string name="about_dec1">CS Launcher (full name Craft Studio Launcher) is a high-performance Minecraft launcher by Craft Studio Team, based on PojavLauncher and optimized for Android devices.</string>
+    <string name="about_dec2">CS Launcher focuses on premium user experience, featuring a redesigned UI for easy Minecraft access on any Android device.</string>
+    <string name="about_dec3">CS Launcher is licensed under GPL v3.0. Please comply with open-source provisions when distributing modified versions.</string>
+    <string name="about_contributors">CS Launcher Contributors &amp; Acknowledgements:</string>
+    <string name="about_sponsors">Special Thanks to Craft Studio Team Supporters:</string>
+    <string name="about_sponsors_list">View Supporters</string>
+    <string name="about_sponsors_desc">All sponsors who support CS Launcher development — thank you!</string>
+    <string name="about_sponsors_amount">Time and Total Amount</string>
+    <string name="about_button_support_development">Support CS Launcher Development</string>
+    <string name="about_MovTery_desc">MovTery — Original CS Launcher Author</string>
+    <string name="about_PojavLauncher_desc">PojavLauncher Team — Core Engine</string>
+    <string name="about_mcmod_desc">MC Wiki — Mod and modpack translations</string>
+    <string name="about_VeraFirefly_desc">VeraFirefly — Rendering technical support</string>
+    <string name="about_LingMuQiuZhu_desc">LingMuQiuZhu — Technical support</string>
+    <string name="about_ShirosakiMio_desc">ShirosakiMio — Technical support and bug fixes</string>
+    <string name="about_bangbang93_desc">bangbang93 — BMCLAPI mirror source</string>
+    <string name="about_access_space">Access Space</string>
+    <string name="about_access_link">Access Link</string>
+    <string name="about_version_name">CS Version Name:</string>
+    <string name="about_version_code">CS Version Code:</string>
+    <string name="about_last_update_time">Last Updated:</string>
+    <string name="about_version_status">Build Status:</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🏠 MAIN SCREEN                    -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="main_open_main_dir">Open CS Folder</string>
+    <string name="main_install_jar_file">Execute .jar File</string>
+    <string name="main_share_logs">Share CS Logs</string>
+    <string name="main_launch">▶  Play</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ⚙️ SETTINGS — CATEGORIES          -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="setting_category_control">Control Settings</string>
+    <string name="setting_category_virtual_mouse">Virtual Mouse</string>
+    <string name="setting_category_gyro_controls">Gyro Controls</string>
+    <string name="setting_category_controller_settings">Controller Settings</string>
+    <string name="setting_category_java_tweaks">Java Tweaks</string>
+    <string name="setting_category_video">Video Settings</string>
+    <string name="setting_category_version">Version Settings</string>
+    <string name="setting_category_language">Language</string>
+    <string name="setting_category_personalization">Personalization</string>
+    <string name="setting_category_download">Downloads</string>
+    <string name="setting_category_game">Game Settings</string>
+    <string name="setting_category_launcher">CS Launcher Settings</string>
+    <string name="setting_category_game_menu">Game Menu</string>
+    <string name="setting_category_experimental">Experimental Settings</string>
+    <string name="setting_category_experimental_patches">Experimental Patches</string>
+    <string name="setting_category_support">External Support</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ⚙️ SETTINGS — RENDERER            -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="setting_renderer_title">Renderer</string>
+    <string name="setting_renderer_from_plugins">From %s Plugin</string>
+    <string name="setting_renderer_local_import_title">Local Renderer Import</string>
+    <string name="setting_renderer_local_import_desc">Import renderer plugins locally. Some devices may not support local renderer plugins.</string>
+    <string name="setting_renderer_local_import_restart">New renderer imported. Restart CS Launcher to load it!</string>
+    <string name="setting_renderer_local_import_failed">Failed to import renderer plugin. Check file format or plugin conflicts!</string>
+    <string name="setting_renderer_local_manage">Manage Local Renderer Plugins</string>
+    <string name="setting_renderer_local_delete">Delete this renderer plugin? This cannot be undone!</string>
+    <string name="setting_driver_title">Vulkan Driver</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ⚙️ SETTINGS — VIDEO               -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="setting_ignore_notch_title">Fullscreen Mode</string>
+    <string name="setting_ignore_notch_desc">Ignore notch and extend screen content to fullscreen</string>
+    <string name="setting_launcher_ignore_notch_title">Fullscreen Mode (Non-Game)</string>
+    <string name="setting_launcher_ignore_notch_desc">Extend screen to fullscreen on non-game interfaces</string>
+    <string name="setting_resolution_scaler_title">Resolution Scaling</string>
+    <string name="setting_resolution_scaler_desc">Adjust game resolution. Native resolution = 100%</string>
+    <string name="setting_use_surface_view_title">Use Alternative Surface Rendering</string>
+    <string name="setting_use_surface_view_desc">May improve performance on GPU-limited devices</string>
+    <string name="setting_sustained_performance_title">Enable Sustained Performance Mode</string>
+    <string name="setting_force_vsync_title">Force V-Sync</string>
+    <string name="setting_limit_overheating_throttling">Prevent overheating by limiting peak performance</string>
+    <string name="setting_vsync_in_zink_title">Allow V-Sync with Zink</string>
+    <string name="setting_vsync_in_zink_desc">Enable V-Sync for Zink using internal system APIs</string>
+    <string name="setting_vulkan_driver_system_title">Use System Vulkan Driver</string>
+    <string name="setting_vulkan_driver_system_desc">Force system Vulkan driver on Adreno GPUs instead of Turnip</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ⚙️ SETTINGS — CONTROLS            -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="setting_longpress_trigger_title">Long Press Trigger Delay</string>
+    <string name="setting_longpress_trigger_desc">Change delay for long press actions like breaking blocks</string>
+    <string name="setting_button_scale_title">Control Layout Scaling</string>
+    <string name="setting_button_scale_desc">Enlarge buttons if they are too small</string>
+    <string name="setting_mouse_scale_desc">Modify the size of the virtual mouse</string>
+    <string name="setting_mouse_speed_desc">Modify the movement speed of the virtual mouse</string>
+    <string name="setting_mouse_start_title">Show Virtual Mouse by Default on Game Start</string>
+    <string name="setting_mouse_start_desc">Virtual mouse will appear on startup when enabled</string>
+    <string name="setting_disable_gestures_title">Disable Gestures</string>
+    <string name="setting_disable_gestures_desc">Disable gestures such as long press to break blocks</string>
+    <string name="setting_disable_swap_hand_title">Disable Double Tap to Swap Items</string>
+    <string name="setting_disable_swap_hand_desc">Disable double tapping hotbar item to swap with off-hand</string>
+    <string name="setting_button_allcaps_title">Use All Caps in Button Labels</string>
+    <string name="setting_button_allcaps_desc">Disable to use lowercase letters in control layout</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ⚙️ SETTINGS — GYRO                -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="setting_gyro_invert_x_axis">Invert X Axis</string>
+    <string name="setting_gyro_invert_y_axis">Invert Y Axis</string>
+    <string name="setting_gyro_invert_x_axis_description">Invert the horizontal axis</string>
+    <string name="setting_gyro_invert_y_axis_description">Invert the vertical axis</string>
+    <string name="setting_enable_gyro_title">Enable Gyroscope Control</string>
+    <string name="setting_enable_gyro_desc">Rotate your device to rotate camera in-game</string>
+    <string name="setting_gyro_smoothing_title">Enable Gyroscope Smoothing</string>
+    <string name="setting_gyro_smoothing_desc">Reduces jitter but increases latency</string>
+    <string name="setting_gyro_sensitivity_title">Gyroscope Sensitivity</string>
+    <string name="setting_gyro_sensitivity_desc">Adjust gyroscope control sensitivity</string>
+    <string name="setting_gyro_sample_rate_title">Gyroscope Sample Rate</string>
+    <string name="setting_gyro_sample_rate_description">Increase if you experience gyroscope performance issues</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ⚙️ SETTINGS — CONTROLLER          -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="setting_remap_controller_title">Remap Controller Buttons</string>
+    <string name="setting_remap_controller_desc">Modify keyboard keys bound to each controller button</string>
+    <string name="setting_controller_map_wiped">Controller mapping has been reset</string>
+    <string name="setting_wipe_controller_title">Reset Controller Mapping</string>
+    <string name="setting_wipe_controller_desc">Reset all controller button mappings</string>
+    <string name="setting_deadzone_scale_title">Joystick Deadzone Scale</string>
+    <string name="setting_deadzone_scale_desc">Increase if joystick drifts</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ⚙️ SETTINGS — JAVA                -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="setting_java_multirt_title">Runtime Environment Manager</string>
+    <string name="setting_java_multirt_desc">Manage installed Java Runtime Environments</string>
+    <string name="setting_java_select_runtime_title">Select Runtime Before Execution</string>
+    <string name="setting_java_select_runtime_desc">Java runtime to use before entering execution environment</string>
+    <string name="setting_java_select_runtime_ask_me">Let me choose temporarily</string>
+    <string name="setting_java_select_runtime_default">Current default runtime environment</string>
+    <string name="setting_java_args_title">JVM Startup Arguments</string>
+    <string name="setting_java_args_desc">Additional JVM arguments for launching Minecraft. Modify carefully to avoid crashes.</string>
+    <string name="setting_java_memory_title">Memory Allocation</string>
+    <string name="setting_java_memory_desc">Control how much memory is allocated to Minecraft</string>
+    <string name="setting_java_memory_info">Current: %s / %s, Free: %s</string>
+    <string name="setting_java_memory_exceeded">Memory setting exceeds available memory</string>
+    <string name="setting_java_sandbox_title">Enable Sandbox Security Manager</string>
+    <string name="setting_java_sandbox_desc">Enable sandbox security manager when executing .jar files</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          ⚙️ SETTINGS — MISC                -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="setting_check_libraries_title">Check Libraries After Download</string>
+    <string name="setting_check_libraries_desc">Forces hash check on libraries to prevent download errors</string>
+    <string name="setting_shader_dump_title">Enable Shader Output</string>
+    <string name="setting_shader_dump_desc">Logs converted shaders to log file</string>
+    <string name="setting_force_big_core_title">Force Renderer on Big Core</string>
+    <string name="setting_force_big_core_desc">Forces Minecraft rendering thread to run on highest frequency core</string>
+    <string name="setting_touch_controller_vibrate_duration_title">TouchController Vibration Duration</string>
+    <string name="setting_touch_controller_vibrate_duration_desc">Set vibration duration for TouchController mod</string>
+    <string name="setting_verify_manifest_title">Game Version List Check</string>
+    <string name="setting_verify_manifest_desc">Check game version list and libraries when enabled</string>
+    <string name="setting_resource_image_cache_title">Cache Resource Images</string>
+    <string name="setting_resource_image_cache_desc">Cache cover images and screenshots for faster loading</string>
+    <string name="setting_resource_full_name_title">Resource Full Name Prefix</string>
+    <string name="setting_resource_full_name_desc">Add full resource name as prefix to custom file name on download</string>
+    <string name="setting_download_source_title">Game Download Source</string>
+    <string name="setting_download_source_desc">Choose a mirror download source</string>
+    <string name="setting_max_download_threads_title">Max Download Threads</string>
+    <string name="setting_max_download_threads_desc">Max concurrent downloads. 64 threads is sufficient!</string>
+    <string name="setting_version_isolation_title">Version Isolation</string>
+    <string name="setting_version_isolation_desc">Enable version isolation. Disabled: .minecraft/ — Enabled: .minecraft/versions/&lt;name&gt;/</string>
+    <string name="setting_version_custom_info_title">Custom Info</string>
+    <string name="setting_version_custom_info_desc">Custom info shown in F3 debug screen. Use [cs_version] for CS Launcher version tag.</string>
+    <string name="setting_set_game_language_title">Auto Set Game Language</string>
+    <string name="setting_set_game_language_desc">Automatically set game language on startup</string>
+    <string name="setting_set_game_language_list">Set Game Language</string>
+    <string name="setting_set_game_language_system">Follow System Language</string>
+    <string name="setting_set_game_language_overridden_title">Override Game Language</string>
+    <string name="setting_set_game_language_overridden_desc">Force game language to match CS Launcher language</string>
+    <string name="setting_launcher_theme">CS Theme Mode</string>
+    <string name="setting_launcher_theme_system">Follow System Theme</string>
+    <string name="setting_launcher_theme_light">Light Mode</string>
+    <string name="setting_launcher_theme_dark">Dark Mode</string>
+    <string name="setting_enable_log_output_title">Open Log Output When Launching Game</string>
+    <string name="setting_enable_log_output_desc">Enable log output interface when game starts</string>
+    <string name="setting_animation_title">Enable Animations</string>
+    <string name="setting_animation_desc">Play animations when switching interfaces</string>
+    <string name="setting_animation_speed_title">Animation Speed</string>
+    <string name="setting_animation_speed_desc">Set the speed of launcher animations</string>
+    <string name="setting_page_opacity_title">Page Opacity</string>
+    <string name="setting_page_opacity_desc">Set opacity of main pages in CS Launcher</string>
+    <string name="setting_quit_launcher_title">Quit Launcher</string>
+    <string name="setting_quit_launcher_desc">Quit CS Launcher when game officially starts</string>
+    <string name="setting_accept_pre_release_updates_title">Receive Pre-release Updates</string>
+    <string name="setting_accept_pre_release_updates_desc">Allow CS Launcher to receive pre-release updates</string>
+    <string name="setting_ask_for_notification_title">Allow Notifications</string>
+    <string name="setting_ask_for_notification_desc">Re-request notification permissions for background downloads</string>
+    <string name="setting_game_menu_show_memory_title">Real-time Memory Info</string>
+    <string name="setting_game_menu_show_memory_desc">Show real-time memory info on game menu</string>
+    <string name="setting_game_menu_show_fps_title">Show Real-time FPS</string>
+    <string name="setting_game_menu_show_fps_desc">Show real-time FPS on game menu</string>
+    <string name="setting_game_menu_memory_text_title">Memory Info Prefix Text</string>
+    <string name="setting_game_menu_memory_text_desc">Customize the memory info prefix text</string>
+    <string name="setting_game_menu_info_refresh_rate_title">Information Refresh Rate</string>
+    <string name="setting_game_menu_info_refresh_rate_desc">Controls refresh rate of game menu info. High refresh may cause performance issues.</string>
+    <string name="setting_game_menu_location_title">Game Menu Initial Position</string>
+    <string name="setting_game_menu_location_center">Center</string>
+    <string name="setting_game_menu_location_bottom_or_center">Bottom Center</string>
+    <string name="setting_game_menu_location_top_or_center">Top Center</string>
+    <string name="setting_game_menu_location_left_or_top">Top Left</string>
+    <string name="setting_game_menu_location_left_or_bottom">Bottom Left</string>
+    <string name="setting_game_menu_location_right_or_top">Top Right</string>
+    <string name="setting_game_menu_location_right_or_bottom">Bottom Right</string>
+    <string name="setting_game_menu_alpha_title">Floating Window Opacity</string>
+    <string name="setting_game_menu_alpha_desc">Set opacity of game menu floating window</string>
+    <string name="setting_reboot_tip">Restart CS Launcher to apply changes.</string>
+    <string name="setting_zink_driver_adreno">Adreno GPU detected. Enabling this may cause Zink to malfunction. Continue?</string>
+    <string name="setting_language">Language</string>
+    <string name="setting_check_update">Check for Updates</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--     ⚙️ SETTINGS — PREFERENCE TITLES/SUMM  -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="timeLongPressTriggerTitle">Long Press Trigger Time</string>
+    <string name="timeLongPressTriggerSummary">Adjust long press trigger duration</string>
+    <string name="buttonscaleTitle">Button Scale</string>
+    <string name="buttonscaleSummary">Adjust on-screen button size</string>
+    <string name="mousescaleTitle">Mouse Scale</string>
+    <string name="mousescaleSummary">Adjust mouse cursor scale</string>
+    <string name="mousespeedTitle">Mouse Speed</string>
+    <string name="mousespeedSummary">Adjust mouse movement speed</string>
+    <string name="gyroSensitivityTitle">Gyroscope Sensitivity</string>
+    <string name="gyroSensitivitySummary">Adjust gyroscope sensitivity</string>
+    <string name="gyroSampleRateTitle">Gyroscope Sample Rate</string>
+    <string name="gyroSampleRateSummary">Adjust gyroscope sampling rate</string>
+    <string name="gamepadDeadzoneScaleTitle">Gamepad Deadzone</string>
+    <string name="gamepadDeadzoneScaleSummary">Adjust gamepad deadzone scale</string>
+    <string name="enableGyroCategory">Gyroscope Settings</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🎮 GAME                           -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="game_exit_message">The app/game exited with code %d.</string>
+    <string name="game_singnal_message">The app/game aborted due to fatal signal %d.</string>
+    <string name="game_exit_note">Check log file or crash report for details. Share logs if you need help!</string>
+    <string name="game_exit_no_screenshot">Do not screenshot the app. Share your log file or crash report!</string>
+    <string name="game_autopick_runtime_failed">No suitable runtime found. Using version-selected runtime.</string>
+    <string name="game_tip">Game is running. Enable log output via menu to check status.</string>
+    <string name="game_tip_version">Currently launched version:</string>
+    <string name="game_tip_mc_info">Minecraft Info:</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          📥 DOWNLOAD CENTER                -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="download_classify_mod">Download Mod</string>
+    <string name="download_classify_modpack">Download Modpack</string>
+    <string name="download_classify_resource_pack">Download Resource Pack</string>
+    <string name="download_classify_world">Download World</string>
+    <string name="download_classify_shader_pack">Download Shader Pack</string>
+    <string name="download_ui_install_local">Install from Local</string>
+    <string name="download_ui_search">Search Name</string>
+    <string name="download_ui_mc_version">MC Version</string>
+    <string name="download_ui_platform">Search Platform</string>
+    <string name="download_ui_sort_by">Sort By</string>
+    <string name="download_ui_category">Category Filter</string>
+    <string name="download_ui_modloader">Mod Loader</string>
+    <string name="download_ui_sort_by_relevant">Relevance</string>
+    <string name="download_ui_sort_by_total_downloads">Total Downloads</string>
+    <string name="download_ui_sort_by_popularity">Popularity</string>
+    <string name="download_ui_sort_by_recently_created">Recently Created</string>
+    <string name="download_ui_sort_by_recently_updated">Recently Updated</string>
+    <string name="download_info_downloads">Downloads:</string>
+    <string name="download_info_author">Author:</string>
+    <string name="download_info_date">Creation Date:</string>
+    <string name="download_info_modloader">Compatible With:</string>
+    <string name="download_info_dependencies">Dependency Type:</string>
+    <string name="download_info_load_screenshot">Show Screenshot</string>
+    <string name="download_search_failed">Failed to search for resources!</string>
+    <string name="download_search_no_result">No related resources found!</string>
+    <string name="download_search_platform_not_supported">Platform does not support this resource type or category filter!</string>
+    <string name="download_install_custom_name">Custom File Name</string>
+    <string name="download_install_download_file" formatted="false">Downloading resource (%.2fMB / %.2fMB, speed: %s/s)</string>
+    <string name="download_install_dependencies">%s has the following dependencies or incompatible mods</string>
+    <string name="download_install_dependencies_tip">Download required dependencies. Missing or incompatible mods may cause game to fail!</string>
+    <string name="download_install_dependencies_required">Required</string>
+    <string name="download_install_dependencies_optional">Optional</string>
+    <string name="download_install_dependencies_incompatible">Incompatible</string>
+    <string name="download_install_dependencies_embedded">Embedded</string>
+    <string name="download_install_dependencies_tool">Tool</string>
+    <string name="download_install_dependencies_include">Includes</string>
+    <string name="download_install">Download %s</string>
+    <string name="download_install_is_adapt">Current version %s is available</string>
+    <string name="download_install_unpack_world_error">Cannot recognize file structure. Automatic unpacking failed. Please handle manually!</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          📦 MODPACK                        -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="select_modpack_local_tip">Please select a modpack file supported by CS Launcher!</string>
+    <string name="select_modpack_local_not_supported">This modpack is not supported! CS Launcher supports Modrinth, CurseForge, and MCBBS formats.</string>
+    <string name="select_modpack_local_installing_files">Installing game files… (%d / %d)</string>
+    <string name="modpack_download_downloading_metadata" formatted="false">Downloading modpack metadata (%.2fMB / %.2fMB, speed: %s/s)</string>
+    <string name="modpack_download_downloading_mods" formatted="false">Downloading mods (%.2fMB / %.2fMB, speed: %s/s)</string>
+    <string name="modpack_download_downloading_mods_fc" formatted="false">Downloading mods (Downloaded: %d (%s), Total: %d, Speed: %s/s)</string>
+    <string name="modpack_download_applying_overrides" formatted="false">Applying overrides (%d/%d)</string>
+    <string name="modpack_install_download_failed">Failed to download modpack file</string>
+    <string name="modpack_prepare_mod_loader_installation">All mods installed. Preparing mod loader installation.</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🧹 CLEAR CACHE                    -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="clear_up_cache">Clear Cache</string>
+    <string name="clear_up_cache_desc">Check and clean CS Launcher cache files. Clearing does not affect normal app usage.</string>
+    <string name="clear_up_cache_not_found">No cache files found.</string>
+    <string name="clear_up_cache_clean_up">Cleanup complete. Cleared %s of cache files.</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🔄 UPDATE                         -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="update">Check for Updates</string>
+    <string name="update_available">Update Available</string>
+    <string name="update_dialog_title">New Version Detected</string>
+    <string name="update_dialog_version">Version:</string>
+    <string name="update_dialog_time">Date:</string>
+    <string name="update_dialog_file_size">Package Size:</string>
+    <string name="update_dialog_yes">Update</string>
+    <string name="update_dialog_ignore">Ignore This Update</string>
+    <string name="update_summary">Get and install the latest version</string>
+    <string name="update_download">Download Update</string>
+    <string name="update_later">Remind Me Later</string>
+    <string name="update_changelog">What\'s New</string>
+    <string name="update_checking">Checking for updates…</string>
+    <string name="update_without">CS Launcher is up to date!</string>
+    <string name="update_up_to_date">CS Launcher is up to date!</string>
+    <string name="update_fail">Network error. Unable to check for updates!</string>
+    <string name="update_failed">Failed to check for updates</string>
+    <string name="update_fail_code">Network error. Unable to check for updates! Error code: %d</string>
+    <string name="update_success">Latest package downloaded. Install now? Location:</string>
+    <string name="update_downloading">Downloading package… (%s / %s)</string>
+    <string name="update_downloading_tip">Fetching update from: %s</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🔑 OTHER LOGIN                    -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="other_login_server">Auth Server</string>
+    <string name="other_login_email">Email or Username</string>
+    <string name="other_login_password">Password</string>
+    <string name="other_login_uniform_pass">Unified Passport</string>
+    <string name="other_login_yggdrasil_api">Enter Yggdrasil API authentication server address</string>
+    <string name="other_login_32_bit_server">Enter the 32-bit server ID</string>
+    <string name="other_login_error">An error occurred during login:\n</string>
+    <string name="other_login_baseurl_not_set">Base URL Not Set</string>
+    <string name="other_login_server_not_empty">Server cannot be empty. Check authentication server settings!</string>
+    <string name="other_login_select_role_title">Select Role</string>
+    <string name="other_login_select_role_message">Multiple roles found. Select the role you want to use.</string>
+    <string name="other_login_registry_now">No account? Click here to register!</string>
+    <string name="other_login_role_not_found">Role not found for current account. Check if this role exists on your server!</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          📊 MEMORY / SYSTEM                -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="autoram_info_msg">Memory set to %d MB</string>
+    <string name="memory_warning_msg" formatted="false">Available memory (%d MB) is lower than allocated (%d MB). Game may crash!</string>
+    <string name="address_memory_warning_msg" formatted="false">Free memory (%d MB) is less than allocated (%d MB). This will cause a crash!</string>
+    <string name="force_exit_confirm">Are you sure you want to force close CS Launcher?</string>
+    <string name="dialog_select_jar">Select .jar File</string>
+    <string name="percent_format" translatable="false">%d%%</string>
+    <string name="version_select_hint">Select version (Long press to reset)</string>
+    <string name="input_preview_tip">Input preview:</string>
+    <string name="open_link">Opening link in browser:</string>
+    <string name="execute_jar_failed_to_read_file">Failed to read .jar file</string>
+    <string name="execute_jar_incompatible_runtime">Java incompatible with version %d</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          🔒 SECURITY WARNINGS              -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="dl_tampered_manifest_title">⚠️ File Verification Warning</string>
+    <string name="dl_tampered_manifest"><![CDATA[Tampered version manifest detected.<br/><b>This is unsafe. Your data may be at risk.</b>]]></string>
+    <string name="dl_turn_off_manifest_checks">Disable manifest checks</string>
+    <string name="dl_switch_to_official_site">Switch to official source</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          📜 LOG VIEWER                     -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="log_view_button_scroll_off">Auto-scroll: Off</string>
+    <string name="log_view_button_scroll_on">Auto-scroll: On</string>
+    <string name="log_view_button_output_off">Log Output: Off</string>
+    <string name="log_view_button_output_on">Log Output: On</string>
+    <string name="log_view_label_log_output">CS Log Output:</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          👶 NEWBIE GUIDE                   -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="newbie_guide_general_close">Tap this button to close and return to previous screen.</string>
+    <string name="newbie_guide_general_refresh">Tap this button to refresh current content.</string>
+    <string name="newbie_guide_control_search">Tap to search for your desired control layout!</string>
+    <string name="newbie_guide_control_import">Tap to open file manager and import your control layout file!</string>
+    <string name="newbie_guide_control_create">Tap to quickly create a new control layout!</string>
+    <string name="newbie_guide_background_reset">Tap to quickly reset the background image of selected interface.</string>
+    <string name="newbie_guide_background_import">Tap to open file manager and import your background image!</string>
+    <string name="newbie_guide_mouse_import">Tap to open file manager and import your virtual mouse image!</string>
+    <string name="newbie_guide_file_search">Tap to search for files quickly.</string>
+    <string name="newbie_guide_file_import">Tap to open file manager and import files into CS Launcher!</string>
+    <string name="newbie_guide_file_create_folder">Tap to create a new folder in current directory.</string>
+    <string name="newbie_guide_file_select">Tap to confirm this directory as selection.</string>
+    <string name="newbie_guide_mod_search">Tap to search for your desired mod quickly.</string>
+    <string name="newbie_guide_mod_import">Select a mod file to import it into current mod folder.</string>
+    <string name="newbie_guide_mod_download">Tap to open the mod download page.</string>
+    <string name="newbie_guide_game_menu">Drag the game menu floating window to any position on screen.</string>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!--          💝 SPONSORSHIP                    -->
+    <!-- ══════════════════════════════════════════ -->
+    <string name="request_sponsorship_title">Support CS Launcher Development</string>
+    <string name="request_sponsorship_message">CS Launcher is developed and maintained with passion. If you find it helpful and are able to, please consider supporting us to keep improving it. Thank you!</string>
+
+</resources>

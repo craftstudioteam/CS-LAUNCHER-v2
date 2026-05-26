@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AnimConstraintLayout">
+        <attr name="ripple_for_constraint" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="AnimRelativeLayout">
+        <attr name="ripple_for_relative" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="AnimTextView">
+        <attr name="ripple_for_text" format="boolean"/>
+    </declare-styleable>
+</resources>

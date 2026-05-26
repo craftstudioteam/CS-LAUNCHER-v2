@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:clipToPadding="false"
+    tools:ignore="ContentDescription">
+
+    <View
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:alpha="0.12"
+        android:background="@drawable/bg_dl_glow_green"
+        android:translationX="-50dp"
+        android:translationY="-30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:alpha="0.08"
+        android:background="@drawable/bg_dl_glow_green"
+        android:translationX="60dp"
+        android:translationY="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/classify_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_max="110dp"
+        app:layout_constraintWidth_min="88dp"
+        app:layout_constraintWidth_percent="0.24">
+
+        <com.angcyo.tablayout.DslTabLayout
+            android:id="@+id/classify_tab"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="6dp"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/bg_dl_sidebar"
+            android:clipToPadding="false"
+            android:layoutAnimation="@anim/layout_anim_dl_sidebar"
+            android:paddingStart="6dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/classify_shadowView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tab_draw_indicator="true"
+            app:tab_indicator_color="#24B538"
+            app:tab_indicator_enable_flow="true"
+            app:tab_indicator_x_offset="3dp"
+            app:tab_orientation="VERTICAL">
+
+            <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/bg_dl_tab_item"
+                android:minHeight="76dp"
+                android:paddingStart="6dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="10dp"
+                android:stateListAnimator="@animator/anim_dl_tab_press">
+
+                <FrameLayout
+                    android:id="@+id/mod_icon_frame"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/bg_dl_icon_circle">
+
+                    <ImageView
+                        android:id="@+id/mod_image"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:duplicateParentState="true"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_profile_mods"
+                        app:tint="@color/dl_tab_icon_tint" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/mod_icon_frame"
+                    android:layout_marginTop="6dp"
+                    android:duplicateParentState="true"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/download_classify_mod"
+                    android:textAlignment="center"
+                    android:textColor="@color/dl_tab_text_color"
+                    android:textSize="10sp" />
+
+            </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+            <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/bg_dl_tab_item"
+                android:minHeight="76dp"
+                android:paddingStart="6dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="10dp"
+                android:stateListAnimator="@animator/anim_dl_tab_press">
+
+                <FrameLayout
+                    android:id="@+id/modpack_icon_frame"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/bg_dl_icon_circle">
+
+                    <ImageView
+                        android:id="@+id/modpack_image"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:duplicateParentState="true"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_zip"
+                        app:tint="@color/dl_tab_icon_tint" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/modpack_icon_frame"
+                    android:layout_marginTop="6dp"
+                    android:duplicateParentState="true"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/download_classify_modpack"
+                    android:textAlignment="center"
+                    android:textColor="@color/dl_tab_text_color"
+                    android:textSize="10sp" />
+
+            </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+            <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/bg_dl_tab_item"
+                android:minHeight="76dp"
+                android:paddingStart="6dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="10dp"
+                android:stateListAnimator="@animator/anim_dl_tab_press">
+
+                <FrameLayout
+                    android:id="@+id/resource_icon_frame"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/bg_dl_icon_circle">
+
+                    <ImageView
+                        android:id="@+id/resource_pack_image"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:duplicateParentState="true"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_profile_resource_pack"
+                        app:tint="@color/dl_tab_icon_tint" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/resource_icon_frame"
+                    android:layout_marginTop="6dp"
+                    android:duplicateParentState="true"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:text="@string/download_classify_resource_pack"
+                    android:textAlignment="center"
+                    android:textColor="@color/dl_tab_text_color"
+                    android:textSize="9.5sp" />
+
+            </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+            <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/bg_dl_tab_item"
+                android:minHeight="76dp"
+                android:paddingStart="6dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="10dp"
+                android:stateListAnimator="@animator/anim_dl_tab_press">
+
+                <FrameLayout
+                    android:id="@+id/world_icon_frame"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/bg_dl_icon_circle">
+
+                    <ImageView
+                        android:id="@+id/world_image"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:duplicateParentState="true"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_profile_saves"
+                        app:tint="@color/dl_tab_icon_tint" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/world_icon_frame"
+                    android:layout_marginTop="6dp"
+                    android:duplicateParentState="true"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/download_classify_world"
+                    android:textAlignment="center"
+                    android:textColor="@color/dl_tab_text_color"
+                    android:textSize="10sp" />
+
+            </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+            <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_dl_tab_item"
+                android:minHeight="76dp"
+                android:paddingStart="6dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="10dp"
+                android:stateListAnimator="@animator/anim_dl_tab_press">
+
+                <FrameLayout
+                    android:id="@+id/shader_icon_frame"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/bg_dl_icon_circle">
+
+                    <ImageView
+                        android:id="@+id/shader_pack_image"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:duplicateParentState="true"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_profile_shader_pack"
+                        app:tint="@color/dl_tab_icon_tint" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/shader_icon_frame"
+                    android:layout_marginTop="6dp"
+                    android:duplicateParentState="true"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:text="@string/download_classify_shader_pack"
+                    android:textAlignment="center"
+                    android:textColor="@color/dl_tab_text_color"
+                    android:textSize="9.5sp" />
+
+            </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+        </com.angcyo.tablayout.DslTabLayout>
+
+        <View
+            android:id="@+id/classify_shadowView"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/bg_dl_edge_glow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content_panel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_dl_content_panel"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/classify_layout"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/content_glow"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/bg_dl_top_glow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_dl_top_glow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/download_viewpager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="6dp"
+            android:clipToPadding="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content_glow" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

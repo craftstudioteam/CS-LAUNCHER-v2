@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
+
+    <!-- LEFT PANEL: Version List (weight 6.5) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/version_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:background="@color/surface_card"
+        android:padding="@dimen/_12sdp"
+        app:layout_constraintHorizontal_weight="6.5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/operate_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Header: Icon + Title + Subtitle -->
+        <ImageView
+            android:id="@+id/header_icon"
+            android:layout_width="@dimen/_48sdp"
+            android:layout_height="@dimen/_48sdp"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:src="@drawable/ic_cube_hex"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:text="@string/versions_title"
+            android:textColor="@color/accent_orange"
+            android:textSize="@dimen/_20ssp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            app:layout_constraintStart_toEndOf="@id/header_icon"
+            app:layout_constraintTop_toTopOf="@id/header_icon" />
+
+        <TextView
+            android:id="@+id/header_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:text="@string/versions_subtitle"
+            android:textColor="@color/secondary_text"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toEndOf="@id/header_icon"
+            app:layout_constraintTop_toBottomOf="@id/header_title" />
+
+        <!-- Top Bar: Install New + Tab -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/version_top_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            app:layout_constraintTop_toBottomOf="@id/header_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Install New Button -->
+            <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                android:id="@+id/install_new"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:background="@drawable/bg_btn_outline_orange"
+                android:padding="@dimen/_8sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tab_card"
+                app:layout_constraintHorizontal_weight="1"
+                app:ripple_for_relative="true">
+
+                <ImageView
+                    android:id="@+id/install_icon"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_download"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/install_icon"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:textColor="@color/accent_orange"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.06"
+                    android:textSize="@dimen/_12ssp"
+                    android:text="@string/version_install_new" />
+
+            </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+            <!-- Tab Card: All Versions -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/tab_card"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:background="@drawable/background_card"
+                app:layout_constraintStart_toEndOf="@id/install_new"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1.6">
+
+                <com.angcyo.tablayout.DslTabLayout
+                    android:id="@+id/favorites_folder_tab"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/_4sdp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/favorites_actions"
+                    app:tab_deselect_color="@color/secondary_text"
+                    app:tab_select_color="@color/accent_orange"
+                    app:tab_indicator_enable_flow="true"
+                    app:tab_indicator_drawable="@drawable/selector_bar_horizontal"
+                    app:tab_indicator_y_offset="@dimen/_4sdp">
+
+                    <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                        android:id="@+id/all_category"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/_12sdp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:paddingHorizontal="@dimen/_8sdp"
+                            android:maxLines="1"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.04"
+                            android:textSize="@dimen/_12ssp"
+                            android:text="@string/generic_all"
+                            android:textColor="@color/accent_orange" />
+
+                    </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                </com.angcyo.tablayout.DslTabLayout>
+
+                <ImageView
+                    android:id="@+id/favorites_actions"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:scaleType="centerCrop"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_more"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:ignore="ContentDescription" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Version List Card -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/versions_list_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:background="@drawable/background_card"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/version_top_bar">
+
+            <!-- Dot + VERSION LIST label -->
+            <View
+                android:id="@+id/list_dot"
+                android:layout_width="@dimen/_8sdp"
+                android:layout_height="@dimen/_8sdp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/circle_orange"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/title_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:text="@string/version_manager_title"
+                android:textColor="@color/secondary_text"
+                android:textSize="@dimen/_11ssp"
+                android:letterSpacing="0.06"
+                app:layout_constraintStart_toEndOf="@id/list_dot"
+                app:layout_constraintTop_toTopOf="@id/list_dot"
+                app:layout_constraintBottom_toBottomOf="@id/list_dot" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/versions"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_view" />
+
+            <ProgressBar
+                android:id="@+id/refresh_versions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_view" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- RIGHT PANEL: Profiles Paths (weight 3) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/operate_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintStart_toEndOf="@+id/version_layout"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Left shadow divider -->
+        <View
+            android:id="@+id/shadowView"
+            android:layout_width="@dimen/_4sdp"
+            android:layout_height="match_parent"
+            android:background="@drawable/shadow_gradient_right"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/operate_layout"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/operate_main_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@color/menu_overlay"
+            android:padding="@dimen/_12sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/shadowView">
+
+            <!-- Folder icon + PROFILES PATHS heading -->
+            <ImageView
+                android:id="@+id/profiles_icon"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:src="@drawable/ic_folder_open"
+                android:layout_marginTop="@dimen/_4sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/profiles_path_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:text="@string/profiles_path_title"
+                android:textColor="@color/accent_orange"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintStart_toEndOf="@id/profiles_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/profiles_icon"
+                app:layout_constraintBottom_toBottomOf="@id/profiles_icon" />
+
+            <!-- Paths RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/profiles_path"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                app:layout_constraintBottom_toTopOf="@id/actions_label"
+                app:layout_constraintTop_toBottomOf="@id/profiles_path_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- ACTIONS label -->
+            <ImageView
+                android:id="@+id/actions_icon"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="@dimen/_18sdp"
+                android:src="@drawable/ic_settings_gear"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/operate_view"
+                android:layout_marginBottom="@dimen/_6sdp"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/actions_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
+                android:text="@string/actions_title"
+                android:textColor="@color/accent_orange"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintStart_toEndOf="@id/actions_icon"
+                app:layout_constraintBottom_toTopOf="@id/operate_view"
+                app:layout_constraintTop_toTopOf="@id/actions_icon"
+                app:layout_constraintBottom_toBottomOf="@id/actions_icon" />
+
+            <!-- Action Buttons -->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/operate_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:orientation="vertical"
+                android:divider="@drawable/divider_8dp"
+                android:showDividers="middle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <com.craftstudio.launcher.ui.view.AnimButton
+                    android:id="@+id/create_path_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:background="@drawable/bg_btn_green"
+                    android:text="@string/profiles_path_create_new" />
+
+                <com.craftstudio.launcher.ui.view.AnimButton
+                    android:id="@+id/refresh_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:background="@drawable/bg_btn_blue"
+                    android:text="@string/generic_refresh" />
+
+                <com.craftstudio.launcher.ui.view.AnimButton
+                    android:id="@+id/return_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_44sdp"
+                    android:background="@drawable/bg_btn_red"
+                    android:text="@string/generic_return" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

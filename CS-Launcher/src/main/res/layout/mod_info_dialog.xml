@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/background_card"
+    android:padding="@dimen/_16sdp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/mods_info_title"
+        android:textSize="@dimen/_18ssp"
+        android:textStyle="bold"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/_16sdp"
+        android:textColor="@color/black_or_white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/gray"
+            android:layout_marginBottom="@dimen/_4sdp" />
+
+        <TextView
+            android:id="@+id/mod_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mod Name"
+            android:textSize="@dimen/_14ssp"
+            android:textColor="@color/black_or_white"
+            android:layout_marginBottom="@dimen/_12sdp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Version"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/gray"
+            android:layout_marginBottom="@dimen/_4sdp" />
+
+        <TextView
+            android:id="@+id/mod_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="v1.0.0"
+            android:textSize="@dimen/_14ssp"
+            android:textColor="@color/black_or_white"
+            android:layout_marginBottom="@dimen/_12sdp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Author"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/gray"
+            android:layout_marginBottom="@dimen/_4sdp" />
+
+        <TextView
+            android:id="@+id/mod_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Author Name"
+            android:textSize="@dimen/_14ssp"
+            android:textColor="@color/black_or_white"
+            android:layout_marginBottom="@dimen/_12sdp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/gray"
+            android:layout_marginBottom="@dimen/_4sdp" />
+
+        <TextView
+            android:id="@+id/mod_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mod description goes here..."
+            android:textSize="@dimen/_14ssp"
+            android:textColor="@color/black_or_white"
+            android:layout_marginBottom="@dimen/_12sdp"
+            android:maxLines="4"
+            android:ellipsize="end" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/gray"
+            android:layout_marginBottom="@dimen/_4sdp" />
+
+        <TextView
+            android:id="@+id/mod_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enabled"
+            android:textSize="@dimen/_14ssp"
+            android:textColor="@color/green"
+            android:layout_marginBottom="@dimen/_12sdp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Size"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/gray"
+            android:layout_marginBottom="@dimen/_4sdp" />
+
+        <TextView
+            android:id="@+id/mod_size"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0 MB"
+            android:textSize="@dimen/_14ssp"
+            android:textColor="@color/black_or_white"
+            android:layout_marginBottom="@dimen/_12sdp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="File"
+            android:textSize="@dimen/_12ssp"
+            android:textColor="@color/gray"
+            android:layout_marginBottom="@dimen/_4sdp" />
+
+        <TextView
+            android:id="@+id/mod_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="mod.jar"
+            android:textSize="@dimen/_14ssp"
+            android:textColor="@color/black_or_white"
+            android:layout_marginBottom="@dimen/_16sdp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/close_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/generic_close"
+        android:textSize="@dimen/_16ssp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:textColor="@color/black_or_white" />
+
+</LinearLayout>

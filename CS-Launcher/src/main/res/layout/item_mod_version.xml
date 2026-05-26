@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.craftstudio.launcher.ui.layout.AnimConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="@dimen/_4sdp"
+    android:background="@drawable/background_item"
+    android:padding="@dimen/_8sdp"
+    app:ripple_for_constraint="true">
+
+    <ImageView
+        android:id="@+id/download_imageview"
+        android:layout_width="@dimen/_28sdp"
+        android:layout_height="@dimen/_28sdp"
+        android:layout_marginStart="@dimen/_4sdp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_download_release"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/download_link"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/about_access_link"
+        android:src="@drawable/ic_launch_link"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/TextAppearance.AppCompat.Body2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:ellipsize="end"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/_13ssp"
+        app:layout_constraintEnd_toStartOf="@+id/download_link"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/download_imageview"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Mod Title" />
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/tags_Layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:flexDirection="row"
+        app:flexWrap="wrap"
+        app:alignItems="flex_start"
+        app:justifyContent="flex_start"
+        app:layout_constraintStart_toStartOf="@+id/title_textview"
+        app:layout_constraintEnd_toEndOf="@+id/title_textview"
+        app:layout_constraintTop_toBottomOf="@+id/title_textview"/>
+
+</com.craftstudio.launcher.ui.layout.AnimConstraintLayout>

@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_file_dialog_root"
+    android:minWidth="@dimen/dialog_min_width"
+    android:paddingBottom="16dp"
+    tools:ignore="ContentDescription">
+
+    <!-- Top glow line -->
+    <View
+        android:id="@+id/dialog_top_glow"
+        android:layout_width="0dp"
+        android:layout_height="3dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_file_dialog_glow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Header -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_top_glow">
+
+        <!-- Left: icon + title -->
+        <FrameLayout
+            android:id="@+id/title_icon_holder"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_file_dialog_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_folder"
+                app:tint="#24B538" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/title_icon_holder"
+            app:layout_constraintEnd_toStartOf="@id/close_button"
+            app:layout_constraintStart_toEndOf="@id/title_icon_holder"
+            app:layout_constraintTop_toTopOf="@id/title_icon_holder">
+
+            <TextView
+                android:id="@+id/title_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-bold"
+                android:singleLine="true"
+                android:text="@string/file_tips"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="File actions"
+                android:textColor="#80FFFFFF"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <!-- Close -->
+        <ImageView
+            android:id="@+id/close_button"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_file_dialog_close_btn"
+            android:padding="8dp"
+            android:src="@drawable/ic_close"
+            android:stateListAnimator="@animator/anim_file_dialog_press"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#FF4D4D" />
+
+        <!-- Subtitle / message scroll -->
+        <ScrollView
+            android:id="@+id/text_scroll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_icon_holder">
+
+            <LinearLayout
+                android:id="@+id/layout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/message_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_file_dialog_message"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.3"
+                    android:paddingStart="14dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="10dp"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Divider -->
+    <View
+        android:id="@+id/dialog_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="14dp"
+        android:background="@drawable/bg_file_dialog_glow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout" />
+
+    <!-- Action label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="sans-serif-bold"
+        android:letterSpacing="0.08"
+        android:text="ACTIONS"
+        android:textColor="#8024B538"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_divider" />
+
+    <!-- LEFT column actions -->
+    <LinearLayout
+        android:id="@+id/layout_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="6dp"
+        android:background="@drawable/bg_file_dialog_actions_panel"
+        android:orientation="vertical"
+        android:padding="6dp"
+        app:layout_constraintEnd_toStartOf="@+id/layout_2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_divider">
+
+        <!-- Copy -->
+        <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+            android:id="@+id/copy_view"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/bg_file_dialog_action_row"
+            android:stateListAnimator="@animator/anim_file_dialog_press">
+
+            <View
+                android:id="@+id/copy_accent"
+                android:layout_width="4dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_file_dialog_accent" />
+
+            <FrameLayout
+                android:id="@+id/copy_icon_bg"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_toEndOf="@id/copy_accent"
+                android:background="@drawable/bg_file_dialog_icon_circle">
+
+                <ImageView
+                    android:id="@+id/copy_image"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_copy"
+                    app:tint="#24B538" />
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/copy_icon_bg"
+                android:fontFamily="sans-serif-medium"
+                android:singleLine="true"
+                android:text="@android:string/copy"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+
+        </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+        <!-- Rename -->
+        <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+            android:id="@+id/rename_view"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/bg_file_dialog_action_row"
+            android:stateListAnimator="@animator/anim_file_dialog_press">
+
+            <View
+                android:id="@+id/rename_accent"
+                android:layout_width="4dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_file_dialog_accent" />
+
+            <FrameLayout
+                android:id="@+id/rename_icon_bg"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_toEndOf="@id/rename_accent"
+                android:background="@drawable/bg_file_dialog_icon_circle">
+
+                <ImageView
+                    android:id="@+id/rename_image"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_edit"
+                    app:tint="#24B538" />
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/rename_icon_bg"
+                android:fontFamily="sans-serif-medium"
+                android:singleLine="true"
+                android:text="@string/generic_rename"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+
+        </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+        <!-- Share -->
+        <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+            android:id="@+id/share_view"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/bg_file_dialog_action_row"
+            android:stateListAnimator="@animator/anim_file_dialog_press">
+
+            <View
+                android:id="@+id/share_accent"
+                android:layout_width="4dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_file_dialog_accent" />
+
+            <FrameLayout
+                android:id="@+id/share_icon_bg"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_toEndOf="@id/share_accent"
+                android:background="@drawable/bg_file_dialog_icon_circle">
+
+                <ImageView
+                    android:id="@+id/share_image"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_share"
+                    app:tint="#24B538" />
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/share_icon_bg"
+                android:fontFamily="sans-serif-medium"
+                android:singleLine="true"
+                android:text="@string/generic_share"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+
+        </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+    </LinearLayout>
+
+    <!-- RIGHT column actions -->
+    <LinearLayout
+        android:id="@+id/layout_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/bg_file_dialog_actions_panel"
+        android:orientation="vertical"
+        android:padding="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layout_1"
+        app:layout_constraintTop_toBottomOf="@id/dialog_divider">
+
+        <!-- Move -->
+        <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+            android:id="@+id/move_view"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/bg_file_dialog_action_row"
+            android:stateListAnimator="@animator/anim_file_dialog_press">
+
+            <View
+                android:id="@+id/move_accent"
+                android:layout_width="4dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_file_dialog_accent" />
+
+            <FrameLayout
+                android:id="@+id/move_icon_bg"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_toEndOf="@id/move_accent"
+                android:background="@drawable/bg_file_dialog_icon_circle">
+
+                <ImageView
+                    android:id="@+id/move_image"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_move"
+                    app:tint="#24B538" />
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/move_icon_bg"
+                android:fontFamily="sans-serif-medium"
+                android:singleLine="true"
+                android:text="@string/generic_move"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+
+        </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+        <!-- Delete — RED -->
+        <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+            android:id="@+id/delete_view"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/bg_file_dialog_action_row_danger"
+            android:stateListAnimator="@animator/anim_file_dialog_press">
+
+            <View
+                android:id="@+id/delete_accent"
+                android:layout_width="4dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_file_dialog_accent_red" />
+
+            <FrameLayout
+                android:id="@+id/delete_icon_bg"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_toEndOf="@id/delete_accent"
+                android:background="@drawable/bg_file_dialog_icon_circle_red">
+
+                <ImageView
+                    android:id="@+id/delete_image"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_menu_delete_forever"
+                    app:tint="#FF4D4D" />
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/delete_icon_bg"
+                android:fontFamily="sans-serif-medium"
+                android:singleLine="true"
+                android:text="@string/generic_delete"
+                android:textColor="#FF4D4D"
+                android:textSize="13sp" />
+
+        </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+        <!-- More -->
+        <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+            android:id="@+id/more_view"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:background="@drawable/bg_file_dialog_action_row"
+            android:stateListAnimator="@animator/anim_file_dialog_press">
+
+            <View
+                android:id="@+id/more_accent"
+                android:layout_width="4dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_file_dialog_accent" />
+
+            <FrameLayout
+                android:id="@+id/more_icon_bg"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_toEndOf="@id/more_accent"
+                android:background="@drawable/bg_file_dialog_icon_circle">
+
+                <ImageView
+                    android:id="@+id/more_image"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_more"
+                    app:tint="#24B538" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/more_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/more_icon_bg"
+                android:fontFamily="sans-serif-medium"
+                android:singleLine="true"
+                android:text="@string/generic_more"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+
+        </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,10 @@
+/.gradle
+/build
+/*/build
+local.properties
+.idea/
+.vscode/
+/curseforge_key.txt
+/CS-Launcher/.cxx/
+/CS-Launcher/src/main/assets/components/lwjgl3/
+/CS-Launcher/release/

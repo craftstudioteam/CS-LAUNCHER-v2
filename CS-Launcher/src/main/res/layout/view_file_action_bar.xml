@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/_8sdp"
+    android:layout_marginBottom="@dimen/_26sdp"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/refresh_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/generic_refresh"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_refresh" />
+
+    <ImageButton
+        android:id="@+id/search_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/generic_search"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_search" />
+
+    <ImageButton
+        android:id="@+id/paste_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/generic_paste"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_paste" />
+
+    <ImageButton
+        android:id="@+id/add_file_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/file_add_file"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_add_new" />
+
+    <ImageButton
+        android:id="@+id/create_folder_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/file_create_folder"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_add" />
+
+    <ImageButton
+        android:id="@+id/return_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/generic_return"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_close" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

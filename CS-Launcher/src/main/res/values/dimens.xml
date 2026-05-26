@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Padding -->
+    <dimen name="padding_small">@dimen/_2sdp</dimen>
+    <dimen name="padding_medium">@dimen/_4sdp</dimen>
+    <dimen name="padding_moderate">@dimen/_6sdp</dimen>
+    <dimen name="padding_heavy">@dimen/_12sdp</dimen>
+    <dimen name="padding_large">@dimen/_16sdp</dimen>
+    <dimen name="padding_extra_large">@dimen/_24sdp</dimen>
+    <!-- Input text padding -->
+    <dimen name="padding_input_bottom">@dimen/padding_heavy</dimen>
+    <dimen name="padding_input_top">@dimen/_11sdp</dimen>
+    <!--  Dialog min width  -->
+    <dimen name="dialog_min_width">@dimen/_480sdp</dimen>
+</resources>

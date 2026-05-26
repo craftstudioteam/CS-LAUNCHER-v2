@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/editor_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/operate_layout"
+        app:layout_constraintHorizontal_weight="6.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ScrollView
+            android:id="@+id/scrollView3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fadeScrollbars="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:padding="@dimen/_12sdp"
+                    android:background="@drawable/background_card">
+
+                    <TextView
+                        android:id="@+id/version_settings_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_category_version"
+                        android:textColor="@color/settings_category"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/isolation_type_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:text="@string/setting_version_isolation_title"
+                        app:layout_constraintTop_toBottomOf="@id/version_settings_title" />
+
+                    <com.skydoves.powerspinner.PowerSpinnerView
+                        android:id="@+id/isolation_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:background="@drawable/background_item"
+                        android:padding="@dimen/padding_heavy"
+                        app:layout_constraintTop_toBottomOf="@id/isolation_type_title"
+                        app:spinner_arrow_tint="@color/primary_text"
+                        app:spinner_item_height="@dimen/_40sdp"
+                        app:spinner_popup_background="@drawable/background_edit_box"
+                        app:spinner_popup_max_height="@dimen/_240sdp"
+                        tools:paddingVertical="@dimen/_12sdp" />
+
+                    <TextView
+                        android:id="@+id/control_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:text="@string/pedit_control"
+                        app:layout_constraintStart_toStartOf="@+id/control_name"
+                        app:layout_constraintTop_toBottomOf="@+id/isolation_type" />
+
+                    <com.craftstudio.launcher.ui.view.AnimTextView
+                        android:id="@+id/control_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/padding_medium"
+                        android:background="@drawable/background_item"
+                        android:hint="@string/pedit_default"
+                        android:padding="@dimen/padding_heavy"
+                        android:textSize="@dimen/_13ssp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/reset_control"
+                        app:layout_constraintTop_toBottomOf="@+id/control_title" />
+
+                    <com.craftstudio.launcher.ui.view.AnimButton
+                        android:id="@+id/reset_control"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:text="@string/generic_reset"
+                        app:layout_constraintBottom_toBottomOf="@id/control_name"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/control_name" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/custom_path_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        app:layout_constraintTop_toBottomOf="@id/control_name">
+
+                        <TextView
+                            android:id="@+id/custom_path_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pedit_custom_path"
+                            app:layout_constraintStart_toStartOf="@+id/custom_path"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.craftstudio.launcher.ui.view.AnimTextView
+                            android:id="@+id/custom_path"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/padding_medium"
+                            android:background="@drawable/background_item"
+                            android:hint="./.minecraft"
+                            android:padding="@dimen/padding_heavy"
+                            android:textSize="@dimen/_13ssp"
+                            app:layout_constraintEnd_toStartOf="@id/reset_custom_path"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/custom_path_title"
+                            tools:ignore="HardcodedText" />
+
+                        <com.craftstudio.launcher.ui.view.AnimButton
+                            android:id="@+id/reset_custom_path"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:text="@string/generic_reset"
+                            app:layout_constraintBottom_toBottomOf="@id/custom_path"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/custom_path" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/renderer_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:text="@string/setting_renderer_title"
+                        app:layout_constraintStart_toStartOf="@+id/renderer_spinner"
+                        app:layout_constraintTop_toBottomOf="@+id/custom_path_layout" />
+
+                    <com.skydoves.powerspinner.PowerSpinnerView
+                        android:id="@+id/renderer_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:background="@drawable/background_item"
+                        android:padding="@dimen/padding_heavy"
+                        app:layout_constraintTop_toBottomOf="@+id/renderer_title"
+                        app:spinner_arrow_tint="@color/primary_text"
+                        app:spinner_item_height="@dimen/_40sdp"
+                        app:spinner_popup_background="@drawable/background_edit_box"
+                        app:spinner_popup_max_height="@dimen/_240sdp"
+                        tools:paddingVertical="@dimen/_12sdp" />
+
+                    <TextView
+                        android:id="@+id/driver_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:text="@string/setting_driver_title"
+                        app:layout_constraintStart_toStartOf="@+id/driver_spinner"
+                        app:layout_constraintTop_toBottomOf="@+id/renderer_spinner" />
+
+                    <com.skydoves.powerspinner.PowerSpinnerView
+                        android:id="@+id/driver_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:background="@drawable/background_item"
+                        android:padding="@dimen/padding_heavy"
+                        app:layout_constraintTop_toBottomOf="@+id/driver_title"
+                        app:spinner_arrow_tint="@color/primary_text"
+                        app:spinner_item_height="@dimen/_40sdp"
+                        app:spinner_popup_background="@drawable/background_edit_box"
+                        app:spinner_popup_max_height="@dimen/_240sdp"
+                        tools:paddingVertical="@dimen/_12sdp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_12sdp"
+                    android:background="@drawable/background_card"
+                    android:padding="@dimen/_12sdp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/game_settings_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_category_game"
+                        android:textColor="@color/settings_category"/>
+
+                    <TextView
+                        android:id="@+id/custom_info_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:text="@string/setting_version_custom_info_title" />
+
+                    <TextView
+                        android:id="@+id/custom_info_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/_10ssp"
+                        android:text="@string/setting_version_custom_info_desc" />
+
+                    <com.craftstudio.launcher.ui.view.AnimEditText
+                        android:id="@+id/custom_info_edit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_item"
+                        android:ems="10"
+                        android:hint="@string/pedit_default"
+                        android:inputType="text"
+                        android:padding="@dimen/padding_heavy"
+                        android:textSize="@dimen/_13ssp" />
+
+                    <TextView
+                        android:id="@+id/jvm_args_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:text="@string/setting_java_args_title" />
+
+                    <TextView
+                        android:id="@+id/jvm_args_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/_10ssp"
+                        android:text="@string/setting_java_args_desc" />
+
+                    <com.craftstudio.launcher.ui.view.AnimEditText
+                        android:id="@+id/jvm_args_edit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_item"
+                        android:ems="10"
+                        android:hint="@string/pedit_default"
+                        android:inputType="text"
+                        android:padding="@dimen/padding_heavy"
+                        android:textSize="@dimen/_13ssp" />
+
+                    <TextView
+                        android:id="@+id/runtime_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:text="@string/multirt_config_title" />
+
+                    <com.skydoves.powerspinner.PowerSpinnerView
+                        android:id="@+id/runtime_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:background="@drawable/background_item"
+                        android:padding="@dimen/padding_heavy"
+                        app:spinner_arrow_tint="@color/primary_text"
+                        app:spinner_item_height="@dimen/_40sdp"
+                        app:spinner_popup_background="@drawable/background_edit_box"
+                        app:spinner_popup_max_height="@dimen/_240sdp"
+                        tools:paddingVertical="@dimen/_12sdp" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/operate_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintStart_toEndOf="@+id/editor_layout"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/shadowView"
+            android:layout_width="@dimen/_4sdp"
+            android:layout_height="match_parent"
+            android:background="@drawable/shadow_gradient_right"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/operate_layout"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/operate_main_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@color/menu_overlay"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/shadowView"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.craftstudio.launcher.ui.layout.AnimConstraintLayout
+                android:id="@+id/icon_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_52sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/icon"
+                    android:layout_width="@dimen/_52sdp"
+                    android:layout_height="@dimen/_52sdp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:paddingHorizontal="@dimen/_2sdp"
+                    android:paddingVertical="@dimen/_2sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@tools:sample/avatars" />
+
+                <ImageView
+                    android:layout_width="@dimen/_14sdp"
+                    android:layout_height="@dimen/_14sdp"
+                    android:background="@drawable/background_icon_edit"
+                    android:src="@drawable/ic_edit"
+                    app:layout_constraintBottom_toBottomOf="@+id/icon"
+                    app:layout_constraintEnd_toEndOf="@+id/icon" />
+
+            </com.craftstudio.launcher.ui.layout.AnimConstraintLayout>
+
+            <ImageView
+                android:id="@+id/icon_reset"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_marginTop="@dimen/_18sdp"
+                android:src="@drawable/ic_reset"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/icon_layout" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/save_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:text="@string/generic_save"
+                app:layout_constraintBottom_toTopOf="@+id/cancel_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/cancel_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:text="@android:string/cancel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

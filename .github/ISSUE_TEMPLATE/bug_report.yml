@@ -1,0 +1,125 @@
+name: BUG Report / BUG 反馈
+description: 'Report a bug / 反馈一个 Bug'
+labels: [Bug]
+body:
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type / 问题类型
+      options:
+        - 'Game Issue / 游戏问题'
+        - 'Launcher Issue / 启动器问题'
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description / 问题描述
+      description: |
+        Clearly and in detail describe the issue you encountered.
+        清晰，详细地描述出你所遇到的问题。
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: Log File / 日志文件
+      description: |
+        Please upload the log file from the most recent occurrence of the issue here. This helps me quickly pinpoint the problem.
+        你需要在这里上传最近一次遇到此问题的日志，直接帮助我快速定位问题。
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Videos / 截图或视频
+      description: |
+        Upload screenshots or videos from the most recent occurrence of the issue. This may help me identify the problem faster.
+        上传最近一次遇到此问题的截图或者视频，可能会帮助我更快的确定问题。
+    validations:
+      required: false
+
+  - type: textarea
+    id: repetition
+    attributes:
+      label: Reproduction Steps / 复现步骤
+      description: |
+        Steps to reproduce the issue. Please be as detailed as possible to help me quickly locate the problem.
+        复现问题的步骤，请尽量详细一些，方便我快速定位问题。
+      placeholder: |
+        1. xxx
+        2. xxx
+        ... *(steps to reproduce the issue / 复现问题的一些操作)*
+      render: markdown
+    validations:
+      required: false
+
+  - type: dropdown
+    id: android-version
+    attributes:
+      label: Android Version / Android 版本
+      description: |
+        CS-Launcher does not support running on devices with Android 7 or lower!
+        CS-Launcher 不支持运行在 Android 7 或更低版本的设备上！
+      options:
+        - '16'
+        - '15'
+        - '14'
+        - '13'
+        - '12'
+        - '11'
+        - '10'
+        - '9'
+        - '8'
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: App Version / 应用版本
+      description: |
+        Which version of CS-Launcher did you encounter this issue in? You can check this on the "About CS-Launcher" page.
+        遇到此问题的版本是？你可以在“关于 CS-Launcher”页面内查看。
+      placeholder: 1.4.1.2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: renderer
+    attributes:
+      label: Selected Renderer / 选择的渲染器
+      description: |
+        The renderer might be the root cause of the issue. If this is not a game-related problem, please ignore this field and leave it blank. (Issues caused by renderer plugins are not supported.)
+        渲染器可能会是问题的根本原因，如果此问题并非游戏问题，请忽略此项不填。（渲染器插件导致的问题不受支持）
+      options:
+        - 'GL4ES'
+        - 'Vulkan Zink'
+        - 'VirGLRenderer'
+        - 'Freedreno'
+        - 'Panfrost'
+        - 'Mobile Glues'
+    validations:
+      required: false
+
+  - type: input
+    id: device-info
+    attributes:
+      label: Device Information / 设备信息
+      description: |
+        Providing detailed information about the device will help me troubleshoot the issue.
+        提供设备的详细信息，有助于我排查问题。
+      placeholder: Android 11, arm64
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: check-issue
+    attributes:
+      label: This issue has not been reported before / 这个问题还没有人反馈过
+      options:
+        - label: I have checked the Issues and found no similar issue reported / 我已经查看过 Issues，并且没有发现与之类似的问题被反馈
+          required: true

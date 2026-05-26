@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Glow border layer -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp" />
+            <gradient
+                android:type="linear"
+                android:startColor="#3324B538"
+                android:endColor="#1124B538"
+                android:angle="135" />
+        </shape>
+    </item>
+
+    <!-- Main card background (inset by 1dp to show border) -->
+    <item
+        android:left="1dp"
+        android:top="1dp"
+        android:right="1dp"
+        android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="15dp" />
+            <gradient
+                android:type="linear"
+                android:startColor="#E0000000"
+                android:endColor="#CC050505"
+                android:angle="135" />
+        </shape>
+    </item>
+
+</layer-list>

@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_runtime_screen">
+
+        <!-- Background image -->
+        <ImageView
+            android:id="@+id/background_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0.30"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Ambient green glow -->
+        <View
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:alpha="0.08"
+            android:background="@drawable/bg_runtime_glow"
+            android:translationX="-50dp"
+            android:translationY="-30dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:alpha="0.05"
+            android:background="@drawable/bg_runtime_glow"
+            android:translationX="60dp"
+            android:translationY="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Hidden text input -->
+        <com.craftstudio.launcher.customcontrols.keyboard.TouchCharInput
+            android:id="@+id/awt_touch_char"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:alpha="0"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:imeOptions="flagNoFullscreen|flagNoExtractUi|flagNoPersonalizedLearning|actionDone"
+            android:inputType="textFilter|textImeMultiLine|textAutoComplete|textAutoCorrect"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <!-- Main canvas -->
+        <com.craftstudio.launcher.AWTCanvasView
+            android:id="@+id/texture_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:foregroundGravity="bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Touch layer -->
+        <LinearLayout
+            android:id="@+id/main_touchpad"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/mouse_pointer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_mouse_pointer"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
+
+        <!-- Top Left Utility Panel -->
+        <LinearLayout
+            android:id="@+id/runtime_left_tools"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_runtime_panel"
+            android:orientation="vertical"
+            android:padding="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-bold"
+                android:letterSpacing="0.08"
+                android:text="TOOLS"
+                android:textColor="#8024B538"
+                android:textSize="10sp" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/button"
+                android:layout_width="120dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_runtime_primary_btn"
+                android:onClick="toggleKeyboard"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="@string/generic_keyboard"
+                android:textAllCaps="false"
+                android:textColor="#000000"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/button3"
+                android:layout_width="120dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_runtime_secondary_btn"
+                android:onClick="performCopy"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="@string/generic_clone"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:layout_width="120dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_runtime_secondary_btn"
+                android:onClick="performPaste"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="@string/generic_paste"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Top Right Runtime Actions -->
+        <LinearLayout
+            android:id="@+id/runtime_right_tools"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="14dp"
+            android:background="@drawable/bg_runtime_panel"
+            android:orientation="vertical"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-bold"
+                android:letterSpacing="0.08"
+                android:text="RUNTIME"
+                android:textColor="#8024B538"
+                android:textSize="10sp" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/installmod_btn2"
+                android:layout_width="132dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_runtime_danger_btn"
+                android:onClick="forceClose"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="@string/option_force_close"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/installmod_btn3"
+                android:layout_width="132dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_runtime_secondary_btn"
+                android:onClick="openLogOutput"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="@string/option_log_out"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/button2"
+                android:layout_width="132dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_runtime_primary_btn"
+                android:onClick="toggleVirtualMouse"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="@string/control_mouse"
+                android:textAllCaps="false"
+                android:textColor="#000000"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Bottom Left Mouse Buttons -->
+        <LinearLayout
+            android:id="@+id/runtime_mouse_panel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginBottom="14dp"
+            android:background="@drawable/bg_runtime_panel"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/installmod_mouse_pri"
+                android:layout_width="112dp"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_runtime_mouse_primary"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="@string/control_primary"
+                android:textAllCaps="false"
+                android:textColor="#000000"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/installmod_mouse_sec"
+                android:layout_width="112dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_runtime_mouse_secondary"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="@string/control_secondary"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Bottom Right D-Pad -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/runtime_move_panel"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="14dp"
+            android:background="@drawable/bg_runtime_panel"
+            android:padding="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/installmod_window_moveup"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_runtime_dpad_btn"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="▲"
+                android:textColor="#24B538"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/installmod_window_movedown"
+                app:layout_constraintStart_toStartOf="@+id/installmod_window_movedown"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="HardcodedText" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/installmod_window_moveleft"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_runtime_dpad_btn"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="◀"
+                android:textColor="#24B538"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/installmod_window_movedown"
+                app:layout_constraintEnd_toStartOf="@+id/installmod_window_movedown"
+                app:layout_constraintTop_toTopOf="@+id/installmod_window_movedown"
+                tools:ignore="HardcodedText" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/installmod_window_movedown"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_runtime_dpad_btn"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="▼"
+                android:textColor="#24B538"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="HardcodedText" />
+
+            <com.craftstudio.launcher.ui.view.AnimButton
+                android:id="@+id/installmod_window_moveright"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_runtime_dpad_btn"
+                android:stateListAnimator="@animator/anim_runtime_overlay_press"
+                android:text="▶"
+                android:textColor="#24B538"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/installmod_window_movedown"
+                app:layout_constraintStart_toEndOf="@+id/installmod_window_movedown"
+                app:layout_constraintTop_toTopOf="@+id/installmod_window_movedown"
+                tools:ignore="HardcodedText" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Logger Overlay -->
+    <com.kdt.LoggerView
+        android:id="@+id/launcherLoggerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_runtime_logger"
+        android:visibility="gone" />
+
+</FrameLayout>

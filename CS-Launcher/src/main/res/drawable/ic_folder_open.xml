@@ -1,0 +1,17 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Folder body -->
+    <path
+        android:pathData="M20,18 L4,18 C2.9,18 2,17.1 2,16 L2,6 C2,4.9 2.9,4 4,4 L10,4 L12,6 L20,6 C21.1,6 22,6.9 22,8 L22,16 C22,17.1 21.1,18 20,18 Z"
+        android:fillColor="#FFAA00" />
+
+    <!-- Folder open flap -->
+    <path
+        android:pathData="M2,8 L22,8 L20,18 L4,18 Z"
+        android:fillColor="#FFCC44" />
+
+</vector>

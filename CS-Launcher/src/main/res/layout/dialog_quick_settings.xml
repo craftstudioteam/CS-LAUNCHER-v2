@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_quick_settings_dialog"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_setting"
+            android:tint="@color/quick_settings_green"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:text="Quick Settings"
+            android:textColor="@color/quick_settings_green"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium" />
+
+        <ImageView
+            android:id="@+id/btn_close"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_close"
+            android:tint="@color/quick_settings_text_dim"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@null" />
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/quick_settings_track"
+        android:layout_marginBottom="16dp" />
+
+    <!-- ═══ RAM ALLOCATION ═══ -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RAM ALLOCATION"
+        android:textColor="@color/quick_settings_green"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.12"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/ram_value_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Allocated RAM: 2048 MB"
+        android:textColor="@color/quick_settings_text"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <SeekBar
+        android:id="@+id/ram_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="4096"
+        android:progress="2048"
+        android:progressDrawable="@drawable/bg_quick_settings_seekbar"
+        android:thumb="@drawable/bg_quick_settings_seekbar_thumb"
+        android:minHeight="6dp"
+        android:maxHeight="6dp"
+        android:layout_marginBottom="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="256 MB"
+            android:textColor="@color/quick_settings_text_dim"
+            android:textSize="10sp" />
+        <TextView
+            android:id="@+id/ram_max_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/quick_settings_text_dim"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/quick_settings_track"
+        android:layout_marginBottom="16dp" />
+
+    <!-- ═══ JAVA VERSION ═══ -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="JAVA RUNTIME"
+        android:textColor="@color/quick_settings_green"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.12"
+        android:layout_marginBottom="10dp" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/java_chip_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:singleSelection="true"
+        app:selectionRequired="true"
+        xmlns:app="http://schemas.android.com/apk/res-auto" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/quick_settings_track"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Apply Button -->
+    <TextView
+        android:id="@+id/btn_apply"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@drawable/bg_quick_settings_apply"
+        android:gravity="center"
+        android:text="APPLY"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.08"
+        android:clickable="true"
+        android:focusable="true" />
+
+</LinearLayout>

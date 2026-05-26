@@ -1,0 +1,1540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_menu_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    tools:ignore="ContentDescription">
+
+    <ImageView
+        android:id="@+id/main_background_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- LEFT SIDEBAR -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/launcher_menu"
+        android:layout_width="@dimen/_65sdp"
+        android:layout_height="match_parent"
+        android:background="#D9151520"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="0dp"
+                android:paddingBottom="@dimen/_16sdp">
+
+                <!-- CS logo/social block removed -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/_8sdp"
+                    android:paddingBottom="@dimen/_16sdp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/logo_icon"
+                        android:layout_width="@dimen/_32sdp"
+                        android:layout_height="@dimen/_32sdp"
+                        android:src="@drawable/ic_cs_launcher_logo"
+                         />
+
+                    <!-- CS text hidden; social icons moved here (top-left) -->
+                    <LinearLayout
+                        android:id="@+id/logo_social_row"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/_6sdp">
+
+                        <ImageView
+                            android:id="@+id/icon_discord"
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_discord"
+                            android:tint="#B3FFFFFF"
+                            android:layout_marginEnd="@dimen/_8sdp" />
+
+                        <ImageView
+                            android:id="@+id/icon_twitter"
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_twitter"
+                            android:tint="#B3FFFFFF"
+                            android:visibility="gone"
+                            android:layout_marginEnd="@dimen/_8sdp" />
+
+                        <ImageView
+                            android:id="@+id/icon_instagram"
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_instagram"
+                            android:tint="#B3FFFFFF"
+                            android:visibility="gone"
+                            android:layout_marginEnd="@dimen/_8sdp" />
+
+                        <ImageView
+                            android:id="@+id/icon_youtube"
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_youtube"
+                            android:tint="#B3FFFFFF"
+                            android:layout_marginEnd="@dimen/_8sdp" />
+
+                        <ImageView
+                            android:id="@+id/icon_web"
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_web"
+                            android:tint="#B3FFFFFF" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Home Button (active/selected state) -->
+                <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                    android:id="@+id/home_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:background="#33FFB74D"
+                    app:ripple_for_relative="true">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="@dimen/_8sdp">
+                        <ImageView
+                            android:id="@+id/home_icon"
+                            android:layout_width="@dimen/_22sdp"
+                            android:layout_height="@dimen/_22sdp"
+                            android:src="@drawable/ic_home"
+                             />
+                        <TextView
+                            android:id="@+id/home_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:text="Home"
+                            android:textColor="#FFB74D"
+                            android:textSize="@dimen/_8sdp"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                <!-- Settings Button (moved directly below Home) -->
+                <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                    android:id="@+id/about_button"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:ripple_for_relative="true">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="@dimen/_8sdp">
+                        <ImageView
+                            android:id="@+id/about_icon"
+                            android:layout_width="@dimen/_22sdp"
+                            android:layout_height="@dimen/_22sdp"
+                            android:src="@drawable/ic_menu_settings"
+                            android:tint="#B3FFFFFF" />
+                        <TextView
+                            android:id="@+id/about_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:text="Settings"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="@dimen/_8sdp"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                <!-- Controls Button -->
+                <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                    android:id="@+id/custom_control_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:ripple_for_relative="true">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="@dimen/_8sdp">
+                        <ImageView
+                            android:id="@+id/custom_control_icon"
+                            android:layout_width="@dimen/_22sdp"
+                            android:layout_height="@dimen/_22sdp"
+                            android:src="@drawable/ic_menu_custom_controls"
+                            android:tint="#B3FFFFFF" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:text="Controls"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="@dimen/_8sdp"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                <!-- Mods Button -->
+                <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                    android:id="@+id/mods_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:ripple_for_relative="true">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="@dimen/_8sdp">
+                        <ImageView
+                            android:id="@+id/mods_icon"
+                            android:layout_width="@dimen/_22sdp"
+                            android:layout_height="@dimen/_22sdp"
+                            android:src="@drawable/ic_mods"
+                            android:tint="#B3FFFFFF" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:text="Mods"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="@dimen/_8sdp"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                <!-- Java Button -->
+                <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                    android:id="@+id/install_jar_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:ripple_for_relative="true">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="@dimen/_8sdp">
+                        <ImageView
+                            android:id="@+id/install_jar_icon"
+                            android:layout_width="@dimen/_22sdp"
+                            android:layout_height="@dimen/_22sdp"
+                            android:src="@drawable/ic_java"
+                            android:tint="#B3FFFFFF" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:text="Java"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="@dimen/_8sdp"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                <!-- Logs Button -->
+                <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                    android:id="@+id/share_logs_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:ripple_for_relative="true">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="@dimen/_8sdp">
+                        <ImageView
+                            android:id="@+id/share_logs_icon"
+                            android:layout_width="@dimen/_22sdp"
+                            android:layout_height="@dimen/_22sdp"
+                            android:src="@drawable/ic_share"
+                            android:tint="#B3FFFFFF" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:text="Logs"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="@dimen/_8sdp"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                <!-- Open Main Dir Button (ADDED - replaces missing openMainDirButton) -->
+                <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                    android:id="@+id/open_main_dir_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:ripple_for_relative="true">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="@dimen/_8sdp">
+                        <ImageView
+                            android:id="@+id/open_main_dir_icon"
+                            android:layout_width="@dimen/_22sdp"
+                            android:layout_height="@dimen/_22sdp"
+                            android:src="@drawable/ic_folder"
+                            android:tint="#B3FFFFFF" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:text="Files"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="@dimen/_8sdp"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                <!-- About button moved to bottom-left (was hidden) -->
+                <TextView
+                    android:id="@+id/about_section_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:gravity="center"
+                    android:text="About"
+                    android:textColor="#66FFFFFF"
+                    android:textSize="@dimen/_8sdp"
+                    android:textStyle="bold" />
+
+                <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                    android:id="@+id/about_button_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:visibility="visible"
+                    app:ripple_for_relative="true">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="@dimen/_8sdp">
+                        <ImageView
+                            android:id="@+id/about_icon_bottom"
+                            android:layout_width="@dimen/_22sdp"
+                            android:layout_height="@dimen/_22sdp"
+                            android:src="@drawable/ic_about"
+                            android:tint="#B3FFFFFF" />
+                        <TextView
+                            android:id="@+id/about_text_bottom"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:text="About"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="@dimen/_8sdp"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+            </LinearLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- MAIN CONTENT AREA -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/play_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/launcher_menu"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/shadowView"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#33FFB74D"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/play_main_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/shadowView"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- TOP BAR -->
+            <LinearLayout
+                android:id="@+id/top_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/_16sdp"
+                android:paddingEnd="@dimen/_16sdp"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:background="#CC151520"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <!-- Social icons moved to left logo area -->
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <!-- Players Online -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/players_online_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    app:cardBackgroundColor="#1A1A2E"
+                    app:cardCornerRadius="@dimen/_16sdp"
+                    app:cardElevation="0dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/_10sdp"
+                        android:paddingEnd="@dimen/_10sdp"
+                        android:paddingTop="@dimen/_6sdp"
+                        android:paddingBottom="@dimen/_6sdp">
+                        <View
+                            android:id="@+id/online_dot"
+                            android:layout_width="@dimen/_8sdp"
+                            android:layout_height="@dimen/_8sdp"
+                            android:background="@drawable/circle_green"
+                            android:layout_marginEnd="@dimen/_6sdp" />
+                        <TextView
+                            android:id="@+id/players_online_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 players online"
+                            android:textColor="#FFFFFF"
+                            android:textSize="@dimen/_10ssp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Premium Profile Button -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/premium_profile_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="#1A1A2E"
+                    app:cardCornerRadius="@dimen/_16sdp"
+                    app:cardElevation="0dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/_10sdp"
+                        android:paddingEnd="@dimen/_10sdp"
+                        android:paddingTop="@dimen/_6sdp"
+                        android:paddingBottom="@dimen/_6sdp">
+                        <ImageView
+                            android:id="@+id/premium_crown_icon"
+                            android:layout_width="@dimen/_14sdp"
+                            android:layout_height="@dimen/_14sdp"
+                            android:src="@drawable/ic_crown"
+                            
+                            android:layout_marginEnd="@dimen/_6sdp" />
+                        <TextView
+                            android:id="@+id/premium_profile_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Premium Profile"
+                            android:textColor="#FFB74D"
+                            android:textSize="@dimen/_10ssp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Chat notification -->
+                <FrameLayout
+                    android:id="@+id/chat_notification_frame"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:visibility="gone">
+                    <ImageView
+                        android:id="@+id/icon_chat"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:src="@drawable/ic_chat"
+                        android:tint="#B3FFFFFF" />
+                    <TextView
+                        android:id="@+id/chat_badge"
+                        android:layout_width="@dimen/_14sdp"
+                        android:layout_height="@dimen/_14sdp"
+                        android:layout_gravity="top|end"
+                        android:background="@drawable/circle_red"
+                        android:gravity="center"
+                        android:text="8"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/_7ssp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+
+                <!-- Bell notification (hidden) -->
+                <FrameLayout
+                    android:id="@+id/bell_notification_frame"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:visibility="gone">
+                    <ImageView
+                        android:id="@+id/icon_bell"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:src="@drawable/ic_bell"
+                        android:tint="#B3FFFFFF" />
+                    <TextView
+                        android:id="@+id/bell_badge"
+                        android:layout_width="@dimen/_14sdp"
+                        android:layout_height="@dimen/_14sdp"
+                        android:layout_gravity="top|end"
+                        android:background="@drawable/circle_red"
+                        android:gravity="center"
+                        android:text="3"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/_7ssp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+
+                <!-- User Avatar + Dropdown -->
+                <!-- Top-right profile removed (kept in layout but hidden) -->
+                <include
+                    android:id="@+id/view_account"
+                    android:visibility="gone"
+                    layout="@layout/view_account" />
+
+            </LinearLayout>
+
+            <!-- MAIN SCROLLABLE CONTENT -->
+            <ScrollView
+                android:id="@+id/main_scroll"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scrollbars="none"
+                app:layout_constraintTop_toBottomOf="@id/top_bar"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_16sdp">
+
+                    <!-- HERO + PROFILE ROW -->
+                    <LinearLayout
+                        android:id="@+id/hero_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/_16sdp">
+
+                        <!-- HERO BANNER (Featured Version Card) -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/hero_banner_card"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/_200sdp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            app:cardBackgroundColor="#CC151520"
+                            app:cardCornerRadius="@dimen/_16sdp"
+                            app:cardElevation="0dp">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <!-- Background Minecraft screenshot -->
+                                <ImageView
+                                    android:id="@+id/hero_banner_image"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/bg_minecraft_hero"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <!-- Gradient overlay -->
+                                <View
+                                    android:id="@+id/hero_gradient_overlay"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/gradient_hero_overlay"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <!-- Modpack Tag -->
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/modpack_tag_card"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_16sdp"
+                                    android:layout_marginTop="@dimen/_16sdp"
+                                    app:cardBackgroundColor="#88151520"
+                                    app:cardCornerRadius="@dimen/_8sdp"
+                                    app:cardElevation="0dp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+                                    <TextView
+                                        android:id="@+id/modpack_tag_text"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:paddingStart="@dimen/_10sdp"
+                                        android:paddingEnd="@dimen/_10sdp"
+                                        android:paddingTop="@dimen/_4sdp"
+                                        android:paddingBottom="@dimen/_4sdp"
+                                        android:text="Vanilla"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="@dimen/_9ssp" />
+                                </androidx.cardview.widget.CardView>
+
+                                <!-- Hero text content -->
+                                <LinearLayout
+                                    android:id="@+id/hero_text_layout"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:layout_marginStart="@dimen/_16sdp"
+                                    android:layout_marginEnd="@dimen/_16sdp"
+                                    android:layout_marginBottom="@dimen/_16sdp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent">
+
+                                    <TextView
+                                        android:id="@+id/hero_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Minecraft"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="@dimen/_22ssp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/hero_description"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/_4sdp"
+                                        android:layout_marginBottom="@dimen/_12sdp"
+                                        android:text="Explore new biomes, mobs, and exciting\nadventures in the latest Minecraft update\nwith improved performance and stability."
+                                        android:textColor="#CCE8EAF6"
+                                        android:textSize="@dimen/_10ssp" />
+
+                                    <!-- PLAY Button row — ID play_buttons_layout ADDED here -->
+                                    <LinearLayout
+                                        android:id="@+id/play_buttons_layout"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:gravity="center_vertical">
+
+                                        <com.craftstudio.launcher.ui.view.AnimButton
+                                            android:id="@+id/play_button"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="@dimen/_42sdp"
+                                            android:layout_marginEnd="@dimen/_10sdp"
+                                            android:minWidth="@dimen/_120sdp"
+                                            android:backgroundTint="#FFB74D"
+                                            android:text="▶  PLAY"
+                                            android:textAllCaps="true"
+                                            android:textColor="#151520"
+                                            android:textSize="@dimen/_13ssp"
+                                            android:textStyle="bold" />
+
+                                        <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                                            android:id="@+id/version"
+                                            android:layout_width="@dimen/_42sdp"
+                                            android:layout_height="@dimen/_42sdp"
+                                            android:background="@drawable/background_item"
+                                            android:backgroundTint="#CC151520"
+                                            app:ripple_for_relative="true">
+                                            <ImageView
+                                                android:id="@+id/version_icon"
+                                                android:layout_width="@dimen/_22sdp"
+                                                android:layout_height="@dimen/_22sdp"
+                                                android:layout_centerInParent="true"
+                                                android:src="@drawable/ic_sliders"
+                                                android:tint="#B3FFFFFF" />
+                                        </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                                        <ImageButton
+                                            android:id="@+id/manager_profile_button"
+                                            android:layout_width="@dimen/_42sdp"
+                                            android:layout_height="@dimen/_42sdp"
+                                            android:layout_marginStart="@dimen/_10sdp"
+                                            android:background="@drawable/background_item"
+                                            android:backgroundTint="#CC151520"
+                                            android:scaleType="centerInside"
+                                            android:src="@drawable/ic_setting"
+                                            
+                                            android:visibility="gone" />
+
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- PROFILE PANEL (right side) -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/profile_panel_card"
+                            android:layout_width="@dimen/_180sdp"
+                            android:layout_height="@dimen/_200sdp"
+                            app:cardBackgroundColor="#CC151520"
+                            app:cardCornerRadius="@dimen/_16sdp"
+                            app:cardElevation="0dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/_14sdp">
+
+                                <!-- Avatar + Name row -->
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginBottom="@dimen/_12sdp">
+
+                                    <ImageView
+                                        android:id="@+id/profile_avatar"
+                                        android:layout_width="@dimen/_44sdp"
+                                        android:layout_height="@dimen/_44sdp"
+                                        android:src="@drawable/default_head"
+                                        android:layout_marginEnd="@dimen/_10sdp" />
+
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:id="@+id/profile_username"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="docy"
+                                            android:textColor="#FFFFFF"
+                                            android:textSize="@dimen/_14ssp"
+                                            android:textStyle="bold" />
+
+                                        <androidx.cardview.widget.CardView
+                                            android:id="@+id/premium_badge_card"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="@dimen/_2sdp"
+                                            app:cardBackgroundColor="#33FFB74D"
+                                            app:cardCornerRadius="@dimen/_6sdp"
+                                            app:cardElevation="0dp">
+                                            <LinearLayout
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:orientation="horizontal"
+                                                android:gravity="center_vertical"
+                                                android:paddingStart="@dimen/_6sdp"
+                                                android:paddingEnd="@dimen/_6sdp"
+                                                android:paddingTop="@dimen/_2sdp"
+                                                android:paddingBottom="@dimen/_2sdp">
+                                                <ImageView
+                                                    android:id="@+id/premium_badge_icon"
+                                                    android:layout_width="@dimen/_10sdp"
+                                                    android:layout_height="@dimen/_10sdp"
+                                                    android:src="@drawable/ic_crown"
+                                                    
+                                                    android:layout_marginEnd="@dimen/_4sdp" />
+                                                <TextView
+                                                    android:id="@+id/premium_badge_text"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:text="Premium User"
+                                                    android:textColor="#FFB74D"
+                                                    android:textSize="@dimen/_8ssp"
+                                                    android:textStyle="bold" />
+                                            </LinearLayout>
+                                        </androidx.cardview.widget.CardView>
+
+                                        <LinearLayout
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="horizontal"
+                                            android:gravity="center_vertical"
+                                            android:layout_marginTop="@dimen/_2sdp">
+                                            <View
+                                                android:id="@+id/profile_online_dot"
+                                                android:layout_width="@dimen/_6sdp"
+                                                android:layout_height="@dimen/_6sdp"
+                                                android:background="@drawable/circle_green"
+                                                android:layout_marginEnd="@dimen/_4sdp" />
+                                            <TextView
+                                                android:id="@+id/profile_status_text"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:text="Online"
+                                                android:textColor="#4CAF50"
+                                                android:textSize="@dimen/_9ssp" />
+                                        </LinearLayout>
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                                <!-- Profile Menu Items -->
+                                <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                                    android:id="@+id/profile_settings_button"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="@dimen/_2sdp"
+                                    app:ripple_for_relative="true">
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:gravity="center_vertical"
+                                        android:paddingTop="@dimen/_8sdp"
+                                        android:paddingBottom="@dimen/_8sdp">
+                                        <ImageView
+                                            android:id="@+id/profile_settings_icon"
+                                            android:layout_width="@dimen/_16sdp"
+                                            android:layout_height="@dimen/_16sdp"
+                                            android:src="@drawable/ic_setting"
+                                            android:tint="#B3FFFFFF"
+                                            android:layout_marginEnd="@dimen/_10sdp" />
+                                        <TextView
+                                            android:id="@+id/profile_settings_text"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="Profile Settings"
+                                            android:textColor="#E8EAF6"
+                                            android:textSize="@dimen/_10ssp" />
+                                        <ImageView
+                                            android:layout_width="@dimen/_12sdp"
+                                            android:layout_height="@dimen/_12sdp"
+                                            android:src="@drawable/ic_arrow_right"
+                                            android:tint="#66FFFFFF" />
+                                    </LinearLayout>
+                                </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#1AFFFFFF" />
+
+                                <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                                    android:id="@+id/friends_button"
+                                    android:visibility="gone"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="@dimen/_2sdp"
+                                    app:ripple_for_relative="true">
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:gravity="center_vertical"
+                                        android:paddingTop="@dimen/_8sdp"
+                                        android:paddingBottom="@dimen/_8sdp">
+                                        <ImageView
+                                            android:id="@+id/friends_icon"
+                                            android:layout_width="@dimen/_16sdp"
+                                            android:layout_height="@dimen/_16sdp"
+                                            android:src="@drawable/ic_friends"
+                                            android:tint="#B3FFFFFF"
+                                            android:layout_marginEnd="@dimen/_10sdp" />
+                                        <TextView
+                                            android:id="@+id/friends_text"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="Friends"
+                                            android:textColor="#E8EAF6"
+                                            android:textSize="@dimen/_10ssp" />
+                                        <ImageView
+                                            android:layout_width="@dimen/_12sdp"
+                                            android:layout_height="@dimen/_12sdp"
+                                            android:src="@drawable/ic_arrow_right"
+                                            android:tint="#66FFFFFF" />
+                                    </LinearLayout>
+                                </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#1AFFFFFF" />
+
+                                <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                                    android:id="@+id/logout_button"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    app:ripple_for_relative="true">
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:gravity="center_vertical"
+                                        android:paddingTop="@dimen/_8sdp"
+                                        android:paddingBottom="@dimen/_8sdp">
+                                        <ImageView
+                                            android:id="@+id/logout_icon"
+                                            android:layout_width="@dimen/_16sdp"
+                                            android:layout_height="@dimen/_16sdp"
+                                            android:src="@drawable/ic_add"
+                                            android:tint="#B3FFFFFF"
+                                            android:layout_marginEnd="@dimen/_10sdp" />
+                                        <TextView
+                                            android:id="@+id/logout_text"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="Login"
+                                            android:textColor="#E8EAF6"
+                                            android:textSize="@dimen/_10ssp" />
+                                        <ImageView
+                                            android:layout_width="@dimen/_12sdp"
+                                            android:layout_height="@dimen/_12sdp"
+                                            android:src="@drawable/ic_arrow_right"
+                                            android:tint="#66FFFFFF" />
+                                    </LinearLayout>
+                                </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <!-- FEATURE CARDS ROW -->
+                    <LinearLayout
+                        android:id="@+id/feature_cards_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/_16sdp">
+
+                        <!-- Download Card (moved from top-right) -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/premium_upgrade_card"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            app:cardBackgroundColor="#1A110A"
+                            app:cardCornerRadius="@dimen/_12sdp"
+                            app:cardElevation="0dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/_14sdp">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginBottom="@dimen/_8sdp">
+                                    <ImageView
+                                        android:id="@+id/premium_upgrade_icon"
+                                        android:layout_width="@dimen/_26sdp"
+                                        android:layout_height="@dimen/_26sdp"
+                                        android:src="@drawable/ic_download"
+                                        
+                                        android:layout_marginEnd="@dimen/_8sdp" />
+                                    <TextView
+                                        android:id="@+id/premium_upgrade_title"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Download\nCenter"
+                                        android:textColor="#FFB74D"
+                                        android:textSize="@dimen/_12ssp"
+                                        android:textStyle="bold" />
+                                    <ImageView
+                                        android:layout_width="@dimen/_14sdp"
+                                        android:layout_height="@dimen/_14sdp"
+                                        android:src="@drawable/ic_arrow_right"
+                                        android:tint="#66FFB74D" />
+                                </LinearLayout>
+                                <TextView
+                                    android:id="@+id/premium_upgrade_desc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Browse mods, modpacks, resource packs, worlds, and more."
+                                    android:textColor="#99E8EAF6"
+                                    android:textSize="@dimen/_9ssp"
+                                    android:layout_marginBottom="@dimen/_10sdp" />
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/upgrade_now_button"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="@dimen/_32sdp"
+                                    android:background="@drawable/background_item"
+                                    android:backgroundTint="#33FFB74D"
+                                    android:text="Open Downloads  ›"
+                                    android:textColor="#FFB74D"
+                                    android:textSize="@dimen/_9ssp"
+                                    android:textStyle="bold"
+                                    android:paddingStart="@dimen/_12sdp"
+                                    android:paddingEnd="@dimen/_12sdp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/manage_mods_card"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            app:cardBackgroundColor="#1A110A"
+                            app:cardCornerRadius="@dimen/_12sdp"
+                            app:cardElevation="0dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/_14sdp">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginBottom="@dimen/_8sdp">
+                                    <ImageView
+                                        android:id="@+id/manage_mods_icon"
+                                        android:layout_width="@dimen/_26sdp"
+                                        android:layout_height="@dimen/_26sdp"
+                                        android:src="@drawable/ic_mods"
+                                        android:tint="#FF8F00"
+                                        android:layout_marginEnd="@dimen/_8sdp" />
+                                    <TextView
+                                        android:id="@+id/manage_mods_title"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Manage Mods"
+                                        android:textColor="#FF8F00"
+                                        android:textSize="@dimen/_12ssp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+                                <TextView
+                                    android:id="@+id/manage_mods_desc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Enable, disable, or remove mods quickly."
+                                    android:textColor="#99E8EAF6"
+                                    android:textSize="@dimen/_9ssp"
+                                    android:layout_marginBottom="@dimen/_10sdp" />
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/btn_manage_mods"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="@dimen/_32sdp"
+                                    android:background="@drawable/background_item"
+                                    android:backgroundTint="#33FF8F00"
+                                    android:text="@string/manage_mods"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="@dimen/_9ssp"
+                                    android:textStyle="bold"
+                                    android:paddingStart="@dimen/_12sdp"
+                                    android:paddingEnd="@dimen/_12sdp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Enable Client Features Card -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/client_features_card"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            app:cardBackgroundColor="#110A1A"
+                            app:cardCornerRadius="@dimen/_12sdp"
+                            app:cardElevation="0dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/_14sdp">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginBottom="@dimen/_8sdp">
+                                    <ImageView
+                                        android:id="@+id/client_features_icon"
+                                        android:layout_width="@dimen/_26sdp"
+                                        android:layout_height="@dimen/_26sdp"
+                                        android:src="@drawable/ic_rocket"
+                                        android:tint="#A855F7"
+                                        android:layout_marginEnd="@dimen/_8sdp" />
+                                    <TextView
+                                        android:id="@+id/client_features_title"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Enable Client\nFeatures"
+                                        android:textColor="#A855F7"
+                                        android:textSize="@dimen/_12ssp"
+                                        android:textStyle="bold" />
+                                    <ImageView
+                                        android:layout_width="@dimen/_14sdp"
+                                        android:layout_height="@dimen/_14sdp"
+                                        android:src="@drawable/ic_arrow_right"
+                                        android:tint="#66A855F7" />
+                                </LinearLayout>
+                                <TextView
+                                    android:id="@+id/client_features_desc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Unlock and enable premium client-side features."
+                                    android:textColor="#99E8EAF6"
+                                    android:textSize="@dimen/_9ssp"
+                                    android:layout_marginBottom="@dimen/_10sdp" />
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/manage_features_button"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="@dimen/_32sdp"
+                                    android:background="@drawable/background_item"
+                                    android:backgroundTint="#33A855F7"
+                                    android:text="Manage Features  ›"
+                                    android:textColor="#A855F7"
+                                    android:textSize="@dimen/_9ssp"
+                                    android:textStyle="bold"
+                                    android:paddingStart="@dimen/_12sdp"
+                                    android:paddingEnd="@dimen/_12sdp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- New Mods Card -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/new_mods_card"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/_8sdp"
+                            app:cardBackgroundColor="#0A1A0E"
+                            app:cardCornerRadius="@dimen/_12sdp"
+                            app:cardElevation="0dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/_14sdp">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginBottom="@dimen/_8sdp">
+                                    <ImageView
+                                        android:id="@+id/new_mods_icon"
+                                        android:layout_width="@dimen/_26sdp"
+                                        android:layout_height="@dimen/_26sdp"
+                                        android:src="@drawable/ic_puzzle"
+                                        android:tint="#22C55E"
+                                        android:layout_marginEnd="@dimen/_8sdp" />
+                                    <TextView
+                                        android:id="@+id/new_mods_title"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="New Mods"
+                                        android:textColor="#22C55E"
+                                        android:textSize="@dimen/_12ssp"
+                                        android:textStyle="bold" />
+                                    <ImageView
+                                        android:layout_width="@dimen/_14sdp"
+                                        android:layout_height="@dimen/_14sdp"
+                                        android:src="@drawable/ic_arrow_right"
+                                        android:tint="#6622C55E" />
+                                </LinearLayout>
+                                <TextView
+                                    android:id="@+id/new_mods_desc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Discover amazing mods from our community."
+                                    android:textColor="#99E8EAF6"
+                                    android:textSize="@dimen/_9ssp"
+                                    android:layout_marginBottom="@dimen/_10sdp" />
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/explore_mods_button"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="@dimen/_32sdp"
+                                    android:background="@drawable/background_item"
+                                    android:backgroundTint="#3322C55E"
+                                    android:text="Explore Mods  ›"
+                                    android:textColor="#22C55E"
+                                    android:textSize="@dimen/_9ssp"
+                                    android:textStyle="bold"
+                                    android:paddingStart="@dimen/_12sdp"
+                                    android:paddingEnd="@dimen/_12sdp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Launcher Update Card -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/launcher_update_card"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="#0A0E1A"
+                            app:cardCornerRadius="@dimen/_12sdp"
+                            app:cardElevation="0dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/_14sdp">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginBottom="@dimen/_8sdp">
+                                    <ImageView
+                                        android:id="@+id/launcher_update_icon"
+                                        android:layout_width="@dimen/_26sdp"
+                                        android:layout_height="@dimen/_26sdp"
+                                        android:src="@drawable/ic_diamond"
+                                        android:tint="#38BDF8"
+                                        android:layout_marginEnd="@dimen/_8sdp" />
+                                    <TextView
+                                        android:id="@+id/launcher_update_title"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Launcher\nUpdate"
+                                        android:textColor="#38BDF8"
+                                        android:textSize="@dimen/_12ssp"
+                                        android:textStyle="bold" />
+                                    <ImageView
+                                        android:layout_width="@dimen/_14sdp"
+                                        android:layout_height="@dimen/_14sdp"
+                                        android:src="@drawable/ic_arrow_right"
+                                        android:tint="#6638BDF8" />
+                                </LinearLayout>
+                                <TextView
+                                    android:id="@+id/launcher_update_desc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="You are running the latest version of CS Launcher 2."
+                                    android:textColor="#99E8EAF6"
+                                    android:textSize="@dimen/_9ssp"
+                                    android:layout_marginBottom="@dimen/_10sdp" />
+                                <com.craftstudio.launcher.ui.view.AnimButton
+                                    android:id="@+id/check_update_button"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="@dimen/_32sdp"
+                                    android:background="@drawable/background_item"
+                                    android:backgroundTint="#3338BDF8"
+                                    android:text="Check for Update  ›"
+                                    android:textColor="#38BDF8"
+                                    android:textSize="@dimen/_9ssp"
+                                    android:textStyle="bold"
+                                    android:paddingStart="@dimen/_12sdp"
+                                    android:paddingEnd="@dimen/_12sdp" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <!-- BOTTOM STATUS BAR -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/status_bar_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="#CC151520"
+                        app:cardCornerRadius="@dimen/_12sdp"
+                        app:cardElevation="0dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/_14sdp"
+                            android:gravity="center_vertical">
+
+                            <!-- Mobile Optimized -->
+                            <LinearLayout
+                                android:id="@+id/status_mobile_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+                                <ImageView
+                                    android:id="@+id/status_mobile_icon"
+                                    android:layout_width="@dimen/_20sdp"
+                                    android:layout_height="@dimen/_20sdp"
+                                    android:src="@drawable/ic_mobile"
+                                    
+                                    android:layout_marginEnd="@dimen/_8sdp" />
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+                                    <TextView
+                                        android:id="@+id/status_mobile_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Mobile Optimized"
+                                        android:textColor="#E8EAF6"
+                                        android:textSize="@dimen/_10ssp"
+                                        android:textStyle="bold" />
+                                    <TextView
+                                        android:id="@+id/status_mobile_sub"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Smooth performance"
+                                        android:textColor="#66E8EAF6"
+                                        android:textSize="@dimen/_8ssp" />
+                                </LinearLayout>
+                                <ImageView
+                                    android:id="@+id/status_mobile_check"
+                                    android:layout_width="@dimen/_18sdp"
+                                    android:layout_height="@dimen/_18sdp"
+                                    android:src="@drawable/ic_check"
+                                    android:tint="#4CAF50" />
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="@dimen/_30sdp"
+                                android:background="#1AFFFFFF"
+                                android:layout_marginStart="@dimen/_8sdp"
+                                android:layout_marginEnd="@dimen/_8sdp" />
+
+                            <!-- Multi-Version JRE -->
+                            <LinearLayout
+                                android:id="@+id/status_jre_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+                                <ImageView
+                                    android:id="@+id/status_jre_icon"
+                                    android:layout_width="@dimen/_20sdp"
+                                    android:layout_height="@dimen/_20sdp"
+                                    android:src="@drawable/ic_java"
+                                    
+                                    android:layout_marginEnd="@dimen/_8sdp" />
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+                                    <TextView
+                                        android:id="@+id/status_jre_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Multi-Version JRE"
+                                        android:textColor="#E8EAF6"
+                                        android:textSize="@dimen/_10ssp"
+                                        android:textStyle="bold" />
+                                    <TextView
+                                        android:id="@+id/status_jre_sub"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Auto management"
+                                        android:textColor="#66E8EAF6"
+                                        android:textSize="@dimen/_8ssp" />
+                                </LinearLayout>
+                                <ImageView
+                                    android:id="@+id/status_jre_check"
+                                    android:layout_width="@dimen/_18sdp"
+                                    android:layout_height="@dimen/_18sdp"
+                                    android:src="@drawable/ic_check"
+                                    android:tint="#4CAF50" />
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="@dimen/_30sdp"
+                                android:background="#1AFFFFFF"
+                                android:layout_marginStart="@dimen/_8sdp"
+                                android:layout_marginEnd="@dimen/_8sdp" />
+
+                            <!-- Secure & Safe -->
+                            <LinearLayout
+                                android:id="@+id/status_secure_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+                                <ImageView
+                                    android:id="@+id/status_secure_icon"
+                                    android:layout_width="@dimen/_20sdp"
+                                    android:layout_height="@dimen/_20sdp"
+                                    android:src="@drawable/ic_shield"
+                                    
+                                    android:layout_marginEnd="@dimen/_8sdp" />
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+                                    <TextView
+                                        android:id="@+id/status_secure_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Secure &amp; Safe"
+                                        android:textColor="#E8EAF6"
+                                        android:textSize="@dimen/_10ssp"
+                                        android:textStyle="bold" />
+                                    <TextView
+                                        android:id="@+id/status_secure_sub"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="100% protected"
+                                        android:textColor="#66E8EAF6"
+                                        android:textSize="@dimen/_8ssp" />
+                                </LinearLayout>
+                                <ImageView
+                                    android:id="@+id/status_secure_check"
+                                    android:layout_width="@dimen/_18sdp"
+                                    android:layout_height="@dimen/_18sdp"
+                                    android:src="@drawable/ic_check"
+                                    android:tint="#4CAF50" />
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="@dimen/_30sdp"
+                                android:background="#1AFFFFFF"
+                                android:layout_marginStart="@dimen/_8sdp"
+                                android:layout_marginEnd="@dimen/_8sdp" />
+
+                            <!-- Regular Updates -->
+                            <LinearLayout
+                                android:id="@+id/status_updates_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+                                <ImageView
+                                    android:id="@+id/status_updates_icon"
+                                    android:layout_width="@dimen/_20sdp"
+                                    android:layout_height="@dimen/_20sdp"
+                                    android:src="@drawable/ic_refresh"
+                                    
+                                    android:layout_marginEnd="@dimen/_8sdp" />
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+                                    <TextView
+                                        android:id="@+id/status_updates_title"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Regular Updates"
+                                        android:textColor="#E8EAF6"
+                                        android:textSize="@dimen/_10ssp"
+                                        android:textStyle="bold" />
+                                    <TextView
+                                        android:id="@+id/status_updates_sub"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Always up to date"
+                                        android:textColor="#66E8EAF6"
+                                        android:textSize="@dimen/_8ssp" />
+                                </LinearLayout>
+                                <ImageView
+                                    android:id="@+id/status_updates_check"
+                                    android:layout_width="@dimen/_18sdp"
+                                    android:layout_height="@dimen/_18sdp"
+                                    android:src="@drawable/ic_check"
+                                    android:tint="#4CAF50" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+            </ScrollView>
+
+            <!-- Version selector (hidden) -->
+            <TextView
+                android:id="@+id/version_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/version_no_versions"
+                android:textColor="#FFB74D"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/version_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#99E8EAF6"
+                android:textSize="@dimen/_9sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Manager Profile Button moved next to version selector -->
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

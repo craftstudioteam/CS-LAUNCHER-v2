@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212"
+    android:orientation="horizontal"
+    tools:context="com.craftstudio.launcher.ui.fragment.SettingsFragment">
+
+    <!-- Sidebar layout -->
+    <LinearLayout
+        android:id="@+id/settings_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <com.angcyo.tablayout.DslTabLayout
+            android:id="@+id/settings_tab"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:tab_draw_indicator="true"
+            app:tab_indicator_color="#24B538"
+            app:tab_indicator_width="4dp"
+            app:tab_orientation="VERTICAL" />
+    </LinearLayout>
+
+    <!-- ViewPager2 -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/settings_viewpager"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5" />
+
+</LinearLayout>

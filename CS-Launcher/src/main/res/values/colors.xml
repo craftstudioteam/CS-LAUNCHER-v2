@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="black_or_white">#FFFFFF</color>
+
+    <!-- App Backgrounds -->
+    <color name="background_app">#151520</color>
+    <color name="background_app_error">#3E1515</color>
+    <color name="background_overlay">#B3000000</color>
+    <color name="background_status_bar">#151520</color>
+
+    <!-- Menu Backgrounds -->
+    <color name="background_menu_top">#1A1B2E</color>
+    <color name="background_menu_top_error">#8B0000</color>
+    <color name="background_menu_element">#FFB74D</color>
+    <color name="background_ripple_effect">#33FFB74D</color>
+
+    <!-- Cards / Surface -->
+    <color name="surface_card">#0D0D1A</color>
+
+    <!-- Accent Colors -->
+    <color name="accent_orange">#FFAA00</color>
+    <color name="accent_purple">#A855F7</color>
+    <color name="accent_blue">#38BDF8</color>
+    <color name="accent_teal">#2DD4BF</color>
+    <color name="accent_green">#4ADE80</color>
+
+    <!-- Secondary Text -->
+    <color name="secondary_text">#888899</color>
+    <color name="tab_selected">#FFB74D</color>
+
+    <!-- Buttons -->
+    <color name="button_background">#252538</color>
+    <color name="button_background_selected">#353550</color>
+
+    <!-- Dialog -->
+    <color name="dialog_background">#1A1B2E</color>
+
+    <!-- Menu -->
+    <color name="menu_bar">#151520</color>
+    <color name="menu_bar_text">#FFB74D</color>
+    <color name="menu_overlay">#B3151520</color>
+    <color name="menu_progress">#FFB74D</color>
+
+    <!-- Items -->
+    <color name="background_item">#CC151520</color>
+    <color name="background_item_selected">#33FFB74D</color>
+    <color name="background_item_disabled">#80151520</color>
+
+    <!-- Sponsors -->
+    <color name="background_sponsor_intermediate">#CCFFB74D</color>
+    <color name="background_sponsor_advanced">#CCFF8A65</color>
+
+    <!-- Settings -->
+    <color name="settings_bg">#0D0F1C</color>
+    <color name="settings_card">#131629</color>
+    <color name="settings_divider">#1E2238</color>
+    <color name="settings_text_primary">#FFFFFF</color>
+    <color name="settings_text_secondary">#6B7280</color>
+
+    <!-- Icon Backgrounds -->
+    <color name="icon_bg_purple">#3B1F6A</color>
+    <color name="icon_bg_blue_dark">#1A2A4A</color>
+    <color name="icon_bg_teal">#0F3030</color>
+    <color name="icon_bg_orange">#3A2000</color>
+    <color name="icon_bg_green">#0A2A15</color>
+
+    <!-- EditText -->
+    <color name="edit_box_fill">#252538</color>
+    <color name="edit_box_fill_selected">#353550</color>
+
+    <!-- Misc -->
+    <color name="mod_category_fill">#801A1B2E</color>
+    <color name="text_background_fill">#B3000000</color>
+    <color name="settings_category">#FFB74D</color>
+    <color name="favorite_color">#FF5252</color>
+    <color name="icon_color">#FFB74D</color>
+
+    <!-- Text -->
+    <color name="primary_text">#E8EAF6</color>
+
+    <!-- Cursor Studio -->
+    <color name="cursor_studio_bg">#1A1A1A</color>
+    <color name="cursor_studio_panel">#252525</color>
+    <color name="cursor_studio_panel_border">#333333</color>
+    <color name="cursor_studio_accent">#FF6B00</color>
+    <color name="cursor_studio_accent_dim">#80FF6B00</color>
+    <color name="cursor_studio_accent_light">#FFAA00</color>
+    <color name="cursor_studio_grid_line">#33FFFFFF</color>
+    <color name="cursor_studio_watermark">#15FFFFFF</color>
+    <color name="cursor_studio_text">#E0E0E0</color>
+    <color name="cursor_studio_text_dim">#808080</color>
+    <color name="cursor_studio_tool_active">#FF6B00</color>
+    <color name="cursor_studio_tool_inactive">#666666</color>
+    <color name="cursor_studio_preview_light">#F5F5F5</color>
+    <color name="cursor_studio_preview_dark">#2A2A2A</color>
+
+    <!-- Quick Settings Dialog -->
+    <color name="quick_settings_bg">#000000</color>
+    <color name="quick_settings_card">#0A0A0A</color>
+    <color name="quick_settings_green">#24B538</color>
+    <color name="quick_settings_green_dim">#8024B538</color>
+    <color name="quick_settings_green_ripple">#3324B538</color>
+    <color name="quick_settings_text">#FFFFFF</color>
+    <color name="quick_settings_text_dim">#808080</color>
+    <color name="quick_settings_track">#333333</color>
+    <color name="quick_settings_border">#333333</color>
+
+    <!-- Mod Manager -->
+    <color name="red">#F44336</color>
+    <color name="green">#4CAF50</color>
+    <color name="gray">#9E9E9E</color>
+
+</resources>
