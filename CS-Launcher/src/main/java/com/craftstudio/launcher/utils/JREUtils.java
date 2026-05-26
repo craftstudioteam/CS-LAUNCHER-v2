@@ -23,7 +23,6 @@ import com.craftstudio.launcher.feature.customprofilepath.ProfilePathManager;
 import com.craftstudio.launcher.feature.log.Logging;
 import com.craftstudio.launcher.feature.version.Version;
 import com.craftstudio.launcher.feature.version.VersionInfo;
-import com.craftstudio.launcher.launch.LauncherState;
 import com.craftstudio.launcher.plugins.driver.DriverPluginManager;
 import com.craftstudio.launcher.plugins.renderer.RendererPluginManager;
 import com.craftstudio.launcher.plugins.renderer.RendererPlugin;
@@ -428,13 +427,7 @@ public final class JREUtils {
         chdir(gameVersion == null ? ProfilePathHome.getGameHome() : gameVersion.getGameDir().getAbsolutePath());
         userArgs.add(0,"java"); 
 
-        final int exitCode;
-        LauncherState.setSleepMode(true, activity);
-        try {
-            exitCode = VMLauncher.launchJVM(userArgs.toArray(new String[0]));
-        } finally {
-            LauncherState.setSleepMode(false, activity);
-        }
+        final int exitCode = VMLauncher.launchJVM(userArgs.toArray(new String[0]));
         Logger.appendToLog("Java Exit code: " + exitCode);
         if (exitCode != 0) {
             ErrorActivity.showExitMessage(activity, exitCode, false);
