@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.kdt.mcgui.ProgressLayout
 import com.craftstudio.launcher.R
 import com.craftstudio.launcher.event.single.AccountUpdateEvent
-import com.craftstudio.launcher.feature.OptionsOptimizer
+import com.craftstudio.launcher.utils.OptionsOptimizer
 import com.craftstudio.launcher.feature.accounts.AccountType
 import com.craftstudio.launcher.feature.accounts.AccountUtils
 import com.craftstudio.launcher.feature.accounts.AccountsManager
