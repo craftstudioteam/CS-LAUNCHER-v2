@@ -154,7 +154,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_launcher"
+                        android:src="@mipmap/ic_launcher"
                         app:tint="#FFB74D" />
                     
                     <TextView
