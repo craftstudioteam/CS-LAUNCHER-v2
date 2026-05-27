@@ -77,15 +77,15 @@ public class MicrosoftBackgroundLogin {
             @Nullable final ErrorListener errorListener
     ) {
         Task.runTask(() -> {
-            notifyProgress(1, context.getString(R.string.account_login_progress_access_token));
+            setStep(1, context.getString(R.string.account_login_progress_access_token));
             String accessToken = acquireAccessToken(mIsRefresh, mAuthCode);
-            notifyProgress(2, context.getString(R.string.account_login_progress_xbl_token));
+            setStep(2, context.getString(R.string.account_login_progress_xbl_token));
             String xboxLiveToken = acquireXBLToken(accessToken);
-            notifyProgress(3, context.getString(R.string.account_login_progress_xsts_token));
+            setStep(3, context.getString(R.string.account_login_progress_xsts_token));
             String[] xsts = acquireXsts(xboxLiveToken);
-            notifyProgress(4, context.getString(R.string.account_login_progress_minecraft_token));
+            setStep(4, context.getString(R.string.account_login_progress_minecraft_token));
             String mcToken = acquireMinecraftToken(xsts[0], xsts[1]);
-            notifyProgress(5, context.getString(R.string.account_login_progress_checking));
+            setStep(5, context.getString(R.string.account_login_progress_checking));
             fetchOwnedItems(mcToken);
             checkMcProfile(mcToken);
 
