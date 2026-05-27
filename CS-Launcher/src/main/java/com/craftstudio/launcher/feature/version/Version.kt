@@ -81,14 +81,25 @@ class Version(
         val major = versionMatch?.groupValues?.getOrNull(1)?.toIntOrNull()
         val minor = versionMatch?.groupValues?.getOrNull(2)?.toIntOrNull()
 
-        return if (major != null && minor != null && (major > 1 || minor >= 17)) {
-            "vulkan_zink"
+        return if (major != null && minor != null) {
+            if (major >= 26 && minor >= 2) {
+                "opengles2" // OpenGL (Holy GL4ES)
+            } else if (major > 1 || (major == 1 && minor >= 17)) {
+                "vulkan_zink"
+            } else {
+                "gallium_virgl"
+            }
         } else {
             "gallium_virgl"
         }
     }
 
     fun getRenderer(): String {
+        // Auto-fallback: Default to OpenGL (Holy GL4ES) for Android API 26 to prevent black screens
+        if (android.os.Build.VERSION.SDK_INT == 26) {
+            return "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7"
+        }
+
         val configuredRenderer = versionConfig.getRenderer()
         if (configuredRenderer.isNotEmpty()) return configuredRenderer
 

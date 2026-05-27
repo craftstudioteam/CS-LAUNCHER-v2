@@ -123,7 +123,12 @@ class LaunchGame {
         @JvmStatic
         fun runGame(activity: AppCompatActivity, minecraftVersion: Version, version: JMinecraftVersionList.Version) {
             if (!Renderers.isCurrentRendererValid()) {
-                Renderers.setCurrentRenderer(activity, AllSettings.renderer.getValue())
+                val rendererToUse = if (android.os.Build.VERSION.SDK_INT == 26) {
+                    "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Default to OpenGL (Holy GL4ES)
+                } else {
+                    AllSettings.renderer.getValue()
+                }
+                Renderers.setCurrentRenderer(activity, rendererToUse)
             }
 
             var account = AccountsManager.currentAccount!!
@@ -142,12 +147,14 @@ class LaunchGame {
             }
 
             val customArgs = minecraftVersion.getJavaArgs().takeIf { it.isNotBlank() } ?: ""
+            val rendererArgs = getRendererJVMArgs()
+            val totalArgs = "$customArgs $rendererArgs".trim()
 
             val javaRuntime = getRuntime(activity, minecraftVersion, version.javaVersion?.majorVersion ?: 8)
 
             printLauncherInfo(
                 minecraftVersion,
-                customArgs.takeIf { it.isNotBlank() } ?: "NONE",
+                totalArgs.takeIf { it.isNotBlank() } ?: "NONE",
                 javaRuntime,
                 account
             )
@@ -169,9 +176,17 @@ class LaunchGame {
             // Localhost skin rendering removed — no authlib args, no CSL injection
             val authlibArgs = emptyList<String>()
 
-            launch(activity, account, minecraftVersion, javaRuntime, customArgs, authlibArgs)
+            launch(activity, account, minecraftVersion, javaRuntime, totalArgs, authlibArgs)
 
             GameService.setActive(false)
+        }
+
+        private fun getRendererJVMArgs(): String {
+            val renderer = Renderers.getCurrentRenderer()
+            val rendererId = renderer.getRendererId()
+            return if (rendererId.startsWith("opengles")) {
+                " -Dorg.lwjgl.opengl.libname=${renderer.getRendererLibrary()}"
+            } else ""
         }
 
         private fun getRuntime(activity: Activity, version: Version, targetJavaVersion: Int): String {

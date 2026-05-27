@@ -239,10 +239,12 @@ public final class JREUtils {
 
         if (rendererId.startsWith("opengles2")) {
             envMap.put("LIBGL_ES", "2");
+            envMap.put("LIBGL_GL", "21");
             envMap.put("LIBGL_MIPMAP", "3");
             envMap.put("LIBGL_NOERROR", "1");
             envMap.put("LIBGL_NOINTOVLHACK", "1");
             envMap.put("LIBGL_NORMALIZE", "1");
+            envMap.put("LIBGL_FB", "1");
         }
 
         envMap.putAll(currentRenderer.getRendererEnv().getValue());
