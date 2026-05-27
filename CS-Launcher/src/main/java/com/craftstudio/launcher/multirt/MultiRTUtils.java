@@ -8,6 +8,7 @@ import com.kdt.mcgui.ProgressLayout;
 import com.craftstudio.launcher.R;
 import com.craftstudio.launcher.feature.log.Logging;
 import com.craftstudio.launcher.feature.unpack.Jre;
+import com.craftstudio.launcher.task.TaskExecutors;
 import com.craftstudio.launcher.utils.path.PathManager;
 import com.craftstudio.launcher.utils.stringutils.SortStrings;
 

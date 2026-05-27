@@ -21,6 +21,7 @@ import com.craftstudio.launcher.setting.AllSettings;
 import com.craftstudio.launcher.MainActivity;
 import com.craftstudio.launcher.Tools;
 import com.craftstudio.launcher.progresskeeper.ProgressKeeper;
+import com.craftstudio.launcher.task.TaskExecutors;
 import com.craftstudio.launcher.tasks.AsyncMinecraftDownloader;
 import com.craftstudio.launcher.utils.NotificationUtils;
 

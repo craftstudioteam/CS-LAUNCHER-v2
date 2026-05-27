@@ -9,6 +9,7 @@ import com.craftstudio.launcher.feature.customprofilepath.ProfilePathHome;
 import com.craftstudio.launcher.feature.log.Logging;
 import com.craftstudio.launcher.setting.AllSettings;
 import com.craftstudio.launcher.task.Task;
+import com.craftstudio.launcher.task.TaskExecutors;
 import com.craftstudio.launcher.utils.path.PathManager;
 
 import com.craftstudio.launcher.JAssetInfo;
