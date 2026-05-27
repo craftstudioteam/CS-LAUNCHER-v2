@@ -11,6 +11,7 @@ import com.craftstudio.launcher.Tools
 import com.craftstudio.launcher.progresskeeper.ProgressKeeper
 import com.craftstudio.launcher.tasks.AsyncMinecraftDownloader
 import com.craftstudio.launcher.tasks.MinecraftDownloader
+import com.craftstudio.launcher.utils.TaskExecutors  // ✅ FIX: TaskExecutors import added
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.util.concurrent.atomic.AtomicReference
