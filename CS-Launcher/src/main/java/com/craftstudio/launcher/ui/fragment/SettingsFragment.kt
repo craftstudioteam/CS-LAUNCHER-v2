@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.craftstudio.launcher.R
+import com.craftstudio.launcher.anim.AnimPlayer
+import com.craftstudio.launcher.anim.animations.Animations
 import com.craftstudio.launcher.databinding.FragmentSettingsBinding
 import com.craftstudio.launcher.setting.Settings
 import com.craftstudio.launcher.ui.fragment.settings.AppearanceSettingsFragment
@@ -56,12 +58,11 @@ class SettingsFragment : FragmentWithAnim(R.layout.fragment_settings) {
             .commit()
     }
 
-    override fun slideIn(com.craftstudio.launcher.anim.AnimPlayer animPlayer) {
-        // Simple fade in for the main list
-        animPlayer.apply(com.craftstudio.launcher.anim.AnimPlayer.Entry(binding.root, com.craftstudio.launcher.anim.animations.Animations.FadeIn))
+    override fun slideIn(animPlayer: AnimPlayer) {
+        animPlayer.apply(AnimPlayer.Entry(binding.root, Animations.FadeIn))
     }
 
-    override fun slideOut(com.craftstudio.launcher.anim.AnimPlayer animPlayer) {
-        animPlayer.apply(com.craftstudio.launcher.anim.AnimPlayer.Entry(binding.root, com.craftstudio.launcher.anim.animations.Animations.FadeOut))
+    override fun slideOut(animPlayer: AnimPlayer) {
+        animPlayer.apply(AnimPlayer.Entry(binding.root, Animations.FadeOut))
     }
 }
