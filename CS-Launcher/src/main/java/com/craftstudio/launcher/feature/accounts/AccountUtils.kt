@@ -2,11 +2,7 @@ package com.craftstudio.launcher.feature.accounts
 
 import android.content.Context
 import com.kdt.mcgui.ProgressLayout
-
-// ✅ FIX: Purana import hata kar tera naya Craft Studio R class lagana hai.
-// (Maine yahan example ke liye com.craftstudio.launcher.R likha hai, ise apne package se match kar lena)
-import com.craftstudio.launcher.R 
-
+import com.craftstudio.launcher.R
 import com.craftstudio.launcher.feature.log.Logging
 import com.craftstudio.launcher.task.Task
 import com.craftstudio.launcher.Tools
@@ -14,6 +10,7 @@ import com.craftstudio.launcher.authenticator.listener.DoneListener
 import com.craftstudio.launcher.authenticator.listener.ErrorListener
 import com.craftstudio.launcher.authenticator.microsoft.MicrosoftBackgroundLogin
 import com.craftstudio.launcher.value.MinecraftAccount
+import com.craftstudio.launcher.utils.TaskExecutors  // ✅ FIX: TaskExecutors import added
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Locale
