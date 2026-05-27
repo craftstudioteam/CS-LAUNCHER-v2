@@ -122,13 +122,18 @@ class LaunchGame {
         @Throws(Throwable::class)
         @JvmStatic
         fun runGame(activity: AppCompatActivity, minecraftVersion: Version, version: JMinecraftVersionList.Version) {
-            if (!Renderers.isCurrentRendererValid()) {
-                val rendererToUse = if (android.os.Build.VERSION.SDK_INT == 26) {
-                    "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Default to OpenGL (Holy GL4ES)
-                } else {
-                    AllSettings.renderer.getValue()
+            try {
+                if (!Renderers.isCurrentRendererValid()) {
+                    val rendererToUse = if (android.os.Build.VERSION.SDK_INT == 26) {
+                        "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Default to OpenGL (Holy GL4ES)
+                    } else {
+                        AllSettings.renderer.getValue()
+                    }
+                    Renderers.setCurrentRenderer(activity, rendererToUse)
                 }
-                Renderers.setCurrentRenderer(activity, rendererToUse)
+            } catch (e: Throwable) {
+                Logging.e("LaunchGame", "Critical: Failed to initialize selected renderer. Falling back to default Holy GL4ES.", e)
+                Renderers.setCurrentRenderer(activity, "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7")
             }
 
             var account = AccountsManager.currentAccount!!

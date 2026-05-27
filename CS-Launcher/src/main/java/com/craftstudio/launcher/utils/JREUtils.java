@@ -350,19 +350,23 @@ public final class JREUtils {
     }
 
     private static void initGraphicAndSoundEngine(boolean renderer) {
-        dlopen(DIR_NATIVE_LIB + "/libopenal.so");
+        try {
+            dlopen(DIR_NATIVE_LIB + "/libopenal.so");
 
-        if (!renderer) return;
+            if (!renderer) return;
 
-        String rendererLib = loadGraphicsLibrary();
-        RendererPlugin customRenderer = RendererPluginManager.getSelectedRendererPlugin();
+            String rendererLib = loadGraphicsLibrary();
+            RendererPlugin customRenderer = RendererPluginManager.getSelectedRendererPlugin();
 
-        if (customRenderer != null) {
-            customRenderer.getDlopen().forEach(lib -> dlopen(customRenderer.getPath() + "/" + lib));
-        }
+            if (customRenderer != null) {
+                customRenderer.getDlopen().forEach(lib -> dlopen(customRenderer.getPath() + "/" + lib));
+            }
 
-        if (!dlopen(rendererLib) && !dlopen(findInLdLibPath(rendererLib))) {
-            Logging.e("RENDER_LIBRARY", "Failed to load renderer " + rendererLib);
+            if (!dlopen(rendererLib) && !dlopen(findInLdLibPath(rendererLib))) {
+                Logging.e("RENDER_LIBRARY", "Failed to load renderer " + rendererLib);
+            }
+        } catch (Throwable e) {
+            Logging.e("JREUtils", "Failed to initialize graphics or sound engine: " + e.getMessage());
         }
     }
 
@@ -456,15 +460,20 @@ public final class JREUtils {
     ) throws Throwable {
         String runtimeHome = MultiRTUtils.getRuntimeHome(runtime.name).getAbsolutePath();
 
-        relocateLibPath(runtime, runtimeHome);
+        try {
+            relocateLibPath(runtime, runtimeHome);
 
-        initLdLibraryPath(runtimeHome);
+            initLdLibraryPath(runtimeHome);
 
-        setEnv(runtimeHome, runtime, gameVersion);
+            setEnv(runtimeHome, runtime, gameVersion);
 
-        initJavaRuntime(runtimeHome);
+            initJavaRuntime(runtimeHome);
 
-        initGraphicAndSoundEngine(gameVersion != null);
+            initGraphicAndSoundEngine(gameVersion != null);
+        } catch (Throwable e) {
+            Logging.e("JREUtils", "Critical failure during launch preparation", e);
+            // We still attempt to launch Java VM, but it will likely fail or use system defaults
+        }
 
         launchJavaVM(activity, runtimeHome, gameVersion, JVMArgs, userArgsString);
     }

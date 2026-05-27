@@ -28,6 +28,7 @@ import com.craftstudio.launcher.ui.fragment.settings.wrapper.BaseSettingsWrapper
 import com.craftstudio.launcher.ui.fragment.settings.wrapper.ListSettingsWrapper
 import com.craftstudio.launcher.ui.fragment.settings.wrapper.SeekBarSettingsWrapper
 import com.craftstudio.launcher.ui.fragment.settings.wrapper.SwitchSettingsWrapper
+import com.craftstudio.launcher.utils.DeviceGPUDetector
 import com.craftstudio.launcher.utils.ZHTools
 import com.craftstudio.launcher.utils.file.FileTools
 import com.craftstudio.launcher.utils.path.PathManager
@@ -113,15 +114,36 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val context = requireActivity()
 
+        val gpuFamily = DeviceGPUDetector.getGPUFamily()
+        binding.gpuRecommendationText.text = "Detected GPU: ${DeviceGPUDetector.getGPUName()} - Recommended: " + when (gpuFamily) {
+            DeviceGPUDetector.GPUFamily.ADRENO -> "Zink + Turnip"
+            else -> "Holy GL4ES"
+        }
+
         val renderers = Renderers.getCompatibleRenderers(context).first
+        val rendererNames = renderers.rendererNames.toMutableList()
+        val rendererIds = renderers.rendererIdentifier.toMutableList()
+
+        // Apply "Recommended" tag to renderers
+        for (i in rendererNames.indices) {
+            val id = rendererIds[i]
+            val isRecommended = when (gpuFamily) {
+                DeviceGPUDetector.GPUFamily.ADRENO -> id == "0fa435e2-46df-45c9-906c-b29606aaef00" // Zink
+                else -> id == "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Holy GL4ES
+            }
+            if (isRecommended) {
+                rendererNames[i] = rendererNames[i] + " (Recommended)"
+            }
+        }
+
         ListSettingsWrapper(
             context,
             AllSettings.renderer,
             binding.rendererLayout,
             binding.rendererTitle,
             binding.rendererValue,
-            renderers.rendererNames.toTypedArray(),
-            renderers.rendererIdentifier.toTypedArray()
+            rendererNames.toTypedArray(),
+            rendererIds.toTypedArray()
         ).setOnSaveListener {
             computeVisibility()
         }
@@ -142,28 +164,59 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             }
         }
 
-        val driverNames = DriverPluginManager.getDriverNameList().toTypedArray()
+        val driverNames = DriverPluginManager.getDriverNameList().toMutableList()
+        // Apply "Recommended" tag to vulkan drivers
+        if (gpuFamily == DeviceGPUDetector.GPUFamily.ADRENO) {
+             for (i in driverNames.indices) {
+                 if (driverNames[i].contains("Turnip", ignoreCase = true)) {
+                     driverNames[i] = driverNames[i] + " (Recommended)"
+                 }
+             }
+        } else {
+            // Hide or tag System Default for Mali
+            for (i in driverNames.indices) {
+                if (driverNames[i] == "System Default") {
+                    driverNames[i] = driverNames[i] + " (Recommended)"
+                }
+            }
+        }
+
         ListSettingsWrapper(
             context,
             AllSettings.driver,
             binding.driverLayout,
             binding.driverTitle,
             binding.driverValue,
-            driverNames,
-            driverNames
+            driverNames.toTypedArray(),
+            DriverPluginManager.getDriverNameList().toTypedArray()
         )
 
         binding.driverDownload.setOnClickListener { ZHTools.openLink(context, UrlManager.URL_FCL_DRIVER_PLUGIN) }
 
-        val vulkanDriverNames = DriverPluginManager.getDriverNameList().toTypedArray()
+        val vulkanDriverNamesRaw = DriverPluginManager.getDriverNameList().toTypedArray()
+        val vulkanDriverNames = vulkanDriverNamesRaw.toMutableList()
+        if (gpuFamily == DeviceGPUDetector.GPUFamily.ADRENO) {
+            for (i in vulkanDriverNames.indices) {
+                if (vulkanDriverNames[i].contains("Turnip", ignoreCase = true)) {
+                    vulkanDriverNames[i] = vulkanDriverNames[i] + " (Recommended)"
+                }
+            }
+        } else {
+            for (i in vulkanDriverNames.indices) {
+                if (vulkanDriverNames[i] == "System Default") {
+                    vulkanDriverNames[i] = vulkanDriverNames[i] + " (Recommended)"
+                }
+            }
+        }
+
         ListSettingsWrapper(
             context,
             AllSettings.vulkanDriver,
             binding.vulkanDriverLayout,
             binding.vulkanDriverTitle,
             binding.vulkanDriverValue,
-            vulkanDriverNames,
-            vulkanDriverNames
+            vulkanDriverNames.toTypedArray(),
+            vulkanDriverNamesRaw
         ).setOnSaveListener {
             DriverPluginManager.setDriverByName(AllSettings.vulkanDriver.getValue())
         }
@@ -291,15 +344,19 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
     }
 
     private fun computeVisibility() {
-        binding.apply {
-            binding.forceVsyncLayout.visibility = if (AllSettings.alternateSurface.getValue()) View.VISIBLE else View.GONE
-            
-            val currentRendererId = AllSettings.renderer.getValue()
-            val isVulkan = currentRendererId == "0fa435e2-46df-45c9-906c-b29606aaef00" || // Zink
-                           currentRendererId == "1e7845f3-3158-469b-980b-967969149492"    // Freedreno (if any)
-            
-            binding.vulkanDriverLayout.visibility = if (isVulkan) View.VISIBLE else View.GONE
-            binding.vulkanDriverImportLayout.visibility = if (isVulkan) View.VISIBLE else View.GONE
+        try {
+            binding.apply {
+                binding.forceVsyncLayout.visibility = if (AllSettings.alternateSurface.getValue()) View.VISIBLE else View.GONE
+                
+                val currentRendererId = AllSettings.renderer.getValue()
+                val isVulkan = currentRendererId == "0fa435e2-46df-45c9-906c-b29606aaef00" || // Zink
+                               currentRendererId == "1e7845f3-3158-469b-980b-967969149492"    // Freedreno (if any)
+                
+                binding.vulkanDriverLayout.visibility = if (isVulkan) View.VISIBLE else View.GONE
+                binding.vulkanDriverImportLayout.visibility = if (isVulkan) View.VISIBLE else View.GONE
+            }
+        } catch (e: Exception) {
+            Logging.e("VideoSettings", "Failed to compute visibility", e)
         }
     }
 
