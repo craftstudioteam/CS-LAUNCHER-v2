@@ -5,6 +5,7 @@ import com.kdt.mcgui.ProgressLayout
 import com.craftstudio.launcher.R
 import com.craftstudio.launcher.feature.log.Logging
 import com.craftstudio.launcher.task.Task
+import com.craftstudio.launcher.task.TaskExecutors
 import com.craftstudio.launcher.Tools
 import com.craftstudio.launcher.authenticator.listener.DoneListener
 import com.craftstudio.launcher.authenticator.listener.ErrorListener
@@ -26,13 +27,13 @@ class AccountUtils {
 
         @JvmStatic
         fun otherLogin(context: Context, account: MinecraftAccount, doneListener: DoneListener, errorListener: ErrorListener) {
-            fun clearProgress() = TaskExecutors.runInUIThread { ProgressLayout.clearProgress(ProgressLayout.LOGIN_ACCOUNT) }
+            fun clearProgress() = Handler(Looper.getMainLooper()).post { ProgressLayout.clearProgress(ProgressLayout.LOGIN_ACCOUNT) }
 
             Task.runTask {
                 OtherLoginHelper(account.otherBaseUrl, account.accountType, account.otherAccount, account.otherPassword,
                     object : OtherLoginHelper.OnLoginListener {
                         override fun onLoading() {
-                            TaskExecutors.runInUIThread { ProgressLayout.setProgress(ProgressLayout.LOGIN_ACCOUNT, 0, R.string.account_login_start) }
+                            Handler(Looper.getMainLooper()).post { ProgressLayout.setProgress(ProgressLayout.LOGIN_ACCOUNT, 0, R.string.account_login_start) }
                         }
 
                         override fun unLoading() {}
@@ -109,6 +110,10 @@ class AccountUtils {
             return if (!baseUrl.startsWith("http://", true) && !baseUrl.startsWith("https://")) {
                 "https://$baseUrl".lowercase(Locale.ROOT)
             } else baseUrl.lowercase(Locale.ROOT)
+        }
+    }
+}
+e(Locale.ROOT)
         }
     }
 }

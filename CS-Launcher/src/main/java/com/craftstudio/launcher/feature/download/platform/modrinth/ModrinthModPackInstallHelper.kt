@@ -1,6 +1,8 @@
 package com.craftstudio.launcher.feature.download.platform.modrinth
 
 import com.kdt.mcgui.ProgressLayout
+import android.os.Handler
+import android.os.Looper
 import com.craftstudio.launcher.R
 import com.craftstudio.launcher.feature.download.enums.ModLoader
 import com.craftstudio.launcher.feature.download.install.InstallHelper
@@ -14,6 +16,7 @@ import com.craftstudio.launcher.modloaders.modpacks.models.ModrinthIndex
 import com.craftstudio.launcher.progresskeeper.DownloaderProgressWrapper
 import com.craftstudio.launcher.utils.TaskExecutors  // ✅ FIX: TaskExecutors import added
 import com.craftstudio.launcher.utils.ZipUtils
+import com.craftstudio.launcher.task.TaskExecutors
 import java.io.File
 import java.util.zip.ZipFile
 
@@ -52,7 +55,7 @@ class ModrinthModPackInstallHelper {
                         ProgressLayout.INSTALL_RESOURCE
                     )
                 )
-                TaskExecutors.runInUIThread {
+                Handler(Looper.getMainLooper()).post {
                     ProgressLayout.setProgress(
                         ProgressLayout.INSTALL_RESOURCE,
                         0,
@@ -62,7 +65,7 @@ class ModrinthModPackInstallHelper {
                     )
                 }
                 ZipUtils.zipExtract(modpackZipFile, "overrides/", targetPath)
-                TaskExecutors.runInUIThread { ProgressLayout.setProgress(ProgressLayout.INSTALL_RESOURCE, 50, R.string.modpack_download_applying_overrides, 2, 2) }
+                Handler(Looper.getMainLooper()).post { ProgressLayout.setProgress(ProgressLayout.INSTALL_RESOURCE, 50, R.string.modpack_download_applying_overrides, 2, 2) }
                 ZipUtils.zipExtract(modpackZipFile, "client-overrides/", targetPath)
                 return createInfo(modrinthIndex)
             }

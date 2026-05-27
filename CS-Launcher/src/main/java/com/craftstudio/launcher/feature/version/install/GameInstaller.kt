@@ -1,12 +1,15 @@
 package com.craftstudio.launcher.feature.version.install
 
 import android.app.Activity
+import android.os.Handler
+import android.os.Looper
 import com.kdt.mcgui.ProgressLayout
 import com.craftstudio.launcher.R
 import com.craftstudio.launcher.event.value.InstallGameEvent
 import com.craftstudio.launcher.feature.log.Logging
 import com.craftstudio.launcher.feature.version.VersionsManager
 import com.craftstudio.launcher.task.Task
+import com.craftstudio.launcher.task.TaskExecutors
 import com.craftstudio.launcher.Tools
 import com.craftstudio.launcher.progresskeeper.ProgressKeeper
 import com.craftstudio.launcher.tasks.AsyncMinecraftDownloader
@@ -30,7 +33,7 @@ class GameInstaller(
         Logging.i("Minecraft Downloader", "Start downloading the version: $realVersion")
 
         if (taskMap.isNotEmpty()) {
-            TaskExecutors.runInUIThread { ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.download_install_download_file, 0, 0, 0) }
+            Handler(Looper.getMainLooper()).post { ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.download_install_download_file, 0, 0, 0) }
         }
 
         val mcVersion = AsyncMinecraftDownloader.getListedVersion(realVersion)
@@ -73,7 +76,7 @@ class GameInstaller(
                         }
 
                         modloaderTask.get()?.let { taskPair ->
-                            TaskExecutors.runInUIThread { ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.mod_download_progress, taskPair.first.addonName) }
+                            Handler(Looper.getMainLooper()).post { ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.mod_download_progress, taskPair.first.addonName) }
 
                             Logging.i("Install Version", "Installing ModLoader: ${taskPair.second.selectedVersion}")
                             val file = taskPair.second.task.run(customVersionName)
