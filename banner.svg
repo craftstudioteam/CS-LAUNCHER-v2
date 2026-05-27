@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 200" width="860" height="200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#060A14"/>
+      <stop offset="100%" stop-color="#0C1020"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#fff"/>
+      <stop offset="30%"  stop-color="#FFD54F"/>
+      <stop offset="60%"  stop-color="#FF8F00"/>
+      <stop offset="100%" stop-color="#E65100"/>
+    </linearGradient>
+    <linearGradient id="sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#FF8F00" stop-opacity="0"/>
+      <stop offset="50%"  stop-color="#FFCC02" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#FF8F00" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="subGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#FF8F00">
+        <animate attributeName="stop-color" values="#FF8F00;#FFCC02;#FF8F00" dur="2.5s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="100%" stop-color="#FFCC02">
+        <animate attributeName="stop-color" values="#FFCC02;#FF8F00;#FFCC02" dur="2.5s" repeatCount="indefinite"/>
+      </stop>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#FF8F00" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FF8F00" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.8" fill="#FF8F00" fill-opacity="0.18"/>
+    </pattern>
+    <filter id="gf" x="-20%" y="-40%" width="140%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="lf" x="-5%" y="-200%" width="110%" height="600%">
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+    <mask id="dm">
+      <radialGradient id="dg" cx="50%" cy="50%" r="50%">
+        <stop offset="20%" stop-color="white" stop-opacity="1"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </radialGradient>
+      <rect width="860" height="200" fill="url(#dg)"/>
+    </mask>
+  </defs>
+
+  <!-- BG -->
+  <rect width="860" height="200" rx="12" fill="url(#bg)"/>
+  <rect width="860" height="200" rx="12" fill="url(#dots)" mask="url(#dm)"/>
+
+  <!-- Ambient glow -->
+  <ellipse cx="430" cy="100" rx="280" ry="100" fill="url(#glow)">
+    <animate attributeName="rx" values="280;320;280" dur="4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;0.7;1" dur="4s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- Border -->
+  <rect x="1" y="1" width="858" height="198" rx="12" fill="none" stroke="#FF8F00" stroke-width="1.2" stroke-opacity="0.2">
+    <animate attributeName="stroke-opacity" values="0.2;0.55;0.2" dur="3s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="6" y="6" width="848" height="188" rx="9" fill="none" stroke="#FF8F00" stroke-width="0.4" stroke-opacity="0.07"/>
+
+  <!-- Corner brackets -->
+  <path d="M20 38 L20 18 L40 18" fill="none" stroke="#FF8F00" stroke-width="2" stroke-linecap="round" stroke-opacity="0.65"/>
+  <path d="M840 38 L840 18 L820 18" fill="none" stroke="#FF8F00" stroke-width="2" stroke-linecap="round" stroke-opacity="0.65"/>
+  <path d="M20 162 L20 182 L40 182" fill="none" stroke="#FF8F00" stroke-width="2" stroke-linecap="round" stroke-opacity="0.65"/>
+  <path d="M840 162 L840 182 L820 182" fill="none" stroke="#FF8F00" stroke-width="2" stroke-linecap="round" stroke-opacity="0.65"/>
+
+  <!-- Side accent lines -->
+  <line x1="18" y1="70" x2="18" y2="130" stroke="#FF8F00" stroke-width="2" stroke-opacity="0.35" stroke-linecap="round"/>
+  <line x1="842" y1="70" x2="842" y2="130" stroke="#FF8F00" stroke-width="2" stroke-opacity="0.35" stroke-linecap="round"/>
+
+  <!-- Particles -->
+  <circle cx="60"  cy="160" r="1.4" fill="#FF8F00" opacity="0"><animate attributeName="cy" values="160;30;160" dur="7s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.7;0" dur="7s" repeatCount="indefinite"/></circle>
+  <circle cx="140" cy="180" r="1"   fill="#FFD54F" opacity="0"><animate attributeName="cy" values="180;40;180" dur="9s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.5;0" dur="9s" repeatCount="indefinite"/></circle>
+  <circle cx="230" cy="170" r="1.6" fill="#FF8F00" opacity="0"><animate attributeName="cy" values="170;20;170" dur="6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.6;0" dur="6s" repeatCount="indefinite"/></circle>
+  <circle cx="340" cy="185" r="0.9" fill="#fff"    opacity="0"><animate attributeName="cy" values="185;35;185" dur="8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.4;0" dur="8s" repeatCount="indefinite"/></circle>
+  <circle cx="430" cy="175" r="1.5" fill="#FFCC02" opacity="0"><animate attributeName="cy" values="175;25;175" dur="5.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.8;0" dur="5.5s" repeatCount="indefinite"/></circle>
+  <circle cx="530" cy="190" r="1"   fill="#FF8F00" opacity="0"><animate attributeName="cy" values="190;50;190" dur="7.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.5;0" dur="7.5s" repeatCount="indefinite"/></circle>
+  <circle cx="630" cy="165" r="1.3" fill="#FFD54F" opacity="0"><animate attributeName="cy" values="165;30;165" dur="10s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.4;0" dur="10s" repeatCount="indefinite"/></circle>
+  <circle cx="720" cy="180" r="1.8" fill="#FF8F00" opacity="0"><animate attributeName="cy" values="180;40;180" dur="8.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.6;0" dur="8.5s" repeatCount="indefinite"/></circle>
+  <circle cx="800" cy="160" r="1"   fill="#00E5FF" opacity="0"><animate attributeName="cy" values="160;25;160" dur="6.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.35;0" dur="6.5s" repeatCount="indefinite"/></circle>
+  <circle cx="110" cy="155" r="0.9" fill="#00E5FF" opacity="0"><animate attributeName="cy" values="155;45;155" dur="11s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.3;0" dur="11s" repeatCount="indefinite"/></circle>
+
+  <!-- 3D shadow layers for CS -->
+  <text x="430" y="112" font-family="'Courier New',Courier,monospace" font-size="100" font-weight="900" text-anchor="middle" fill="#5C2800" opacity="0.45" transform="translate(8,12)">CS</text>
+  <text x="430" y="112" font-family="'Courier New',Courier,monospace" font-size="100" font-weight="900" text-anchor="middle" fill="#A05000" opacity="0.3"  transform="translate(4,6)">CS</text>
+
+  <!-- CS main -->
+  <text x="430" y="112" font-family="'Courier New',Courier,monospace" font-size="100" font-weight="900" text-anchor="middle" fill="url(#titleGrad)" filter="url(#gf)">CS
+    <animate attributeName="fill-opacity" values="1;0.85;1" dur="3s" repeatCount="indefinite"/>
+  </text>
+  <!-- CS glow pulse -->
+  <text x="430" y="112" font-family="'Courier New',Courier,monospace" font-size="100" font-weight="900" text-anchor="middle" fill="#FFD54F" opacity="0" filter="url(#gf)">CS
+    <animate attributeName="opacity" values="0;0.12;0" dur="3s" repeatCount="indefinite"/>
+  </text>
+
+  <!-- LAUNCHER -->
+  <text x="430" y="148" font-family="'Courier New',Courier,monospace" font-size="24" font-weight="700" text-anchor="middle" fill="url(#subGrad)" letter-spacing="10">LAUNCHER</text>
+
+  <!-- Divider line -->
+  <line x1="220" y1="160" x2="640" y2="160" stroke="#FF8F00" stroke-width="1" stroke-opacity="0.25"/>
+  <!-- Sweep -->
+  <rect x="-160" y="158" width="160" height="3" rx="1.5" fill="url(#sweep)" opacity="0.85">
+    <animate attributeName="x" values="-160;860;-160" dur="2.8s" repeatCount="indefinite" calcMode="ease-in-out"/>
+  </rect>
+  <!-- Glow copy of line -->
+  <line x1="220" y1="160" x2="640" y2="160" stroke="#FF8F00" stroke-width="3" stroke-opacity="0.08" filter="url(#lf)"/>
+
+  <!-- Tagline -->
+  <text x="430" y="181" font-family="'Courier New',Courier,monospace" font-size="9.5" text-anchor="middle" fill="#5A6070" letter-spacing="2.5">THE ULTIMATE MINECRAFT UTILITY  ·  OPEN SOURCE  ·  CRAFT STUDIO</text>
+
+  <!-- Badges -->
+  <!-- GPLv3 -->
+  <g transform="translate(246,186)">
+    <rect width="72" height="16" rx="4" fill="#0d1f0d" stroke="#1e4d1e" stroke-width="0.8"/>
+    <rect width="20" height="16" rx="4" fill="#1a6b1a" opacity="0.9"/>
+    <text x="10" y="11" font-family="monospace" font-size="7.5" fill="white" text-anchor="middle" font-weight="700">GPL</text>
+    <text x="46" y="11" font-family="monospace" font-size="7.5" fill="#4caf70" text-anchor="middle">v3 ✓</text>
+  </g>
+  <!-- Android -->
+  <g transform="translate(326,186)">
+    <rect width="74" height="16" rx="4" fill="#0d1f16" stroke="#1a4a2e" stroke-width="0.8"/>
+    <rect width="22" height="16" rx="4" fill="#3DDC84" opacity="0.85"/>
+    <text x="11" y="11" font-family="monospace" font-size="7" fill="#060A14" text-anchor="middle" font-weight="900">APK</text>
+    <text x="49" y="11" font-family="monospace" font-size="7.5" fill="#3DDC84" text-anchor="middle">Android</text>
+  </g>
+  <!-- Active -->
+  <g transform="translate(408,186)">
+    <rect width="72" height="16" rx="4" fill="#1a1000" stroke="#4a2e00" stroke-width="0.8"/>
+    <circle cx="12" cy="8" r="3.5" fill="#FF8F00" opacity="0.9">
+      <animate attributeName="opacity" values="0.9;0.3;0.9" dur="1.4s" repeatCount="indefinite"/>
+    </circle>
+    <text x="44" y="11" font-family="monospace" font-size="7.5" fill="#FFB74D" text-anchor="middle">Active</text>
+  </g>
+  <!-- Open Source -->
+  <g transform="translate(488,186)">
+    <rect width="88" height="16" rx="4" fill="#0a0e20" stroke="#2a2f5a" stroke-width="0.8"/>
+    <rect width="22" height="16" rx="4" fill="#5865F2" opacity="0.85"/>
+    <text x="11" y="11" font-family="monospace" font-size="7" fill="white" text-anchor="middle" font-weight="700">OSS</text>
+    <text x="57" y="11" font-family="monospace" font-size="7.5" fill="#7289da" text-anchor="middle">Open Src</text>
+  </g>
+
+</svg>
