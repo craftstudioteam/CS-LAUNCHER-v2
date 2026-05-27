@@ -2,13 +2,13 @@ package com.craftstudio.launcher.renderer
 
 import android.content.Context
 import com.craftstudio.launcher.feature.log.Logging
+import com.craftstudio.launcher.renderer.renderers.AngleRenderer
 import com.craftstudio.launcher.renderer.renderers.FreedrenoRenderer
 import com.craftstudio.launcher.renderer.renderers.GL4ESRenderer
+import com.craftstudio.launcher.renderer.renderers.LTWRenderer
 import com.craftstudio.launcher.renderer.renderers.PanfrostRenderer
 import com.craftstudio.launcher.renderer.renderers.VirGLRenderer
 import com.craftstudio.launcher.renderer.renderers.VulkanZinkRenderer
-import com.craftstudio.launcher.Architecture
-import com.craftstudio.launcher.Tools
 
 /**
  * 启动器所有渲染器总管理者，启动器内置的渲染器与渲染器插件加载的渲染器，都会加载到这里
@@ -30,9 +30,11 @@ object Renderers {
         }
 
         addRenderers(
-            VulkanZinkRenderer(),
-            VirGLRenderer(),
             GL4ESRenderer(),
+            VirGLRenderer(),
+            VulkanZinkRenderer(),
+            LTWRenderer(),
+            AngleRenderer(),
             FreedrenoRenderer(),
             PanfrostRenderer()
         )

@@ -184,9 +184,11 @@ class LaunchGame {
         private fun getRendererJVMArgs(): String {
             val renderer = Renderers.getCurrentRenderer()
             val rendererId = renderer.getRendererId()
-            return if (rendererId.startsWith("opengles")) {
-                " -Dorg.lwjgl.opengl.libname=${renderer.getRendererLibrary()}"
-            } else ""
+            return when {
+                rendererId.startsWith("opengles") -> " -Dorg.lwjgl.opengl.libname=${renderer.getRendererLibrary()}"
+                rendererId == "ltw_render" -> " -Dorg.lwjgl.opengl.libname=${renderer.getRendererLibrary()}"
+                else -> ""
+            }
         }
 
         private fun getRuntime(activity: Activity, version: Version, targetJavaVersion: Int): String {

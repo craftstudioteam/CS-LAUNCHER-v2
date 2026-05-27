@@ -185,6 +185,10 @@ public final class JREUtils {
         if (customRenderer != null) {
             ldLibraryPath.append(customRenderer.getPath()).append(":");
         }
+        String vulkanDriverPath = DriverPluginManager.getDriver().getPath();
+        if (vulkanDriverPath != null && !vulkanDriverPath.isEmpty()) {
+            ldLibraryPath.append(vulkanDriverPath).append(":");
+        }
         ldLibraryPath.append(jreHome)
                 .append("/").append(Tools.DIRNAME_HOME_JRE)
                 .append("/jli:").append(jreHome).append("/").append(Tools.DIRNAME_HOME_JRE)
@@ -245,6 +249,11 @@ public final class JREUtils {
             envMap.put("LIBGL_NOINTOVLHACK", "1");
             envMap.put("LIBGL_NORMALIZE", "1");
             envMap.put("LIBGL_FB", "1");
+        } else if (rendererId.equals("ltw_render")) {
+            envMap.put("LIBGL_ES", "3");
+            envMap.put("LIBGL_GL", "30");
+            envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "ltw");
+            envMap.put("GALLIUM_DRIVER", "ltw");
         }
 
         envMap.putAll(currentRenderer.getRendererEnv().getValue());

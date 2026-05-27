@@ -3,6 +3,9 @@ package com.craftstudio.launcher.plugins.driver
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import com.craftstudio.launcher.setting.AllSettings
+import com.craftstudio.launcher.utils.path.PathManager
+import com.craftstudio.launcher.utils.ZipUtils
+import java.io.File
 
 /**
  * FCL 驱动器插件
@@ -25,13 +28,47 @@ object DriverPluginManager {
     fun getDriver(): Driver = currentDriver
 
     /**
+     * 导入本地驱动器插件 (.zip)
+     */
+    fun importLocalDriverPlugin(pluginFile: File): Boolean {
+        if (!pluginFile.exists() || !pluginFile.isFile) return false
+        
+        return try {
+            val driverFolder = File(PathManager.DIR_INSTALLED_RENDERER_PLUGIN, "vulkan_drivers/" + pluginFile.nameWithoutExtension)
+            if (!driverFolder.exists()) driverFolder.mkdirs()
+            
+            ZipUtils.zipExtract(pluginFile.absolutePath, driverFolder.absolutePath)
+            
+            // Add to list if not already there
+            if (driverList.none { it.driver == pluginFile.nameWithoutExtension }) {
+                driverList.add(Driver(pluginFile.nameWithoutExtension, driverFolder.absolutePath))
+            }
+            true
+        } catch (e: Exception) {
+            com.craftstudio.launcher.feature.log.Logging.e("DriverImport", "Failed to import driver", e)
+            false
+        }
+    }
+
+    /**
      * 初始化驱动器
-     * @param reset 是否清除已有插件
      */
     fun initDriver(context: Context, reset: Boolean) {
         if (reset) driverList.clear()
-        driverList.add(Driver("Turnip", context.applicationInfo.nativeLibraryDir))
-        setDriverByName(AllSettings.driver.getValue())
+        driverList.add(Driver("System Default", ""))
+        driverList.add(Driver("Custom Turnip / Freedreno", context.applicationInfo.nativeLibraryDir))
+        
+        // Scan for installed drivers
+        val driverBaseDir = File(PathManager.DIR_INSTALLED_RENDERER_PLUGIN, "vulkan_drivers")
+        if (driverBaseDir.exists() && driverBaseDir.isDirectory) {
+            driverBaseDir.listFiles()?.forEach { 
+                if (it.isDirectory) {
+                    driverList.add(Driver(it.name, it.absolutePath))
+                }
+            }
+        }
+        
+        setDriverByName(AllSettings.vulkanDriver.getValue())
     }
 
     /**

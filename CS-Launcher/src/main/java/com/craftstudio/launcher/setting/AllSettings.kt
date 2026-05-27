@@ -20,6 +20,9 @@ class AllSettings {
         val driver = StringSettingUnit("driver", "Turnip")
 
         @JvmStatic
+        val vulkanDriver = StringSettingUnit("vulkan_driver", "system")
+
+        @JvmStatic
         val ignoreNotch = BooleanSettingUnit("ignoreNotch", true)
 
         @JvmStatic

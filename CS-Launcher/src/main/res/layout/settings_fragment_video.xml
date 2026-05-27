@@ -378,6 +378,136 @@
                 </LinearLayout>
             </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
 
+            <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                android:id="@+id/vulkan_driver_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_vid_row"
+                android:minHeight="78dp"
+                android:padding="14dp"
+                android:stateListAnimator="@animator/anim_vid_pro_press">
+
+                <View
+                    android:id="@+id/vulkan_driver_accent"
+                    android:layout_width="4dp"
+                    android:layout_height="44dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/bg_vid_accent_line" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="16dp"
+                    android:layout_toEndOf="@id/vulkan_driver_accent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingEnd="12dp">
+
+                        <TextView
+                            android:id="@+id/vulkan_driver_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="Vulkan Driver"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/vulkan_driver_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:background="@drawable/bg_vid_value_chip"
+                            android:fontFamily="sans-serif"
+                            android:paddingStart="10dp"
+                            android:paddingTop="4dp"
+                            android:paddingEnd="10dp"
+                            android:paddingBottom="4dp"
+                            android:text="System Default"
+                            android:textColor="#24B538"
+                            android:textSize="11sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
+            <com.craftstudio.launcher.ui.layout.AnimRelativeLayout
+                android:id="@+id/vulkan_driver_import_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_vid_row"
+                android:minHeight="78dp"
+                android:padding="14dp"
+                android:stateListAnimator="@animator/anim_vid_pro_press">
+
+                <View
+                    android:id="@+id/vulkan_import_accent"
+                    android:layout_width="4dp"
+                    android:layout_height="44dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/bg_vid_accent_line" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="16dp"
+                    android:layout_toEndOf="@id/vulkan_import_accent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingEnd="12dp">
+
+                        <TextView
+                            android:id="@+id/vulkan_driver_import_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="Import Custom Driver"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/vulkan_driver_import_summary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Select a .zip file containing Turnip drivers"
+                            android:textColor="#80FFFFFF"
+                            android:textSize="11sp" />
+
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/vulkan_driver_import_manage"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:background="@drawable/bg_vid_action_btn"
+                        android:contentDescription="Import Driver"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_download"
+                        app:tint="#24B538" />
+
+                </LinearLayout>
+            </com.craftstudio.launcher.ui.layout.AnimRelativeLayout>
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <LinearLayout

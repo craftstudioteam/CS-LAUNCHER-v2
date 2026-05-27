@@ -41,6 +41,7 @@ import java.io.File
 class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragment_video, SettingCategory.VIDEO) {
     private lateinit var binding: SettingsFragmentVideoBinding
     private lateinit var openDocumentLauncher: ActivityResultLauncher<Any>
+    private var isImportingDriver = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,13 +61,18 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
                     pluginFiles?.let { files ->
                         var requiresRestart = false
                         files.forEach { pluginFile ->
-                            val info = if (RendererPluginManager.importLocalRendererPlugin(pluginFile)) {
-                                requiresRestart = true
-                                "The renderer plugin has been successfully imported!"
+                            val success = if (isImportingDriver) {
+                                DriverPluginManager.importLocalDriverPlugin(pluginFile)
                             } else {
-                                "The renderer plugin import failed!"
+                                RendererPluginManager.importLocalRendererPlugin(pluginFile)
                             }
-                            Logging.i("VideoSettings", info)
+
+                            if (success) {
+                                requiresRestart = true
+                                Logging.i("VideoSettings", "The plugin has been successfully imported!")
+                            } else {
+                                Logging.i("VideoSettings", "The plugin import failed!")
+                            }
                             FileUtils.deleteQuietly(pluginFile)
                         }
                         TaskExecutors.runInUIThread {
@@ -89,6 +95,7 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
                     Tools.showErrorRemote(e)
                 }.finallyTask(TaskExecutors.getAndroidUI()) {
                     dialog.dismiss()
+                    isImportingDriver = false
                 }.execute()
             }
         }
@@ -115,7 +122,9 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             binding.rendererValue,
             renderers.rendererNames.toTypedArray(),
             renderers.rendererIdentifier.toTypedArray()
-        )
+        ).setOnSaveListener {
+            computeVisibility()
+        }
 
         binding.rendererDownload.setOnClickListener { ZHTools.openLink(context, UrlManager.URL_FCL_RENDERER_PLUGIN) }
 
@@ -123,6 +132,7 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             context,
             binding.rendererLocalImportLayout
         ) {
+            isImportingDriver = false
             openDocumentLauncher.launch("zip")
         }
 
@@ -144,6 +154,24 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
         )
 
         binding.driverDownload.setOnClickListener { ZHTools.openLink(context, UrlManager.URL_FCL_DRIVER_PLUGIN) }
+
+        val vulkanDriverNames = DriverPluginManager.getDriverNameList().toTypedArray()
+        ListSettingsWrapper(
+            context,
+            AllSettings.vulkanDriver,
+            binding.vulkanDriverLayout,
+            binding.vulkanDriverTitle,
+            binding.vulkanDriverValue,
+            vulkanDriverNames,
+            vulkanDriverNames
+        ).setOnSaveListener {
+            DriverPluginManager.setDriverByName(AllSettings.vulkanDriver.getValue())
+        }
+
+        binding.vulkanDriverImportManage.setOnClickListener {
+            isImportingDriver = true
+            openDocumentLauncher.launch("zip")
+        }
 
         val ignoreNotch = SwitchSettingsWrapper(
             context,
@@ -265,6 +293,13 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
     private fun computeVisibility() {
         binding.apply {
             binding.forceVsyncLayout.visibility = if (AllSettings.alternateSurface.getValue()) View.VISIBLE else View.GONE
+            
+            val currentRendererId = AllSettings.renderer.getValue()
+            val isVulkan = currentRendererId == "0fa435e2-46df-45c9-906c-b29606aaef00" || // Zink
+                           currentRendererId == "1e7845f3-3158-469b-980b-967969149492"    // Freedreno (if any)
+            
+            binding.vulkanDriverLayout.visibility = if (isVulkan) View.VISIBLE else View.GONE
+            binding.vulkanDriverImportLayout.visibility = if (isVulkan) View.VISIBLE else View.GONE
         }
     }
 

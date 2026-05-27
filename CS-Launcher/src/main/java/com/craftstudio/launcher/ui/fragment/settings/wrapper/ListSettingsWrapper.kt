@@ -38,6 +38,13 @@ class ListSettingsWrapper(
         mainView.setOnClickListener { createAListDialog() }
     }
 
+    private var onSaveListener: (() -> Unit)? = null
+
+    fun setOnSaveListener(listener: () -> Unit): ListSettingsWrapper {
+        this.onSaveListener = listener
+        return this
+    }
+
     private fun createAListDialog() {
         val index = entryValues.indexOf(unit.getValue())
         AlertDialog.Builder(context, R.style.CustomAlertDialogTheme)
@@ -47,6 +54,7 @@ class ListSettingsWrapper(
                     val selectedValue = entryValues[which]
                     unit.put(selectedValue).save()
                     updateListViewValue()
+                    onSaveListener?.invoke()
                     checkShowRebootDialog(context)
                 }
                 dialog.dismiss()

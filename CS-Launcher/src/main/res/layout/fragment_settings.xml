@@ -162,8 +162,7 @@
                             android:letterSpacing="0.06"
                             android:layout_toEndOf="@id/icon_bg_video"
                             android:layout_marginStart="14dp"
-                            android:layout_centerVertical="true"
-                            android:layout_toStartOf="@id/divider_v_video" />
+                            android:layout_centerVertical="true" />
 
                         <!-- Vertical divider -->
                         <View
@@ -173,12 +172,12 @@
                             android:background="#333333"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="16dp"
-                            android:layout_toStartOf="@id/tv_video_desc" />
+                            android:layout_toEndOf="@id/tv_video_title" />
 
                         <!-- Description -->
                         <TextView
                             android:id="@+id/tv_video_desc"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Adjust graphics, resolution and performance"
                             android:textColor="#888888"
@@ -254,8 +253,7 @@
                             android:letterSpacing="0.06"
                             android:layout_toEndOf="@id/icon_bg_controls"
                             android:layout_marginStart="14dp"
-                            android:layout_centerVertical="true"
-                            android:layout_toStartOf="@id/divider_v_controls" />
+                            android:layout_centerVertical="true" />
 
                         <View
                             android:id="@+id/divider_v_controls"
@@ -264,11 +262,11 @@
                             android:background="#333333"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="16dp"
-                            android:layout_toStartOf="@id/tv_controls_desc" />
+                            android:layout_toEndOf="@id/tv_controls_title" />
 
                         <TextView
                             android:id="@+id/tv_controls_desc"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Customize touch, gamepad and input"
                             android:textColor="#888888"
@@ -342,8 +340,7 @@
                             android:letterSpacing="0.06"
                             android:layout_toEndOf="@id/icon_bg_game"
                             android:layout_marginStart="14dp"
-                            android:layout_centerVertical="true"
-                            android:layout_toStartOf="@id/divider_v_game" />
+                            android:layout_centerVertical="true" />
 
                         <View
                             android:id="@+id/divider_v_game"
@@ -352,11 +349,11 @@
                             android:background="#333333"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="16dp"
-                            android:layout_toStartOf="@id/tv_game_desc" />
+                            android:layout_toEndOf="@id/tv_game_title" />
 
                         <TextView
                             android:id="@+id/tv_game_desc"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Configure gameplay and world settings"
                             android:textColor="#888888"
@@ -430,8 +427,7 @@
                             android:letterSpacing="0.06"
                             android:layout_toEndOf="@id/icon_bg_launcher"
                             android:layout_marginStart="14dp"
-                            android:layout_centerVertical="true"
-                            android:layout_toStartOf="@id/divider_v_launcher" />
+                            android:layout_centerVertical="true" />
 
                         <View
                             android:id="@+id/divider_v_launcher"
@@ -440,11 +436,11 @@
                             android:background="#333333"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="16dp"
-                            android:layout_toStartOf="@id/tv_launcher_desc" />
+                            android:layout_toEndOf="@id/tv_launcher_title" />
 
                         <TextView
                             android:id="@+id/tv_launcher_desc"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Manage launcher behavior and options"
                             android:textColor="#888888"
@@ -518,8 +514,7 @@
                             android:letterSpacing="0.06"
                             android:layout_toEndOf="@id/icon_bg_experimental"
                             android:layout_marginStart="14dp"
-                            android:layout_centerVertical="true"
-                            android:layout_toStartOf="@id/divider_v_experimental" />
+                            android:layout_centerVertical="true" />
 
                         <View
                             android:id="@+id/divider_v_experimental"
@@ -528,11 +523,11 @@
                             android:background="#333333"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="16dp"
-                            android:layout_toStartOf="@id/tv_experimental_desc" />
+                            android:layout_toEndOf="@id/tv_experimental_title" />
 
                         <TextView
                             android:id="@+id/tv_experimental_desc"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Try new features and experimental options"
                             android:textColor="#888888"
@@ -606,8 +601,7 @@
                             android:letterSpacing="0.06"
                             android:layout_toEndOf="@id/icon_bg_appearance"
                             android:layout_marginStart="14dp"
-                            android:layout_centerVertical="true"
-                            android:layout_toStartOf="@id/divider_v_appearance" />
+                            android:layout_centerVertical="true" />
 
                         <View
                             android:id="@+id/divider_v_appearance"
@@ -616,11 +610,11 @@
                             android:background="#333333"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="16dp"
-                            android:layout_toStartOf="@id/tv_appearance_desc" />
+                            android:layout_toEndOf="@id/tv_appearance_title" />
 
                         <TextView
                             android:id="@+id/tv_appearance_desc"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Customize theme and visual preferences"
                             android:textColor="#888888"
