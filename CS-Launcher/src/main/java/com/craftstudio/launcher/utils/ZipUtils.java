@@ -11,6 +11,8 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.craftstudio.launcher.utils.FileUtils;
+
 public class ZipUtils {
     /**
      * Gets an InputStream for a given ZIP entry, throwing an IOException if the ZIP entry does not
