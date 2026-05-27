@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212"
+    android:background="#0A0A0A"
     android:orientation="vertical"
     tools:context="com.craftstudio.launcher.ui.fragment.SettingsFragment">
 
@@ -15,229 +15,680 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Settings"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="24dp" />
+            <!-- Header Section -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="#0A0A0A"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="16dp">
 
-            <!-- Video Settings -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_video"
+                <!-- Top: Logo top-left -->
+                <ImageView
+                    android:id="@+id/iv_logo"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@mipmap/ic_launcher"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    app:tint="#FF8F00" />
+
+                <!-- Gear icon top-right -->
+                <ImageView
+                    android:id="@+id/iv_gear"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:src="@drawable/ic_settings"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="-8dp"
+                    app:tint="#FF8F00"
+                    android:alpha="0.9" />
+
+                <!-- SETTINGS title -->
+                <TextView
+                    android:id="@+id/tv_settings_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SETTINGS"
+                    android:textColor="#FFFFFF"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed"
+                    android:letterSpacing="0.08"
+                    android:layout_below="@id/iv_logo"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Left orange bar accent -->
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="52dp"
+                    android:background="#FF8F00"
+                    android:layout_alignTop="@id/tv_settings_title"
+                    android:layout_marginStart="-12dp"
+                    android:layout_toStartOf="@id/tv_settings_title"
+                    android:layout_alignParentStart="true"
+                    android:visibility="gone" />
+
+                <!-- Subtitle -->
+                <TextView
+                    android:id="@+id/tv_settings_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Customize your experience"
+                    android:textColor="#999999"
+                    android:textSize="14sp"
+                    android:layout_below="@id/tv_settings_title"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="2dp" />
+
+                <!-- Orange divider line -->
+                <View
+                    android:id="@+id/divider_header"
+                    android:layout_width="80dp"
+                    android:layout_height="3dp"
+                    android:background="#FF8F00"
+                    android:layout_below="@id/tv_settings_subtitle"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="12dp" />
+
+            </RelativeLayout>
+
+            <!-- Cards Section -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#1E1E1E"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#FFB74D"
-                app:strokeWidth="1dp">
-                
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-                    
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_video"
-                        app:tint="#FFB74D" />
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Video Settings"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="80dp">
 
-            <!-- Control Settings -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_controls"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#1E1E1E"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#FFB74D"
-                app:strokeWidth="1dp">
-                
-                <LinearLayout
+                <!-- Video Settings -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_video"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-                    
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_control"
-                        app:tint="#FFB74D" />
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Controls"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    android:layout_marginBottom="10dp"
+                    app:cardBackgroundColor="#161616"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#FF8F00"
+                    app:strokeWidth="1dp">
 
-            <!-- Game Settings -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_game"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#1E1E1E"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#FFB74D"
-                app:strokeWidth="1dp">
-                
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-                    
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_game"
-                        app:tint="#FFB74D" />
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Game"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="16dp">
 
-            <!-- Launcher Settings -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_launcher"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#1E1E1E"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#FFB74D"
-                app:strokeWidth="1dp">
-                
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-                    
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@mipmap/ic_launcher"
-                        app:tint="#FFB74D" />
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Launcher"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        <!-- Icon hexagon background -->
+                        <FrameLayout
+                            android:id="@+id/icon_bg_video"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentStart="true">
 
-            <!-- Experimental Settings -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_experimental"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#1E1E1E"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#FFB74D"
-                app:strokeWidth="1dp">
-                
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-                    
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_experimental"
-                        app:tint="#FFB74D" />
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Experimental"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                            <ImageView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/ic_hexagon_bg"
+                                app:tint="#FF8F00"
+                                android:alpha="0.25" />
 
-            <!-- Appearance Settings -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_appearance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#1E1E1E"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#FFB74D"
-                app:strokeWidth="1dp">
-                
-                <LinearLayout
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_video"
+                                android:layout_gravity="center"
+                                app:tint="#FF8F00" />
+                        </FrameLayout>
+
+                        <!-- Title -->
+                        <TextView
+                            android:id="@+id/tv_video_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="VIDEO SETTINGS"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-condensed"
+                            android:letterSpacing="0.06"
+                            android:layout_toEndOf="@id/icon_bg_video"
+                            android:layout_marginStart="14dp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/divider_v_video" />
+
+                        <!-- Vertical divider -->
+                        <View
+                            android:id="@+id/divider_v_video"
+                            android:layout_width="1dp"
+                            android:layout_height="36dp"
+                            android:background="#333333"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="16dp"
+                            android:layout_toStartOf="@id/tv_video_desc" />
+
+                        <!-- Description -->
+                        <TextView
+                            android:id="@+id/tv_video_desc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Adjust graphics, resolution and performance"
+                            android:textColor="#888888"
+                            android:textSize="12sp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/iv_arrow_video"
+                            android:layout_marginEnd="12dp"
+                            android:layout_marginStart="0dp"
+                            android:layout_toEndOf="@id/divider_v_video" />
+
+                        <!-- Arrow -->
+                        <ImageView
+                            android:id="@+id/iv_arrow_video"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_chevron_right"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            app:tint="#FF8F00" />
+
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Controls -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_controls"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-                    
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_appearance"
-                        app:tint="#FFB74D" />
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Appearance"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    android:layout_marginBottom="10dp"
+                    app:cardBackgroundColor="#161616"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#FF8F00"
+                    app:strokeWidth="1dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="16dp">
+
+                        <FrameLayout
+                            android:id="@+id/icon_bg_controls"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentStart="true">
+
+                            <ImageView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/ic_hexagon_bg"
+                                app:tint="#FF8F00"
+                                android:alpha="0.25" />
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_control"
+                                android:layout_gravity="center"
+                                app:tint="#FF8F00" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tv_controls_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CONTROLS"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-condensed"
+                            android:letterSpacing="0.06"
+                            android:layout_toEndOf="@id/icon_bg_controls"
+                            android:layout_marginStart="14dp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/divider_v_controls" />
+
+                        <View
+                            android:id="@+id/divider_v_controls"
+                            android:layout_width="1dp"
+                            android:layout_height="36dp"
+                            android:background="#333333"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="16dp"
+                            android:layout_toStartOf="@id/tv_controls_desc" />
+
+                        <TextView
+                            android:id="@+id/tv_controls_desc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Customize touch, gamepad and input"
+                            android:textColor="#888888"
+                            android:textSize="12sp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/iv_arrow_controls"
+                            android:layout_marginEnd="12dp"
+                            android:layout_toEndOf="@id/divider_v_controls" />
+
+                        <ImageView
+                            android:id="@+id/iv_arrow_controls"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_chevron_right"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            app:tint="#FF8F00" />
+
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Game -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_game"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    app:cardBackgroundColor="#161616"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#FF8F00"
+                    app:strokeWidth="1dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="16dp">
+
+                        <FrameLayout
+                            android:id="@+id/icon_bg_game"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentStart="true">
+
+                            <ImageView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/ic_hexagon_bg"
+                                app:tint="#FF8F00"
+                                android:alpha="0.25" />
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_game"
+                                android:layout_gravity="center"
+                                app:tint="#FF8F00" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tv_game_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="GAME"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-condensed"
+                            android:letterSpacing="0.06"
+                            android:layout_toEndOf="@id/icon_bg_game"
+                            android:layout_marginStart="14dp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/divider_v_game" />
+
+                        <View
+                            android:id="@+id/divider_v_game"
+                            android:layout_width="1dp"
+                            android:layout_height="36dp"
+                            android:background="#333333"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="16dp"
+                            android:layout_toStartOf="@id/tv_game_desc" />
+
+                        <TextView
+                            android:id="@+id/tv_game_desc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Configure gameplay and world settings"
+                            android:textColor="#888888"
+                            android:textSize="12sp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/iv_arrow_game"
+                            android:layout_marginEnd="12dp"
+                            android:layout_toEndOf="@id/divider_v_game" />
+
+                        <ImageView
+                            android:id="@+id/iv_arrow_game"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_chevron_right"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            app:tint="#FF8F00" />
+
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Launcher -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_launcher"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    app:cardBackgroundColor="#161616"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#FF8F00"
+                    app:strokeWidth="1dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="16dp">
+
+                        <FrameLayout
+                            android:id="@+id/icon_bg_launcher"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentStart="true">
+
+                            <ImageView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/ic_hexagon_bg"
+                                app:tint="#FF8F00"
+                                android:alpha="0.25" />
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@mipmap/ic_launcher"
+                                android:layout_gravity="center"
+                                app:tint="#FF8F00" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tv_launcher_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="LAUNCHER"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-condensed"
+                            android:letterSpacing="0.06"
+                            android:layout_toEndOf="@id/icon_bg_launcher"
+                            android:layout_marginStart="14dp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/divider_v_launcher" />
+
+                        <View
+                            android:id="@+id/divider_v_launcher"
+                            android:layout_width="1dp"
+                            android:layout_height="36dp"
+                            android:background="#333333"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="16dp"
+                            android:layout_toStartOf="@id/tv_launcher_desc" />
+
+                        <TextView
+                            android:id="@+id/tv_launcher_desc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Manage launcher behavior and options"
+                            android:textColor="#888888"
+                            android:textSize="12sp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/iv_arrow_launcher"
+                            android:layout_marginEnd="12dp"
+                            android:layout_toEndOf="@id/divider_v_launcher" />
+
+                        <ImageView
+                            android:id="@+id/iv_arrow_launcher"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_chevron_right"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            app:tint="#FF8F00" />
+
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Experimental -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_experimental"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    app:cardBackgroundColor="#161616"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#FF8F00"
+                    app:strokeWidth="1dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="16dp">
+
+                        <FrameLayout
+                            android:id="@+id/icon_bg_experimental"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentStart="true">
+
+                            <ImageView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/ic_hexagon_bg"
+                                app:tint="#FF8F00"
+                                android:alpha="0.25" />
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_experimental"
+                                android:layout_gravity="center"
+                                app:tint="#FF8F00" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tv_experimental_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="EXPERIMENTAL"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-condensed"
+                            android:letterSpacing="0.06"
+                            android:layout_toEndOf="@id/icon_bg_experimental"
+                            android:layout_marginStart="14dp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/divider_v_experimental" />
+
+                        <View
+                            android:id="@+id/divider_v_experimental"
+                            android:layout_width="1dp"
+                            android:layout_height="36dp"
+                            android:background="#333333"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="16dp"
+                            android:layout_toStartOf="@id/tv_experimental_desc" />
+
+                        <TextView
+                            android:id="@+id/tv_experimental_desc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Try new features and experimental options"
+                            android:textColor="#888888"
+                            android:textSize="12sp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/iv_arrow_experimental"
+                            android:layout_marginEnd="12dp"
+                            android:layout_toEndOf="@id/divider_v_experimental" />
+
+                        <ImageView
+                            android:id="@+id/iv_arrow_experimental"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_chevron_right"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            app:tint="#FF8F00" />
+
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Appearance -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_appearance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    app:cardBackgroundColor="#161616"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#FF8F00"
+                    app:strokeWidth="1dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="16dp">
+
+                        <FrameLayout
+                            android:id="@+id/icon_bg_appearance"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentStart="true">
+
+                            <ImageView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/ic_hexagon_bg"
+                                app:tint="#FF8F00"
+                                android:alpha="0.25" />
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_appearance"
+                                android:layout_gravity="center"
+                                app:tint="#FF8F00" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tv_appearance_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="APPEARANCE"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-condensed"
+                            android:letterSpacing="0.06"
+                            android:layout_toEndOf="@id/icon_bg_appearance"
+                            android:layout_marginStart="14dp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/divider_v_appearance" />
+
+                        <View
+                            android:id="@+id/divider_v_appearance"
+                            android:layout_width="1dp"
+                            android:layout_height="36dp"
+                            android:background="#333333"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="16dp"
+                            android:layout_toStartOf="@id/tv_appearance_desc" />
+
+                        <TextView
+                            android:id="@+id/tv_appearance_desc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Customize theme and visual preferences"
+                            android:textColor="#888888"
+                            android:textSize="12sp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/iv_arrow_appearance"
+                            android:layout_marginEnd="12dp"
+                            android:layout_toEndOf="@id/divider_v_appearance" />
+
+                        <ImageView
+                            android:id="@+id/iv_arrow_appearance"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_chevron_right"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            app:tint="#FF8F00" />
+
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Footer Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:background="#0D0D0D"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:gravity="center_vertical"
+        android:layout_gravity="bottom">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_info"
+            app:tint="#FF8F00" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CS LAUNCHER V2"
+            android:textColor="#FF8F00"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-condensed"
+            android:letterSpacing="0.08"
+            android:layout_marginStart="6dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="20dp"
+            android:background="#444444"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Version 2.0.0"
+            android:textColor="#666666"
+            android:textSize="11sp" />
+
+    </LinearLayout>
 
 </LinearLayout>
