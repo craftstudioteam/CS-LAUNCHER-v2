@@ -35,28 +35,32 @@ class NeoForgeDownloadTask(neoforgeVersion: String) : InstallTask, DownloaderFee
         if (if (mLoaderVersion!!.contains("1.20.1")) determineNeoForgedForgeDownloadUrl() else determineNeoForgeDownloadUrl()) {
             outputFile = downloadNeoForge()
         }
-        ProgressLayout.clearProgress(ProgressLayout.INSTALL_RESOURCE)
+        com.craftstudio.launcher.task.TaskExecutors.runInUIThread { ProgressLayout.clearProgress(ProgressLayout.INSTALL_RESOURCE) }
         return outputFile
     }
 
     override fun updateProgress(curr: Long, max: Long) {
         val progress100 = ((curr.toFloat() / max.toFloat()) * 100f).toInt()
-        ProgressKeeper.submitProgress(
-            ProgressLayout.INSTALL_RESOURCE,
-            progress100,
-            R.string.mod_download_progress,
-            mLoaderVersion
-        )
+        com.craftstudio.launcher.task.TaskExecutors.runInUIThread {
+            ProgressKeeper.submitProgress(
+                ProgressLayout.INSTALL_RESOURCE,
+                progress100,
+                R.string.mod_download_progress,
+                mLoaderVersion
+            )
+        }
     }
 
     @Throws(Exception::class)
     private fun downloadNeoForge(): File {
-        ProgressKeeper.submitProgress(
-            ProgressLayout.INSTALL_RESOURCE,
-            0,
-            R.string.mod_download_progress,
-            mLoaderVersion
-        )
+        com.craftstudio.launcher.task.TaskExecutors.runInUIThread {
+            ProgressKeeper.submitProgress(
+                ProgressLayout.INSTALL_RESOURCE,
+                0,
+                R.string.mod_download_progress,
+                mLoaderVersion
+            )
+        }
         val destinationFile = File(PathManager.DIR_CACHE, "neoforge-installer.jar")
         val buffer = ByteArray(8192)
         DownloadUtils.downloadFileMonitored(mDownloadUrl, destinationFile, buffer, this)
@@ -65,11 +69,13 @@ class NeoForgeDownloadTask(neoforgeVersion: String) : InstallTask, DownloaderFee
 
     private fun determineDownloadUrl(findVersion: Boolean): Boolean {
         if (mDownloadUrl != null && mLoaderVersion != null) return true
-        ProgressKeeper.submitProgress(
-            ProgressLayout.INSTALL_RESOURCE,
-            0,
-            R.string.mod_neoforge_searching
-        )
+        com.craftstudio.launcher.task.TaskExecutors.runInUIThread {
+            ProgressKeeper.submitProgress(
+                ProgressLayout.INSTALL_RESOURCE,
+                0,
+                R.string.mod_neoforge_searching
+            )
+        }
         if (!findVersion) {
             throw IOException("Version not found")
         }

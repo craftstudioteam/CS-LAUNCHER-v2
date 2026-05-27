@@ -145,9 +145,6 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         // Set the sustained performance mode for available APIs
         window.setSustainedPerformanceMode(AllSettings.getSustainedPerformance().getValue());
 
-        // 防止系统息屏
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         ControlLayout controlLayout = binding.mainControlLayout;
         mControlSettingsBinding = ViewControlMenuBinding.inflate(getLayoutInflater());
         new ControlMenu(this, this, mControlSettingsBinding, controlLayout, false);

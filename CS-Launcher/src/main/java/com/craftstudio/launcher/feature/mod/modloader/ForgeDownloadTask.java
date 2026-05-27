@@ -45,11 +45,11 @@ public class ForgeDownloadTask implements InstallTask, Tools.DownloaderFeedback 
     @Override
     public void updateProgress(long curr, long max) {
         int progress100 = (int)(((float)curr / (float)max)*100f);
-        ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, progress100, R.string.mod_download_progress, mFullVersion);
+        com.craftstudio.launcher.task.TaskExecutors.runInUIThread(() -> ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, progress100, R.string.mod_download_progress, mFullVersion));
     }
 
     private File downloadForge() throws Exception {
-        ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.mod_download_progress, mFullVersion);
+        com.craftstudio.launcher.task.TaskExecutors.runInUIThread(() -> ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.mod_download_progress, mFullVersion));
         File destinationFile = new File(PathManager.DIR_CACHE, "forge-installer.jar");
         byte[] buffer = new byte[8192];
         DownloadUtils.downloadFileMonitored(mDownloadUrl, destinationFile, buffer, this);
@@ -58,7 +58,7 @@ public class ForgeDownloadTask implements InstallTask, Tools.DownloaderFeedback 
 
     public boolean determineDownloadUrl() throws Exception {
         if (mDownloadUrl != null && mFullVersion != null) return true;
-        ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.mod_forge_searching);
+        com.craftstudio.launcher.task.TaskExecutors.runInUIThread(() -> ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.mod_forge_searching));
         if (!findVersion()) {
             throw new IOException("Version not found");
         }

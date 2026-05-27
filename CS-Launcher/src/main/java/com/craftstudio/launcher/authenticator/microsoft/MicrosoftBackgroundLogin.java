@@ -302,8 +302,8 @@ public class MicrosoftBackgroundLogin {
     }
 
     /** Wrapper to ease notifying the listener */
-    private void notifyProgress(int step, String stepString) {
-        ProgressLayout.setProgress(ProgressLayout.LOGIN_ACCOUNT, step * 20, R.string.account_login_microsoft_progress, stepString);
+    private void setStep(int step, String stepString) {
+        TaskExecutors.runInUIThread(() -> ProgressLayout.setProgress(ProgressLayout.LOGIN_ACCOUNT, step * 20, R.string.account_login_microsoft_progress, stepString));
     }
 
 

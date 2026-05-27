@@ -79,7 +79,7 @@ public class MinecraftDownloader {
     private void downloadGame(JMinecraftVersionList.Version verInfo, String versionName) throws Exception {
         // Put up a dummy progress line, for the activity to start the service and do all the other necessary
         // work to keep the launcher alive. We will replace this line when we will start downloading stuff.
-        ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.newdl_starting);
+        TaskExecutors.runInUIThread(() -> ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0, R.string.newdl_starting));
         SpeedCalculator speedCalculator = new SpeedCalculator();
 
         mTargetJarFile = createGameJarPath(versionName);
@@ -140,17 +140,17 @@ public class MinecraftDownloader {
     private void reportProgressFileCounter(double speed) {
         long dlFileCounter = mProcessedFileCounter.get();
         int progress = (int)((dlFileCounter * 100L) / mTotalFileCount);
-        ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, progress,
+        TaskExecutors.runInUIThread(() -> ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, progress,
                 R.string.newdl_downloading_game_files, dlFileCounter,
-                mTotalFileCount, speed);
+                mTotalFileCount, speed));
     }
     private void reportProgressSizeCounter(double speed) {
         long dlFileSize = mProcessedSizeCounter.get();
         double dlSizeMegabytes = (double) dlFileSize / ONE_MEGABYTE;
         double dlTotalMegabytes = (double) mTotalSize / ONE_MEGABYTE;
         int progress = (int)((dlFileSize * 100L) / mTotalSize);
-        ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, progress,
-                R.string.newdl_downloading_game_files_size, dlSizeMegabytes, dlTotalMegabytes, speed);
+        TaskExecutors.runInUIThread(() -> ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, progress,
+                R.string.newdl_downloading_game_files_size, dlSizeMegabytes, dlTotalMegabytes, speed));
     }
 
     private File createGameJsonPath(String versionId) {
@@ -179,8 +179,8 @@ public class MinecraftDownloader {
         if(mDeclaredNatives.isEmpty()) return;
         int totalCount = mDeclaredNatives.size();
 
-        ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0,
-                R.string.newdl_extracting_native_libraries, 0, totalCount);
+        TaskExecutors.runInUIThread(() -> ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0,
+                R.string.newdl_extracting_native_libraries, 0, totalCount));
 
         File targetDirectory = new File(PathManager.DIR_CACHE, "natives/"+versionName);
         FileUtils.ensureDirectory(targetDirectory);
@@ -189,8 +189,9 @@ public class MinecraftDownloader {
         for(File source : mDeclaredNatives) {
             nativesExtractor.extractFromAar(source);
             extractedCount++;
-            ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, extractedCount * 100 / totalCount,
-                    R.string.newdl_extracting_native_libraries, extractedCount, totalCount);
+            int finalExtractedCount = extractedCount;
+            TaskExecutors.runInUIThread(() -> ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, finalExtractedCount * 100 / totalCount,
+                    R.string.newdl_extracting_native_libraries, finalExtractedCount, totalCount));
         }
     }
 
@@ -201,8 +202,8 @@ public class MinecraftDownloader {
         FileUtils.ensureParentDirectory(targetFile);
         try {
             DownloadUtils.ensureSha1(targetFile, AllSettings.getVerifyManifest().getValue() ? verInfo.sha1 : null, () -> {
-                ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0,
-                        R.string.newdl_downloading_metadata, targetFile.getName());
+                TaskExecutors.runInUIThread(() -> ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0,
+                        R.string.newdl_downloading_metadata, targetFile.getName()));
                 DownloadMirror.downloadFileMirrored(DownloadMirror.DOWNLOAD_CLASS_METADATA, verInfo.url, targetFile);
                 return null;
             });
@@ -219,8 +220,8 @@ public class MinecraftDownloader {
         File targetFile = new File(ProfilePathHome.getAssetsHome(), "indexes"+ File.separator + verInfo.assets + ".json");
         FileUtils.ensureParentDirectory(targetFile);
         DownloadUtils.ensureSha1(targetFile, assetIndex.sha1, ()-> {
-            ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0,
-                    R.string.newdl_downloading_metadata, targetFile.getName());
+            TaskExecutors.runInUIThread(() -> ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, 0,
+                    R.string.newdl_downloading_metadata, targetFile.getName()));
             DownloadMirror.downloadFileMirrored(DownloadMirror.DOWNLOAD_CLASS_METADATA, assetIndex.url, targetFile);
             return null;
         });

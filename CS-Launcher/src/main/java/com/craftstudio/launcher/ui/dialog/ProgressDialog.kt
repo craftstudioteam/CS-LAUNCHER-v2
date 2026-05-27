@@ -31,22 +31,28 @@ class ProgressDialog(
     }
 
     fun updateText(text: String?) {
-        binding.textView.text = text
+        (context as? android.app.Activity)?.runOnUiThread {
+            binding.textView.text = text
+        }
     }
 
     fun updateRate(processingRate: Long) {
-        if (processingRate > 0) binding.uploadRate.visibility = View.VISIBLE
-        val formatFileSize = formatFileSize(processingRate)
-        "$formatFileSize/s".also { binding.uploadRate.text = it }
+        (context as? android.app.Activity)?.runOnUiThread {
+            if (processingRate > 0) binding.uploadRate.visibility = View.VISIBLE
+            val formatFileSize = formatFileSize(processingRate)
+            "$formatFileSize/s".also { binding.uploadRate.text = it }
+        }
     }
 
     fun updateProgress(progress: Double, total: Double) {
-        val doubleValue = progress / total * 1000
-        val intValue = doubleValue.toInt()
+        (context as? android.app.Activity)?.runOnUiThread {
+            val doubleValue = progress / total * 1000
+            val intValue = doubleValue.toInt()
 
-        binding.progressBar.apply {
-            visibility = if (doubleValue > 0) View.VISIBLE else View.GONE
-            setProgress(intValue, AllSettings.animation.getValue())
+            binding.progressBar.apply {
+                visibility = if (doubleValue > 0) View.VISIBLE else View.GONE
+                setProgress(intValue, AllSettings.animation.getValue())
+            }
         }
     }
 

@@ -29,13 +29,13 @@ class AccountUtils {
 
         @JvmStatic
         fun otherLogin(context: Context, account: MinecraftAccount, doneListener: DoneListener, errorListener: ErrorListener) {
-            fun clearProgress() = ProgressLayout.clearProgress(ProgressLayout.LOGIN_ACCOUNT)
+            fun clearProgress() = TaskExecutors.runInUIThread { ProgressLayout.clearProgress(ProgressLayout.LOGIN_ACCOUNT) }
 
             Task.runTask {
                 OtherLoginHelper(account.otherBaseUrl, account.accountType, account.otherAccount, account.otherPassword,
                     object : OtherLoginHelper.OnLoginListener {
                         override fun onLoading() {
-                            ProgressLayout.setProgress(ProgressLayout.LOGIN_ACCOUNT, 0, R.string.account_login_start)
+                            TaskExecutors.runInUIThread { ProgressLayout.setProgress(ProgressLayout.LOGIN_ACCOUNT, 0, R.string.account_login_start) }
                         }
 
                         override fun unLoading() {}

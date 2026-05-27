@@ -81,9 +81,6 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
             Tools.showError(this, e, true);
         }
 
-        // 防止系统息屏
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         MainActivity.GLOBAL_CLIPBOARD = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         binding.awtTouchChar.setCharacterSender(new AwtCharSender());
 

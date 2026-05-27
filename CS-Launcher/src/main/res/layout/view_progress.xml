@@ -10,6 +10,8 @@
         android:id="@+id/progress_generic_progressbar"
         android:layout_width="@dimen/_40sdp"
         android:layout_height="@dimen/_30sdp"
+        android:progressTint="#24B538"
+        android:indeterminateTint="#24B538"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -19,7 +21,7 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:paddingEnd="@dimen/_40sdp"
-        android:textColor="@color/primary_text"
+        android:textColor="#FFFFFF"
         android:textSize="@dimen/_12ssp"
 
         app:layout_constraintBottom_toBottomOf="parent"

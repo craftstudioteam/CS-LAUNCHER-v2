@@ -29,7 +29,7 @@ class GameInstaller(
         Logging.i("Minecraft Downloader", "Start downloading the version: $realVersion")
 
         if (taskMap.isNotEmpty()) {
-            ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.download_install_download_file, 0, 0, 0)
+            TaskExecutors.runInUIThread { ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.download_install_download_file, 0, 0, 0) }
         }
 
         val mcVersion = AsyncMinecraftDownloader.getListedVersion(realVersion)
@@ -72,7 +72,7 @@ class GameInstaller(
                         }
 
                         modloaderTask.get()?.let { taskPair ->
-                            ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.mod_download_progress, taskPair.first.addonName)
+                            TaskExecutors.runInUIThread { ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.mod_download_progress, taskPair.first.addonName) }
 
                             Logging.i("Install Version", "Installing ModLoader: ${taskPair.second.selectedVersion}")
                             val file = taskPair.second.task.run(customVersionName)

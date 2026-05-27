@@ -32,7 +32,7 @@ public class FabricLikeDownloadTask implements InstallTask, Tools.DownloaderFeed
 
     @Override
     public File run(@NonNull String customName) throws Exception {
-        ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.mod_download_progress, mUtils.getName());
+        com.craftstudio.launcher.task.TaskExecutors.runInUIThread(() -> ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.mod_download_progress, mUtils.getName()));
         File outputFile;
         if (mGameVersion == null && mLoaderVersion == null) {
             outputFile = downloadInstaller();
@@ -41,7 +41,7 @@ public class FabricLikeDownloadTask implements InstallTask, Tools.DownloaderFeed
             legacyInstall(customName);
             outputFile = null;
         }
-        ProgressLayout.clearProgress(ProgressLayout.INSTALL_RESOURCE);
+        com.craftstudio.launcher.task.TaskExecutors.runInUIThread(() -> ProgressLayout.clearProgress(ProgressLayout.INSTALL_RESOURCE));
         return outputFile;
     }
 
@@ -69,6 +69,6 @@ public class FabricLikeDownloadTask implements InstallTask, Tools.DownloaderFeed
     @Override
     public void updateProgress(long curr, long max) {
         int progress100 = (int)(((float)curr / (float)max)*100f);
-        ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, progress100, R.string.mod_download_progress, mUtils.getName());
+        com.craftstudio.launcher.task.TaskExecutors.runInUIThread(() -> ProgressKeeper.submitProgress(ProgressLayout.INSTALL_RESOURCE, progress100, R.string.mod_download_progress, mUtils.getName()));
     }
 }

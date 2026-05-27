@@ -85,7 +85,7 @@ abstract class AbstractPlatformHelper(val api: ApiHandler) {
                             }
 
                             if (!isTaskRunning(ProgressLayout.INSTALL_RESOURCE)) {
-                                ProgressLayout.setProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.generic_waiting)
+                                TaskExecutors.runInUIThread { ProgressLayout.setProgress(ProgressLayout.INSTALL_RESOURCE, 0, R.string.generic_waiting) }
                                 Task.runTask {
                                     val modloader = installModPack(version, customName)
 
@@ -190,7 +190,7 @@ abstract class AbstractPlatformHelper(val api: ApiHandler) {
                 val progressKey = installFile.absolutePath
                 if (!taskRunning(progressKey)) {
                     install(installFile, progressKey)
-                    ProgressLayout.setProgress(progressKey, 0, R.string.generic_waiting)
+                    TaskExecutors.runInUIThread { ProgressLayout.setProgress(progressKey, 0, R.string.generic_waiting) }
                 }
                 true
             }.showDialog()

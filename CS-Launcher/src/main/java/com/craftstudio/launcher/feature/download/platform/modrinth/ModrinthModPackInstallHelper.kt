@@ -51,15 +51,17 @@ class ModrinthModPackInstallHelper {
                         ProgressLayout.INSTALL_RESOURCE
                     )
                 )
-                ProgressLayout.setProgress(
-                    ProgressLayout.INSTALL_RESOURCE,
-                    0,
-                    R.string.modpack_download_applying_overrides,
-                    1,
-                    2
-                )
+                TaskExecutors.runInUIThread {
+                    ProgressLayout.setProgress(
+                        ProgressLayout.INSTALL_RESOURCE,
+                        0,
+                        R.string.modpack_download_applying_overrides,
+                        1,
+                        2
+                    )
+                }
                 ZipUtils.zipExtract(modpackZipFile, "overrides/", targetPath)
-                ProgressLayout.setProgress(ProgressLayout.INSTALL_RESOURCE, 50, R.string.modpack_download_applying_overrides, 2, 2)
+                TaskExecutors.runInUIThread { ProgressLayout.setProgress(ProgressLayout.INSTALL_RESOURCE, 50, R.string.modpack_download_applying_overrides, 2, 2) }
                 ZipUtils.zipExtract(modpackZipFile, "client-overrides/", targetPath)
                 return createInfo(modrinthIndex)
             }
