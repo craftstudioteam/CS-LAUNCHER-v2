@@ -36,7 +36,7 @@
                 app:cardBackgroundColor="#1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#33FFFFFF"
+                app:strokeColor="#FFB74D"
                 app:strokeWidth="1dp">
                 
                 <LinearLayout
@@ -50,7 +50,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_video"
-                        app:tint="#24B538" />
+                        app:tint="#FFB74D" />
                     
                     <TextView
                         android:layout_width="wrap_content"
@@ -71,7 +71,7 @@
                 app:cardBackgroundColor="#1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#33FFFFFF"
+                app:strokeColor="#FFB74D"
                 app:strokeWidth="1dp">
                 
                 <LinearLayout
@@ -85,7 +85,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_control"
-                        app:tint="#24B538" />
+                        app:tint="#FFB74D" />
                     
                     <TextView
                         android:layout_width="wrap_content"
@@ -106,7 +106,7 @@
                 app:cardBackgroundColor="#1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#33FFFFFF"
+                app:strokeColor="#FFB74D"
                 app:strokeWidth="1dp">
                 
                 <LinearLayout
@@ -120,7 +120,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_game"
-                        app:tint="#24B538" />
+                        app:tint="#FFB74D" />
                     
                     <TextView
                         android:layout_width="wrap_content"
@@ -141,7 +141,7 @@
                 app:cardBackgroundColor="#1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#33FFFFFF"
+                app:strokeColor="#FFB74D"
                 app:strokeWidth="1dp">
                 
                 <LinearLayout
@@ -155,7 +155,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_launcher"
-                        app:tint="#24B538" />
+                        app:tint="#FFB74D" />
                     
                     <TextView
                         android:layout_width="wrap_content"
@@ -176,7 +176,7 @@
                 app:cardBackgroundColor="#1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#33FFFFFF"
+                app:strokeColor="#FFB74D"
                 app:strokeWidth="1dp">
                 
                 <LinearLayout
@@ -190,7 +190,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_experimental"
-                        app:tint="#24B538" />
+                        app:tint="#FFB74D" />
                     
                     <TextView
                         android:layout_width="wrap_content"
@@ -211,7 +211,7 @@
                 app:cardBackgroundColor="#1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#33FFFFFF"
+                app:strokeColor="#FFB74D"
                 app:strokeWidth="1dp">
                 
                 <LinearLayout
@@ -225,7 +225,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_appearance"
-                        app:tint="#24B538" />
+                        app:tint="#FFB74D" />
                     
                     <TextView
                         android:layout_width="wrap_content"
