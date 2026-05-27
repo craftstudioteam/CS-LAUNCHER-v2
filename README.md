@@ -1,80 +1,134 @@
-# 🌌 CS Launcher — The Ultimate Mobile Minecraft Utility
+<div align="center">
+  <img src="banner.svg" width="860" alt="CS Launcher Banner"/>
+</div>
+
+<br>
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/your-username/your-repo/main/assets/banner.png" alt="CS Launcher Banner" width="100%" />
 
-  <p align="center">
-    <strong>A high-performance, precision-engineered open-source environment for mobile power users.</strong>
-  </p>
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg?style=for-the-badge&logo=gnu&logoColor=white)](https://www.gnu.org/licenses/gpl-3.0)
+[![Platform](https://img.shields.io/badge/Platform-Android-3DDC84.svg?style=for-the-badge&logo=android&logoColor=white)](https://www.android.com)
+[![Status](https://img.shields.io/badge/Status-Active%20Development-FF8F00.svg?style=for-the-badge&logoColor=white)]()
+[![Discord](https://img.shields.io/badge/Discord-Craft%20Studio-5865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/VQ7ps9K4n)
+[![YouTube](https://img.shields.io/badge/YouTube-Craft%20Studio-FF0000.svg?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/@craft-studio-official)
 
-  <p align="center">
-    <img src="https://img.shields.io/badge/License-GPLv3-green.svg?style=for-the-badge&logo=gnu" alt="License: GPL v3" />
-    <img src="https://img.shields.io/badge/Platform-Android-00FF00.svg?style=for-the-badge&logo=android&logoColor=black" alt="Platform: Android" />
-    <img src="https://img.shields.io/badge/Theme-Matte%20Black-121212.svg?style=for-the-badge&logo=probot" alt="Theme: Matte Black" />
-  </p>
+</div>
 
-  <h4>
-    <a href="https://youtube.com/@craft-studio-official">📺 YouTube Channel</a>
-    <span> · </span>
-    <a href="https://discord.gg/VQ7ps9K4n">💬 Discord Server</a>
-  </h4>
+<br>
+
+<div align="center">
+  <strong>High-performance open-source Minecraft utility for Android — built with a Matte Black / Cyberpunk aesthetic.<br>Extreme optimization · Smart resource management · Seamless modding experience.</strong>
 </div>
 
 ---
 
-## ⚡ Core Systems & Performance Architecture
+## ⚡ Core Architecture
 
-CS Launcher isn't just a basic wrapper. It is engineered from the ground up to utilize every ounce of your mobile hardware while maintaining a clean, minimal ecosystem.
+> CS Launcher is not a wrapper. It is a precision-engineered runtime environment built from the ground up for mobile-first Minecraft.
 
-### 🚀 Ultra-Fast Mobile Optimization
-*   **Mobile-Tuned G1GC:** Customized Garbage Collection arguments tailored for mobile heap sizes to eliminate micro-stutters during heavy world generation and chunk loading.
-*   **Dynamic Thread Pooling:** Background tasks auto-scale dynamically across your CPU's big.LITTLE architecture for efficient core distribution.
+<br>
 
-### 💤 Smart "Deep Sleep" Resource Manager
-*   Proprietary background management that detects active gameplay states and aggressively hibernates non-essential OS services.
-*   **The Result:** Zero background latency spikes and up to 35% better battery efficiency during long sessions.
+### 🚀 Performance Engine
 
-### 🎮 Elite Visuals & Refreshes
-*   **260+ FPS Unlock:** Automated engine patches override standard system display limits, pushing frames well past standard device refresh rates.
-*   **Zero-Latency Smart VSync:** Next-gen synchronization prevents display tearing without introducing the traditional input lag associated with standard VSync buffers.
+| Component | Technology | Result |
+|---|---|---|
+| **Garbage Collector** | G1GC — Mobile-tuned heap management | Zero stutter during chunk loading |
+| **Thread Scheduler** | Dynamic pooling across all cores | 100% CPU utilization, no waste |
+| **Memory Manager** | Per-session heap profiling + auto-recovery | No mid-game OOM crashes |
+| **Frame Engine** | Engine-level FPS cap patches | **260+ FPS unlocked** |
 
-### 🛠️ Integrated Mod Ecosystem
-*   **1-Click Mod Injection:** Pure `.jar` implementation support with built-in automatic dependency resolution.
-*   **Global Ecosystem Themes:** Seamlessly switch between high-contrast, professional Matte Black configurations instantly.
+<br>
+
+### 💤 Deep Sleep™ Resource Manager
+
+```
+╔══════════════════════════════════════════════════════════╗
+║           [ GAME SESSION DETECTED ]                      ║
+╠══════════════════════════════════════════════════════════╣
+║  → Suspending background sync .................. ✓       ║
+║  → Parking idle CPU cores  ..................... ✓       ║
+║  → Locking GPU thermal headroom ................ ✓       ║
+║  → Applying G1GC mobile heap profile ........... ✓       ║
+║                                                          ║
+║  ██████████████████  ZERO LAG MODE ACTIVE                ║
+╚══════════════════════════════════════════════════════════╝
+```
+
+- **Zero** background interference during extended sessions
+- **Maximum** battery efficiency without sacrificing responsiveness
+- **Instant** resume when returning to the launcher
+
+<br>
+
+### 🎮 Frame Rate Comparison
+
+```
+  Standard Android Limit ───────────▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░  60 FPS
+  CS Launcher Unlocked   ───────────▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  260+ FPS
+```
+
+> Automated engine patches that shatter hardware-imposed framerate caps. Smart VSync eliminates screen tearing without traditional input latency.
 
 ---
 
-## ⚙️ Performance Benchmarks (Target Profiles)
+## 🛠️ Integrated Mod Ecosystem
 
-| Optimization Tier | Frame Rate Target | GC Overhead | Battery Drain Rate |
-| :--- | :--- | :--- | :--- |
-| **Standard Mode** | 60 - 90 FPS | Minimal | Low (Balanced) |
-| **Performance Unleashed** | 120 - 144 FPS | Optimized | Moderate |
-| **CS Insanity Tier** | **260+ FPS** | Extreme Bypass | High Performance |
+```
+📦 CS MOD MANAGER
+│
+├── 📥  1-Click .jar Installation
+│       └─ Automatic dependency resolution
+│
+├── 🔍  Version Compatibility Scanner
+│       └─ Pre-flight checks before every launch
+│
+├── 🗂️  Mod Profile System
+│       └─ Swap entire mod loadouts instantly
+│
+└── 🎨  Global Theme Engine
+        └─ High-contrast & minimalist UI themes
+```
+
+---
+
+## 📺 Official Community
+
+<div align="center">
+
+| Platform | Channel | Link |
+|:---:|:---:|:---:|
+| 🎬 YouTube | Craft Studio Official | [Subscribe](https://youtube.com/@craft-studio-official) |
+| 💬 Discord | Craft Studio Server | [Join](https://discord.gg/VQ7ps9K4n) |
+
+</div>
 
 ---
 
 ## 📜 Credits & Acknowledgements
 
-This project thrives because of the incredible foundations laid down by the global open-source community:
+CS Launcher stands on the shoulders of the open-source community. Full respect and attribution to every project that made this possible.
 
-*   **PojavLauncher Team:** Special thanks and deep gratitude to the PojavLauncher Team. Significant portions of this project utilize modified source code from their foundational work. We fully respect, uphold, and operate under their original GPLv3 framework.
-*   **LWJGL:** Essential cross-platform library support for low-level graphics and hardware integration.
-*   **Minecraft:** A registered product of Mojang AB and Microsoft.
+| Project | Role | Attribution |
+|---|---|---|
+| **PojavLauncher Team** | Core Foundation | Significant portions of this project utilize modified source code from their foundational work. Their original **GPLv3** license is fully respected and upheld. |
+| **LWJGL** | Native Libraries | Cross-platform native library bridging |
+| **Minecraft** | Game | A product of Mojang AB and Microsoft |
 
 ---
 
-## ⚖️ License & Disclaimers
+## ⚖️ License & Legal
 
-**Copyright (C) 2026 Rohit (CS Rohit) - Craft Studio Development Group.**
+**Copyright (C) 2026 Rohit (CS Rohit) — Craft Studio Development Group.**
 
-This project is fully open-source and licensed under the **GNU General Public License v3**. Please review the main `LICENSE` file for full legal provisions and third-party dependency attribution details.
+This project is distributed under the **GNU General Public License v3.0**.
+See the [`LICENSE`](LICENSE) file for the complete legal text and all third-party attributions.
 
-> [!IMPORTANT]  
-> **Disclaimer:** CS Launcher is entirely an independent utility. It is **not** affiliated, endorsed, or associated with Mojang AB, Microsoft, or any official Minecraft entities.
+> **Disclaimer:** CS Launcher is an independent utility and is **not** affiliated with, endorsed by, or connected to Mojang AB, Microsoft, or any official Minecraft entity. *"Minecraft"* is a registered trademark of Mojang AB.
 
 ---
 
 <div align="center">
-  <sub>Forged in the shadows for the ultimate mobile experience. Built by <strong>Craft Studio</strong>.</sub>
+  <sub>
+    <code>© 2026 Craft Studio Development Group · GNU GPLv3 · Forged in the Shadows for the Ultimate Mobile Experience</code>
+  </sub>
 </div>
