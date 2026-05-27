@@ -1,6 +1,8 @@
 package com.craftstudio.launcher.feature.accounts
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import com.kdt.mcgui.ProgressLayout
 import com.craftstudio.launcher.R
 import com.craftstudio.launcher.feature.log.Logging
@@ -11,7 +13,6 @@ import com.craftstudio.launcher.authenticator.listener.DoneListener
 import com.craftstudio.launcher.authenticator.listener.ErrorListener
 import com.craftstudio.launcher.authenticator.microsoft.MicrosoftBackgroundLogin
 import com.craftstudio.launcher.value.MinecraftAccount
-import com.craftstudio.launcher.utils.TaskExecutors  // ✅ FIX: TaskExecutors import added
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Locale
@@ -110,10 +111,6 @@ class AccountUtils {
             return if (!baseUrl.startsWith("http://", true) && !baseUrl.startsWith("https://")) {
                 "https://$baseUrl".lowercase(Locale.ROOT)
             } else baseUrl.lowercase(Locale.ROOT)
-        }
-    }
-}
-e(Locale.ROOT)
         }
     }
 }
