@@ -37,7 +37,9 @@ object DriverPluginManager {
             val driverFolder = File(PathManager.DIR_INSTALLED_RENDERER_PLUGIN, "vulkan_drivers/" + pluginFile.nameWithoutExtension)
             if (!driverFolder.exists()) driverFolder.mkdirs()
             
-            ZipUtils.zipExtract(pluginFile.absolutePath, driverFolder.absolutePath)
+            java.util.zip.ZipFile(pluginFile).use { zipFile ->
+                ZipUtils.zipExtract(zipFile, "", driverFolder)
+            }
             
             // Add to list if not already there
             if (driverList.none { it.driver == pluginFile.nameWithoutExtension }) {
