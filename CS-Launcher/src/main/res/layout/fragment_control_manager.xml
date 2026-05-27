@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -61,14 +62,19 @@
         android:orientation="vertical"
         android:paddingTop="@dimen/_8sdp"
         android:paddingBottom="@dimen/_8sdp"
-        android:spacing="@dimen/_8sdp"
         app:layout_constraintTop_toBottomOf="@id/file_actions_header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- SET DEFAULT button -->
+        <!--
+            returnButton → SET DEFAULT
+            Kotlin: returnButton.setOnClickListener { ZHTools.onBackPressed(...) }
+            In this new UI, SET DEFAULT is the primary action shown visually.
+            The back action is handled by btn_back in fragment_control_manager.xml.
+            So returnButton here is mapped to SET DEFAULT card.
+        -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btn_set_default"
+            android:id="@+id/returnButton"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_52sdp"
             android:layout_marginBottom="@dimen/_8sdp"
@@ -87,7 +93,6 @@
                 android:paddingEnd="@dimen/_16sdp">
 
                 <ImageView
-                    android:id="@+id/iv_default_icon"
                     android:layout_width="@dimen/_22sdp"
                     android:layout_height="@dimen/_22sdp"
                     android:src="@drawable/ic_restore"
@@ -109,9 +114,12 @@
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- IMPORT button -->
+        <!--
+            addFileButton → IMPORT
+            Kotlin: addFileButton.setOnClickListener { openDocumentLauncher?.launch(".json") }
+        -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btn_import"
+            android:id="@+id/addFileButton"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_52sdp"
             android:layout_marginBottom="@dimen/_8sdp"
@@ -130,7 +138,6 @@
                 android:paddingEnd="@dimen/_16sdp">
 
                 <ImageView
-                    android:id="@+id/iv_import_icon"
                     android:layout_width="@dimen/_22sdp"
                     android:layout_height="@dimen/_22sdp"
                     android:src="@drawable/ic_download"
@@ -152,9 +159,12 @@
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- EXPORT button -->
+        <!--
+            createFolderButton → EXPORT
+            Kotlin: createFolderButton.setOnClickListener { show EditControlInfoDialog to create new control }
+        -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btn_export"
+            android:id="@+id/createFolderButton"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_52sdp"
             android:layout_marginBottom="@dimen/_8sdp"
@@ -173,7 +183,6 @@
                 android:paddingEnd="@dimen/_16sdp">
 
                 <ImageView
-                    android:id="@+id/iv_export_icon"
                     android:layout_width="@dimen/_22sdp"
                     android:layout_height="@dimen/_22sdp"
                     android:src="@drawable/ic_upload"
@@ -184,7 +193,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="EXPORT"
+                    android:text="CREATE NEW"
                     android:textColor="#9C27B0"
                     android:textSize="@dimen/_13ssp"
                     android:textStyle="bold"
@@ -195,13 +204,18 @@
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- DELETE ALL button -->
+        <!--
+            pasteButton → DELETE ALL (hidden by default, shown when clipboard has file)
+            Kotlin: pasteButton.visibility = View.GONE/VISIBLE
+        -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/btn_delete_all"
+            android:id="@+id/pasteButton"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_52sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
             android:clickable="true"
             android:focusable="true"
+            android:visibility="gone"
             app:cardBackgroundColor="#2A0D0D"
             app:cardCornerRadius="@dimen/_10sdp"
             app:cardElevation="0dp"
@@ -215,10 +229,9 @@
                 android:paddingEnd="@dimen/_16sdp">
 
                 <ImageView
-                    android:id="@+id/iv_delete_icon"
                     android:layout_width="@dimen/_22sdp"
                     android:layout_height="@dimen/_22sdp"
-                    android:src="@drawable/ic_delete"
+                    android:src="@drawable/ic_paste"
                     android:layout_centerVertical="true"
                     android:layout_alignParentStart="true"
                     app:tint="#F44336" />
@@ -226,7 +239,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="DELETE ALL"
+                    android:text="PASTE"
                     android:textColor="#F44336"
                     android:textSize="@dimen/_13ssp"
                     android:textStyle="bold"
@@ -236,6 +249,78 @@
 
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <!-- Search and Refresh row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_48sdp"
+            android:orientation="horizontal">
+
+            <!--
+                searchButton → Search icon button
+                Kotlin: searchButton.setOnClickListener { mSearchViewWrapper.setVisibility() }
+            -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/searchButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="#1A1A2A"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:cardElevation="0dp"
+                app:strokeColor="#607D8B"
+                app:strokeWidth="1dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:src="@drawable/ic_search"
+                        android:layout_centerInParent="true"
+                        app:tint="#90A4AE" />
+
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!--
+                refreshButton → Refresh icon button
+                Kotlin: refreshButton.setOnClickListener { controlsListViewCreator.refresh() }
+            -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/refreshButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="#1A1A2A"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:cardElevation="0dp"
+                app:strokeColor="#607D8B"
+                app:strokeWidth="1dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:src="@drawable/ic_refresh"
+                        android:layout_centerInParent="true"
+                        app:tint="#90A4AE" />
+
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
 
     </LinearLayout>
 
