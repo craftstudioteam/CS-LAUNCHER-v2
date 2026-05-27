@@ -1,476 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:background="#1A1A2E">
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
 
-    <!-- Left Panel: Custom Controls List -->
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/control_layout"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1.4"
-        android:padding="16dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/operate_layout"
+        app:layout_constraintHorizontal_weight="7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Close Button -->
-        <ImageButton
-            android:id="@+id/btn_close"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:padding="@dimen/_6sdp"
             android:src="@drawable/ic_close"
-            android:background="@drawable/bg_rounded_dark"
-            android:contentDescription="Close" />
+            android:tint="#FFFFFF"
+            android:background="@drawable/btn_icon_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Card Container -->
-        <LinearLayout
-            android:id="@+id/card_container"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/btn_close"
-            android:layout_marginTop="12dp"
-            android:orientation="vertical"
-            android:background="@drawable/bg_card_dark"
-            android:padding="16dp">
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginVertical="@dimen/_16sdp"
+            android:background="@drawable/background_card"
+            android:backgroundTint="#CC151520"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <!-- Title -->
             <TextView
-                android:id="@+id/tv_title"
+                android:id="@+id/title_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Custom Controls"
-                android:textColor="#F5A623"
-                android:textSize="22sp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:text="@string/custom_control_title"
+                android:textColor="#FFB74D"
+                android:textSize="@dimen/_14ssp"
                 android:textStyle="bold"
-                android:layout_marginBottom="12dp" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Move Row -->
-            <LinearLayout
-                android:id="@+id/row_move"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_row_dark"
-                android:layout_marginBottom="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_drag_handle"
-                    android:tint="#888888" />
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_move"
-                    android:tint="#FFFFFF"
-                    android:layout_marginStart="12dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Move"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:layout_marginStart="12dp" />
-
-                <ImageButton
-                    android:id="@+id/btn_edit_move"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_edit"
-                    android:background="@drawable/bg_btn_dark"
-                    android:tint="#FFFFFF"
-                    android:contentDescription="Edit Move" />
-            </LinearLayout>
-
-            <!-- Aim Row -->
-            <LinearLayout
-                android:id="@+id/row_aim"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_row_dark"
-                android:layout_marginBottom="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_drag_handle"
-                    android:tint="#888888" />
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_aim"
-                    android:tint="#FFFFFF"
-                    android:layout_marginStart="12dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Aim"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:layout_marginStart="12dp" />
-
-                <ImageButton
-                    android:id="@+id/btn_edit_aim"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_edit"
-                    android:background="@drawable/bg_btn_dark"
-                    android:tint="#FFFFFF"
-                    android:contentDescription="Edit Aim" />
-            </LinearLayout>
-
-            <!-- Fire Row -->
-            <LinearLayout
-                android:id="@+id/row_fire"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_row_dark"
-                android:layout_marginBottom="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_drag_handle"
-                    android:tint="#888888" />
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_fire"
-                    android:tint="#FFFFFF"
-                    android:layout_marginStart="12dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Fire"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:layout_marginStart="12dp" />
-
-                <ImageButton
-                    android:id="@+id/btn_edit_fire"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_edit"
-                    android:background="@drawable/bg_btn_dark"
-                    android:tint="#FFFFFF"
-                    android:contentDescription="Edit Fire" />
-            </LinearLayout>
-
-            <!-- Crouch Row -->
-            <LinearLayout
-                android:id="@+id/row_crouch"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_row_dark"
-                android:layout_marginBottom="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_drag_handle"
-                    android:tint="#888888" />
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_crouch"
-                    android:tint="#FFFFFF"
-                    android:layout_marginStart="12dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Crouch"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:layout_marginStart="12dp" />
-
-                <ImageButton
-                    android:id="@+id/btn_edit_crouch"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_edit"
-                    android:background="@drawable/bg_btn_dark"
-                    android:tint="#FFFFFF"
-                    android:contentDescription="Edit Crouch" />
-            </LinearLayout>
-
-            <!-- Prone Row -->
-            <LinearLayout
-                android:id="@+id/row_prone"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_row_dark"
-                android:layout_marginBottom="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_drag_handle"
-                    android:tint="#888888" />
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_prone"
-                    android:tint="#FFFFFF"
-                    android:layout_marginStart="12dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Prone"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:layout_marginStart="12dp" />
-
-                <ImageButton
-                    android:id="@+id/btn_edit_prone"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_edit"
-                    android:background="@drawable/bg_btn_dark"
-                    android:tint="#FFFFFF"
-                    android:contentDescription="Edit Prone" />
-            </LinearLayout>
-
-            <!-- Open Backpack Row -->
-            <LinearLayout
-                android:id="@+id/row_open_backpack"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_row_dark"
-                android:layout_marginBottom="12dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_drag_handle"
-                    android:tint="#888888" />
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_backpack"
-                    android:tint="#FFFFFF"
-                    android:layout_marginStart="12dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Open Backpack"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:layout_marginStart="12dp" />
-
-                <ImageButton
-                    android:id="@+id/btn_edit_backpack"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_edit"
-                    android:background="@drawable/bg_btn_dark"
-                    android:tint="#FFFFFF"
-                    android:contentDescription="Edit Open Backpack" />
-            </LinearLayout>
-
-            <!-- Empty State -->
-            <LinearLayout
-                android:id="@+id/layout_empty_state"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:background="@drawable/bg_empty_state"
-                android:visibility="visible">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_document"
-                    android:tint="#888888" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No custom controls added yet."
-                    android:textColor="#888888"
-                    android:textSize="14sp"
-                    android:layout_marginStart="8dp" />
-            </LinearLayout>
-
-        </LinearLayout>
-    </RelativeLayout>
-
-    <!-- Divider (Green Line) -->
-    <View
-        android:layout_width="2dp"
-        android:layout_height="match_parent"
-        android:background="#00FF00" />
-
-    <!-- Right Panel: Actions -->
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:padding="24dp">
-
-        <!-- Info Icon -->
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_info"
-            android:tint="#F5A623"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Info Text -->
-        <TextView
-            android:id="@+id/tv_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Set a control and tap the Default button to restore default settings."
-            android:textColor="#AAAAAA"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:layout_marginBottom="32dp" />
-
-        <!-- SET DEFAULT Button -->
-        <Button
-            android:id="@+id/btn_set_default"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="SET DEFAULT"
-            android:textColor="#00FF00"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:background="@drawable/bg_btn_green_outline"
-            android:drawableStart="@drawable/ic_reset"
-            android:drawableTint="#00FF00"
-            android:drawablePadding="8dp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- IMPORT Button -->
-        <Button
-            android:id="@+id/btn_import"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="IMPORT"
-            android:textColor="#00BFFF"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:background="@drawable/bg_btn_blue_outline"
-            android:drawableStart="@drawable/ic_download"
-            android:drawableTint="#00BFFF"
-            android:drawablePadding="8dp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- EXPORT Button -->
-        <Button
-            android:id="@+id/btn_export"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="EXPORT"
-            android:textColor="#BF5FFF"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:background="@drawable/bg_btn_purple_outline"
-            android:drawableStart="@drawable/ic_upload"
-            android:drawableTint="#BF5FFF"
-            android:drawablePadding="8dp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- DELETE ALL Button -->
-        <Button
-            android:id="@+id/btn_delete_all"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="DELETE ALL"
-            android:textColor="#FF4444"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:background="@drawable/bg_btn_red_outline"
-            android:drawableStart="@drawable/ic_delete"
-            android:drawableTint="#FF4444"
-            android:drawablePadding="8dp"
-            android:layout_marginBottom="24dp" />
-
-        <!-- Spacer -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <!-- File Actions Bottom Bar -->
-        <LinearLayout
-            android:id="@+id/layout_file_actions"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="@drawable/bg_row_dark"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_file"
-                android:tint="#CCCCCC" />
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="@dimen/_4sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_view" />
 
             <TextView
+                android:id="@+id/nothing_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:text="@string/controls_nothing"
+                android:background="@drawable/background_item"
+                android:backgroundTint="#80151520"
+                android:textColor="#E8EAF6"
+                android:padding="@dimen/_12sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/operate_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="2.5"
+        app:layout_constraintStart_toEndOf="@+id/control_layout"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/shadowView"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#33FFB74D"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/operate_layout"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/operate_main_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="#D9151520"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/shadowView">
+
+            <TextView
+                android:id="@+id/set_default_tip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:text="@string/controls_tip_set_default"
+                android:textColor="#99E8EAF6"
+                android:textSize="@dimen/_10ssp"
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <include
+                android:id="@+id/operate_view"
+                layout="@layout/view_file_action_bar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="File Actions"
-                android:textColor="#CCCCCC"
-                android:textSize="15sp"
-                android:layout_marginStart="12dp" />
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_16sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_chevron_up"
-                android:tint="#CCCCCC" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-</LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
