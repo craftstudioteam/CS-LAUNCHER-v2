@@ -4,7 +4,26 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
+
+    <!-- Hexagon outline -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM13,17h-2v-6h2v6zM13,9h-2V7h2v2z" />
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,2 L20.66,7 L20.66,17 L12,22 L3.34,17 L3.34,7 Z"
+        android:strokeColor="#FF8F00"
+        android:strokeWidth="1.5"
+        android:strokeLineJoin="round" />
+
+    <!-- i dot -->
+    <path
+        android:fillColor="#FF8F00"
+        android:pathData="M12,8 m-1,0 a1,1 0 1,0 2,0 a1,1 0 1,0 -2,0" />
+
+    <!-- i stem -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M12,11 L12,16"
+        android:strokeColor="#FF8F00"
+        android:strokeWidth="2"
+        android:strokeLineCap="round" />
+
 </vector>
