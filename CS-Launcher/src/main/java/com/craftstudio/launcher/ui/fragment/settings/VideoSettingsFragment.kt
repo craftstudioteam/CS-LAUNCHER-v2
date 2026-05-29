@@ -114,22 +114,31 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val context = requireActivity()
 
+        // 1. Smart Recommendation UI
         val gpuFamily = DeviceGPUDetector.getGPUFamily()
-        binding.gpuRecommendationText.text = "Detected GPU: ${DeviceGPUDetector.getGPUName()} - Recommended: " + when (gpuFamily) {
-            DeviceGPUDetector.GPUFamily.ADRENO -> "Zink + Turnip"
-            else -> "Holy GL4ES"
+        val gpuName = DeviceGPUDetector.getGPUName()
+        
+        binding.gpuRecommendationText.text = buildString {
+            append("Detected GPU: ")
+            append(gpuName)
+            append(" - Recommended: ")
+            when (gpuFamily) {
+                DeviceGPUDetector.GPUFamily.ADRENO -> append("Zink + Turnip")
+                DeviceGPUDetector.GPUFamily.MALI, DeviceGPUDetector.GPUFamily.XCLIPSE -> append("Holy GL4ES")
+                else -> append("Holy GL4ES")
+            }
         }
 
+        // 2. Renderer List with Auto-Tagging
         val renderers = Renderers.getCompatibleRenderers(context).first
         val rendererNames = renderers.rendererNames.toMutableList()
         val rendererIds = renderers.rendererIdentifier.toMutableList()
 
-        // Apply "Recommended" tag to renderers
         for (i in rendererNames.indices) {
             val id = rendererIds[i]
             val isRecommended = when (gpuFamily) {
-                DeviceGPUDetector.GPUFamily.ADRENO -> id == "0fa435e2-46df-45c9-906c-b29606aaef00" // Zink
-                else -> id == "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Holy GL4ES
+                DeviceGPUDetector.GPUFamily.ADRENO -> id == "0fa435e2-46df-45c9-906c-b29606aaef00" // Zink (Vulkan)
+                else -> id == "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Holy GL4ES (OpenGL)
             }
             if (isRecommended) {
                 rendererNames[i] = rendererNames[i] + " (Recommended)"
@@ -164,21 +173,29 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             }
         }
 
-        val driverNames = DriverPluginManager.getDriverNameList().toMutableList()
-        // Apply "Recommended" tag to vulkan drivers
-        if (gpuFamily == DeviceGPUDetector.GPUFamily.ADRENO) {
-             for (i in driverNames.indices) {
-                 if (driverNames[i].contains("Turnip", ignoreCase = true)) {
-                     driverNames[i] = driverNames[i] + " (Recommended)"
-                 }
-             }
-        } else {
-            // Hide or tag System Default for Mali
-            for (i in driverNames.indices) {
-                if (driverNames[i] == "System Default") {
-                    driverNames[i] = driverNames[i] + " (Recommended)"
-                }
+        // 3. Driver List with Filtering & Auto-Tagging
+        val rawDriverNames = DriverPluginManager.getDriverNameList()
+        val filteredDriverNames = mutableListOf<String>()
+        val filteredDriverValues = mutableListOf<String>()
+
+        for (driver in rawDriverNames) {
+            // Hide Turnip drivers for non-Adreno GPUs as they will crash
+            if (gpuFamily != DeviceGPUDetector.GPUFamily.ADRENO && driver.contains("Turnip", ignoreCase = true)) {
+                continue
             }
+            
+            filteredDriverValues.add(driver)
+            
+            var displayName = driver
+            val isRecommended = when (gpuFamily) {
+                DeviceGPUDetector.GPUFamily.ADRENO -> driver.contains("Turnip", ignoreCase = true)
+                else -> driver == "System Default"
+            }
+            
+            if (isRecommended) {
+                displayName += " (Recommended)"
+            }
+            filteredDriverNames.add(displayName)
         }
 
         ListSettingsWrapper(
@@ -187,26 +204,26 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             binding.driverLayout,
             binding.driverTitle,
             binding.driverValue,
-            driverNames.toTypedArray(),
-            DriverPluginManager.getDriverNameList().toTypedArray()
+            filteredDriverNames.toTypedArray(),
+            filteredDriverValues.toTypedArray()
         )
 
         binding.driverDownload.setOnClickListener { ZHTools.openLink(context, UrlManager.URL_FCL_DRIVER_PLUGIN) }
 
-        val vulkanDriverNamesRaw = DriverPluginManager.getDriverNameList().toTypedArray()
-        val vulkanDriverNames = vulkanDriverNamesRaw.toMutableList()
-        if (gpuFamily == DeviceGPUDetector.GPUFamily.ADRENO) {
-            for (i in vulkanDriverNames.indices) {
-                if (vulkanDriverNames[i].contains("Turnip", ignoreCase = true)) {
-                    vulkanDriverNames[i] = vulkanDriverNames[i] + " (Recommended)"
-                }
+        // 4. Vulkan Driver List (Used by Zink)
+        val vulkanDriverValues = DriverPluginManager.getDriverNameList()
+        val vulkanDriverDisplayNames = mutableListOf<String>()
+        
+        for (driver in vulkanDriverValues) {
+            var displayName = driver
+            val isRecommended = when (gpuFamily) {
+                DeviceGPUDetector.GPUFamily.ADRENO -> driver.contains("Turnip", ignoreCase = true)
+                else -> driver == "System Default"
             }
-        } else {
-            for (i in vulkanDriverNames.indices) {
-                if (vulkanDriverNames[i] == "System Default") {
-                    vulkanDriverNames[i] = vulkanDriverNames[i] + " (Recommended)"
-                }
+            if (isRecommended) {
+                displayName += " (Recommended)"
             }
+            vulkanDriverDisplayNames.add(displayName)
         }
 
         ListSettingsWrapper(
@@ -215,8 +232,8 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             binding.vulkanDriverLayout,
             binding.vulkanDriverTitle,
             binding.vulkanDriverValue,
-            vulkanDriverNames.toTypedArray(),
-            vulkanDriverNamesRaw
+            vulkanDriverDisplayNames.toTypedArray(),
+            vulkanDriverValues.toTypedArray()
         ).setOnSaveListener {
             DriverPluginManager.setDriverByName(AllSettings.vulkanDriver.getValue())
         }
@@ -226,6 +243,7 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             openDocumentLauncher.launch("zip")
         }
 
+        // ... rest of the settings wrappers ...
         val ignoreNotch = SwitchSettingsWrapper(
             context,
             AllSettings.ignoreNotch,
@@ -315,7 +333,7 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             zinkPreferSystemDriver.setGone()
         } else {
             zinkPreferSystemDriver.setOnCheckedChangeListener { buttonView, isChecked, listener ->
-                if (isChecked and ZHTools.isAdrenoGPU()) {
+                if (isChecked and DeviceGPUDetector.isAdreno()) {
                     TipDialog.Builder(requireActivity())
                         .setTitle(R.string.generic_warning)
                         .setMessage(R.string.setting_zink_driver_adreno)

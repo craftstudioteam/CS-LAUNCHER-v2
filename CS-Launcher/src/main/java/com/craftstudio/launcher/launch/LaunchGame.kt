@@ -122,6 +122,7 @@ class LaunchGame {
         @Throws(Throwable::class)
         @JvmStatic
         fun runGame(activity: AppCompatActivity, minecraftVersion: Version, version: JMinecraftVersionList.Version) {
+            // FIX: Robust Renderer Initialization with Fallback
             try {
                 if (!Renderers.isCurrentRendererValid()) {
                     val rendererToUse = if (android.os.Build.VERSION.SDK_INT == 26) {
@@ -133,7 +134,16 @@ class LaunchGame {
                 }
             } catch (e: Throwable) {
                 Logging.e("LaunchGame", "Critical: Failed to initialize selected renderer. Falling back to default Holy GL4ES.", e)
-                Renderers.setCurrentRenderer(activity, "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7")
+                try {
+                    Renderers.setCurrentRenderer(activity, "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7")
+                } catch (fallbackError: Throwable) {
+                    Logging.e("LaunchGame", "Emergency: Fallback renderer also failed!", fallbackError)
+                }
+            } finally {
+                // Ensure any "Checking mods" progress is cleared before proceeding to launch
+                TaskExecutors.runInUIThread {
+                    ProgressLayout.clearProgress(ProgressLayout.CHECKING_MODS)
+                }
             }
 
             var account = AccountsManager.currentAccount!!
