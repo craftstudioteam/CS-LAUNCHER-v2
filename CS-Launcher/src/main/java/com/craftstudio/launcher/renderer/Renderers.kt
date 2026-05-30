@@ -2,140 +2,109 @@ package com.craftstudio.launcher.renderer
 
 import android.content.Context
 import com.craftstudio.launcher.feature.log.Logging
-import com.craftstudio.launcher.renderer.renderers.AngleRenderer
-import com.craftstudio.launcher.renderer.renderers.FreedrenoRenderer
-import com.craftstudio.launcher.renderer.renderers.GL4ESRenderer
-import com.craftstudio.launcher.renderer.renderers.LTWRenderer
-import com.craftstudio.launcher.renderer.renderers.PanfrostRenderer
-import com.craftstudio.launcher.renderer.renderers.VirGLRenderer
-import com.craftstudio.launcher.renderer.renderers.VulkanZinkRenderer
-import com.craftstudio.launcher.renderer.renderers.FclGl4esRenderer
-import com.craftstudio.launcher.renderer.renderers.FclVirglRenderer
-import com.craftstudio.launcher.renderer.renderers.GalliumGenericRenderer
-import com.craftstudio.launcher.renderer.renderers.KryptonRenderer
-import com.craftstudio.launcher.renderer.renderers.MobileGluesRenderer
-import com.craftstudio.launcher.Architecture
-import com.craftstudio.launcher.Tools
+import com.craftstudio.launcher.setting.AllSettings
 
-/**
- * 启动器所有渲染器总管理者，启动器内置的渲染器与渲染器插件加载的渲染器，都会加载到这里
- */
-object Renderers {
-    private val renderers: MutableList<RendererInterface> = mutableListOf()
-    private var compatibleRenderers: Pair<RenderersList, MutableList<RendererInterface>>? = null
-    private var currentRenderer: RendererInterface? = null
-    private var isInitialized: Boolean = false
+enum class Renderers(
+    val rendererId: String,
+    val displayName: String,
+    val rendererLibrary: String,
+    val rendererEGL: String? = null
+) : RendererInterface {
+    ZINK(
+        rendererId = "vulkan_zink",
+        displayName = "Zink (Vulkan)",
+        rendererLibrary = "libOSMesa.so"
+    ),
+    GL4ES(
+        rendererId = "opengles2", 
+        displayName = "Holy GL4ES",
+        rendererLibrary = "libgl4es_114.so"
+    ),
+    LTW(
+        rendererId = "ltw_render",
+        displayName = "LTW (OpenGL ES 3)",
+        rendererLibrary = "libltw.so",
+        rendererEGL = "libltw.so"
+    ),
+    MOBILEGLUES(
+        rendererId = "mobileglues",
+        displayName = "MobileGlues (OpenGL ES 3)",
+        rendererLibrary = "libMobileGlues.so"
+    ),
+    KRYPTON(
+        rendererId = "krypton",
+        displayName = "Krypton Wrapper (OpenGL ES 3)",
+        rendererLibrary = "libkrypton.so"
+    ),
+    GALLIUM_GENERIC(
+        rendererId = "gallium_generic",
+        displayName = "Gallium Generic (Mesa)",
+        rendererLibrary = "libOSMesa.so"
+    ),
+    FCL_GL4ES(
+        rendererId = "fclplugin_gl4es",
+        displayName = "Holy GL4ES (FCL Plugin)",
+        rendererLibrary = "libgl4es_114.so"
+    ),
+    FCL_VIRGL(
+        rendererId = "fclplugin_virgl",
+        displayName = "Holy VirGL (FCL Plugin)",
+        rendererLibrary = "libOSMesa.so"
+    );
 
-    fun init(reset: Boolean = false) {
-        if (isInitialized && !reset) return
-        isInitialized = true
+    override fun getRendererId(): String = rendererId
+    override fun getUniqueIdentifier(): String = rendererId
+    override fun getRendererName(): String = displayName
+    override fun getRendererEnv(): Lazy<Map<String, String>> = lazy { emptyMap() }
+    override fun getDlopenLibrary(): Lazy<List<String>> = lazy { emptyList() }
+    override fun getRendererLibrary(): String = rendererLibrary
+    override fun getRendererEGL(): String? = rendererEGL
 
-        if (reset) {
-            renderers.clear()
-            compatibleRenderers = null
-            currentRenderer = null
+    companion object {
+        @JvmField
+        val INSTANCE = this
+
+        @JvmStatic
+        var currentRenderer: Renderers = ZINK
+        
+        @JvmStatic
+        fun fromId(id: String): Renderers {
+            return values().find { it.rendererId == id } ?: ZINK
+        }
+        
+        @JvmStatic
+        fun getRendererList(): List<Renderers> = values().toList()
+
+        @JvmStatic
+        fun init(reset: Boolean = false) {
+            currentRenderer = fromId(AllSettings.renderer.getValue())
+            Logging.i("RENDERER", "Initialized with: " + currentRenderer.rendererId)
         }
 
-        // Keep order requested by user implicitly or by adding them sequentially
-        addRenderers(
-            VulkanZinkRenderer(),
-            GL4ESRenderer(),
-            LTWRenderer(),
-            MobileGluesRenderer(),
-            KryptonRenderer(),
-            GalliumGenericRenderer(),
-            FclGl4esRenderer(),
-            FclVirglRenderer(),
-            AngleRenderer(),
-            FreedrenoRenderer(),
-            PanfrostRenderer(),
-            VirGLRenderer()
-        )
-    }
+        @JvmStatic
+        fun isCurrentRendererValid(): Boolean = true
 
-    /**
-     * 获取兼容当前设备的所有渲染器
-     */
-    fun getCompatibleRenderers(context: Context): Pair<RenderersList, List<RendererInterface>> = compatibleRenderers ?: run {
-        val deviceHasVulkan = Tools.checkVulkanSupport(context.packageManager)
-        // Currently, only 32-bit x86 does not have the Zink binary
-        val deviceHasZinkBinary = !(Architecture.is32BitsDevice() && Architecture.isx86Device())
+        @JvmStatic
+        fun getCurrentRenderer(): Renderers = currentRenderer
 
-        val compatibleRenderers1: MutableList<RendererInterface> = mutableListOf()
-        renderers.forEach { renderer ->
-            val rendererId = renderer.getRendererId().lowercase()
-            if (rendererId.contains("llvmpipe")) return@forEach
-            if (renderer.getRendererId().contains("vulkan") && !deviceHasVulkan) return@forEach
-            if (renderer.getRendererId().contains("zink") && !deviceHasZinkBinary) return@forEach
-            compatibleRenderers1.add(renderer)
+        @JvmStatic
+        fun setCurrentRenderer(context: Context, id: String, retryToFirstOnFailure: Boolean = true) {
+            currentRenderer = fromId(id)
+            AllSettings.renderer.put(currentRenderer.rendererId).save()
+            Logging.i("RENDERER", "Current renderer set & saved to ${currentRenderer.rendererId}")
         }
 
-        val rendererIdentifiers: MutableList<String> = mutableListOf()
-        val rendererNames: MutableList<String> = mutableListOf()
-        compatibleRenderers1.forEach { renderer ->
-            rendererIdentifiers.add(renderer.getUniqueIdentifier())
-            rendererNames.add(renderer.getRendererName())
+        @JvmStatic
+        fun getCompatibleRenderers(context: Context): Pair<RenderersList, List<Renderers>> {
+            val list = values().toList()
+            val ids = list.map { it.rendererId }
+            val names = list.map { it.displayName }
+            return Pair(RenderersList(ids, names), list)
         }
 
-        val rendererPair = Pair(RenderersList(rendererIdentifiers, rendererNames), compatibleRenderers1)
-        compatibleRenderers = rendererPair
-        rendererPair
-    }
-
-    /**
-     * 加入一些渲染器
-     */
-    @JvmStatic
-    fun addRenderers(vararg renderers: RendererInterface) {
-        renderers.forEach { renderer ->
-            addRenderer(renderer)
+        @JvmStatic
+        fun addRenderer(renderer: RendererInterface): Boolean {
+            return false // Stubs for PluginLoader.kt
         }
     }
-
-    /**
-     * 加入单个渲染器
-     */
-    @JvmStatic
-    fun addRenderer(renderer: RendererInterface): Boolean {
-        return if (this.renderers.any { it.getUniqueIdentifier() == renderer.getUniqueIdentifier() }) {
-            Logging.w("Renderers", "The unique identifier of this renderer (${renderer.getRendererName()} - ${renderer.getUniqueIdentifier()}) conflicts with an already loaded renderer. " +
-                    "Normally, this shouldn't happen. You deliberately caused this conflict, didn't you, user?")
-            false
-        } else {
-            this.renderers.add(renderer)
-            Logging.i("Renderers", "Renderer loaded: ${renderer.getRendererName()} (${renderer.getRendererId()} - ${renderer.getUniqueIdentifier()})")
-            true
-        }
-    }
-
-    /**
-     * 设置当前的渲染器
-     * @param context 用于初始化适配当前设备的渲染器
-     * @param uniqueIdentifier 渲染器的唯一标识符，用于找到当前想要设置的渲染器
-     * @param retryToFirstOnFailure 如果未找到匹配的渲染器，是否跳回渲染器列表的首个渲染器
-     */
-    fun setCurrentRenderer(context: Context, uniqueIdentifier: String, retryToFirstOnFailure: Boolean = true) {
-        if (!isInitialized) throw IllegalStateException("Uninitialized renderer!")
-        val compatibleRenderers = getCompatibleRenderers(context).second
-        currentRenderer = compatibleRenderers.find { it.getUniqueIdentifier() == uniqueIdentifier } ?: run {
-            if (retryToFirstOnFailure) {
-                val renderer = compatibleRenderers[0]
-                Logging.w("Renderers", "Incompatible renderer $uniqueIdentifier will be replaced with ${renderer.getUniqueIdentifier()} (${renderer.getRendererName()})")
-                renderer
-            } else null
-        }
-    }
-
-    /**
-     * 获取当前的渲染器
-     */
-    fun getCurrentRenderer(): RendererInterface {
-        if (!isInitialized) throw IllegalStateException("Uninitialized renderer!")
-        return currentRenderer ?: throw IllegalStateException("Current renderer not set")
-    }
-
-    /**
-     * 当前是否设置了渲染器
-     */
-    fun isCurrentRendererValid(): Boolean = isInitialized && this.currentRenderer != null
 }

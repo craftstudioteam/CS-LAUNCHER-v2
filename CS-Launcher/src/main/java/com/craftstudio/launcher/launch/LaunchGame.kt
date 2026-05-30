@@ -141,7 +141,7 @@ class LaunchGame {
                             // Proceed anyway logic is usually just calling the rest of runGame, 
                             // but since we are inside runGame, we might need a way to re-trigger or bypass.
                             // For simplicity, we'll implement the check as a blocker that can be bypassed by user confirmation.
-                            AllSettings.renderer.put("0fa435e2-46df-45c9-906c-b29606aaef00").save() // Switch to Zink
+                            AllSettings.renderer.put("vulkan_zink").save() // Switch to Zink
                             ZHTools.killProcess() // Restart to apply
                         }
                         .setCancelClickListener {
@@ -156,15 +156,15 @@ class LaunchGame {
 
             try {
                 var rendererToUse = if (android.os.Build.VERSION.SDK_INT == 26) {
-                    "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Default to OpenGL (Holy GL4ES)
+                    "opengles2" // Default to OpenGL (Holy GL4ES)
                 } else {
                     AllSettings.renderer.getValue()
                 }
 
                 // SMART GUARD: Holy GL4ES only supports OpenGL 2.1 and will crash on 1.17+.
-                if (isModern && rendererToUse == "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7") {
+                if (isModern && rendererToUse == "opengles2") {
                     Logging.w("LaunchGame", "Modern Minecraft ($versionName) detected. Holy GL4ES is incompatible. Overriding to Zink (Vulkan).")
-                    rendererToUse = "0fa435e2-46df-45c9-906c-b29606aaef00" // Zink (Vulkan)
+                    rendererToUse = "vulkan_zink" // Zink (Vulkan)
                 }
 
                 if (!Renderers.isCurrentRendererValid() || Renderers.getCurrentRenderer().getUniqueIdentifier() != rendererToUse) {
@@ -173,7 +173,7 @@ class LaunchGame {
             } catch (e: Throwable) {
                 Logging.e("LaunchGame", "Critical: Failed to initialize selected renderer. Falling back to default Holy GL4ES.", e)
                 try {
-                    Renderers.setCurrentRenderer(activity, "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7")
+                    Renderers.setCurrentRenderer(activity, "opengles2")
                 } catch (fallbackError: Throwable) {
                     Logging.e("LaunchGame", "Emergency: Fallback renderer also failed!", fallbackError)
                 }

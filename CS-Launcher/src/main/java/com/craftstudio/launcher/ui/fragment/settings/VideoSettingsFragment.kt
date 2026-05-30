@@ -137,21 +137,21 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
         for (i in rendererNames.indices) {
             val id = rendererIds[i]
             val isRecommended = when (gpuFamily) {
-                DeviceGPUDetector.GPUFamily.ADRENO -> id == "0fa435e2-46df-45c9-906c-b29606aaef00" // Zink (Vulkan)
-                else -> id == "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Holy GL4ES (OpenGL)
+                DeviceGPUDetector.GPUFamily.ADRENO -> id == "vulkan_zink" // Zink (Vulkan)
+                else -> id == "opengles2" // Holy GL4ES (OpenGL)
             }
 
             // FIX 3: Renderer Info UI (Descriptions)
             val description = when (id) {
-                "0fa435e2-46df-45c9-906c-b29606aaef00" -> "✅ Recommended | All versions" // vulkan_zink
-                "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" -> "⚡ Fast | MC 1.16.5 tak best" // opengles2
+                "vulkan_zink" -> "✅ Recommended | All versions" // vulkan_zink
+                "opengles2" -> "⚡ Fast | MC 1.16.5 tak best" // opengles2
                 "ltw_render" -> "⚠️ 1.17+ only | Experimental" // ltw_render
                 "gallium_virgl" -> "❌ MC 1.17+ pe kaam nahi karta" // gallium_virgl
-                "d4e5f6a7-8b9c-0d1e-2f3a-4b5c6d7e8f9a" -> "🔌 FCL Plugin required" // fclplugin_gl4es
-                "e5f6a78b-9c0d-1e2f-3a4b-5c6d7e8f9a0b" -> "🔌 FCL Plugin required" // fclplugin_virgl
-                "c2b3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e" -> "🆕 OpenGL ES 3 | 1.17+ best" // mobileglues
-                "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d" -> "🆕 OpenGL ES 3 | Experimental" // krypton
-                "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e" -> "🐢 Slow fallback | All versions" // gallium_generic
+                "fclplugin_gl4es" -> "🔌 FCL Plugin required" // fclplugin_gl4es
+                "fclplugin_virgl" -> "🔌 FCL Plugin required" // fclplugin_virgl
+                "mobileglues" -> "🆕 OpenGL ES 3 | 1.17+ best" // mobileglues
+                "krypton" -> "🆕 OpenGL ES 3 | Experimental" // krypton
+                "gallium_generic" -> "🐢 Slow fallback | All versions" // gallium_generic
                 "angle" -> "🔬 Experimental | Test only" // angle
                 else -> ""
             }
@@ -388,8 +388,8 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
                 binding.forceVsyncLayout.visibility = if (AllSettings.alternateSurface.getValue()) View.VISIBLE else View.GONE
                 
                 val currentRendererId = AllSettings.renderer.getValue()
-                val isVulkan = currentRendererId == "0fa435e2-46df-45c9-906c-b29606aaef00" || // Zink
-                               currentRendererId == "1e7845f3-3158-469b-980b-967969149492"    // Freedreno (if any)
+                val isVulkan = currentRendererId == "vulkan_zink" || // Zink
+                               currentRendererId == "gallium_freedreno"    // Freedreno (if any)
                 
                 binding.vulkanDriverLayout.visibility = if (isVulkan) View.VISIBLE else View.GONE
                 binding.vulkanDriverImportLayout.visibility = if (isVulkan) View.VISIBLE else View.GONE

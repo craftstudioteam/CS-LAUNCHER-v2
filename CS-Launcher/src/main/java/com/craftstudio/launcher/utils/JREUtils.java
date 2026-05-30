@@ -292,137 +292,122 @@ public final class JREUtils {
     }
 
     private static void setRendererEnv(Map<String, String> envMap) {
-        RendererInterface currentRenderer = Renderers.INSTANCE.getCurrentRenderer();
-        String rendererId = currentRenderer.getRendererId();
+    String rendererId = Renderers.getCurrentRenderer().getRendererId();
+    
+    Logging.d("RENDERER", "Setting env for: " + rendererId);
+    
+    envMap.put("POJAV_RENDERER", rendererId);
+    envMap.put("MESA_GLSL_CACHE_DIR", 
+        PathManager.DIR_CACHE.getAbsolutePath());
 
-        // 1. Base / Common Environment Setup
-        envMap.put("POJAV_RENDERER", rendererId);
-        envMap.put("MESA_GLSL_CACHE_DIR", PathManager.DIR_CACHE.getAbsolutePath());
+    switch (rendererId) {
+        case "opengles2":
+            envMap.put("LIBGL_ES", "2");
+            envMap.put("LIBGL_GL", "21");
+            envMap.put("LIBGL_MIPMAP", "3");
+            envMap.put("LIBGL_NOERROR", "1");
+            envMap.put("LIBGL_NOINTOVLHACK", "1");
+            envMap.put("LIBGL_NORMALIZE", "1");
+            envMap.put("LIBGL_FB", "1");
+            break;
 
-        // 2. Strict Renderer-Specific Isolation
-        switch (rendererId) {
-            case "opengles2": // Holy GL4ES
-                envMap.put("LIBGL_ES", "2");
-                envMap.put("LIBGL_GL", "21");
-                envMap.put("LIBGL_MIPMAP", "3");
-                envMap.put("LIBGL_NOERROR", "1");
-                envMap.put("LIBGL_NOINTOVLHACK", "1");
-                envMap.put("LIBGL_NORMALIZE", "1");
-                envMap.put("LIBGL_FB", "1");
-                break;
-
-            case "angle": // OpenGL ES (Angle)
-                envMap.put("LIBGL_ES", "3");
-                envMap.put("LIBGL_GL", "32"); // Support modern Minecraft
-                break;
-
-            case "gallium_virgl": // Virgl (OpenGL)
-                envMap.put("MESA_EXTENSION_OVERRIDE", "-GL_EXT_texture_sRGB");
-                envMap.put("VIRGL_DEBUG", "x11");
-                envMap.put("GALLIUM_DRIVER", "virpipe"); // Standard Virgl driver name
-                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
-                break;
-
-            case "gallium_panfrost": // Panfrost (OpenGL)
-                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "panfrost");
-                envMap.put("GALLIUM_DRIVER", "panfrost");
-                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
-                break;
-
-            case "gallium_freedreno": // Freedreno (OpenGL)
-                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "freedreno");
-                envMap.put("GALLIUM_DRIVER", "freedreno");
-                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
-                break;
-
-            case "fclplugin_gl4es":
-                envMap.put("LIBGL_ES", "2");
-                envMap.put("LIBGL_MIPMAP", "3");
-                envMap.put("LIBGL_NOERROR", "1");
-                envMap.put("LIBGL_NOINTOVLHACK", "1");
-                envMap.put("LIBGL_NORMALIZE", "1");
-                envMap.put("LIBGL_FB", "1");
-                break;
-
-            case "fclplugin_virgl":
-                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "virpipe");
-                envMap.put("GALLIUM_DRIVER", "virpipe");
-                envMap.put("MESA_GL_VERSION_OVERRIDE", "4.3");
-                envMap.put("MESA_GLSL_VERSION_OVERRIDE", "430");
-                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
-                break;
-
-            case "mobileglues":
-                envMap.put("LIBGL_ES", "3");
-                envMap.put("LIBGL_GL", "32");
-                envMap.put("MGL_RENDERER", "1");
-                envMap.put("MESA_GL_VERSION_OVERRIDE", "3.2");
-                envMap.put("MESA_GLSL_VERSION_OVERRIDE", "150");
-                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
-                break;
-
-            case "krypton":
-                envMap.put("LIBGL_ES", "3");
-                envMap.put("LIBGL_GL", "32");
-                envMap.put("KRYPTON_RENDERER", "1");
-                envMap.put("MESA_GL_VERSION_OVERRIDE", "3.2");
-                envMap.put("MESA_GLSL_VERSION_OVERRIDE", "150");
-                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
-                break;
-
-            case "gallium_generic":
-                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "softpipe");
-                envMap.put("GALLIUM_DRIVER", "softpipe");
-                envMap.put("MESA_GL_VERSION_OVERRIDE", "3.3");
-                envMap.put("MESA_GLSL_VERSION_OVERRIDE", "330");
-                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
-                break;
-
-            case "ltw_render": // LTW (Hardware accelerated)
-                envMap.put("LIBGL_ES", "3");
-                envMap.put("LIBGL_GL", "30");
-                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "ltw");
-                envMap.put("GALLIUM_DRIVER", "ltw");
-                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
-                break;
-
-            case "vulkan_zink": // Zink (Vulkan)
-                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
-                envMap.put("GALLIUM_DRIVER", "zink");
-                envMap.put("ZINK_DESCRIPTORS", "lazy");
-                envMap.put("MESA_GL_VERSION_OVERRIDE", "4.6");
-                envMap.put("MESA_GLSL_VERSION_OVERRIDE", "460");
-                envMap.put("force_glsl_extensions_warn", "true");
-                envMap.put("allow_higher_compat_version", "true");
-                envMap.put("allow_glsl_extension_directive_midshader", "true");
-                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
-                if (!AllSettings.getZinkPreferSystemDriver().getValue() && com.craftstudio.launcher.utils.DeviceGPUDetector.INSTANCE.isAdreno()) {
-                    envMap.put("POJAV_LOAD_TURNIP", "1");
-                }
-                break;
-        }
-
-        // 3. Merge environment variables defined within the Renderer implementation itself
-        envMap.putAll(currentRenderer.getRendererEnv().getValue());
-
-        // 4. EGL Context Override (if defined by the renderer)
-        String eglName = currentRenderer.getRendererEGL();
-        if (eglName != null) envMap.put("POJAVEXEC_EGL", eglName);
-
-        // 5. Global Fallback for LIBGL_ES if not explicitly set
-        if (!envMap.containsKey("LIBGL_ES")) {
-            int glesMajor = getDetectedVersion();
-            Logging.i("glesDetect", "GLES version detected: " + glesMajor);
-
-            if (rendererId.startsWith("opengles")) {
-                envMap.put("LIBGL_ES", rendererId.replace("opengles", "").replace("_5", ""));
-            } else if (glesMajor >= 3) {
-                envMap.put("LIBGL_ES", "3");
-            } else {
-                envMap.put("LIBGL_ES", "2");
+        case "vulkan_zink":
+            envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
+            envMap.put("GALLIUM_DRIVER", "zink");
+            envMap.put("ZINK_DESCRIPTORS", "lazy");
+            envMap.put("MESA_GL_VERSION_OVERRIDE", "4.6");
+            envMap.put("MESA_GLSL_VERSION_OVERRIDE", "460");
+            envMap.put("force_glsl_extensions_warn", "true");
+            envMap.put("allow_higher_compat_version", "true");
+            envMap.put("allow_glsl_extension_directive_midshader", "true");
+            envMap.put("LIB_MESA_NAME", 
+                PathManager.DIR_NATIVE_LIB + "/libOSMesa.so");
+            if (!AllSettings.getZinkPreferSystemDriver().getValue()) {
+                envMap.put("POJAV_LOAD_TURNIP", "1");
             }
-        }
+            break;
+
+        case "ltw_render":
+            envMap.put("LIBGL_ES", "3");
+            envMap.put("LIBGL_GL", "30");
+            envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "ltw");
+            envMap.put("GALLIUM_DRIVER", "ltw");
+            envMap.put("POJAVEXEC_EGL", "libltw.so");
+            envMap.put("LIB_MESA_NAME",
+                PathManager.DIR_NATIVE_LIB + "/libltw.so");
+            break;
+
+        case "mobileglues":
+            envMap.put("LIBGL_ES", "3");
+            envMap.put("LIBGL_GL", "32");
+            envMap.put("MGL_RENDERER", "1");
+            envMap.put("MESA_GL_VERSION_OVERRIDE", "3.2");
+            envMap.put("MESA_GLSL_VERSION_OVERRIDE", "150");
+            envMap.put("LIB_MESA_NAME",
+                PathManager.DIR_NATIVE_LIB + "/libMobileGlues.so");
+            break;
+
+        case "krypton":
+            envMap.put("LIBGL_ES", "3");
+            envMap.put("LIBGL_GL", "32");
+            envMap.put("KRYPTON_RENDERER", "1");
+            envMap.put("MESA_GL_VERSION_OVERRIDE", "3.2");
+            envMap.put("MESA_GLSL_VERSION_OVERRIDE", "150");
+            envMap.put("LIB_MESA_NAME",
+                PathManager.DIR_NATIVE_LIB + "/libkrypton.so");
+            break;
+
+        case "gallium_generic":
+            envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "softpipe");
+            envMap.put("GALLIUM_DRIVER", "softpipe");
+            envMap.put("MESA_GL_VERSION_OVERRIDE", "3.3");
+            envMap.put("MESA_GLSL_VERSION_OVERRIDE", "330");
+            envMap.put("LIB_MESA_NAME",
+                PathManager.DIR_NATIVE_LIB + "/libOSMesa.so");
+            break;
+
+        case "fclplugin_gl4es":
+        case "fclplugin_virgl":
+            RendererPlugin plugin = 
+                RendererPluginManager.getSelectedRendererPlugin();
+            if (plugin != null) {
+                envMap.put("LIB_MESA_NAME", 
+                    plugin.getPath() + "/" + plugin.getGlName());
+                if (rendererId.equals("fclplugin_gl4es")) {
+                    envMap.put("LIBGL_ES", "2");
+                    envMap.put("LIBGL_MIPMAP", "3");
+                    envMap.put("LIBGL_NOERROR", "1");
+                } else {
+                    envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "virpipe");
+                    envMap.put("GALLIUM_DRIVER", "virpipe");
+                    envMap.put("MESA_GL_VERSION_OVERRIDE", "4.3");
+                    envMap.put("MESA_GLSL_VERSION_OVERRIDE", "430");
+                }
+            } else {
+                Logging.e("RENDERER", "FCL Plugin not found!");
+                // Fallback to GL4ES
+                envMap.put("LIBGL_ES", "2");
+                envMap.put("LIBGL_MIPMAP", "3");
+                envMap.put("LIB_MESA_NAME",
+                    PathManager.DIR_NATIVE_LIB + "/libgl4es_114.so");
+            }
+            break;
+
+        default:
+            Logging.w("RENDERER", 
+                "Unknown renderer: " + rendererId + ", using GL4ES");
+            envMap.put("LIBGL_ES", "2");
+            envMap.put("LIB_MESA_NAME",
+                PathManager.DIR_NATIVE_LIB + "/libgl4es_114.so");
+            break;
     }
+    
+    // EGL override if defined
+    String egl = Renderers.getCurrentRenderer().getRendererEGL();
+    if (egl != null) envMap.put("POJAVEXEC_EGL", egl);
+    
+    Logging.d("RENDERER", "Env set complete for: " + rendererId);
+}
 
     private static void setCustomEnv(Map<String, String> envMap) throws Throwable {
         File customEnvFile = new File(PathManager.DIR_GAME_HOME, "custom_env.txt");
@@ -715,31 +700,42 @@ public final class JREUtils {
     }
 
     public static String loadGraphicsLibrary() {
-        if (!Renderers.INSTANCE.isCurrentRendererValid()) return "libgl4es_114.so";
-        else {
-            RendererInterface currentRenderer = Renderers.INSTANCE.getCurrentRenderer();
-            String rendererId = currentRenderer.getRendererId();
-
-            if (rendererId.equals("fclplugin_gl4es") || rendererId.equals("fclplugin_virgl")) {
-                RendererPlugin rendererPlugin = RendererPluginManager.getSelectedRendererPlugin();
-                if (rendererPlugin != null) {
-                    return rendererPlugin.getPath() + "/" + rendererPlugin.getGlName();
-                } else {
-                    Logging.e("JREUtils", "FCL Plugin not found. Please install the renderer plugin.");
-                    return "libgl4es_114.so"; // Fallback to avoid crash
-                }
-            } else if (rendererId.equals("mobileglues")) {
-                return PathManager.DIR_NATIVE_LIB + "/libMobileGlues.so";
-            } else if (rendererId.equals("krypton")) {
-                return PathManager.DIR_NATIVE_LIB + "/libkrypton.so";
-            } else if (rendererId.equals("gallium_generic")) {
-                return PathManager.DIR_NATIVE_LIB + "/libOSMesa.so";
-            } else {
-                String lib = currentRenderer.getRendererLibrary();
-                return lib != null ? lib : "libgl4es_114.so";
-            }
-        }
+    RendererPlugin plugin = 
+        RendererPluginManager.getSelectedRendererPlugin();
+    if (plugin != null) {
+        return plugin.getPath() + "/" + plugin.getGlName();
     }
+    
+    String rendererId = 
+        Renderers.getCurrentRenderer().getRendererId();
+    String lib;
+    
+    switch (rendererId) {
+        case "opengles2":
+        case "fclplugin_gl4es":
+            lib = "libgl4es_114.so"; break;
+        case "vulkan_zink":
+        case "gallium_virgl":
+        case "gallium_generic":
+        case "fclplugin_virgl":
+            lib = "libOSMesa.so"; break;
+        case "ltw_render":
+            lib = "libltw.so"; break;
+        case "mobileglues":
+            lib = "libMobileGlues.so"; break;
+        case "krypton":
+            lib = "libkrypton.so"; break;
+        default:
+            lib = "libgl4es_114.so";
+            Logging.w("RENDERER", 
+                "Unknown renderer " + rendererId + 
+                ", fallback libgl4es");
+    }
+    
+    String fullPath = PathManager.DIR_NATIVE_LIB + "/" + lib;
+    Logging.d("RENDERER", "Graphics lib: " + fullPath);
+    return fullPath;
+}
 
     private static void purgeArg(List<String> argList, String argStart) {
         argList.removeIf(arg -> arg.startsWith(argStart));
