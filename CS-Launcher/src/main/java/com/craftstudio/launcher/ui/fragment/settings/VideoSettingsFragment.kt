@@ -129,7 +129,7 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             }
         }
 
-        // 2. Renderer List with Auto-Tagging
+        // 2. Renderer List with Auto-Tagging & Descriptions
         val renderers = Renderers.getCompatibleRenderers(context).first
         val rendererNames = renderers.rendererNames.toMutableList()
         val rendererIds = renderers.rendererIdentifier.toMutableList()
@@ -138,12 +138,28 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             val id = rendererIds[i]
             val isRecommended = when (gpuFamily) {
                 DeviceGPUDetector.GPUFamily.ADRENO -> id == "0fa435e2-46df-45c9-906c-b29606aaef00" // Zink (Vulkan)
-                else -> id == "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" || id == "c3f8e5d2-1a2b-4c3d-bd5f-e7a9b0c1d2e3" // Holy GL4ES or ANGLE
+                else -> id == "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Holy GL4ES (OpenGL)
             }
+
+            // FIX 3: Renderer Info UI (Descriptions)
+            val description = when (id) {
+                "0fa435e2-46df-45c9-906c-b29606aaef00" -> "✅ Recommended | MC 1.17+ | Vulkan required" // vulkan_zink
+                "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" -> "⚠️ MC 1.16.5 tak | Purane versions ke liye" // opengles2
+                "ltw_render" -> "⚠️ Experimental | Java 17/21 use karo" // ltw_render
+                "gallium_virgl" -> "❌ MC 1.17+ pe kaam nahi karta" // gallium_virgl
+                "angle" -> "🔬 Experimental | Test only" // angle
+                else -> ""
+            }
+
             if (isRecommended) {
                 rendererNames[i] = rendererNames[i] + " (Recommended)"
             }
+
+            if (description.isNotEmpty()) {
+                rendererNames[i] = rendererNames[i] + "\n$description"
+            }
         }
+
 
         ListSettingsWrapper(
             context,
