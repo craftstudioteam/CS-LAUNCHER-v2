@@ -262,53 +262,71 @@ public final class JREUtils {
         RendererInterface currentRenderer = Renderers.INSTANCE.getCurrentRenderer();
         String rendererId = currentRenderer.getRendererId();
 
-        if (rendererId.startsWith("opengles2")) {
-            envMap.put("LIBGL_ES", "2");
-            envMap.put("LIBGL_GL", "21");
-            envMap.put("LIBGL_MIPMAP", "3");
-            envMap.put("LIBGL_NOERROR", "1");
-            envMap.put("LIBGL_NOINTOVLHACK", "1");
-            envMap.put("LIBGL_NORMALIZE", "1");
-            envMap.put("LIBGL_FB", "1");
-        } else if (rendererId.equals("ltw_render")) {
-            envMap.put("LIBGL_ES", "3");
-            envMap.put("LIBGL_GL", "30");
-            envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "ltw");
-            envMap.put("GALLIUM_DRIVER", "ltw");
-        } else if (rendererId.equals("gallium_virgl")) {
-            // FIX: Virgl black textures on 1.17+
-            envMap.put("MESA_EXTENSION_OVERRIDE", "-GL_EXT_texture_sRGB");
-            envMap.put("VIRGL_DEBUG", "x11");
+        // 1. Base / Common Environment Setup
+        envMap.put("POJAV_RENDERER", rendererId);
+        envMap.put("MESA_GLSL_CACHE_DIR", PathManager.DIR_CACHE.getAbsolutePath());
+
+        // 2. Strict Renderer-Specific Isolation
+        switch (rendererId) {
+            case "opengles2": // Holy GL4ES
+                envMap.put("LIBGL_ES", "2");
+                envMap.put("LIBGL_GL", "21");
+                envMap.put("LIBGL_MIPMAP", "3");
+                envMap.put("LIBGL_NOERROR", "1");
+                envMap.put("LIBGL_NOINTOVLHACK", "1");
+                envMap.put("LIBGL_NORMALIZE", "1");
+                envMap.put("LIBGL_FB", "1");
+                break;
+
+            case "angle": // OpenGL ES (Angle)
+                envMap.put("LIBGL_ES", "3");
+                envMap.put("LIBGL_GL", "32"); // Support modern Minecraft
+                break;
+
+            case "gallium_virgl": // Virgl (OpenGL)
+                envMap.put("MESA_EXTENSION_OVERRIDE", "-GL_EXT_texture_sRGB");
+                envMap.put("VIRGL_DEBUG", "x11");
+                envMap.put("GALLIUM_DRIVER", "virpipe"); // Standard Virgl driver name
+                break;
+
+            case "ltw_render": // LTW (Hardware accelerated)
+                envMap.put("LIBGL_ES", "3");
+                envMap.put("LIBGL_GL", "30");
+                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "ltw");
+                envMap.put("GALLIUM_DRIVER", "ltw");
+                break;
+
+            case "vulkan_zink": // Zink (Vulkan)
+                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
+                envMap.put("GALLIUM_DRIVER", "zink");
+                envMap.put("ZINK_DESCRIPTORS", "lazy");
+                envMap.put("MESA_GL_VERSION_OVERRIDE", "4.6");
+                envMap.put("MESA_GLSL_VERSION_OVERRIDE", "460");
+                envMap.put("force_glsl_extensions_warn", "true");
+                envMap.put("allow_higher_compat_version", "true");
+                envMap.put("allow_glsl_extension_directive_midshader", "true");
+                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
+                break;
         }
 
+        // 3. Merge environment variables defined within the Renderer implementation itself
         envMap.putAll(currentRenderer.getRendererEnv().getValue());
 
+        // 4. EGL Context Override (if defined by the renderer)
         String eglName = currentRenderer.getRendererEGL();
         if (eglName != null) envMap.put("POJAVEXEC_EGL", eglName);
 
-        envMap.put("POJAV_RENDERER", rendererId);
-
-        if (RendererPluginManager.getSelectedRendererPlugin() != null) return;
-
-        if (!rendererId.startsWith("opengles")) {
-            envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
-            envMap.put("MESA_GLSL_CACHE_DIR", PathManager.DIR_CACHE.getAbsolutePath());
-            envMap.put("force_glsl_extensions_warn", "true");
-            envMap.put("allow_higher_compat_version", "true");
-            envMap.put("allow_glsl_extension_directive_midshader", "true");
-            envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
-        }
-
+        // 5. Global Fallback for LIBGL_ES if not explicitly set
         if (!envMap.containsKey("LIBGL_ES")) {
             int glesMajor = getDetectedVersion();
-            Logging.i("glesDetect","GLES version detected: "+glesMajor);
+            Logging.i("glesDetect", "GLES version detected: " + glesMajor);
 
-            if (glesMajor < 3) {
-                envMap.put("LIBGL_ES","2");
-            } else if (rendererId.startsWith("opengles")) {
+            if (rendererId.startsWith("opengles")) {
                 envMap.put("LIBGL_ES", rendererId.replace("opengles", "").replace("_5", ""));
-            } else {
+            } else if (glesMajor >= 3) {
                 envMap.put("LIBGL_ES", "3");
+            } else {
+                envMap.put("LIBGL_ES", "2");
             }
         }
     }

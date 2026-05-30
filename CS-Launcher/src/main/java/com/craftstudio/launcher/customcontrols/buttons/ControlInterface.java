@@ -115,8 +115,23 @@ public interface ControlInterface extends View.OnLongClickListener, GrabListener
         GradientDrawable gd = getControlView().getBackground() instanceof GradientDrawable
                 ? (GradientDrawable) getControlView().getBackground()
                 : new GradientDrawable();
-        gd.setColor(getProperties().bgColor);
-        gd.setStroke((int) Tools.dpToPx(getProperties().strokeWidth * (getControlLayoutParent().getLayoutScale()/100f)), getProperties().strokeColor);
+        
+        // If it's a ControlButton, we use the themed drawable by default, 
+        // but this method is used for custom colors.
+        // For branding compliance, we force matte black if the background color is default (0 or similar)
+        int bgColor = getProperties().bgColor;
+        if (bgColor == 0x4D000000 || bgColor == 0) {
+            bgColor = Color.parseColor("#1E1E1E");
+        }
+        
+        gd.setColor(bgColor);
+        
+        int strokeColor = getProperties().strokeColor;
+        if (strokeColor == 0xFFFFFFFF || strokeColor == 0) {
+            strokeColor = Color.parseColor("#24B538");
+        }
+        
+        gd.setStroke((int) Tools.dpToPx(getProperties().strokeWidth * (getControlLayoutParent().getLayoutScale()/100f)), strokeColor);
         gd.setCornerRadius(computeCornerRadius(getProperties().cornerRadius));
 
         getControlView().setBackground(gd);

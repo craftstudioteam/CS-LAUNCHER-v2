@@ -69,16 +69,17 @@ public class ControlButton extends TextView implements ControlInterface {
 
         if (mProperties.isToggle) {
             //For the toggle layer
-            final TypedValue value = new TypedValue();
-            getContext().getTheme().resolveAttribute(R.attr.colorAccent, value, true);
-            mRectPaint.setColor(value.data);
+            mRectPaint.setColor(Color.parseColor("#24B538")); // Brand Accent Green
             mRectPaint.setAlpha(128);
         } else {
-            mRectPaint.setColor(Color.WHITE);
-            mRectPaint.setAlpha(60);
+            mRectPaint.setColor(Color.parseColor("#24B538")); // Brand Accent Green
+            mRectPaint.setAlpha(180); // More visible flash for non-toggle buttons
         }
 
         setText(properties.name);
+        
+        // Apply the solid matte black background initially
+        setBackgroundResource(R.drawable.bg_ctrl_button_modern);
     }
 
     @Override

@@ -12,8 +12,9 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:src="@drawable/ic_menu_settings"
+        android:tint="#24B538"
         android:clickable="false"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription,UseAppTint" />
 
     <TextView
         android:id="@+id/fpsText"
@@ -24,7 +25,7 @@
         android:layout_toEndOf="@id/settings_button"
         android:visibility="gone"
         android:text="FPS: 114514"
-        android:textColor="@android:color/white"
+        android:textColor="#E0E0E0"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -36,7 +37,7 @@
         android:layout_toEndOf="@id/fpsText"
         android:visibility="gone"
         android:text="M: 0MB/0MB"
-        android:textColor="@android:color/white"
+        android:textColor="#E0E0E0"
         tools:ignore="HardcodedText" />
 
 </RelativeLayout>

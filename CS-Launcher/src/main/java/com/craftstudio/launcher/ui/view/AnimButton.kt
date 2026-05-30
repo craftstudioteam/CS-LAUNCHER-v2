@@ -33,8 +33,8 @@ open class AnimButton @JvmOverloads constructor(
 
     private fun setRipple() {
         val rippleDrawable = RippleDrawable(
-            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.background_ripple_effect)),
-            ResourcesCompat.getDrawable(resources, R.drawable.button_background, context.theme),
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.quick_settings_green_ripple)),
+            ResourcesCompat.getDrawable(resources, R.drawable.bg_ctrl_button_modern, context.theme),
             null
         )
 
