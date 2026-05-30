@@ -36,6 +36,7 @@
                 android:layout_marginEnd="@dimen/_8sdp"
                 android:orientation="vertical">
 
+                <!-- IMPROVEMENT 2: VulkanMod info banner -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/vulkan_mod_banner"
                     android:layout_width="match_parent"
