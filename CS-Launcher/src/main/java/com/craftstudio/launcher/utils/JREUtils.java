@@ -246,11 +246,6 @@ public final class JREUtils {
             envMap.put("POJAV_EMUI_ITERATOR_MITIGATE", "1");
         }
 
-        // IMPROVEMENT: Turnip driver for Adreno GPUs (FPS boost)
-        if (!AllSettings.getZinkPreferSystemDriver().getValue() && com.craftstudio.launcher.utils.DeviceGPUDetector.INSTANCE.isAdreno()) {
-            envMap.put("POJAV_LOAD_TURNIP", "1");
-        }
-
         // IMPROVEMENT 2: VulkanMod detection and support
         if (isVulkanModPresent(gameVersion)) {
             envMap.put("POJAV_RENDERER", "vulkan_zink");
@@ -325,6 +320,19 @@ public final class JREUtils {
                 envMap.put("MESA_EXTENSION_OVERRIDE", "-GL_EXT_texture_sRGB");
                 envMap.put("VIRGL_DEBUG", "x11");
                 envMap.put("GALLIUM_DRIVER", "virpipe"); // Standard Virgl driver name
+                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
+                break;
+
+            case "gallium_panfrost": // Panfrost (OpenGL)
+                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "panfrost");
+                envMap.put("GALLIUM_DRIVER", "panfrost");
+                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
+                break;
+
+            case "gallium_freedreno": // Freedreno (OpenGL)
+                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "freedreno");
+                envMap.put("GALLIUM_DRIVER", "freedreno");
+                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
                 break;
 
             case "ltw_render": // LTW (Hardware accelerated)
@@ -332,6 +340,7 @@ public final class JREUtils {
                 envMap.put("LIBGL_GL", "30");
                 envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "ltw");
                 envMap.put("GALLIUM_DRIVER", "ltw");
+                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
                 break;
 
             case "vulkan_zink": // Zink (Vulkan)
@@ -344,6 +353,9 @@ public final class JREUtils {
                 envMap.put("allow_higher_compat_version", "true");
                 envMap.put("allow_glsl_extension_directive_midshader", "true");
                 envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
+                if (!AllSettings.getZinkPreferSystemDriver().getValue() && com.craftstudio.launcher.utils.DeviceGPUDetector.INSTANCE.isAdreno()) {
+                    envMap.put("POJAV_LOAD_TURNIP", "1");
+                }
                 break;
         }
 
@@ -660,13 +672,14 @@ public final class JREUtils {
     }
 
     public static String loadGraphicsLibrary() {
-        if (!Renderers.INSTANCE.isCurrentRendererValid()) return null;
+        if (!Renderers.INSTANCE.isCurrentRendererValid()) return "libgl4es_114.so";
         else {
             RendererPlugin rendererPlugin = RendererPluginManager.getSelectedRendererPlugin();
             if (rendererPlugin != null) {
                 return rendererPlugin.getPath() + "/" + rendererPlugin.getGlName();
             } else {
-                return Renderers.INSTANCE.getCurrentRenderer().getRendererLibrary();
+                String lib = Renderers.INSTANCE.getCurrentRenderer().getRendererLibrary();
+                return lib != null ? lib : "libgl4es_114.so";
             }
         }
     }
