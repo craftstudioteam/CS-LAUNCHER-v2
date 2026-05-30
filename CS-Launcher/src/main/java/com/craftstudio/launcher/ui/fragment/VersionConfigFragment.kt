@@ -376,7 +376,7 @@ class VersionConfigFragment : FragmentWithAnim(R.layout.fragment_version_config)
 
     private fun checkVulkanMod() {
         val modsFolder = File(currentVersion.getGameDir(), "mods")
-        val hasVulkanMod = modsFolder.listFiles()?.any { it.name.lowercase().contains("vulkanmod") } ?: false
+        val hasVulkanMod = modsFolder.listFiles()?.any { mod -> mod.name.lowercase().contains("vulkanmod") } ?: false
         val isModern = isModernMinecraft(currentVersion.getVersionName())
         val isFabric = currentVersion.getVersionName().lowercase().contains("fabric")
 
@@ -426,5 +426,8 @@ class VersionConfigFragment : FragmentWithAnim(R.layout.fragment_version_config)
         const val TAG: String = "VersionConfigFragment"
         private const val SELECT_CONTROL = "SELECT_CONTROL"
         private const val SELECT_CUSTOM_PATH = "SELECT_CUSTOM_PATH"
+    }
+}
+TH"
     }
 }

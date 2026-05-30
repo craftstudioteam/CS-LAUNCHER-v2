@@ -14,7 +14,7 @@ class LocaleHelper(context: Context) : ContextWrapper(context) {
             //刷新启动器设置
             Settings.refreshSettings()
 
-            LauncherPreferences.loadPreferences()
+            LauncherPreferences.loadPreferences(context)
             return LocaleHelper(context)
         }
     }
