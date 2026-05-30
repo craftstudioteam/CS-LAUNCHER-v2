@@ -403,9 +403,10 @@ class VersionConfigFragment : FragmentWithAnim(R.layout.fragment_version_config)
     }
 
     private fun isVulkanModPresent(): Boolean {
-        val modsFolder = File(currentVersion.getGameDir(), "mods")
+        val gameDir = currentVersion.getGameDir()
+        val modsFolder = java.io.File(gameDir, "mods")
         if (!modsFolder.exists() || !modsFolder.isDirectory) return false
-        val mods: Array<File> = modsFolder.listFiles() ?: return false
+        val mods: Array<java.io.File> = modsFolder.listFiles() ?: return false
         return mods.any { mod -> mod.name.lowercase().contains("vulkanmod") }
     }
 
