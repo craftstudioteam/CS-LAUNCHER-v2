@@ -235,8 +235,15 @@ public final class JREUtils {
         envMap.put("LD_LIBRARY_PATH", LD_LIBRARY_PATH);
         envMap.put("PATH", jreHome + "/bin:" + Os.getenv("PATH"));
         envMap.put("FORCE_VSYNC", String.valueOf(AllSettings.getForceVsync().getValue()));
-        envMap.put("AWTSTUB_WIDTH", Integer.toString(CallbackBridge.windowWidth > 0 ? CallbackBridge.windowWidth : CallbackBridge.physicalWidth));
-        envMap.put("AWTSTUB_HEIGHT", Integer.toString(CallbackBridge.windowHeight > 0 ? CallbackBridge.windowHeight : CallbackBridge.physicalHeight));
+
+        // Performance Hacks
+        envMap.put("vblank_mode", "0");
+        envMap.put("mesa_glthread", "true");
+        envMap.put("GALLIUM_THREAD", "1");
+
+        float ratio = AllSettings.getResolutionRatio().getValue() / 100F;
+        envMap.put("AWTSTUB_WIDTH", Integer.toString(Tools.getDisplayFriendlyRes(CallbackBridge.windowWidth > 0 ? CallbackBridge.windowWidth : CallbackBridge.physicalWidth, ratio)));
+        envMap.put("AWTSTUB_HEIGHT", Integer.toString(Tools.getDisplayFriendlyRes(CallbackBridge.windowHeight > 0 ? CallbackBridge.windowHeight : CallbackBridge.physicalHeight, ratio)));
         envMap.put("MOD_ANDROID_RUNTIME", PathManager.DIR_RUNTIME_MOD != null ? PathManager.DIR_RUNTIME_MOD.getAbsolutePath() : "");
 
         if (AllSettings.getDumpShaders().getValue())
@@ -268,6 +275,10 @@ public final class JREUtils {
             envMap.put("LIBGL_GL", "30");
             envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "ltw");
             envMap.put("GALLIUM_DRIVER", "ltw");
+        } else if (rendererId.equals("gallium_virgl")) {
+            // FIX: Virgl black textures on 1.17+
+            envMap.put("MESA_EXTENSION_OVERRIDE", "-GL_EXT_texture_sRGB");
+            envMap.put("VIRGL_DEBUG", "x11");
         }
 
         envMap.putAll(currentRenderer.getRendererEnv().getValue());
@@ -422,8 +433,11 @@ public final class JREUtils {
         userArgs.add("-XX:+UnlockExperimentalVMOptions");
         userArgs.add("-XX:G1NewSizePercent=20");
         userArgs.add("-XX:G1ReservePercent=20");
-        userArgs.add("-XX:MaxGCPauseMillis=50");
+        userArgs.add("-XX:MaxGCPauseMillis=20");
+        userArgs.add("-XX:G1HeapRegionSize=8M");
+        userArgs.add("-XX:+ParallelRefProcEnabled");
         userArgs.add("-XX:+DisableExplicitGC");
+        userArgs.add("-XX:+AlwaysPreTouch");
         userArgs.add("-XX:+UseStringDeduplication");
 
         int ramMB = AllSettings.getRamAllocation().getValue().getValue();

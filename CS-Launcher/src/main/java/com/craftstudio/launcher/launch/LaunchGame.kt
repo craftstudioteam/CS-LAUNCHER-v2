@@ -122,14 +122,24 @@ class LaunchGame {
         @Throws(Throwable::class)
         @JvmStatic
         fun runGame(activity: AppCompatActivity, minecraftVersion: Version, version: JMinecraftVersionList.Version) {
-            // FIX: Robust Renderer Initialization with Fallback
+            val versionName = minecraftVersion.getVersionName()
+            val isModern = isModernMinecraft(versionName)
+
+            // FIX: Robust Renderer Initialization with Fallback & Smart Guard
             try {
-                if (!Renderers.isCurrentRendererValid()) {
-                    val rendererToUse = if (android.os.Build.VERSION.SDK_INT == 26) {
-                        "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Default to OpenGL (Holy GL4ES)
-                    } else {
-                        AllSettings.renderer.getValue()
-                    }
+                var rendererToUse = if (android.os.Build.VERSION.SDK_INT == 26) {
+                    "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Default to OpenGL (Holy GL4ES)
+                } else {
+                    AllSettings.renderer.getValue()
+                }
+
+                // SMART GUARD: Holy GL4ES only supports OpenGL 2.1 and will crash on 1.17+.
+                if (isModern && rendererToUse == "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7") {
+                    Logging.w("LaunchGame", "Modern Minecraft ($versionName) detected. Holy GL4ES is incompatible. Overriding to Zink (Vulkan).")
+                    rendererToUse = "0fa435e2-46df-45c9-906c-b29606aaef00" // Zink (Vulkan)
+                }
+
+                if (!Renderers.isCurrentRendererValid() || Renderers.getCurrentRenderer().getUniqueIdentifier() != rendererToUse) {
                     Renderers.setCurrentRenderer(activity, rendererToUse)
                 }
             } catch (e: Throwable) {
@@ -319,6 +329,15 @@ class LaunchGame {
                 // actually launching the game, thus giving us the opportunity
                 // to start after the activity is shown again
             }
+        }
+
+        private fun isModernMinecraft(version: String): Boolean {
+            // Version format can be "1.17", "1.17.1", "1.21.11", or custom names like "Fabric 1.20.1"
+            val versionRegex = """(\d+)\.(\d+)(\.(\d+))?""".toRegex()
+            val match = versionRegex.find(version) ?: return false
+            val major = match.groupValues[1].toIntOrNull() ?: 0
+            val minor = match.groupValues[2].toIntOrNull() ?: 0
+            return (major > 1) || (major == 1 && minor >= 17)
         }
     }
 }

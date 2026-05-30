@@ -124,7 +124,7 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             append(" - Recommended: ")
             when (gpuFamily) {
                 DeviceGPUDetector.GPUFamily.ADRENO -> append("Zink + Turnip")
-                DeviceGPUDetector.GPUFamily.MALI, DeviceGPUDetector.GPUFamily.XCLIPSE -> append("Holy GL4ES")
+                DeviceGPUDetector.GPUFamily.MALI, DeviceGPUDetector.GPUFamily.XCLIPSE -> append("Holy GL4ES / ANGLE")
                 else -> append("Holy GL4ES")
             }
         }
@@ -138,7 +138,7 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
             val id = rendererIds[i]
             val isRecommended = when (gpuFamily) {
                 DeviceGPUDetector.GPUFamily.ADRENO -> id == "0fa435e2-46df-45c9-906c-b29606aaef00" // Zink (Vulkan)
-                else -> id == "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" // Holy GL4ES (OpenGL)
+                else -> id == "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" || id == "c3f8e5d2-1a2b-4c3d-bd5f-e7a9b0c1d2e3" // Holy GL4ES or ANGLE
             }
             if (isRecommended) {
                 rendererNames[i] = rendererNames[i] + " (Recommended)"
