@@ -5,60 +5,60 @@ import com.craftstudio.launcher.feature.log.Logging
 import com.craftstudio.launcher.setting.AllSettings
 
 enum class Renderers(
-    val rendererId: String,
+    val id: String,
     val displayName: String,
-    val rendererLibrary: String,
-    val rendererEGL: String? = null
+    val library: String,
+    val egl: String? = null
 ) : RendererInterface {
     ZINK(
-        rendererId = "vulkan_zink",
+        id = "vulkan_zink",
         displayName = "Zink (Vulkan)",
-        rendererLibrary = "libOSMesa.so"
+        library = "libOSMesa.so"
     ),
     GL4ES(
-        rendererId = "opengles2", 
+        id = "opengles2", 
         displayName = "Holy GL4ES",
-        rendererLibrary = "libgl4es_114.so"
+        library = "libgl4es_114.so"
     ),
     LTW(
-        rendererId = "ltw_render",
+        id = "ltw_render",
         displayName = "LTW (OpenGL ES 3)",
-        rendererLibrary = "libltw.so",
-        rendererEGL = "libltw.so"
+        library = "libltw.so",
+        egl = "libltw.so"
     ),
     MOBILEGLUES(
-        rendererId = "mobileglues",
+        id = "mobileglues",
         displayName = "MobileGlues (OpenGL ES 3)",
-        rendererLibrary = "libMobileGlues.so"
+        library = "libMobileGlues.so"
     ),
     KRYPTON(
-        rendererId = "krypton",
+        id = "krypton",
         displayName = "Krypton Wrapper (OpenGL ES 3)",
-        rendererLibrary = "libkrypton.so"
+        library = "libkrypton.so"
     ),
     GALLIUM_GENERIC(
-        rendererId = "gallium_generic",
+        id = "gallium_generic",
         displayName = "Gallium Generic (Mesa)",
-        rendererLibrary = "libOSMesa.so"
+        library = "libOSMesa.so"
     ),
     FCL_GL4ES(
-        rendererId = "fclplugin_gl4es",
+        id = "fclplugin_gl4es",
         displayName = "Holy GL4ES (FCL Plugin)",
-        rendererLibrary = "libgl4es_114.so"
+        library = "libgl4es_114.so"
     ),
     FCL_VIRGL(
-        rendererId = "fclplugin_virgl",
+        id = "fclplugin_virgl",
         displayName = "Holy VirGL (FCL Plugin)",
-        rendererLibrary = "libOSMesa.so"
+        library = "libOSMesa.so"
     );
 
-    override fun getRendererId(): String = rendererId
-    override fun getUniqueIdentifier(): String = rendererId
+    override fun getRendererId(): String = id
+    override fun getUniqueIdentifier(): String = id
     override fun getRendererName(): String = displayName
     override fun getRendererEnv(): Lazy<Map<String, String>> = lazy { emptyMap() }
     override fun getDlopenLibrary(): Lazy<List<String>> = lazy { emptyList() }
-    override fun getRendererLibrary(): String = rendererLibrary
-    override fun getRendererEGL(): String? = rendererEGL
+    override fun getRendererLibrary(): String = library
+    override fun getRendererEGL(): String? = egl
 
     companion object {
         @JvmField
@@ -69,7 +69,7 @@ enum class Renderers(
         
         @JvmStatic
         fun fromId(id: String): Renderers {
-            return values().find { it.rendererId == id } ?: ZINK
+            return values().find { it.id == id } ?: ZINK
         }
         
         @JvmStatic
@@ -78,7 +78,7 @@ enum class Renderers(
         @JvmStatic
         fun init(reset: Boolean = false) {
             currentRenderer = fromId(AllSettings.renderer.getValue())
-            Logging.i("RENDERER", "Initialized with: " + currentRenderer.rendererId)
+            Logging.i("RENDERER", "Initialized with: " + currentRenderer.id)
         }
 
         @JvmStatic
@@ -90,14 +90,14 @@ enum class Renderers(
         @JvmStatic
         fun setCurrentRenderer(context: Context, id: String, retryToFirstOnFailure: Boolean = true) {
             currentRenderer = fromId(id)
-            AllSettings.renderer.put(currentRenderer.rendererId).save()
-            Logging.i("RENDERER", "Current renderer set & saved to ${currentRenderer.rendererId}")
+            AllSettings.renderer.put(currentRenderer.id).save()
+            Logging.i("RENDERER", "Current renderer set & saved to ${currentRenderer.id}")
         }
 
         @JvmStatic
         fun getCompatibleRenderers(context: Context): Pair<RenderersList, List<Renderers>> {
             val list = values().toList()
-            val ids = list.map { it.rendererId }
+            val ids = list.map { it.id }
             val names = list.map { it.displayName }
             return Pair(RenderersList(ids, names), list)
         }
