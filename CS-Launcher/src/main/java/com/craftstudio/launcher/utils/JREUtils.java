@@ -226,7 +226,7 @@ public final class JREUtils {
         setLdLibraryPath(jvmLibraryPath + ":" + LD_LIBRARY_PATH);
     }
 
-    private static void setJavaEnv(Map<String, String> envMap, String jreHome) {
+    private static void setJavaEnv(Map<String, String> envMap, String jreHome, Version gameVersion, AppCompatActivity activity) {
         envMap.put("POJAV_NATIVEDIR", DIR_NATIVE_LIB);
         envMap.put("DRIVER_PATH", DriverPluginManager.getDriver().getPath());
         envMap.put("JAVA_HOME", jreHome);
@@ -240,6 +240,32 @@ public final class JREUtils {
         envMap.put("vblank_mode", "0");
         envMap.put("mesa_glthread", "true");
         envMap.put("GALLIUM_THREAD", "1");
+
+        // FIX: Huawei device fix
+        if (Tools.deviceHasHangingLinker()) {
+            envMap.put("POJAV_EMUI_ITERATOR_MITIGATE", "1");
+        }
+
+        // IMPROVEMENT: Turnip driver for Adreno GPUs (FPS boost)
+        if (!AllSettings.getZinkPreferSystemDriver().getValue() && com.craftstudio.launcher.utils.DeviceGPUDetector.INSTANCE.isAdreno()) {
+            envMap.put("POJAV_LOAD_TURNIP", "1");
+        }
+
+        // IMPROVEMENT 2: VulkanMod detection and support
+        if (isVulkanModPresent(gameVersion)) {
+            envMap.put("POJAV_RENDERER", "vulkan_zink");
+            envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
+            envMap.put("GALLIUM_DRIVER", "zink");
+            envMap.put("MESA_GL_VERSION_OVERRIDE", "4.6");
+            envMap.put("MESA_GLSL_VERSION_OVERRIDE", "460");
+            envMap.put("VK_ICD_FILENAMES", "");
+            envMap.put("VULKAN_MOD_DETECTED", "1");
+
+            if (activity != null) {
+                activity.runOnUiThread(() -> Toast.makeText(activity, "VulkanMod detected! Vulkan renderer auto-enabled.", Toast.LENGTH_SHORT).show());
+            }
+            Logging.i("VulkanMod", "VulkanMod detected, forcing Vulkan environment");
+        }
 
         float ratio = AllSettings.getResolutionRatio().getValue() / 100F;
         envMap.put("AWTSTUB_WIDTH", Integer.toString(Tools.getDisplayFriendlyRes(CallbackBridge.windowWidth > 0 ? CallbackBridge.windowWidth : CallbackBridge.physicalWidth, ratio)));
@@ -256,6 +282,18 @@ public final class JREUtils {
             envMap.put("POJAV_BIG_CORE_AFFINITY", "1");
         if (FFmpegPlugin.isAvailable)
             envMap.put("POJAV_FFMPEG_PATH", FFmpegPlugin.executablePath);
+    }
+
+    private static boolean isVulkanModPresent(Version gameVersion) {
+        if (gameVersion == null) return false;
+        File modsFolder = new File(gameVersion.getGameDir(), "mods");
+        if (!modsFolder.exists()) return false;
+        File[] mods = modsFolder.listFiles();
+        if (mods == null) return false;
+        for (File mod : mods) {
+            if (mod.getName().toLowerCase(java.util.Locale.ROOT).contains("vulkanmod")) return true;
+        }
+        return false;
     }
 
     private static void setRendererEnv(Map<String, String> envMap) {
@@ -357,10 +395,10 @@ public final class JREUtils {
         }
     }
 
-    private static void setEnv(String jreHome, final Runtime runtime, Version gameVersion) throws Throwable {
+    private static void setEnv(String jreHome, final Runtime runtime, Version gameVersion, AppCompatActivity activity) throws Throwable {
         Map<String, String> envMap = new ArrayMap<>();
 
-        setJavaEnv(envMap, jreHome);
+        setJavaEnv(envMap, jreHome, gameVersion, activity);
         setCustomEnv(envMap);
 
         if (gameVersion != null) {
@@ -467,6 +505,12 @@ public final class JREUtils {
 
         userArgs.add("-XX:ActiveProcessorCount=" + java.lang.Runtime.getRuntime().availableProcessors());
 
+        // IMPROVEMENT 2: VulkanMod JVM arguments
+        if (isVulkanModPresent(gameVersion)) {
+            userArgs.add("-Dvulkanmod.enabled=true");
+            userArgs.add("-Dorg.lwjgl.vulkan.libname=libvulkan.so");
+        }
+
         userArgs.addAll(JVMArgs);
         // Ensure JNA can unpack temporary files: override any previous -Djna.tmpdir
         purgeArg(userArgs, "-Djna.tmpdir");
@@ -510,7 +554,7 @@ public final class JREUtils {
 
             initLdLibraryPath(runtimeHome);
 
-            setEnv(runtimeHome, runtime, gameVersion);
+            setEnv(runtimeHome, runtime, gameVersion, activity);
 
             initJavaRuntime(runtimeHome);
 

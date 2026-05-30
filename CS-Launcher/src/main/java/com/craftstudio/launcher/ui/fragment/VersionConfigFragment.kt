@@ -112,6 +112,9 @@ class VersionConfigFragment : FragmentWithAnim(R.layout.fragment_version_config)
             }
 
             initSpinners(isolationType, rendererSpinner, driverSpinner, runtimeSpinner)
+            
+            // IMPROVEMENT 2: VulkanMod info banner
+            checkVulkanMod()
         }
 
         val versionConfig = currentVersion.getVersionConfig()
@@ -369,6 +372,43 @@ class VersionConfigFragment : FragmentWithAnim(R.layout.fragment_version_config)
 
     private fun getEditableValue(editable: Editable?): String {
         return editable?.toString() ?: ""
+    }
+
+    private fun checkVulkanMod() {
+        val modsFolder = File(currentVersion.getGameDir(), "mods")
+        val hasVulkanMod = modsFolder.listFiles()?.any { it.name.lowercase().contains("vulkanmod") } ?: false
+        val isModern = isModernMinecraft(currentVersion.getVersionName())
+        val isFabric = currentVersion.getVersionName().lowercase().contains("fabric")
+
+        binding.apply {
+            if (hasVulkanMod) {
+                vulkanModBanner.visibility = View.VISIBLE
+                vulkanModText.text = "✅ VulkanMod detected — Best FPS for MC 1.17+"
+                vulkanModText.setTextColor(requireContext().getColor(R.color.green))
+            } else if (isModern) {
+                vulkanModBanner.visibility = View.VISIBLE
+                if (isFabric) {
+                    vulkanModText.text = "💡 VulkanMod install karo maximum FPS ke liye"
+                } else {
+                    vulkanModText.text = "💡 Tip: MC 1.17+ pe Fabric + VulkanMod use karein best FPS ke liye"
+                }
+                vulkanModText.setTextColor(requireContext().getColor(R.color.gray))
+                vulkanModBanner.setOnClickListener {
+                    ZHTools.openLink(requireContext(), "https://modrinth.com/mod/vulkan-mod")
+                }
+            } else {
+                vulkanModBanner.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun isModernMinecraft(version: String): Boolean {
+        val versionRegex = """(\d+)\.(\d+)(\.(\d+))?""".toRegex()
+        val mcVer = version.replace("""-(?i)(forge|fabric|quilt|optifine).*""".toRegex(), "")
+        val match = versionRegex.find(mcVer) ?: return false
+        val major = match.groupValues[1].toIntOrNull() ?: 0
+        val minor = match.groupValues[2].toIntOrNull() ?: 0
+        return (major > 1) || (major == 1 && minor >= 17)
     }
 
     override fun slideIn(animPlayer: AnimPlayer) {

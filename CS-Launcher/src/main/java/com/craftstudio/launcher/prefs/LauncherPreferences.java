@@ -21,7 +21,9 @@ import com.craftstudio.launcher.multirt.MultiRTUtils;
 import com.craftstudio.launcher.utils.JREUtils;
 
 public class LauncherPreferences {
-    public static void loadPreferences() {
+    private static Boolean sIsDevicePowerful = null;
+
+    public static void loadPreferences(Context ctx) {
         String argLwjglLibname = "-Dorg.lwjgl.opengl.libname=";
         String javaArgs = AllSettings.getJavaArgs().getValue();
         for (String arg : JREUtils.parseJavaArguments(javaArgs)) {
@@ -32,6 +34,54 @@ public class LauncherPreferences {
         }
 
         reloadRuntime();
+
+        boolean powerful = isDevicePowerful(ctx);
+        if (!Settings.Manager.contains("bigCoreAffinity"))
+            AllSettings.getBigCoreAffinity().put(false).save();
+        if (!Settings.Manager.contains("sustainedPerformance"))
+            AllSettings.getSustainedPerformance().put(powerful).save();
+        if (!Settings.Manager.contains("resolutionRatio"))
+            AllSettings.getResolutionRatio().put(findBestResolution(ctx)).save();
+    }
+
+    /** Detect if the device is powerful enough for higher settings */
+    public static boolean isDevicePowerful(Context context) {
+        if (sIsDevicePowerful != null) return sIsDevicePowerful;
+        
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) return sIsDevicePowerful = false;
+        if (Tools.getTotalDeviceMemory(context) <= 4096) return sIsDevicePowerful = false;
+        
+        android.util.DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        if (Math.min(metrics.widthPixels, metrics.heightPixels) < 1080) return sIsDevicePowerful = false;
+        
+        if (Runtime.getRuntime().availableProcessors() <= 4) return sIsDevicePowerful = false;
+        if (hasAllCoreSameFreq()) return sIsDevicePowerful = false;
+        
+        return sIsDevicePowerful = true;
+    }
+
+    /** Detect big.LITTLE architecture */
+    private static boolean hasAllCoreSameFreq() {
+        int coreCount = Runtime.getRuntime().availableProcessors();
+        try {
+            String freq0 = Tools.read("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
+            String freqX = Tools.read("/sys/devices/system/cpu/cpu" + (coreCount - 1) + "/cpufreq/cpuinfo_max_freq");
+            return freq0.equals(freqX);
+        } catch (java.io.IOException e) {
+            return false;
+        }
+    }
+
+    /** Auto-detect best resolution ratio */
+    public static int findBestResolution(Context context) {
+        android.util.DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        int minSide = Math.min(metrics.widthPixels, metrics.heightPixels);
+        int targetSide = isDevicePowerful(context) ? 1080 : 720;
+        
+        if (minSide <= targetSide) return 100;
+        
+        float ratio = (100f * targetSide / minSide);
+        return (int) (Math.ceil(ratio / 25) * 25);
     }
 
     public static void reloadRuntime() {

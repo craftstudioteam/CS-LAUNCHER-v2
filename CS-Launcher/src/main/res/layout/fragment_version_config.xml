@@ -29,12 +29,25 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_12sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:orientation="vertical">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/vulkan_mod_banner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:padding="@dimen/_8sdp"
+                    android:background="@drawable/background_card"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/vulkan_mod_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/green"
+                        android:textSize="@dimen/_11ssp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="✅ VulkanMod detected — Best FPS for MC 1.17+" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

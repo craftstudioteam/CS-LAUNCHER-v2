@@ -747,6 +747,11 @@ public final class Tools {
                 packageManager.hasSystemFeature(PackageManager.FEATURE_VULKAN_HARDWARE_VERSION);
     }
 
+    public static boolean deviceHasHangingLinker() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) return false;
+        return android.os.Build.MANUFACTURER.toLowerCase(java.util.Locale.ROOT).contains("huawei");
+    }
+
     public static <T> T getWeakReference(WeakReference<T> weakReference) {
         if(weakReference == null) return null;
         return weakReference.get();
