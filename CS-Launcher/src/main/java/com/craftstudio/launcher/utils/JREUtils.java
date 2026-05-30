@@ -335,6 +335,49 @@ public final class JREUtils {
                 envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
                 break;
 
+            case "fclplugin_gl4es":
+                envMap.put("LIBGL_ES", "2");
+                envMap.put("LIBGL_MIPMAP", "3");
+                envMap.put("LIBGL_NOERROR", "1");
+                envMap.put("LIBGL_NOINTOVLHACK", "1");
+                envMap.put("LIBGL_NORMALIZE", "1");
+                envMap.put("LIBGL_FB", "1");
+                break;
+
+            case "fclplugin_virgl":
+                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "virpipe");
+                envMap.put("GALLIUM_DRIVER", "virpipe");
+                envMap.put("MESA_GL_VERSION_OVERRIDE", "4.3");
+                envMap.put("MESA_GLSL_VERSION_OVERRIDE", "430");
+                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
+                break;
+
+            case "mobileglues":
+                envMap.put("LIBGL_ES", "3");
+                envMap.put("LIBGL_GL", "32");
+                envMap.put("MGL_RENDERER", "1");
+                envMap.put("MESA_GL_VERSION_OVERRIDE", "3.2");
+                envMap.put("MESA_GLSL_VERSION_OVERRIDE", "150");
+                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
+                break;
+
+            case "krypton":
+                envMap.put("LIBGL_ES", "3");
+                envMap.put("LIBGL_GL", "32");
+                envMap.put("KRYPTON_RENDERER", "1");
+                envMap.put("MESA_GL_VERSION_OVERRIDE", "3.2");
+                envMap.put("MESA_GLSL_VERSION_OVERRIDE", "150");
+                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
+                break;
+
+            case "gallium_generic":
+                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "softpipe");
+                envMap.put("GALLIUM_DRIVER", "softpipe");
+                envMap.put("MESA_GL_VERSION_OVERRIDE", "3.3");
+                envMap.put("MESA_GLSL_VERSION_OVERRIDE", "330");
+                envMap.put("LIB_MESA_NAME", loadGraphicsLibrary());
+                break;
+
             case "ltw_render": // LTW (Hardware accelerated)
                 envMap.put("LIBGL_ES", "3");
                 envMap.put("LIBGL_GL", "30");
@@ -674,11 +717,25 @@ public final class JREUtils {
     public static String loadGraphicsLibrary() {
         if (!Renderers.INSTANCE.isCurrentRendererValid()) return "libgl4es_114.so";
         else {
-            RendererPlugin rendererPlugin = RendererPluginManager.getSelectedRendererPlugin();
-            if (rendererPlugin != null) {
-                return rendererPlugin.getPath() + "/" + rendererPlugin.getGlName();
+            RendererInterface currentRenderer = Renderers.INSTANCE.getCurrentRenderer();
+            String rendererId = currentRenderer.getRendererId();
+
+            if (rendererId.equals("fclplugin_gl4es") || rendererId.equals("fclplugin_virgl")) {
+                RendererPlugin rendererPlugin = RendererPluginManager.getSelectedRendererPlugin();
+                if (rendererPlugin != null) {
+                    return rendererPlugin.getPath() + "/" + rendererPlugin.getGlName();
+                } else {
+                    Logging.e("JREUtils", "FCL Plugin not found. Please install the renderer plugin.");
+                    return "libgl4es_114.so"; // Fallback to avoid crash
+                }
+            } else if (rendererId.equals("mobileglues")) {
+                return PathManager.DIR_NATIVE_LIB + "/libMobileGlues.so";
+            } else if (rendererId.equals("krypton")) {
+                return PathManager.DIR_NATIVE_LIB + "/libkrypton.so";
+            } else if (rendererId.equals("gallium_generic")) {
+                return PathManager.DIR_NATIVE_LIB + "/libOSMesa.so";
             } else {
-                String lib = Renderers.INSTANCE.getCurrentRenderer().getRendererLibrary();
+                String lib = currentRenderer.getRendererLibrary();
                 return lib != null ? lib : "libgl4es_114.so";
             }
         }

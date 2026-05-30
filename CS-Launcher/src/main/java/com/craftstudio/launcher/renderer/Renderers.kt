@@ -9,6 +9,11 @@ import com.craftstudio.launcher.renderer.renderers.LTWRenderer
 import com.craftstudio.launcher.renderer.renderers.PanfrostRenderer
 import com.craftstudio.launcher.renderer.renderers.VirGLRenderer
 import com.craftstudio.launcher.renderer.renderers.VulkanZinkRenderer
+import com.craftstudio.launcher.renderer.renderers.FclGl4esRenderer
+import com.craftstudio.launcher.renderer.renderers.FclVirglRenderer
+import com.craftstudio.launcher.renderer.renderers.GalliumGenericRenderer
+import com.craftstudio.launcher.renderer.renderers.KryptonRenderer
+import com.craftstudio.launcher.renderer.renderers.MobileGluesRenderer
 import com.craftstudio.launcher.Architecture
 import com.craftstudio.launcher.Tools
 
@@ -31,14 +36,20 @@ object Renderers {
             currentRenderer = null
         }
 
+        // Keep order requested by user implicitly or by adding them sequentially
         addRenderers(
-            GL4ESRenderer(),
-            VirGLRenderer(),
             VulkanZinkRenderer(),
+            GL4ESRenderer(),
             LTWRenderer(),
+            MobileGluesRenderer(),
+            KryptonRenderer(),
+            GalliumGenericRenderer(),
+            FclGl4esRenderer(),
+            FclVirglRenderer(),
             AngleRenderer(),
             FreedrenoRenderer(),
-            PanfrostRenderer()
+            PanfrostRenderer(),
+            VirGLRenderer()
         )
     }
 

@@ -143,10 +143,15 @@ class VideoSettingsFragment : AbstractSettingsFragment(R.layout.settings_fragmen
 
             // FIX 3: Renderer Info UI (Descriptions)
             val description = when (id) {
-                "0fa435e2-46df-45c9-906c-b29606aaef00" -> "✅ Recommended | MC 1.17+ | Vulkan required" // vulkan_zink
-                "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" -> "⚠️ MC 1.16.5 tak | Purane versions ke liye" // opengles2
-                "ltw_render" -> "⚠️ Experimental | Java 17/21 use karo" // ltw_render
+                "0fa435e2-46df-45c9-906c-b29606aaef00" -> "✅ Recommended | All versions" // vulkan_zink
+                "8b52d82d-8f6d-4d3a-a767-dc93f8b72fc7" -> "⚡ Fast | MC 1.16.5 tak best" // opengles2
+                "ltw_render" -> "⚠️ 1.17+ only | Experimental" // ltw_render
                 "gallium_virgl" -> "❌ MC 1.17+ pe kaam nahi karta" // gallium_virgl
+                "d4e5f6a7-8b9c-0d1e-2f3a-4b5c6d7e8f9a" -> "🔌 FCL Plugin required" // fclplugin_gl4es
+                "e5f6a78b-9c0d-1e2f-3a4b-5c6d7e8f9a0b" -> "🔌 FCL Plugin required" // fclplugin_virgl
+                "c2b3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e" -> "🆕 OpenGL ES 3 | 1.17+ best" // mobileglues
+                "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d" -> "🆕 OpenGL ES 3 | Experimental" // krypton
+                "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e" -> "🐢 Slow fallback | All versions" // gallium_generic
                 "angle" -> "🔬 Experimental | Test only" // angle
                 else -> ""
             }

@@ -276,9 +276,14 @@ class LaunchGame {
             val minor = if (parts.size > 1) parts[1].toIntOrNull() ?: 0 else 0
             val isNewVersion = minor >= 17
             
-            if (isNewVersion && rendererId == "opengles2") return false
-            if (isNewVersion && rendererId == "gallium_virgl") return false
-            return true
+            return when {
+                rendererId == "opengles2" && isNewVersion -> false
+                rendererId == "gallium_virgl" && isNewVersion -> false
+                rendererId == "fclplugin_gl4es" && isNewVersion -> false
+                rendererId == "fclplugin_virgl" && isNewVersion -> false
+                rendererId == "ltw_render" && !isNewVersion -> false // LTW is 1.17+ only
+                else -> true // vulkan_zink, mobileglues, krypton, gallium_generic, and other valid cases
+            }
         }
 
         private fun getRendererJVMArgs(): String {
