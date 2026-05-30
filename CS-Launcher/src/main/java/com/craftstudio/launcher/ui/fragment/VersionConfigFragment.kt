@@ -39,6 +39,7 @@ import com.craftstudio.launcher.Tools
 import com.craftstudio.launcher.multirt.MultiRTUtils
 import com.craftstudio.launcher.multirt.Runtime
 import org.greenrobot.eventbus.EventBus
+import java.io.File
 import kotlin.enums.EnumEntries
 
 class VersionConfigFragment : FragmentWithAnim(R.layout.fragment_version_config), View.OnClickListener {
@@ -375,8 +376,7 @@ class VersionConfigFragment : FragmentWithAnim(R.layout.fragment_version_config)
     }
 
     private fun checkVulkanMod() {
-        val modsFolder = File(currentVersion.getGameDir(), "mods")
-        val hasVulkanMod = modsFolder.listFiles()?.any { mod -> mod.name.lowercase().contains("vulkanmod") } ?: false
+        val hasVulkanMod = isVulkanModPresent()
         val isModern = isModernMinecraft(currentVersion.getVersionName())
         val isFabric = currentVersion.getVersionName().lowercase().contains("fabric")
 
@@ -400,6 +400,13 @@ class VersionConfigFragment : FragmentWithAnim(R.layout.fragment_version_config)
                 vulkanModBanner.visibility = View.GONE
             }
         }
+    }
+
+    private fun isVulkanModPresent(): Boolean {
+        val modsFolder = File(currentVersion.getGameDir(), "mods")
+        if (!modsFolder.exists() || !modsFolder.isDirectory) return false
+        val mods: Array<File> = modsFolder.listFiles() ?: return false
+        return mods.any { mod -> mod.name.lowercase().contains("vulkanmod") }
     }
 
     private fun isModernMinecraft(version: String): Boolean {
@@ -426,8 +433,5 @@ class VersionConfigFragment : FragmentWithAnim(R.layout.fragment_version_config)
         const val TAG: String = "VersionConfigFragment"
         private const val SELECT_CONTROL = "SELECT_CONTROL"
         private const val SELECT_CUSTOM_PATH = "SELECT_CUSTOM_PATH"
-    }
-}
-TH"
     }
 }
