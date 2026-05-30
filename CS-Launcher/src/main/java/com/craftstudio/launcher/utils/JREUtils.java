@@ -178,6 +178,15 @@ public final class JREUtils {
 
         String libName = is64BitsDevice() ? "lib64" : "lib";
         StringBuilder ldLibraryPath = new StringBuilder();
+
+        // 1. JRE internal libs (Priority 1)
+        File serverFile = new File(jreHome + "/" + Tools.DIRNAME_HOME_JRE + "/server/libjvm.so");
+        String jvmServerPath = jreHome + "/" + Tools.DIRNAME_HOME_JRE + "/" + (serverFile.exists() ? "server" : "client");
+        ldLibraryPath.append(jvmServerPath).append(":")
+                .append(jreHome).append("/").append(Tools.DIRNAME_HOME_JRE).append(":")
+                .append(jreHome).append("/lib:").append(jreHome).append("/").append(Tools.DIRNAME_HOME_JRE).append("/jli:");
+
+        // 2. Plugins (FFmpeg, Renderer, Driver)
         if (FFmpegPlugin.isAvailable) {
             ldLibraryPath.append(FFmpegPlugin.libraryPath).append(":");
         }
@@ -189,19 +198,24 @@ public final class JREUtils {
         if (vulkanDriverPath != null && !vulkanDriverPath.isEmpty()) {
             ldLibraryPath.append(vulkanDriverPath).append(":");
         }
-        ldLibraryPath.append(jreHome)
-                .append("/").append(Tools.DIRNAME_HOME_JRE)
-                .append("/jli:").append(jreHome).append("/").append(Tools.DIRNAME_HOME_JRE)
-                .append(":");
+
+        // 3. App Native Libs (Priority 2)
+        ldLibraryPath.append(DIR_NATIVE_LIB).append(":");
+
+        // 4. System Libs (Priority 3)
         ldLibraryPath.append("/system/").append(libName).append(":")
                 .append("/vendor/").append(libName).append(":")
                 .append("/vendor/").append(libName).append("/hw:");
+
+        // 5. Runtime Mod Dir
         File runtimeModDir = PathManager.DIR_RUNTIME_MOD;
         if (runtimeModDir != null) {
             ldLibraryPath.append(runtimeModDir.getAbsolutePath()).append(":");
         }
-        ldLibraryPath.append(DIR_NATIVE_LIB);
-        LD_LIBRARY_PATH = ldLibraryPath.toString();
+
+        String result = ldLibraryPath.toString();
+        if (result.endsWith(":")) result = result.substring(0, result.length() - 1);
+        LD_LIBRARY_PATH = result;
     }
 
     private static void initLdLibraryPath(String jreHome) {
@@ -419,7 +433,6 @@ public final class JREUtils {
         userArgs.add("-Xmx" + ramMB + "M");
         if (Renderers.INSTANCE.isCurrentRendererValid()) userArgs.add("-Dorg.lwjgl.opengl.libname=" + loadGraphicsLibrary());
 
-        userArgs.add("-Dorg.lwjgl.freetype.libname="+ DIR_NATIVE_LIB +"/libfreetype.so");
         userArgs.add("-XX:ActiveProcessorCount=" + java.lang.Runtime.getRuntime().availableProcessors());
 
         userArgs.addAll(JVMArgs);
