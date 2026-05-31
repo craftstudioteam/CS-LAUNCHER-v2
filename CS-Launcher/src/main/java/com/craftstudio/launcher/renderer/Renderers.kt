@@ -75,9 +75,6 @@ enum class Renderers(
         fun isCurrentRendererValid(): Boolean = true
 
         @JvmStatic
-        fun getCurrentRenderer(): Renderers = currentRenderer
-
-        @JvmStatic
         fun setCurrentRenderer(context: Context, id: String, retryToFirstOnFailure: Boolean = true) {
             currentRenderer = fromId(id)
             AllSettings.renderer.put(currentRenderer.id).save()
