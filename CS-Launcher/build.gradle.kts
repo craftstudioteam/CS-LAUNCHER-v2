@@ -182,7 +182,13 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
-            pickFirsts += listOf("**/libbytehook.so", "**/libawt_xawt.so", "**/libexithook.so")
+            pickFirsts += listOf(
+                "**/libbytehook.so",
+                "**/libawt_xawt.so",
+                "**/libexithook.so",
+                "**/liblinkerhook.so",
+                "**/libfreetype.so"
+            )
         }
     }
 
