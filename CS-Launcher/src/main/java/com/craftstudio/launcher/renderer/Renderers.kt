@@ -26,16 +26,6 @@ enum class Renderers(
         library = "libltw.so",
         egl = "libltw.so"
     ),
-    MOBILEGLUES(
-        id = "mobileglues",
-        displayName = "MobileGlues (OpenGL ES 3)",
-        library = "libMobileGlues.so"
-    ),
-    KRYPTON(
-        id = "krypton",
-        displayName = "Krypton Wrapper (OpenGL ES 3)",
-        library = "libkrypton.so"
-    ),
     GALLIUM_GENERIC(
         id = "gallium_generic",
         displayName = "Gallium Generic (Mesa)",

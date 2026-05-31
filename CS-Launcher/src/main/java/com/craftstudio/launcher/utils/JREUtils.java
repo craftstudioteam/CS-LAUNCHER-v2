@@ -337,26 +337,6 @@ public final class JREUtils {
                 PathManager.DIR_NATIVE_LIB + "/libltw.so");
             break;
 
-        case "mobileglues":
-            envMap.put("LIBGL_ES", "3");
-            envMap.put("LIBGL_GL", "32");
-            envMap.put("MGL_RENDERER", "1");
-            envMap.put("MESA_GL_VERSION_OVERRIDE", "3.2");
-            envMap.put("MESA_GLSL_VERSION_OVERRIDE", "150");
-            envMap.put("LIB_MESA_NAME",
-                PathManager.DIR_NATIVE_LIB + "/libMobileGlues.so");
-            break;
-
-        case "krypton":
-            envMap.put("LIBGL_ES", "3");
-            envMap.put("LIBGL_GL", "32");
-            envMap.put("KRYPTON_RENDERER", "1");
-            envMap.put("MESA_GL_VERSION_OVERRIDE", "3.2");
-            envMap.put("MESA_GLSL_VERSION_OVERRIDE", "150");
-            envMap.put("LIB_MESA_NAME",
-                PathManager.DIR_NATIVE_LIB + "/libkrypton.so");
-            break;
-
         case "gallium_generic":
             envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "softpipe");
             envMap.put("GALLIUM_DRIVER", "softpipe");
@@ -721,10 +701,6 @@ public final class JREUtils {
             lib = "libOSMesa.so"; break;
         case "ltw_render":
             lib = "libltw.so"; break;
-        case "mobileglues":
-            lib = "libMobileGlues.so"; break;
-        case "krypton":
-            lib = "libkrypton.so"; break;
         default:
             lib = "libgl4es_114.so";
             Logging.w("RENDERER", 

@@ -19,5 +19,5 @@ class VirGLRenderer : RendererInterface {
 
     override fun getDlopenLibrary(): Lazy<List<String>> = lazy { emptyList() }
 
-    override fun getRendererLibrary(): String = "libOSMesa_2121.so"
+    override fun getRendererLibrary(): String = "libOSMesa.so"
 }

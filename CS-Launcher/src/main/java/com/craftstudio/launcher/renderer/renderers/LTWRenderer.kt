@@ -20,5 +20,5 @@ class LTWRenderer : RendererInterface {
 
     override fun getDlopenLibrary(): Lazy<List<String>> = lazy { emptyList() }
 
-    override fun getRendererLibrary(): String = "libOSMesa_2300d.so"
+    override fun getRendererLibrary(): String = "libltw.so"
 }
