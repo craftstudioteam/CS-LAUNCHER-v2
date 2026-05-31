@@ -127,7 +127,7 @@ class LaunchGame {
             val isModern = isModernMinecraft(mcVer)
 
             // FIX: Robust Renderer Initialization with Fallback & Smart Guard
-            val currentRenderer = Renderers.getCurrentRenderer()
+            val currentRenderer = Renderers.currentRenderer
             val rendererId = currentRenderer.getRendererId()
 
             // FIX 2: Renderer + Version Compatibility Warning
@@ -167,7 +167,7 @@ class LaunchGame {
                     rendererToUse = "vulkan_zink" // Zink (Vulkan)
                 }
 
-                if (!Renderers.isCurrentRendererValid() || Renderers.getCurrentRenderer().getUniqueIdentifier() != rendererToUse) {
+                if (!Renderers.isCurrentRendererValid() || Renderers.currentRenderer.getUniqueIdentifier() != rendererToUse) {
                     Renderers.setCurrentRenderer(activity, rendererToUse)
                 }
             } catch (e: Throwable) {
@@ -287,7 +287,7 @@ class LaunchGame {
         }
 
         private fun getRendererJVMArgs(): String {
-            val renderer = Renderers.getCurrentRenderer()
+            val renderer = Renderers.currentRenderer
             val rendererId = renderer.getRendererId()
             return when {
                 rendererId.startsWith("opengles") -> " -Dorg.lwjgl.opengl.libname=${renderer.getRendererLibrary()}"
@@ -334,7 +334,7 @@ class LaunchGame {
             Logger.appendToLog("Info: Architecture: ${Architecture.archAsString(Tools.DEVICE_ARCHITECTURE)}")
             Logger.appendToLog("Info: Device model: ${StringUtils.insertSpace(Build.MANUFACTURER, Build.MODEL)}")
             Logger.appendToLog("Info: API version: ${Build.VERSION.SDK_INT}")
-            Logger.appendToLog("Info: Renderer: ${Renderers.getCurrentRenderer().getRendererName()}")
+            Logger.appendToLog("Info: Renderer: ${Renderers.currentRenderer.getRendererName()}")
             Logger.appendToLog("Info: Selected Minecraft version: ${minecraftVersion.getVersionName()}")
             Logger.appendToLog("Info: Minecraft Info: $mcInfo")
             Logger.appendToLog("Info: Game Path: ${minecraftVersion.getGameDir().absolutePath} (Isolation: ${minecraftVersion.isIsolation()})")

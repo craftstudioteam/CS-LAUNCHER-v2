@@ -61,7 +61,7 @@ object RendererPluginManager {
     val selectedRendererPlugin: RendererPlugin?
         get() {
             val currentRenderer = runCatching {
-                Renderers.getCurrentRenderer().getUniqueIdentifier()
+                Renderers.currentRenderer.getUniqueIdentifier()
             }.getOrNull()
             return rendererPluginList.find { it.uniqueIdentifier == currentRenderer }
         }
