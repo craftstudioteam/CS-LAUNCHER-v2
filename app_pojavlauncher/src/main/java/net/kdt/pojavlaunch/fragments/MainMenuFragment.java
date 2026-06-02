@@ -36,7 +36,7 @@ public class MainMenuFragment extends Fragment {
     public static final String TAG = "MainMenuFragment";
 
     private mcVersionSpinner mVersionSpinner;
-    private FrameLayout mRightPane;
+    private ViewGroup mRightPane;
     private View mBottomBarBg;   // stub — kept so mTaskCountListener check compiles
     private View mPlayButton;
     private View mEditProfileButton;
@@ -364,5 +364,7 @@ public class MainMenuFragment extends Fragment {
             Tools.installMod(requireActivity(), isCustomArgs);
         else
             Toast.makeText(requireContext(), R.string.tasks_ongoing, Toast.LENGTH_LONG).show();
+    }
+}oast.LENGTH_LONG).show();
     }
 }
