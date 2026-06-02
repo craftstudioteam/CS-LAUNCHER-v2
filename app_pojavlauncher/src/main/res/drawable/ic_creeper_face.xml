@@ -12,20 +12,18 @@
     android:viewportHeight="20">
 
     <!-- Face bg -->
-    <rect
-        android:x="2" android:y="2"
-        android:width="16" android:height="16"
-        android:fillColor="#4CAF50" />
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M2,2h16v16h-16z" />
 
     <!-- Eyes (dark) -->
-    <rect android:x="4" android:y="5" android:width="4" android:height="4" android:fillColor="#1A1A1A" />
-    <rect android:x="12" android:y="5" android:width="4" android:height="4" android:fillColor="#1A1A1A" />
+    <path
+        android:fillColor="#1A1A1A"
+        android:pathData="M4,5h4v4h-4z M12,5h4v4h-4z" />
 
     <!-- Mouth pattern -->
-    <rect android:x="7" android:y="10" android:width="2" android:height="2" android:fillColor="#1A1A1A" />
-    <rect android:x="11" android:y="10" android:width="2" android:height="2" android:fillColor="#1A1A1A" />
-    <rect android:x="7" android:y="12" android:width="6" android:height="2" android:fillColor="#1A1A1A" />
-    <rect android:x="5" android:y="14" android:width="2" android:height="2" android:fillColor="#1A1A1A" />
-    <rect android:x="13" android:y="14" android:width="2" android:height="2" android:fillColor="#1A1A1A" />
+    <path
+        android:fillColor="#1A1A1A"
+        android:pathData="M7,10h2v2h-2z M11,10h2v2h-2z M7,12h6v2h-6z M5,14h2v2h-2z M13,14h2v2h-2z" />
 
 </vector>

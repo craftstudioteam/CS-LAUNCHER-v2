@@ -11,17 +11,23 @@
     android:viewportHeight="34">
 
     <!-- Body stone face (front) -->
-    <rect android:x="4" android:y="12" android:width="20" android:height="18" android:fillColor="#7D6B56" />
+    <path
+        android:fillColor="#7D6B56"
+        android:pathData="M4,12h20v18h-20z" />
 
     <!-- Green grass top -->
-    <rect android:x="4" android:y="6" android:width="20" android:height="7" android:fillColor="#5BBA2C" />
+    <path
+        android:fillColor="#5BBA2C"
+        android:pathData="M4,6h20v7h-20z" />
 
     <!-- Right side face (lighter) -->
-    <path android:fillColor="#9E865E"
+    <path
+        android:fillColor="#9E865E"
         android:pathData="M24,6 L30,10 L30,28 L24,24 Z" />
 
     <!-- Top right face -->
-    <path android:fillColor="#6ECC36"
+    <path
+        android:fillColor="#6ECC36"
         android:pathData="M4,6 L10,2 L30,2 L24,6 Z" />
 
 </vector>
