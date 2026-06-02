@@ -222,6 +222,9 @@ public class LauncherActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Enable edge-to-edge rendering
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
         // Apply saved colour theme before layout inflation
         setTheme(net.kdt.pojavlaunch.theme.ThemeManager.getSavedTheme());
         
