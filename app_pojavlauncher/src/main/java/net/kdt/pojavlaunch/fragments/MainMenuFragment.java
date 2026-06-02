@@ -307,6 +307,11 @@ public class MainMenuFragment extends Fragment {
 
         // Play button visibility during downloads handled by activity's ProgressLayout
 
+        // Apply Premium Mobile Animations
+        applyPremiumTouchAnimation(mHomeButton, mModStoreButton, mCustomControlButton, mInstallJarButton, 
+                                   mShareLogsButton, mManageModsButton, mOpenDirectoryButton, 
+                                   mPlayBtn, mEditProfileBtn, mVersionSpinner);
+
         // Play
         mPlayBtn.setOnClickListener(
                 v -> ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true));
@@ -380,6 +385,31 @@ public class MainMenuFragment extends Fragment {
                     getResources().getColor(R.color.accent_primary) : 
                     getResources().getColor(R.color.text_secondary_light));
             }
+        }
+    }
+
+    /** Applies a premium scale animation on touch for interactive elements. */
+    private void applyPremiumTouchAnimation(View... views) {
+        for (View v : views) {
+            if (v == null) continue;
+            v.setOnTouchListener((view, event) -> {
+                switch (event.getAction()) {
+                    case android.view.MotionEvent.ACTION_DOWN:
+                        view.animate().scaleX(0.94f).scaleY(0.94f).alpha(0.85f)
+                            .setDuration(150)
+                            .setInterpolator(new android.view.animation.DecelerateInterpolator())
+                            .start();
+                        break;
+                    case android.view.MotionEvent.ACTION_UP:
+                    case android.view.MotionEvent.ACTION_CANCEL:
+                        view.animate().scaleX(1f).scaleY(1f).alpha(1f)
+                            .setDuration(200)
+                            .setInterpolator(new android.view.animation.DecelerateInterpolator())
+                            .start();
+                        break;
+                }
+                return false; // Let the standard click listener handle the click event
+            });
         }
     }
 }

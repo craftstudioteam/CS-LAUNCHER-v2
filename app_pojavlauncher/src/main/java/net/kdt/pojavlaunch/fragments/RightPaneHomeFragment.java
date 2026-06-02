@@ -33,6 +33,40 @@ public class RightPaneHomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         loadBackground(view);
+
+        // 1. Premium Fade and Slide In for the whole right pane
+        view.setAlpha(0f);
+        view.setTranslationX(60f);
+        view.animate()
+            .alpha(1f)
+            .translationX(0f)
+            .setDuration(250)
+            .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f))
+            .start();
+
+        // 2. Floating effect for Center Logo
+        ImageView centerLogo = view.findViewById(R.id.iv_center_logo);
+        if (centerLogo != null) {
+            android.animation.ObjectAnimator floatAnim = android.animation.ObjectAnimator.ofFloat(centerLogo, "translationY", 0f, -15f, 0f);
+            floatAnim.setDuration(3500);
+            floatAnim.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+            floatAnim.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+            floatAnim.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+            floatAnim.start();
+        }
+
+        // 3. Subtle Parallax/Ken Burns for Hero Background
+        ImageView heroBg = view.findViewById(R.id.iv_hero_bg);
+        if (heroBg != null) {
+            android.animation.PropertyValuesHolder scaleX = android.animation.PropertyValuesHolder.ofFloat("scaleX", 1.0f, 1.05f, 1.0f);
+            android.animation.PropertyValuesHolder scaleY = android.animation.PropertyValuesHolder.ofFloat("scaleY", 1.0f, 1.05f, 1.0f);
+            android.animation.ObjectAnimator panAnim = android.animation.ObjectAnimator.ofPropertyValuesHolder(heroBg, scaleX, scaleY);
+            panAnim.setDuration(20000);
+            panAnim.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+            panAnim.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+            panAnim.setInterpolator(new android.view.animation.LinearInterpolator());
+            panAnim.start();
+        }
     }
 
     /**
