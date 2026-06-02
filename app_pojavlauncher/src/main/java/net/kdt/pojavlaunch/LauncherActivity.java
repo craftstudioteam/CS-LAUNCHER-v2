@@ -136,13 +136,8 @@ public class LauncherActivity extends BaseActivity {
             MainMenuFragment mmf = (MainMenuFragment) fragment;
             // In two-pane landscape: if right pane already has content, pressing the
             // gear/home button pops back to home. If pane is at home, open settings.
-            if (mmf.isRightPaneActive()) {
-                mmf.clearRightPane();
-            } else {
-                if (!mmf.tryOpenInRightPane(LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, null)) {
-                    Tools.swapFragment(this, LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, null);
-                }
-            }
+            // Always open settings full-screen to match the new UI transformation
+            Tools.swapFragment(this, LauncherPreferenceFragment.class, SETTING_FRAGMENT_TAG, null);
         } else {
             // Portrait: the settings button doubles as a home button when not on main menu
             Tools.backToMainMenu(this);
