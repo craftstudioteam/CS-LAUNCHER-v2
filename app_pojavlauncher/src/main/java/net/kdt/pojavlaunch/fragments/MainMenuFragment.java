@@ -366,4 +366,20 @@ public class MainMenuFragment extends Fragment {
         else
             Toast.makeText(requireContext(), R.string.tasks_ongoing, Toast.LENGTH_LONG).show();
     }
+
+    /** Updates the visual state of sidebar buttons to highlight the active one. */
+    private void updateSidebarStates(View root, int activeId) {
+        int[] buttonIds = {R.id.home_button, R.id.mod_store_button, R.id.open_files_button};
+        for (int id : buttonIds) {
+            View btn = root.findViewById(id);
+            if (btn == null) continue;
+            boolean isActive = (id == activeId);
+            btn.setBackgroundResource(isActive ? R.drawable.bg_nav_item_active : 0);
+            if (btn instanceof Button) {
+                ((Button) btn).setTextColor(isActive ? 
+                    getResources().getColor(R.color.accent_primary) : 
+                    getResources().getColor(R.color.text_secondary_light));
+            }
+        }
+    }
 }

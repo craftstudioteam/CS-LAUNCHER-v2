@@ -71,30 +71,36 @@
     <color name="ar_text_primary">#E0F7FA</color>
     <color name="ar_text_secondary">#80C8D4</color>
 
-    <!-- ── CS Launcher v2 Colors ── -->
+    <!-- ── CS Launcher v2 Colors (Refined Theme) ── -->
     <!-- Base backgrounds -->
-    <color name="bg_launcher_dark">#111111</color>
-    <color name="bg_sidebar">#161616</color>
-    <color name="bg_header">#1A1A1A</color>
-    <color name="bg_bottom_bar">#1E1E1E</color>
-    <color name="bg_card_dark">#2A2A2A</color>
+    <color name="bg_launcher_dark">#121212</color>
+    <color name="bg_sidebar">#181818</color>
+    <color name="bg_header">#1E1E1E</color>
+    <color name="bg_bottom_bar">#222222</color>
+    <color name="bg_card_dark">#2C2C2C</color>
 
-    <!-- Accent greens -->
-    <color name="accent_green">#5BBA2C</color>
-    <color name="accent_green_light">#6EE040</color>
-    <color name="accent_green_bg">#2A4A1A</color>
-    <color name="accent_green_border">#5BBA2C</color>
+    <!-- Accent colors (Professional Blue instead of neon green) -->
+    <color name="accent_primary">#3F51B5</color>
+    <color name="accent_light">#7986CB</color>
+    <color name="accent_bg_subtle">#1A1C2C</color>
+    <color name="accent_border">#3F51B5</color>
+
+    <!-- Legacy/Alias colors (kept to avoid immediate breakage, but updated) -->
+    <color name="accent_green">#3F51B5</color>
+    <color name="accent_green_light">#7986CB</color>
+    <color name="accent_green_bg">#1A1C2C</color>
+    <color name="accent_green_border">#3F51B5</color>
 
     <!-- Text -->
     <color name="text_primary_white">#FFFFFF</color>
-    <color name="text_secondary_light">#AAAAAA</color>
-    <color name="text_secondary_dim">#666666</color>
+    <color name="text_secondary_light">#B0B0B0</color>
+    <color name="text_secondary_dim">#707070</color>
 
     <!-- Dividers -->
-    <color name="divider_color">#2E2E2E</color>
+    <color name="divider_color">#333333</color>
 
-    <!-- PLAY button -->
-    <color name="play_btn_bg">#5BBA2C</color>
-    <color name="play_btn_text">#0A1A00</color>
+    <!-- PLAY button (Updated to follow new theme) -->
+    <color name="play_btn_bg">#3F51B5</color>
+    <color name="play_btn_text">#FFFFFF</color>
 
 </resources>

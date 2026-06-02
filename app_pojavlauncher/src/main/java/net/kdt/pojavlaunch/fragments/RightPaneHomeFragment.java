@@ -32,12 +32,6 @@ public class RightPaneHomeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        view.findViewById(R.id.news_button_pane).setOnClickListener(
-                v -> Tools.openURL(requireActivity(), Tools.URL_HOME));
-
-        view.findViewById(R.id.discord_button_pane).setOnClickListener(
-                v -> Tools.openURL(requireActivity(), getString(R.string.discord_invite)));
-
         loadBackground(view);
     }
 

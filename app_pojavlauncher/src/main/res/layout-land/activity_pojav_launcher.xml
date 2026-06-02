@@ -27,8 +27,8 @@
             android:id="@+id/iv_cs_logo"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
-            android:src="@drawable/ic_cs_logo_placeholder"
-            android:scaleType="fitCenter"
+            android:src="@drawable/bg_hero_minecraft"
+            android:scaleType="centerCrop"
             android:contentDescription="CS Logo" />
 
         <!-- Launcher Title block -->
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/cs_launcher_subtitle"
                 android:textSize="@dimen/_9ssp"
-                android:textColor="@color/accent_green"
+                android:textColor="@color/accent_primary"
                 android:textAllCaps="true"
                 android:letterSpacing="0.06" />
 
@@ -82,7 +82,8 @@
             android:layout_marginStart="@dimen/_8sdp"
             android:background="@drawable/bg_settings_btn"
             android:src="@drawable/ic_menu_settings"
-            android:scaleType="center"
+            android:scaleType="fitCenter"
+            android:padding="@dimen/_8sdp"
             android:contentDescription="Settings"
             android:elevation="2dp" />
 
