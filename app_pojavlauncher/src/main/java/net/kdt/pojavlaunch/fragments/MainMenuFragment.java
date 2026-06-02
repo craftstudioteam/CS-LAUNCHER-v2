@@ -365,6 +365,4 @@ public class MainMenuFragment extends Fragment {
         else
             Toast.makeText(requireContext(), R.string.tasks_ongoing, Toast.LENGTH_LONG).show();
     }
-}oast.LENGTH_LONG).show();
-    }
 }
