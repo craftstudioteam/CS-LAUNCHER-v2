@@ -199,6 +199,7 @@ public class MainMenuFragment extends Fragment {
         Button mManageModsButton    = view.findViewById(R.id.open_files_button);
         Button mOpenDirectoryButton = view.findViewById(R.id.open_directory_button);
         Button mModStoreButton      = view.findViewById(R.id.mod_store_button);
+        Button mHomeButton          = view.findViewById(R.id.home_button);
 
         ImageButton mEditProfileBtn = view.findViewById(R.id.edit_profile_button);
         Button mPlayBtn = view.findViewById(R.id.play_button);
@@ -230,6 +231,9 @@ public class MainMenuFragment extends Fragment {
         }
 
         // ── Sidebar buttons that are hidden in landscape (stubs kept for safety) ──
+        if (mHomeButton != null)
+            mHomeButton.setOnClickListener(v -> clearRightPane());
+
         // Wiki / Discord are moved to RightPaneHomeFragment in landscape;
         // they stay in the sidebar on portrait via fragment_launcher.xml (no-land).
         if (mNewsButton != null)
