@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- bg_nav_item_active.xml — green-tinted rounded bg for the active "Home" nav item -->
+<!-- bg_nav_item_active.xml — blue-tinted rounded bg for the active nav item -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <!-- Semi-transparent green fill -->
-    <solid android:color="#2A4A1A" />
-    <!-- Bright green border -->
+    <!-- Semi-transparent blue fill -->
+    <solid android:color="@color/accent_bg_subtle" />
+    <!-- Primary theme border -->
     <stroke
         android:width="1.5dp"
-        android:color="#5BBA2C" />
+        android:color="@color/accent_primary" />
     <corners android:radius="10dp" />
 </shape>

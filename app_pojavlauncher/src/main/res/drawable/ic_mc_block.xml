@@ -15,9 +15,9 @@
         android:fillColor="#7D6B56"
         android:pathData="M4,12h20v18h-20z" />
 
-    <!-- Green grass top -->
+    <!-- Green grass top (Refined green) -->
     <path
-        android:fillColor="#5BBA2C"
+        android:fillColor="#4CAF50"
         android:pathData="M4,6h20v7h-20z" />
 
     <!-- Right side face (lighter) -->
@@ -26,8 +26,7 @@
         android:pathData="M24,6 L30,10 L30,28 L24,24 Z" />
 
     <!-- Top right face -->
-    <path
-        android:fillColor="#6ECC36"
+    <path android:fillColor="#66BB6A"
         android:pathData="M4,6 L10,2 L30,2 L24,6 Z" />
 
 </vector>
