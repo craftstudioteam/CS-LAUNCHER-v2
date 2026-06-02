@@ -60,6 +60,11 @@ import java.lang.ref.WeakReference;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 
+import android.view.Window;
+import android.view.WindowManager;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 public class LauncherActivity extends BaseActivity {
     public static final String SETTING_FRAGMENT_TAG = "SETTINGS_FRAGMENT";
 
@@ -216,12 +221,22 @@ public class LauncherActivity extends BaseActivity {
 
     @Override
     public boolean setFullscreen() {
-        return false;
+        return true;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Edge-to-edge setup
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            );
+        }
+
         // Apply saved colour theme before layout inflation
         setTheme(net.kdt.pojavlaunch.theme.ThemeManager.getSavedTheme());
         
@@ -229,6 +244,10 @@ public class LauncherActivity extends BaseActivity {
         setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
         setContentView(R.layout.activity_pojav_launcher);
+        
+        // Handle window insets properly to prevent navigation bar space reservation
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content),
+            (v, insets) -> WindowInsetsCompat.CONSUMED);
         FragmentManager fragmentManager = getSupportFragmentManager();
         // If we don't have a back stack root yet...
         if(fragmentManager.getBackStackEntryCount() < 1) {
