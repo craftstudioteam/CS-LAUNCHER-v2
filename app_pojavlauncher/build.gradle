@@ -130,7 +130,6 @@ android {
             // Don't set to true or java.awt will be a.a or something similar.
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.customRelease
             // defaultConfig already set
             // multiDexEnabled = true
             // debuggable = true
@@ -141,7 +140,6 @@ android {
         }
         gplay {
             initWith release
-            signingConfig signingConfigs.googlePlayBuild
             matchingFallbacks = [ 'release' ]
         }
     }
