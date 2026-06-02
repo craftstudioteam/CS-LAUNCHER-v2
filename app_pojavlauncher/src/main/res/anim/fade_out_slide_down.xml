@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    anim/fade_out_slide_down.xml
+    ────────────────────────────
+    Fragment / view exit animation (reverse of enter):
+      • Fades out 1 → 0
+      • Translates down 0 → +16dp
+    Duration: 220 ms  |  Interpolator: accelerate
+-->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/accelerate_interpolator"
+    android:duration="220">
+
+    <alpha
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0" />
+
+    <translate
+        android:fromYDelta="0dp"
+        android:toYDelta="16dp" />
+
+</set>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    anim/welcome_text_fadein.xml
+    ─────────────────────────────
+    Fade-in with slight upward drift for the hero welcome text block.
+    Apply to tv_welcome_label, tv_welcome_username, tv_welcome_subtitle
+    with increasing startOffset values in Java/Kotlin for a stagger effect:
+      tv_welcome_label    → startOffset=0
+      tv_welcome_username → startOffset=120
+      tv_welcome_subtitle → startOffset=240
+-->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/decelerate_interpolator">
+
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="400" />
+
+    <translate
+        android:fromYDelta="14dp"
+        android:toYDelta="0dp"
+        android:duration="400" />
+
+</set>

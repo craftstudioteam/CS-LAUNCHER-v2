@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_bottom_bar.xml — dark pill/rounded bar at bottom of right pane -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#1E1E1E" />
+    <corners android:radius="14dp" />
+</shape>

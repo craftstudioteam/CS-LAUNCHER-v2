@@ -1,0 +1,241 @@
+plugins {
+    id 'com.android.application' version '8.7.2'
+}
+
+static def getDate() { return new Date().format('yyyyMMdd') }
+
+def getVersionName = {
+    // Get the last version tag, as well as the short head of the last commit
+    ByteArrayOutputStream TAG = new ByteArrayOutputStream()
+    String semVer = "1.1.5"
+    // Used by the fallback for github actions
+    ByteArrayOutputStream TAG_PART_COMMIT = new ByteArrayOutputStream()
+    String TAG_STRING
+
+    exec {
+        try {
+            commandLine 'git', 'describe', '--tags'
+            ignoreExitValue true
+            standardOutput = TAG
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    if (TAG.toString() == "") {
+        exec {
+            // Fallback for action builds
+            try {
+                commandLine 'git', 'describe', '--always', '--tags'
+                ignoreExitValue true
+                standardOutput = TAG_PART_COMMIT
+            } catch (Exception e) {
+            }
+        }
+    }
+
+
+    if(TAG.toString() != ""){
+        TAG_STRING = TAG.toString()
+    }else {
+        if(TAG_PART_COMMIT.toString().trim() == ""){
+             //Fallback no repo
+            return ("LOCAL-" + "${getDate()}")
+        }else {
+            // Used by github actions
+            TAG_STRING =  'copper-legacy-' + "${getDate()}" + "-" + TAG_PART_COMMIT.toString().trim()
+        }
+
+    }
+
+    return TAG_STRING.trim().replace("-g", "-") + "-" + semVer
+}
+
+def getCFApiKey = {
+    String key = System.getenv("CURSEFORGE_API_KEY");
+    if(key != null) return key;
+    File curseforgeKeyFile = new File("$projectDir/curseforge_key.txt");
+    if(curseforgeKeyFile.canRead() && curseforgeKeyFile.isFile()) {
+        return curseforgeKeyFile.text;
+    }
+    logger.warn('BUILD: You have no CurseForge key, the curseforge api will get disabled !');
+    return "DUMMY";
+}
+
+configurations {
+    instrumentedClasspath {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+}
+
+android {
+    namespace 'net.kdt.pojavlaunch'
+
+    compileSdk = 34
+
+    lintOptions {
+        abortOnError false
+    }
+
+    signingConfigs {
+        customDebug {
+            storeFile file("debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        customRelease {
+            storeFile file("aamc_upload.jks")
+            storePassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
+            keyAlias "android_github_release"
+            keyPassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
+        }
+        googlePlayBuild {
+            storeFile file("upload.jks")
+            storePassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
+            keyAlias "upload"
+            keyPassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.maxjubayeryt.copper"
+        minSdkVersion 21
+        targetSdkVersion 34
+        versionCode 10000000
+        versionName getVersionName()
+        multiDexEnabled true //important
+        resValue 'string', 'curseforge_api_key', getCFApiKey()
+        externalNativeBuild {
+            ndkBuild {
+                // Fix for Windows command line length limit
+                arguments "APP_SHORT_COMMANDS=true"
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.customDebug
+            resValue "string", "app_name", "Copper (Debug)"
+            resValue "string", "app_short_name", "Copper (Debug)"
+            resValue 'string', 'application_package', 'com.maxjubayeryt.copper.debug'
+            resValue 'string', 'storageProviderAuthorities', 'com.maxjubayeryt.copper.scoped.gamefolder.debug'
+            resValue 'string', 'shareProviderAuthority', 'com.maxjubayeryt.copper.scoped.controlfolder.debug'
+        }
+        proguard {
+            initWith debug
+            minifyEnabled true
+            shrinkResources true
+        }
+        proguardNoDebug {
+            initWith proguard
+            debuggable false
+        }
+
+        release {
+            // Don't set to true or java.awt will be a.a or something similar.
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.customRelease
+            // defaultConfig already set
+            // multiDexEnabled = true
+            // debuggable = true
+            resValue "string", "app_name", "Copper"
+            resValue "string", "app_short_name", "Copper"
+            resValue 'string', 'storageProviderAuthorities', 'com.maxjubayeryt.copper.gamefolder'
+            resValue 'string', 'application_package', 'com.maxjubayeryt.copper'
+        }
+        gplay {
+            initWith release
+            signingConfig signingConfigs.googlePlayBuild
+            matchingFallbacks = [ 'release' ]
+        }
+    }
+
+    ndkVersion = "27.3.13750724"
+
+    externalNativeBuild {
+        ndkBuild {
+            path file('src/main/jni/Android.mk')
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+        doNotStrip += [
+                "**/libcutils.so"
+        ]
+        pickFirst '**/libbytehook.so'
+    }
+
+    buildFeatures {
+        prefab true
+        buildConfig true
+    }
+
+    buildToolsVersion = '34.0.0'
+}
+
+afterEvaluate {
+    // Explicit dependencies for which the apk relies on
+    tasks.mergeDebugAssets.dependsOn(":forge_installer:jar", ":arc_dns_injector:jar", ":methods_injector_agent:jar", ":jre_lwjgl3glfw:jar")
+    tasks.mergeReleaseAssets.dependsOn(":forge_installer:jar", ":arc_dns_injector:jar", ":methods_injector_agent:jar", ":jre_lwjgl3glfw:jar")
+}
+
+dependencies {
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+    implementation 'commons-codec:commons-codec:1.15'
+    // implementation 'com.wu-man:android-bsf-api:3.1.3'
+    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.palette:palette:1.0.0'
+    //implementation 'androidx.core:core:1.7.0'
+    implementation 'androidx.drawerlayout:drawerlayout:1.2.0'
+    implementation 'androidx.viewpager2:viewpager2:1.1.0-beta01'
+    implementation 'androidx.annotation:annotation:1.5.0'
+
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+
+    implementation 'com.github.duanhong169:checkerboarddrawable:1.0.2'
+    implementation 'com.github.PojavLauncherTeam:portrait-sdp:ed33e89cbc'
+    implementation 'com.github.PojavLauncherTeam:portrait-ssp:6c02fd739b'
+    implementation 'com.github.Mathias-Boulay:ExtendedView:1.0.0'
+    implementation 'com.github.Mathias-Boulay:android_gamepad_remapper:2.0.3'
+    implementation 'com.github.Mathias-Boulay:virtual-joystick-android:1.14'
+
+    // implementation 'com.intuit.sdp:sdp-android:1.0.5'
+    // implementation 'com.intuit.ssp:ssp-android:1.0.5'
+
+    implementation 'org.tukaani:xz:1.8'
+    // Our version of exp4j can be built from source at
+    // https://github.com/PojavLauncherTeam/exp4j
+    implementation 'net.sourceforge.htmlcleaner:htmlcleaner:2.6.1'
+    implementation 'com.bytedance:bytehook:1.0.9'
+
+    // implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
+
+    implementation 'top.fifthlight.touchcontroller:proxy-client-android:0.0.4'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+    implementation "net.java.dev.jna:jna:5.13.0@aar"
+
+}

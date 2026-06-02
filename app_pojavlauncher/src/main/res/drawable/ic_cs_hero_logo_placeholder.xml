@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ic_cs_hero_logo_placeholder.xml
+    ────────────────────────────────
+    Placeholder for the large centre CS logo on the hero banner.
+    Replace with your actual hi-res PNG (the glowing green-outlined cube icon).
+
+    This vector draws:
+      • Green hexagonal/diamond glow ring
+      • Stone cube body
+      • Green grass top
+      • Large "CS" in the centre
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="110dp"
+    android:height="110dp"
+    android:viewportWidth="110"
+    android:viewportHeight="110">
+
+    <!-- Outer glow ring (green hexagon outline) -->
+    <path
+        android:strokeColor="#6EE040"
+        android:strokeWidth="2.5"
+        android:fillColor="#00000000"
+        android:pathData="M55,6 L95,28 L95,72 L55,94 L15,72 L15,28 Z" />
+
+    <!-- Inner glow ring (slightly smaller) -->
+    <path
+        android:strokeColor="#4CAF50"
+        android:strokeWidth="1"
+        android:fillColor="#00000000"
+        android:pathData="M55,12 L90,32 L90,70 L55,90 L20,70 L20,32 Z" />
+
+    <!-- Cube stone body -->
+    <path
+        android:fillColor="#5A5A5A"
+        android:pathData="M20,38 L55,20 L90,38 L90,78 L55,96 L20,78 Z" />
+
+    <!-- Green grass top face -->
+    <path
+        android:fillColor="#5BBA2C"
+        android:pathData="M20,38 L55,20 L90,38 L55,56 Z" />
+
+    <!-- Left dark face -->
+    <path
+        android:fillColor="#3A3A3A"
+        android:pathData="M20,38 L55,56 L55,96 L20,78 Z" />
+
+    <!-- Right mid face -->
+    <path
+        android:fillColor="#636363"
+        android:pathData="M90,38 L55,56 L55,96 L90,78 Z" />
+
+    <!-- "CS" lettering — C -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,54 L30,72 L38,72 L38,68 L34,68 L34,58 L38,58 L38,54 Z" />
+    <!-- S -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M42,54 L52,54 L52,62 L44,62 L44,64 L52,64 L52,72 L42,72 L42,68 L48,68 L48,66 L42,66 L42,62 L48,62 L48,56 L42,56 Z" />
+
+</vector>

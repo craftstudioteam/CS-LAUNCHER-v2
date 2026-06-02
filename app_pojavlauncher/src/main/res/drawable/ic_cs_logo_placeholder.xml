@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ic_cs_logo_placeholder.xml
+    ──────────────────────────
+    Placeholder vector for the CS Minecraft-block logo in the top-left header.
+    Replace android:src="@drawable/ic_cs_logo_placeholder" with your actual
+    high-res PNG once it's in your drawable folders.
+
+    Design: grey stone-cube base with a green grass top-face, "CS" lettering
+    centered — mimics the design shown in the reference screenshot.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+
+    <!-- Stone cube body -->
+    <path
+        android:fillColor="#6E6E6E"
+        android:pathData="M4,12 L20,4 L36,12 L36,32 L20,40 L4,32 Z" />
+
+    <!-- Green grass top-face -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M4,12 L20,4 L36,12 L20,20 Z" />
+
+    <!-- Left shadow face -->
+    <path
+        android:fillColor="#555555"
+        android:pathData="M4,12 L20,20 L20,40 L4,32 Z" />
+
+    <!-- Right highlight face -->
+    <path
+        android:fillColor="#7A7A7A"
+        android:pathData="M36,12 L20,20 L20,40 L36,32 Z" />
+
+    <!-- "CS" text approximated as white rectangles -->
+    <!-- C letter -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M13,18 L13,28 L17,28 L17,26 L15,26 L15,20 L17,20 L17,18 Z" />
+    <!-- S letter -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M19,18 L23,18 L23,22 L19,22 L19,24 L23,24 L23,28 L19,28 L19,26 L21,26 L21,24 L19,24 L19,22 L21,22 L21,20 L19,20 Z" />
+
+</vector>

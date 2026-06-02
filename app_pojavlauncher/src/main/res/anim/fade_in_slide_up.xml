@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    anim/fade_in_slide_up.xml
+    ─────────────────────────
+    Fragment / view enter animation:
+      • Fades in from 0 → 1 alpha
+      • Translates upward from +24dp → 0
+    Duration: 320 ms  |  Interpolator: decelerate
+-->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/decelerate_interpolator"
+    android:duration="320">
+
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0" />
+
+    <translate
+        android:fromYDelta="24dp"
+        android:toYDelta="0dp" />
+
+</set>

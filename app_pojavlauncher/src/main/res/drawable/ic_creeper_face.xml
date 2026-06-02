@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ic_creeper_face.xml
+    ───────────────────
+    Small Creeper face icon used as a separator bullet between
+    the username and the subtitle line in the hero banner.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+
+    <!-- Face bg -->
+    <rect
+        android:x="2" android:y="2"
+        android:width="16" android:height="16"
+        android:fillColor="#4CAF50" />
+
+    <!-- Eyes (dark) -->
+    <rect android:x="4" android:y="5" android:width="4" android:height="4" android:fillColor="#1A1A1A" />
+    <rect android:x="12" android:y="5" android:width="4" android:height="4" android:fillColor="#1A1A1A" />
+
+    <!-- Mouth pattern -->
+    <rect android:x="7" android:y="10" android:width="2" android:height="2" android:fillColor="#1A1A1A" />
+    <rect android:x="11" android:y="10" android:width="2" android:height="2" android:fillColor="#1A1A1A" />
+    <rect android:x="7" android:y="12" android:width="6" android:height="2" android:fillColor="#1A1A1A" />
+    <rect android:x="5" android:y="14" android:width="2" android:height="2" android:fillColor="#1A1A1A" />
+    <rect android:x="13" android:y="14" android:width="2" android:height="2" android:fillColor="#1A1A1A" />
+
+</vector>

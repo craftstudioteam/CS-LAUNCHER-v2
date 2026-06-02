@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    anim/hero_logo_pulse.xml
+    ─────────────────────────
+    Subtle breathing / pulse animation for the centre CS logo on the hero banner.
+    Scale oscillates between 1.0 and 1.06 — smooth and not distracting.
+    Apply with: imageView.startAnimation(AnimationUtils.loadAnimation(ctx, R.anim.hero_logo_pulse))
+-->
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <scale
+        android:fromXScale="1.0"
+        android:toXScale="1.06"
+        android:fromYScale="1.0"
+        android:toYScale="1.06"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:duration="2000"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator" />
+
+</set>
