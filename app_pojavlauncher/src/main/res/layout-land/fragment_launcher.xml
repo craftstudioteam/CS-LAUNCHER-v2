@@ -364,7 +364,7 @@
             app:drawableEndPadding="@dimen/_1sdp"
             app:drawableEndSize="@dimen/_12sdp"
             app:drawableStartIntegerScaling="true"
-            app:drawableStartSize="@dimen/_0sdp" />
+            app:drawableStartSize="0dp" />
 
         <!-- Edit / pencil button -->
         <LinearLayout
@@ -406,4 +406,4 @@
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>intLayout>
