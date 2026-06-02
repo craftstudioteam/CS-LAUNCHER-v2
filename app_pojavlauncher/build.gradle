@@ -226,15 +226,4 @@ dependencies {
 
     implementation "net.java.dev.jna:jna:5.13.0@aar"
 
-}t.sourceforge.htmlcleaner:htmlcleaner:2.6.1'
-    implementation 'com.bytedance:bytehook:1.0.9'
-
-    // implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
-
-    implementation 'top.fifthlight.touchcontroller:proxy-client-android:0.0.4'
-
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-
-    implementation "net.java.dev.jna:jna:5.13.0@aar"
-
 }
