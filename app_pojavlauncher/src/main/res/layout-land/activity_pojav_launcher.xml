@@ -5,11 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="@color/bg_launcher_dark">
-
-    <!-- Invisible view to help Tools.updateWindowSize track the actual available space -->
-    <View style="@style/DimensionTracker" />
 
     <!-- ══════════════ TOP HEADER BAR ══════════════ -->
     <LinearLayout
