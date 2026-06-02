@@ -85,18 +85,6 @@ android {
             keyAlias "androiddebugkey"
             keyPassword "android"
         }
-        customRelease {
-            storeFile file("aamc_upload.jks")
-            storePassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
-            keyAlias "android_github_release"
-            keyPassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
-        }
-        googlePlayBuild {
-            storeFile file("upload.jks")
-            storePassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
-            keyAlias "upload"
-            keyPassword System.getenv("GPLAY_KEYSTORE_PASSWORD")
-        }
     }
 
     defaultConfig {
@@ -228,6 +216,17 @@ dependencies {
     // Our version of exp4j can be built from source at
     // https://github.com/PojavLauncherTeam/exp4j
     implementation 'net.sourceforge.htmlcleaner:htmlcleaner:2.6.1'
+    implementation 'com.bytedance:bytehook:1.0.9'
+
+    // implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
+
+    implementation 'top.fifthlight.touchcontroller:proxy-client-android:0.0.4'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+    implementation "net.java.dev.jna:jna:5.13.0@aar"
+
+}t.sourceforge.htmlcleaner:htmlcleaner:2.6.1'
     implementation 'com.bytedance:bytehook:1.0.9'
 
     // implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
