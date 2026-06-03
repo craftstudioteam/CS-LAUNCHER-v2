@@ -9,9 +9,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -27,6 +31,7 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
+import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceRendererSettingsFragment;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
@@ -38,12 +43,25 @@ public class MainMenuFragment extends Fragment {
 
     private mcVersionSpinner mVersionSpinner;
     private ViewGroup mRightPane;
-    private View mBottomBarBg;   // stub — kept so mTaskCountListener check compiles
     private View mPlayButton;
     private View mEditProfileButton;
-    private View mBottomBar;     // the single LinearLayout container for the whole bar
-    // Intercepts Back when the right pane has something above home
+    private View mBottomBar;
     private OnBackPressedCallback mRightPaneBackCallback;
+
+    // ── Top bar state ──
+    private View mTopBrandingRow;
+    private View mProfileCard;
+    private EditText mTopSearchField;
+    private ImageView mTopSearchIcon;
+    private View mBrandTitle;
+    private View mBrandSubtitle;
+    private int mCurrentNavTab = 0; // 0=Home, 1=ModStore, ...
+    // Nav indicator views
+    private View mHomeIndicator, mModStoreIndicator, mControlsIndicator, mCursorIndicator, mToolsIndicator;
+    private Interpolator mFastOutSlowIn = new AccelerateDecelerateInterpolator();
+
+    // Runtime checks to prevent animation overlap
+    private boolean mIsModStoreActive = false;
 
     // ─── Two-pane helpers ────────────────────────────────────────────────────
 
@@ -201,31 +219,38 @@ public class MainMenuFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Button mNewsButton          = view.findViewById(R.id.news_button);
-        Button mDiscordButton       = view.findViewById(R.id.discord_button);
-        Button mCustomControlButton = view.findViewById(R.id.custom_control_button);
-        Button mInstallJarButton   = view.findViewById(R.id.install_jar_button);
-        Button mShareLogsButton    = view.findViewById(R.id.share_logs_button);
-        Button mOpenDirectoryButton = view.findViewById(R.id.open_directory_button);
-        Button mModStoreButton      = view.findViewById(R.id.mod_store_button);
-        Button mCursorCustomButton  = view.findViewById(R.id.cursor_customization_button);
-        Button mHomeButton          = view.findViewById(R.id.home_button);
-
+        // ─── Bottom bar views ───────────────────────────────────────
         ImageButton mEditProfileBtn = view.findViewById(R.id.edit_profile_button);
         Button mPlayBtn = view.findViewById(R.id.play_button);
         mVersionSpinner = view.findViewById(R.id.mc_version_spinner);
-
-        // Detect two-pane landscape layout
         mRightPane = view.findViewById(R.id.right_pane_container);
-
-        // Bottom bar refs
-        mBottomBarBg       = view.findViewById(R.id._background_display_view);
-        mPlayButton        = mPlayBtn;
+        mPlayButton = mPlayBtn;
         mEditProfileButton = mEditProfileBtn;
-        mBottomBar         = view.findViewById(R.id.bottom_bar);
+        mBottomBar = view.findViewById(R.id.bottom_bar);
 
-        // Load home fragment into right pane.
-        // Check by fragment presence, not savedInstanceState, so rotation works correctly.
+        // ─── Horizontal Nav Rail ────────────────────────────────────
+        FrameLayout navHome = view.findViewById(R.id.nav_home);
+        FrameLayout navModStore = view.findViewById(R.id.nav_mod_store);
+        FrameLayout navControls = view.findViewById(R.id.nav_custom_controls);
+        FrameLayout navCursor = view.findViewById(R.id.nav_cursor);
+        FrameLayout navTools = view.findViewById(R.id.nav_instance_tools);
+
+        // Indicator underlines
+        mHomeIndicator = view.findViewById(R.id.nav_home_indicator);
+        mModStoreIndicator = view.findViewById(R.id.nav_mod_store_indicator);
+        mControlsIndicator = view.findViewById(R.id.nav_controls_indicator);
+        mCursorIndicator = view.findViewById(R.id.nav_cursor_indicator);
+        mToolsIndicator = view.findViewById(R.id.nav_tools_indicator);
+
+        // Top bar elements for dynamic states
+        mTopBrandingRow = view.findViewById(R.id.top_branding_row);
+        mProfileCard = view.findViewById(R.id.profile_card);
+        mTopSearchField = view.findViewById(R.id.top_search_field);
+        mTopSearchIcon = view.findViewById(R.id.top_search_icon);
+        mBrandTitle = view.findViewById(R.id.brand_title);
+        mBrandSubtitle = view.findViewById(R.id.brand_subtitle);
+
+        // Load home fragment into right pane
         if (isTwoPane()) {
             Fragment existing = getChildFragmentManager()
                     .findFragmentById(R.id.right_pane_container);
@@ -235,111 +260,100 @@ public class MainMenuFragment extends Fragment {
                         .setReorderingAllowed(true)
                         .replace(R.id.right_pane_container, RightPaneHomeFragment.class, null,
                                 RightPaneHomeFragment.TAG)
-                        // NOT added to back stack — home is the base, not a destination
                         .commit();
             }
         }
 
-        // ── Sidebar buttons that are hidden in landscape (stubs kept for safety) ──
-        if (mHomeButton != null)
-            mHomeButton.setOnClickListener(v -> refreshHomeState());
+        // ─── Nav Tab Click Listeners ────────────────────────────────
+        navHome.setOnClickListener(v -> {
+            setActiveNavTab(0);
+            if (mIsModStoreActive) transitionToHomeState();
+            clearRightPane();
+            setBottomBarVisible(true);
+            // Ensure home fragment is showing
+            if (getChildFragmentManager().findFragmentById(R.id.right_pane_container) == null) {
+                getChildFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.right_pane_container, RightPaneHomeFragment.class, null,
+                                RightPaneHomeFragment.TAG)
+                        .commit();
+            }
+        });
 
-        // Wiki / Discord are moved to RightPaneHomeFragment in landscape;
-        // they stay in the sidebar on portrait via fragment_launcher.xml (no-land).
-        if (mNewsButton != null)
-            mNewsButton.setOnClickListener(
-                    v -> Tools.openURL(requireActivity(), Tools.URL_HOME));
-        if (mDiscordButton != null)
-            mDiscordButton.setOnClickListener(
-                    v -> Tools.openURL(requireActivity(), getString(R.string.discord_invite)));
+        navModStore.setOnClickListener(v -> {
+            setActiveNavTab(1);
+            if (!mIsModStoreActive) transitionToModStoreState();
+            navigateToModStore();
+        });
 
-        // Custom controls (always opens as Activity — can't be in the pane)
-        mCustomControlButton.setOnClickListener(v ->
-                startActivity(new Intent(requireContext(), CustomControlsActivity.class)));
+        navControls.setOnClickListener(v -> {
+            setActiveNavTab(2);
+            if (mIsModStoreActive) transitionToHomeState();
+            startActivity(new Intent(requireContext(), CustomControlsActivity.class));
+        });
 
-        // Cursor Customization
-        if (mCursorCustomButton != null)
-            mCursorCustomButton.setOnClickListener(v ->
-                Tools.swapFragment(requireActivity(), CursorCustomizationFragment.class, CursorCustomizationFragment.TAG, null));
+        navCursor.setOnClickListener(v -> {
+            setActiveNavTab(3);
+            if (mIsModStoreActive) transitionToHomeState();
+            Tools.swapFragment(requireActivity(), CursorCustomizationFragment.class,
+                    CursorCustomizationFragment.TAG, null);
+        });
 
-        // Mod Store
-        if (mModStoreButton != null)
-            mModStoreButton.setOnClickListener(v ->
-                    openPane(ModsSearchFragment.class, ModsSearchFragment.TAG, null));
+        navTools.setOnClickListener(v -> {
+            setActiveNavTab(4);
+            if (mIsModStoreActive) transitionToHomeState();
+            if (Tools.isDemoProfile(v.getContext())) {
+                hasNoOnlineProfileDialog(getActivity(),
+                        getString(R.string.demo_unsupported),
+                        getString(R.string.change_account));
+            } else if (!hasOnlineProfile()) {
+                hasNoOnlineProfileDialog(requireActivity());
+            } else {
+                openPath(v.getContext(), getCurrentProfileDirectory(), false);
+            }
+        });
 
-        // Execute .jar
-        if (hasOnlineProfile()) {
-            mInstallJarButton.setOnClickListener(v -> runInstallerWithConfirmation(false));
-            mInstallJarButton.setOnLongClickListener(v -> {
-                runInstallerWithConfirmation(true);
-                return true;
-            });
-        } else {
-            mInstallJarButton.setOnClickListener(
-                    v -> hasNoOnlineProfileDialog(requireActivity()));
-        }
-
-        // Share logs
-        if (mShareLogsButton != null)
-            mShareLogsButton.setOnClickListener(v -> shareLog(requireContext()));
-
-        // Open game directory
-        if (mOpenDirectoryButton != null) {
-            mOpenDirectoryButton.setOnClickListener(v -> {
-                if (Tools.isDemoProfile(v.getContext())) {
-                    hasNoOnlineProfileDialog(getActivity(),
-                            getString(R.string.demo_unsupported),
-                            getString(R.string.change_account));
-                } else if (!hasOnlineProfile()) {
-                    hasNoOnlineProfileDialog(requireActivity());
+        // Settings gear
+        ImageButton settingsGear = view.findViewById(R.id.settings_gear);
+        if (settingsGear != null) {
+            settingsGear.setOnClickListener(v -> {
+                if (isRightPaneActive()) {
+                    refreshHomeState();
                 } else {
-                    openPath(v.getContext(), getCurrentProfileDirectory(), false);
+                    Tools.swapFragment(requireActivity(), LauncherPreferenceRendererSettingsFragment.class,
+                            LauncherPreferenceRendererSettingsFragment.TAG, null);
                 }
             });
         }
 
-        // Edit profile — always full-screen
-        mEditProfileBtn.setOnClickListener(v -> {
-            mVersionSpinner.openProfileEditor(requireActivity());
-        });
+        // Profile name
+        TextView profileName = view.findViewById(R.id.profile_name);
+        if (profileName != null) {
+            profileName.setText(LauncherPreferences.DEFAULT_PREF
+                    .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "STEVE"));
+        }
 
-        // In landscape: tapping the spinner opens the instance picker in the right pane
+        // ─── Bottom bar listeners ────────────────────────────────────
+        mEditProfileBtn.setOnClickListener(v ->
+                mVersionSpinner.openProfileEditor(requireActivity()));
+
         if (isTwoPane()) {
             mVersionSpinner.setOnClickListener(v ->
                     openPane(InstancePickerFragment.class, InstancePickerFragment.TAG, null));
         }
 
-        // Force correct initial bar state BEFORE registering task listener,
-        // so the listener's immediate callback doesn't fight an unset visibility.
         if (isTwoPane()) {
             setBottomBarVisible(getChildFragmentManager().getBackStackEntryCount() == 0);
         }
 
-        // Play button visibility during downloads handled by activity's ProgressLayout
-
-        // Apply Premium Mobile Animations
-        applyPremiumTouchAnimation(mHomeButton, mModStoreButton, mCursorCustomButton, mCustomControlButton, mInstallJarButton,
-                                   mShareLogsButton, mOpenDirectoryButton,
-                                   mPlayBtn, mEditProfileBtn, mVersionSpinner);
-
-        // Play
         mPlayBtn.setOnClickListener(
                 v -> ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true));
-
-        // Long-press wiki → gamepad mapper (hidden feature)
-        if (mNewsButton != null)
-            mNewsButton.setOnLongClickListener(v -> {
-                Tools.swapFragment(requireActivity(), GamepadMapperFragment.class,
-                        GamepadMapperFragment.TAG, null);
-                return true;
-            });
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mRightPane = null;
-        mBottomBarBg = null;
         mPlayButton = null;
         mEditProfileButton = null;
         mBottomBar = null;
@@ -362,6 +376,103 @@ public class MainMenuFragment extends Fragment {
                 setBottomBarVisible(showBar);
             });
         }
+    }
+
+
+    // ─── Dynamic Top Bar State Transitions ────────────────────────────
+
+    private void transitionToModStoreState() {
+        if (mIsModStoreActive || mTopSearchField == null || mProfileCard == null) return;
+        mIsModStoreActive = true;
+
+        // Show search field (invisible initially, then fade in)
+        mTopSearchField.setVisibility(View.VISIBLE);
+        mTopSearchIcon.setVisibility(View.VISIBLE);
+        mTopSearchField.setAlpha(0f);
+        mTopSearchIcon.setAlpha(0f);
+
+        // Animate: profile slides left, search fades in from right
+        mProfileCard.animate()
+                .translationX(-280f)
+                .setDuration(300)
+                .setInterpolator(mFastOutSlowIn)
+                .start();
+
+        mTopSearchField.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .setInterpolator(mFastOutSlowIn)
+                .start();
+
+        mTopSearchIcon.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .setInterpolator(mFastOutSlowIn)
+                .start();
+
+        // Collapse brand subtitle for space
+        if (mBrandSubtitle != null) {
+            mBrandSubtitle.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .start();
+        }
+    }
+
+    private void transitionToHomeState() {
+        if (!mIsModStoreActive) return;
+        mIsModStoreActive = false;
+
+        // Slide profile back, fade search out
+        mProfileCard.animate()
+                .translationX(0f)
+                .setDuration(300)
+                .setInterpolator(mFastOutSlowIn)
+                .start();
+
+        mTopSearchField.animate()
+                .alpha(0f)
+                .setDuration(250)
+                .setInterpolator(mFastOutSlowIn)
+                .withEndAction(() -> {
+                    mTopSearchField.setVisibility(View.GONE);
+                    mTopSearchIcon.setVisibility(View.GONE);
+                })
+                .start();
+
+        mTopSearchIcon.animate()
+                .alpha(0f)
+                .setDuration(200)
+                .start();
+
+        if (mBrandSubtitle != null) {
+            mBrandSubtitle.animate()
+                    .alpha(1f)
+                    .setDuration(200)
+                    .start();
+        }
+    }
+
+    private void setActiveNavTab(int tabIndex) {
+        mCurrentNavTab = tabIndex;
+        // Reset all indicators
+        if (mHomeIndicator != null) mHomeIndicator.setVisibility(tabIndex == 0 ? View.VISIBLE : View.INVISIBLE);
+        if (mModStoreIndicator != null) mModStoreIndicator.setVisibility(tabIndex == 1 ? View.VISIBLE : View.INVISIBLE);
+        if (mControlsIndicator != null) mControlsIndicator.setVisibility(tabIndex == 2 ? View.VISIBLE : View.INVISIBLE);
+        if (mCursorIndicator != null) mCursorIndicator.setVisibility(tabIndex == 3 ? View.VISIBLE : View.INVISIBLE);
+        if (mToolsIndicator != null) mToolsIndicator.setVisibility(tabIndex == 4 ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private void navigateToModStore() {
+        Bundle args = new Bundle();
+        args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY,
+                LauncherPreferences.DEFAULT_PREF
+                        .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null));
+        getChildFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.right_pane_container, ManageModsFragment.class, args, ManageModsFragment.TAG)
+                .addToBackStack(ManageModsFragment.TAG)
+                .commit();
     }
 
     // ─── Private helpers ────────────────────────────────────────────────────
