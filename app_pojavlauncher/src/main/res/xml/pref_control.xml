@@ -46,6 +46,7 @@
             android:max="@integer/gesture_delay_seekbar_max"
             app:seekBarIncrement="@integer/gesture_delay_seekbar_increment"
             android:icon="@drawable/ic_settings_video"
+            android:layout="@layout/preference_seekbar_modern"
             />
 
     </PreferenceCategory>
@@ -64,6 +65,7 @@
             android:max="@integer/button_scale_seekbar_max"
             app:seekBarIncrement="@integer/button_scale_seekbar_increment"
             android:icon="@drawable/ic_settings_control"
+            android:layout="@layout/preference_seekbar_modern"
             />
         <SwitchPreference
             android:key="buttonAllCaps"
@@ -91,6 +93,7 @@
             app:seekBarIncrement="@integer/mouse_scale_seekbar_increment"
             app:showSeekBarValue="true"
             android:icon="@drawable/ic_settings_control"
+            android:layout="@layout/preference_seekbar_modern"
             />
 
         <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
@@ -103,6 +106,7 @@
             android:max="@integer/mouse_speed_seekbar_max"
             app:seekBarIncrement="@integer/mouse_speed_seekbar_increment"
             app:showSeekBarValue="true"
+            android:layout="@layout/preference_seekbar_modern"
             />
         <SwitchPreference
             android:key="mouse_start"
@@ -140,6 +144,7 @@
             android:max="@integer/gyro_speed_seekbar_max"
             app:seekBarIncrement="@integer/gyro_speed_seekbar_increment"
             app:showSeekBarValue="true"
+            android:layout="@layout/preference_seekbar_modern"
             />
         <net.kdt.pojavlaunch.prefs.CustomSeekBarPreference
             android:key="gyroSampleRate"
@@ -149,6 +154,7 @@
             android:max="@integer/gyro_rate_seekbar_max"
             app:selectable="false"
             app:showSeekBarValue="true"
+            android:layout="@layout/preference_seekbar_modern"
             />
         <SwitchPreferenceCompat
             android:key="gyroSmoothing"
@@ -195,6 +201,7 @@
             app:min="@integer/gamepad_deadzone_seekbar_min"
             android:max="@integer/gamepad_deadzone_seekbar_max"
             app:seekBarIncrement="@integer/gamepad_deadzone_seekbar_increment"
+            android:layout="@layout/preference_seekbar_modern"
             />
 
     </PreferenceCategory>
@@ -237,6 +244,7 @@
             app:min="@integer/touchcontrller_vibrate_length_min"
             android:max="@integer/touchcontrller_vibrate_length_max"
             app:showSeekBarValue="true"
+            android:layout="@layout/preference_seekbar_modern"
             />
     </PreferenceCategory>
 
