@@ -261,15 +261,26 @@
                 android:textColor="?attr/colorTextSecondary"
                 android:letterSpacing="0.08"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/vprof_editor_mods_add"
+                app:layout_constraintEnd_toStartOf="@+id/vprof_editor_mods_import"
                 app:layout_constraintTop_toBottomOf="@+id/vprof_editor_ctrl_spinner" />
+
+            <ImageButton
+                android:id="@+id/vprof_editor_mods_import"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_add"
+                android:layout_marginEnd="@dimen/padding_small"
+                app:layout_constraintEnd_toStartOf="@+id/vprof_editor_mods_add"
+                app:layout_constraintTop_toTopOf="@+id/vprof_editor_mods_header"
+                app:layout_constraintBottom_toBottomOf="@+id/vprof_editor_mods_header" />
 
             <ImageButton
                 android:id="@+id/vprof_editor_mods_add"
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_add"
+                android:src="@drawable/ic_folder"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/vprof_editor_mods_header"
                 app:layout_constraintBottom_toBottomOf="@+id/vprof_editor_mods_header" />

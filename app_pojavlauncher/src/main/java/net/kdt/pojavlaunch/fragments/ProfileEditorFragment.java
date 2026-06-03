@@ -63,7 +63,7 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     private MinecraftProfile mTempProfile = null;
     private String mValueToConsume = "";
     private Button mSaveButton, mDeleteButton, mControlSelectButton, mGameDirButton, mVersionSelectButton;
-    private ImageButton mModsAddButton, mResourcePacksFolder, mShaderPacksFolder, mResourcePacksImport, mShaderPacksImport;
+    private ImageButton mModsAddButton, mModsImport, mResourcePacksFolder, mShaderPacksFolder, mResourcePacksImport, mShaderPacksImport;
     private RecyclerView mModsRecycler, mResourcePacksRecycler, mShaderPacksRecycler;
     private TextView mModsEmpty, mResourcePacksEmpty, mShaderPacksEmpty;
     private Spinner mDefaultRuntime, mDefaultRenderer;
@@ -71,6 +71,11 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     private TextView mDefaultPath, mDefaultVersion, mDefaultControl;
     private ImageView mProfileIcon;
     private final ActivityResultLauncher<?> mCropperLauncher = CropperUtils.registerCropper(this, this);
+
+    private final ActivityResultLauncher<String> mModPicker = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> handleImport(uri, "mods")
+    );
 
     private final ActivityResultLauncher<String> mResourcePackPicker = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
@@ -164,9 +169,8 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         mProfileIcon.setOnClickListener(v -> CropperUtils.startCropper(mCropperLauncher));
 
         mModsAddButton.setOnClickListener(v -> {
-            Bundle args = new Bundle();
-            args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, mProfileKey);
-            navigateToFragment(ManageModsFragment.class, ManageModsFragment.TAG, args);
+            File gameDir = Tools.getGameDirPath(mTempProfile);
+            Tools.openPath(v.getContext(), new File(gameDir, "mods"), false);
         });
 
         mResourcePacksFolder.setOnClickListener(v -> {
@@ -179,6 +183,11 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
             Tools.openPath(v.getContext(), new File(gameDir, "shaderpacks"), false);
         });
 
+        mModsImport = view.findViewById(R.id.vprof_editor_mods_import);
+        mResourcePacksImport = view.findViewById(R.id.vprof_editor_resource_packs_import);
+        mShaderPacksImport = view.findViewById(R.id.vprof_editor_shader_packs_import);
+
+        mModsImport.setOnClickListener(v -> mModPicker.launch("*/*"));
         mResourcePacksImport.setOnClickListener(v -> mResourcePackPicker.launch("*/*"));
         mShaderPacksImport.setOnClickListener(v -> mShaderPackPicker.launch("*/*"));
 
