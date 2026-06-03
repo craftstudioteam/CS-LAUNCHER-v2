@@ -40,6 +40,11 @@ public class CursorDesignerView extends View {
     private final Stack<Bitmap> mRedoStack = new Stack<>();
     private static final int MAX_STACK_SIZE = 20;
 
+    public interface OnCanvasChangedListener {
+        void onCanvasChanged(Bitmap bitmap);
+    }
+    private OnCanvasChangedListener mListener;
+
     public CursorDesignerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
@@ -124,11 +129,16 @@ public class CursorDesignerView extends View {
                     mDrawingBitmap.setPixel(x, y, color);
                 }
                 invalidate();
+                if (mListener != null) mListener.onCanvasChanged(mDrawingBitmap);
                 return true;
             }
         }
         
         return handled || super.onTouchEvent(event);
+    }
+
+    public void setOnCanvasChangedListener(OnCanvasChangedListener listener) {
+        mListener = listener;
     }
 
     private void saveState() {
@@ -143,6 +153,7 @@ public class CursorDesignerView extends View {
             mDrawingBitmap = mUndoStack.peek().copy(mDrawingBitmap.getConfig(), true);
             mDrawingCanvas = new Canvas(mDrawingBitmap);
             invalidate();
+            if (mListener != null) mListener.onCanvasChanged(mDrawingBitmap);
         }
     }
 
@@ -152,6 +163,7 @@ public class CursorDesignerView extends View {
             mDrawingBitmap = mUndoStack.peek().copy(mDrawingBitmap.getConfig(), true);
             mDrawingCanvas = new Canvas(mDrawingBitmap);
             invalidate();
+            if (mListener != null) mListener.onCanvasChanged(mDrawingBitmap);
         }
     }
 
@@ -163,6 +175,7 @@ public class CursorDesignerView extends View {
         saveState();
         mDrawingBitmap.eraseColor(Color.TRANSPARENT);
         invalidate();
+        if (mListener != null) mListener.onCanvasChanged(mDrawingBitmap);
     }
 
     private void floodFill(int x, int y, int targetColor) {

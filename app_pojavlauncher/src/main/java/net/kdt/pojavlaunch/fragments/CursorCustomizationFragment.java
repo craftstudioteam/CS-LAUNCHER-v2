@@ -38,9 +38,9 @@ import java.io.InputStream;
 public class CursorCustomizationFragment extends Fragment {
     public static final String TAG = "CursorCustomizationFragment";
 
-    private View mPanelGeneric, mPanelCreate;
+    private View mPanelCreate, mPanelImport, mPanelCollection;
     private TextView mTabImport, mTabCreate, mTabMyCursors;
-    private ImageView mPreviewNormal, mPreviewHover, mPreviewClick;
+    private ImageView mCreateLivePreview;
     private CursorDesignerView mDesigner;
     private SeekBar mSeekSize, mSeekGlow;
     private ImageButton mBtnPencil, mBtnEraser, mBtnFill;
@@ -66,25 +66,23 @@ public class CursorCustomizationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mPanelGeneric = view.findViewById(R.id.panel_generic);
         mPanelCreate = view.findViewById(R.id.panel_create);
+        mPanelImport = view.findViewById(R.id.panel_import);
+        mPanelCollection = view.findViewById(R.id.panel_collection);
 
         mTabImport = view.findViewById(R.id.tab_import);
         mTabCreate = view.findViewById(R.id.tab_create);
         mTabMyCursors = view.findViewById(R.id.tab_my_cursors);
 
-        mPreviewNormal = view.findViewById(R.id.cursor_preview_normal);
-        mPreviewHover = view.findViewById(R.id.cursor_preview_hover);
-        mPreviewClick = view.findViewById(R.id.cursor_preview_click);
-
+        mCreateLivePreview = view.findViewById(R.id.create_live_preview);
         mDesigner = view.findViewById(R.id.cursor_designer);
         
         mSeekSize = view.findViewById(R.id.seek_cursor_size);
         mSeekGlow = view.findViewById(R.id.seek_glow_strength);
 
         mBtnPencil = view.findViewById(R.id.btn_tool_pencil);
-        mBtnEraser = view.findViewById(R.id.btn_tool_eraser);
         mBtnFill = view.findViewById(R.id.btn_tool_fill);
+        mBtnEraser = view.findViewById(R.id.btn_tool_eraser);
 
         view.findViewById(R.id.cursor_back_button).setOnClickListener(v -> Tools.removeCurrentFragment(requireActivity()));
 
@@ -98,24 +96,26 @@ public class CursorCustomizationFragment extends Fragment {
         view.findViewById(R.id.btn_undo).setOnClickListener(v -> mDesigner.undo());
         view.findViewById(R.id.btn_redo).setOnClickListener(v -> mDesigner.redo());
         view.findViewById(R.id.btn_clear_canvas).setOnClickListener(v -> mDesigner.clear());
-        
+        view.findViewById(R.id.btn_save_creation).setOnClickListener(v -> applyCursor());
+
         // Tool Selectors
         mBtnPencil.setOnClickListener(v -> selectTool(CursorDesignerView.Tool.PENCIL));
-        mBtnEraser.setOnClickListener(v -> selectTool(CursorDesignerView.Tool.ERASER));
         mBtnFill.setOnClickListener(v -> selectTool(CursorDesignerView.Tool.FILL));
+        mBtnEraser.setOnClickListener(v -> selectTool(CursorDesignerView.Tool.ERASER));
 
         // Color Selectors
         view.findViewById(R.id.color_white).setOnClickListener(v -> mDesigner.setColor(Color.WHITE));
         view.findViewById(R.id.color_neon).setOnClickListener(v -> mDesigner.setColor(Color.parseColor("#A6FF3D")));
         view.findViewById(R.id.color_red).setOnClickListener(v -> mDesigner.setColor(Color.RED));
         view.findViewById(R.id.color_blue).setOnClickListener(v -> mDesigner.setColor(Color.BLUE));
+        view.findViewById(R.id.color_black).setOnClickListener(v -> mDesigner.setColor(Color.BLACK));
 
         view.findViewById(R.id.btn_apply_cursor).setOnClickListener(v -> applyCursor());
 
         mSeekSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                updatePreview();
+                updateGlobalPreview();
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -124,10 +124,16 @@ public class CursorCustomizationFragment extends Fragment {
         mSeekGlow.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                updatePreview();
+                updateGlobalPreview();
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        // Real-time canvas listener
+        mDesigner.setOnCanvasChangedListener(bitmap -> {
+            mCurrentBitmap = bitmap;
+            updateCreatePreview();
         });
 
         // Initialize with default
@@ -136,68 +142,62 @@ public class CursorCustomizationFragment extends Fragment {
         mSeekSize.setProgress((int) (LauncherPreferences.PREF_MOUSESCALE * 100));
         mSeekGlow.setProgress(LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS);
         
-        switchTab(0);
+        switchTab(1); // Default to Create
         startPreviewAnimations();
     }
 
     private void switchTab(int index) {
-        mPanelGeneric.setVisibility(index != 1 ? View.VISIBLE : View.GONE);
         mPanelCreate.setVisibility(index == 1 ? View.VISIBLE : View.GONE);
+        mPanelImport.setVisibility(index == 0 ? View.VISIBLE : View.GONE);
+        mPanelCollection.setVisibility(index == 2 ? View.VISIBLE : View.GONE);
 
         AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
         fadeIn.setDuration(300);
         if (index == 1) mPanelCreate.startAnimation(fadeIn);
-        else mPanelGeneric.startAnimation(fadeIn);
+        else if (index == 0) mPanelImport.startAnimation(fadeIn);
+        else mPanelCollection.startAnimation(fadeIn);
 
         mTabImport.setTextColor(index == 0 ? Color.parseColor("#A6FF3D") : Color.LTGRAY);
         mTabCreate.setTextColor(index == 1 ? Color.parseColor("#A6FF3D") : Color.LTGRAY);
         mTabMyCursors.setTextColor(index == 2 ? Color.parseColor("#A6FF3D") : Color.LTGRAY);
+
+        mTabImport.setTypeface(null, index == 0 ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
+        mTabCreate.setTypeface(null, index == 1 ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
+        mTabMyCursors.setTypeface(null, index == 2 ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
         
         if (index == 1) {
             mCurrentBitmap = mDesigner.getCursorBitmap();
-        } else if (index == 2) {
-            getView().findViewById(R.id.recycler_my_cursors).setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.btn_import_png).setVisibility(View.GONE);
+            updateCreatePreview();
         } else {
-            getView().findViewById(R.id.recycler_my_cursors).setVisibility(View.GONE);
-            getView().findViewById(R.id.btn_import_png).setVisibility(View.VISIBLE);
+            updateGlobalPreview();
         }
-        
-        updatePreview();
     }
 
     private void selectTool(CursorDesignerView.Tool tool) {
         mDesigner.setTool(tool);
-        mBtnPencil.setBackgroundColor(tool == CursorDesignerView.Tool.PENCIL ? Color.parseColor("#20A6FF3D") : Color.TRANSPARENT);
-        mBtnEraser.setBackgroundColor(tool == CursorDesignerView.Tool.ERASER ? Color.parseColor("#20A6FF3D") : Color.TRANSPARENT);
-        mBtnFill.setBackgroundColor(tool == CursorDesignerView.Tool.FILL ? Color.parseColor("#20A6FF3D") : Color.TRANSPARENT);
+        mBtnPencil.setBackgroundTintList(tool == CursorDesignerView.Tool.PENCIL ? android.content.res.ColorStateList.valueOf(Color.parseColor("#3FA6FF3D")) : null);
+        mBtnFill.setBackgroundTintList(tool == CursorDesignerView.Tool.FILL ? android.content.res.ColorStateList.valueOf(Color.parseColor("#3FA6FF3D")) : null);
+        mBtnEraser.setBackgroundTintList(tool == CursorDesignerView.Tool.ERASER ? android.content.res.ColorStateList.valueOf(Color.parseColor("#3FA6FF3D")) : null);
     }
 
     private void handleImportedFile(Uri uri) {
         try (InputStream is = requireContext().getContentResolver().openInputStream(uri)) {
             mCurrentBitmap = BitmapFactory.decodeStream(is);
-            updatePreview();
+            updateGlobalPreview();
         } catch (Exception e) {
             Toast.makeText(getContext(), "Failed to import image", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void updatePreview() {
-        if (mCurrentBitmap == null) return;
-        Bitmap preview = mCurrentBitmap;
-        int glow = mSeekGlow.getProgress();
-        if (glow > 0) {
-            preview = CursorManager.applyGlow(mCurrentBitmap, glow, Color.parseColor("#A6FF3D"));
+    private void updateCreatePreview() {
+        if (mCurrentBitmap != null) {
+            mCreateLivePreview.setImageBitmap(mCurrentBitmap);
         }
-        
-        mPreviewNormal.setImageBitmap(preview);
-        mPreviewHover.setImageBitmap(preview);
-        mPreviewClick.setImageBitmap(preview);
-        
-        float scale = mSeekSize.getProgress() / 100f;
-        mPreviewNormal.setScaleX(scale); mPreviewNormal.setScaleY(scale);
-        mPreviewHover.setScaleX(scale * 1.1f); mPreviewHover.setScaleY(scale * 1.1f);
-        mPreviewClick.setScaleX(scale * 0.9f); mPreviewClick.setScaleY(scale * 0.9f);
+    }
+
+    private void updateGlobalPreview() {
+        // This used to update panel_generic previews, but I removed them in the latest layout to simplify.
+        // We'll keep the logic if needed for a single apply-button preview.
     }
 
     private void applyCursor() {
@@ -220,14 +220,8 @@ public class CursorCustomizationFragment extends Fragment {
     }
 
     private void startPreviewAnimations() {
-        // Normal: Gentle Pulse
-        ScaleAnimation pulse = new ScaleAnimation(0.98f, 1.02f, 0.98f, 1.02f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        pulse.setDuration(2000); pulse.setRepeatMode(Animation.REVERSE); pulse.setRepeatCount(Animation.INFINITE);
-        mPreviewNormal.startAnimation(pulse);
-
-        // Hover: Floating
-        AlphaAnimation fade = new AlphaAnimation(0.7f, 1.0f);
-        fade.setDuration(1000); fade.setRepeatMode(Animation.REVERSE); fade.setRepeatCount(Animation.INFINITE);
-        mPreviewHover.startAnimation(fade);
+        ScaleAnimation pulse = new ScaleAnimation(0.95f, 1.05f, 0.95f, 1.05f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        pulse.setDuration(1500); pulse.setRepeatMode(Animation.REVERSE); pulse.setRepeatCount(Animation.INFINITE);
+        mCreateLivePreview.startAnimation(pulse);
     }
 }
