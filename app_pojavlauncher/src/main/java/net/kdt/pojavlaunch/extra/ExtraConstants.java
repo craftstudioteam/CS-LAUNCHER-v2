@@ -19,7 +19,7 @@ public class ExtraConstants {
     public static final String REFRESH_VERSION_SPINNER = "refresh_version";
     /* ExtraCore Constant: When we want to launch the game */
     public static final String LAUNCH_GAME = "launch_game";
-
-
+    /* ExtraCore Constant: When we want to refresh the mouse cursor */
+    public static final String REFRESH_CURSOR = "refresh_cursor";
 
 }

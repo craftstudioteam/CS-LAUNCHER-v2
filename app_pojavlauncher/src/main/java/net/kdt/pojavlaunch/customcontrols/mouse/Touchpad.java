@@ -3,7 +3,10 @@ package net.kdt.pojavlaunch.customcontrols.mouse;
 import static net.kdt.pojavlaunch.Tools.currentDisplayMetrics;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -19,15 +22,40 @@ import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 
 import org.lwjgl.glfw.CallbackBridge;
 
+import net.kdt.pojavlaunch.extra.ExtraConstants;
+import net.kdt.pojavlaunch.extra.ExtraCore;
+import net.kdt.pojavlaunch.extra.ExtraListener;
+
 /**
  * Class dealing with the virtual mouse
  */
-public class Touchpad extends View implements GrabListener, AbstractTouchpad {
+public class Touchpad extends View implements GrabListener, AbstractTouchpad, ExtraListener {
     /* Whether the Touchpad should be displayed */
     private boolean mDisplayState;
     /* Mouse pointer icon used by the touchpad */
     private Drawable mMousePointerDrawable;
     private float mMouseX, mMouseY;
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        ExtraCore.addExtraListener(ExtraConstants.REFRESH_CURSOR, this);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        ExtraCore.removeExtraListenerFromValue(ExtraConstants.REFRESH_CURSOR, this);
+    }
+
+    @Override
+    public boolean onValueSet(String key, Object value) {
+        if (ExtraConstants.REFRESH_CURSOR.equals(key)) {
+            post(this::refreshCursor);
+        }
+        return false;
+    }
+
     public Touchpad(@NonNull Context context) {
         this(context, null);
     }
@@ -78,21 +106,13 @@ public class Touchpad extends View implements GrabListener, AbstractTouchpad {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (mMousePointerDrawable == null) return;
         canvas.translate(mMouseX, mMouseY);
         mMousePointerDrawable.draw(canvas);
     }
 
     private void init(){
-        // Setup mouse pointer
-        mMousePointerDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_mouse_pointer, getContext().getTheme());
-        // For some reason it's annotated as Nullable even though it doesn't seem to actually
-        // ever return null
-        assert mMousePointerDrawable != null;
-        mMousePointerDrawable.setBounds(
-                0, 0,
-                (int) (36 * LauncherPreferences.PREF_MOUSESCALE),
-                (int) (54 * LauncherPreferences.PREF_MOUSESCALE)
-        );
+        refreshCursor();
         setFocusable(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setDefaultFocusHighlightEnabled(false);
@@ -101,6 +121,36 @@ public class Touchpad extends View implements GrabListener, AbstractTouchpad {
         // When the game is grabbing, we should not display the mouse
         disable();
         mDisplayState = false;
+    }
+
+    public void refreshCursor() {
+        Bitmap cursorBitmap = null;
+        if (LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED && LauncherPreferences.PREF_CUSTOM_CURSOR_PATH != null) {
+            cursorBitmap = BitmapFactory.decodeFile(LauncherPreferences.PREF_CUSTOM_CURSOR_PATH);
+        }
+
+        if (cursorBitmap == null) {
+            cursorBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_mouse_pointer);
+        }
+
+        if (cursorBitmap != null) {
+            if (LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS > 0) {
+                cursorBitmap = CursorManager.applyGlow(cursorBitmap, LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS, LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_COLOR);
+            }
+            mMousePointerDrawable = new BitmapDrawable(getResources(), cursorBitmap);
+        }
+
+        if (mMousePointerDrawable == null) {
+            mMousePointerDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_mouse_pointer, getContext().getTheme());
+        }
+
+        assert mMousePointerDrawable != null;
+        mMousePointerDrawable.setBounds(
+                0, 0,
+                (int) (36 * LauncherPreferences.PREF_MOUSESCALE),
+                (int) (54 * LauncherPreferences.PREF_MOUSESCALE)
+        );
+        invalidate();
     }
 
     @Override

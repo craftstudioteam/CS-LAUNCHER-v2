@@ -145,6 +145,7 @@ public final class Tools {
     public static String OBSOLETE_RESOURCES_PATH;
     public static String CTRLMAP_PATH;
     public static String CTRLDEF_FILE;
+    public static String DIR_CURSORS;
     private static RenderersList sCompatibleRenderers;
     public static int iLwjglVersion = 0;
     public static String sLwjglVersion = null;
@@ -216,6 +217,7 @@ public final class Tools {
         OBSOLETE_RESOURCES_PATH = DIR_GAME_NEW + "/resources";
         CTRLMAP_PATH = DIR_GAME_HOME + "/controlmap";
         CTRLDEF_FILE = DIR_GAME_HOME + "/controlmap/default.json";
+        DIR_CURSORS = DIR_GAME_HOME + "/cursors";
     }
 
     @SuppressLint("PrivateApi")

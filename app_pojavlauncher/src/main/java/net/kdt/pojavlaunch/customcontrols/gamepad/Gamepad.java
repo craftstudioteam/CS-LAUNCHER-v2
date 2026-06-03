@@ -11,6 +11,11 @@ import static android.view.MotionEvent.AXIS_Y;
 import static android.view.MotionEvent.AXIS_Z;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.Choreographer;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -26,6 +31,8 @@ import androidx.core.math.MathUtils;
 import net.kdt.pojavlaunch.GrabListener;
 import net.kdt.pojavlaunch.LwjglGlfwKeycode;
 import net.kdt.pojavlaunch.R;
+import net.kdt.pojavlaunch.customcontrols.mouse.CursorManager;
+import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.utils.MCOptionUtils;
 
 import org.lwjgl.glfw.CallbackBridge;
@@ -113,7 +120,21 @@ public class Gamepad implements GrabListener, GamepadHandler {
 
         Context ctx = contextView.getContext();
         mPointerImageView = new ImageView(contextView.getContext());
-        mPointerImageView.setImageDrawable(ResourcesCompat.getDrawable(ctx.getResources(), R.drawable.ic_gamepad_pointer, ctx.getTheme()));
+        
+        Bitmap cursorBitmap = null;
+        if (LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED && LauncherPreferences.PREF_CUSTOM_CURSOR_PATH != null) {
+            cursorBitmap = BitmapFactory.decodeFile(LauncherPreferences.PREF_CUSTOM_CURSOR_PATH);
+        }
+
+        if (cursorBitmap != null) {
+            if (LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS > 0) {
+                cursorBitmap = CursorManager.applyGlow(cursorBitmap, LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS, LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_COLOR);
+            }
+            mPointerImageView.setImageDrawable(new BitmapDrawable(ctx.getResources(), cursorBitmap));
+        } else {
+            mPointerImageView.setImageDrawable(ResourcesCompat.getDrawable(ctx.getResources(), R.drawable.ic_gamepad_pointer, ctx.getTheme()));
+        }
+        
         mPointerImageView.getDrawable().setFilterBitmap(false);
 
         int size = (int) ((22 * getMcScale()) / PREF_SCALE_FACTOR);

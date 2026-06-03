@@ -8,7 +8,7 @@
     android:background="?attr/bgMainDrawable"
     android:orientation="vertical"
     >
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -163,41 +163,155 @@
                 app:layout_constraintTop_toTopOf="@id/vprof_editor_path" />
 
 
+            <!-- MODS SECTION -->
             <TextView
-                android:id="@+id/vprof_editor_instance_tools_header"
-                android:layout_width="match_parent"
+                android:id="@+id/vprof_editor_mods_header"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="@string/mcl_section_instance_tools"
+                android:text="Mods"
                 android:textAllCaps="true"
                 android:textSize="@dimen/_11ssp"
                 android:textColor="?attr/colorTextSecondary"
                 android:letterSpacing="0.08"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/vprof_editor_mods_add"
                 app:layout_constraintTop_toBottomOf="@+id/vprof_editor_path" />
 
-            <com.kdt.mcgui.MineButton
-                android:id="@+id/vprof_editor_manage_mods"
+            <ImageButton
+                android:id="@+id/vprof_editor_mods_add"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_add"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/vprof_editor_mods_header"
+                app:layout_constraintBottom_toBottomOf="@+id/vprof_editor_mods_header" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/vprof_editor_mods_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_small"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_mods_header" />
+
+            <TextView
+                android:id="@+id/vprof_editor_mods_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/manage_mods_empty"
+                android:gravity="center"
                 android:layout_marginTop="@dimen/padding_medium"
-                android:text="@string/mcl_button_manage_mods"
-                app:layout_constraintTop_toBottomOf="@id/vprof_editor_instance_tools_header" />
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_mods_header" />
 
-            <com.kdt.mcgui.MineButton
-                android:id="@+id/vprof_editor_resource_packs"
-                android:layout_width="match_parent"
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/vprof_editor_mods_barrier"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_small"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="vprof_editor_mods_recycler,vprof_editor_mods_empty" />
+
+            <!-- RESOURCE PACKS SECTION -->
+            <TextView
+                android:id="@+id/vprof_editor_resource_packs_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
                 android:text="@string/mcl_button_resource_packs"
-                app:layout_constraintTop_toBottomOf="@id/vprof_editor_manage_mods" />
+                android:textAllCaps="true"
+                android:textSize="@dimen/_11ssp"
+                android:textColor="?attr/colorTextSecondary"
+                android:letterSpacing="0.08"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/vprof_editor_resource_packs_folder"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_mods_barrier" />
 
-            <com.kdt.mcgui.MineButton
-                android:id="@+id/vprof_editor_shader_packs"
+            <ImageButton
+                android:id="@+id/vprof_editor_resource_packs_folder"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_folder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/vprof_editor_resource_packs_header"
+                app:layout_constraintBottom_toBottomOf="@+id/vprof_editor_resource_packs_header" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/vprof_editor_resource_packs_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_small"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_resource_packs_header" />
+
+            <TextView
+                android:id="@+id/vprof_editor_resource_packs_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No resource packs installed."
+                android:gravity="center"
+                android:layout_marginTop="@dimen/padding_medium"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_resource_packs_header" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/vprof_editor_resource_packs_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="vprof_editor_resource_packs_recycler,vprof_editor_resource_packs_empty" />
+
+            <!-- SHADER PACKS SECTION -->
+            <TextView
+                android:id="@+id/vprof_editor_shader_packs_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
                 android:text="@string/mcl_button_shader_packs"
-                app:layout_constraintTop_toBottomOf="@id/vprof_editor_resource_packs" />
+                android:textAllCaps="true"
+                android:textSize="@dimen/_11ssp"
+                android:textColor="?attr/colorTextSecondary"
+                android:letterSpacing="0.08"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/vprof_editor_shader_packs_folder"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_resource_packs_barrier" />
+
+            <ImageButton
+                android:id="@+id/vprof_editor_shader_packs_folder"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_folder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/vprof_editor_shader_packs_header"
+                app:layout_constraintBottom_toBottomOf="@+id/vprof_editor_shader_packs_header" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/vprof_editor_shader_packs_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_small"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_shader_packs_header" />
+
+            <TextView
+                android:id="@+id/vprof_editor_shader_packs_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No shader packs installed."
+                android:gravity="center"
+                android:layout_marginTop="@dimen/padding_medium"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_shader_packs_header" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/vprof_editor_shader_packs_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="vprof_editor_shader_packs_recycler,vprof_editor_shader_packs_empty" />
 
             <TextView
                 android:id="@+id/textView7"
@@ -206,7 +320,7 @@
                 android:layout_marginTop="32dp"
                 android:text="@string/default_control"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_shader_packs" />
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_shader_packs_barrier" />
 
             <TextView
                 android:id="@+id/vprof_editor_ctrl_spinner"
@@ -306,7 +420,7 @@
                 app:layout_constraintTop_toTopOf="@id/vprof_editor_profile_renderer" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

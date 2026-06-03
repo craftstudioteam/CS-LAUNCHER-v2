@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/settings_bg">
+
+    <!-- Top Bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cursor_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_52sdp"
+        android:background="@color/bg_header"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/cursor_back_button"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/padding_medium"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/cursor_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding_small"
+            android:text="@string/cursor_customization_title"
+            android:textColor="@color/text_primary_white"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cursor_back_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/cursor_tab_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginEnd="@dimen/padding_medium"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/tab_import"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/padding_medium"
+                android:text="Import"
+                android:textColor="@color/neon_green"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/tab_create"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/padding_medium"
+                android:text="Create"
+                android:textColor="@color/text_secondary_light"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/tab_my_cursors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/padding_medium"
+                android:text="My Cursors"
+                android:textColor="@color/text_secondary_light"
+                android:textSize="@dimen/_12ssp" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Main Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cursor_top_bar">
+
+        <!-- Left Tools Panel -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3.5"
+            android:background="@color/bg_sidebar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_medium">
+
+                <!-- Tools Cards -->
+                <LinearLayout
+                    android:id="@+id/panel_import"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.kdt.mcgui.MineButton
+                        android:id="@+id/btn_import_png"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Import PNG/SVG"
+                        android:layout_marginBottom="@dimen/padding_medium"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/panel_create"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginBottom="@dimen/padding_small">
+
+                        <ImageButton
+                            android:id="@+id/btn_tool_pencil"
+                            android:layout_width="@dimen/_32sdp"
+                            android:layout_height="@dimen/_32sdp"
+                            android:src="@drawable/ic_edit_profile"
+                            android:background="@drawable/background_card_neon"
+                            android:layout_marginEnd="@dimen/padding_small"/>
+
+                        <ImageButton
+                            android:id="@+id/btn_tool_eraser"
+                            android:layout_width="@dimen/_32sdp"
+                            android:layout_height="@dimen/_32sdp"
+                            android:src="@drawable/ic_menu_delete_forever"
+                            android:background="@drawable/background_card"
+                            android:layout_marginStart="@dimen/padding_small"/>
+
+                    </LinearLayout>
+
+                    <net.kdt.pojavlaunch.customcontrols.mouse.CursorDesignerView
+                        android:id="@+id/cursor_designer"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_200sdp"
+                        android:layout_marginBottom="@dimen/padding_medium"
+                        android:background="@drawable/background_card"/>
+                    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginBottom="@dimen/padding_small">
+
+                        <View android:id="@+id/color_white" android:layout_width="24dp" android:layout_height="24dp" android:background="#FFFFFF" android:layout_margin="4dp"/>
+                        <View android:id="@+id/color_neon" android:layout_width="24dp" android:layout_height="24dp" android:background="#A6FF3D" android:layout_margin="4dp"/>
+                        <View android:id="@+id/color_red" android:layout_width="24dp" android:layout_height="24dp" android:background="#FF0000" android:layout_margin="4dp"/>
+                        <View android:id="@+id/color_blue" android:layout_width="24dp" android:layout_height="24dp" android:background="#0000FF" android:layout_margin="4dp"/>
+
+                    </LinearLayout>
+
+                    <com.kdt.mcgui.MineButton
+                        android:id="@+id/btn_clear_canvas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Clear Canvas"
+                        android:layout_marginBottom="@dimen/padding_medium"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/panel_my_cursors"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    
+                    <!-- RecyclerView for My Cursors -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_my_cursors"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- Settings Card (Always visible) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/background_card"
+                    android:padding="@dimen/padding_medium">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cursor_settings"
+                        android:textColor="@color/neon_green"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/_11ssp"
+                        android:layout_marginBottom="@dimen/padding_small"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cursor_size"
+                        android:textColor="@color/text_primary_white"
+                        android:textSize="@dimen/_10ssp"/>
+                    
+                    <SeekBar
+                        android:id="@+id/seek_cursor_size"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="300"
+                        android:progress="100"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cursor_effect_glow"
+                        android:textColor="@color/text_primary_white"
+                        android:textSize="@dimen/_10ssp"
+                        android:layout_marginTop="@dimen/padding_small"/>
+
+                    <SeekBar
+                        android:id="@+id/seek_glow_strength"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="100"
+                        android:progress="0"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <!-- Right Preview Panel -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6.5"
+            android:padding="@dimen/padding_large">
+
+            <TextView
+                android:id="@+id/preview_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cursor_preview"
+                android:textColor="@color/text_primary_white"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <FrameLayout
+                android:id="@+id/cursor_preview_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/padding_medium"
+                android:background="@drawable/background_card"
+                app:layout_constraintBottom_toTopOf="@id/btn_apply_cursor"
+                app:layout_constraintTop_toBottomOf="@id/preview_header">
+
+                <ImageView
+                    android:id="@+id/cursor_live_preview"
+                    android:layout_width="@dimen/_64sdp"
+                    android:layout_height="@dimen/_64sdp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_mouse_pointer"
+                    tools:ignore="ContentDescription" />
+
+            </FrameLayout>
+
+            <com.kdt.mcgui.MineButton
+                android:id="@+id/btn_apply_cursor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/cursor_apply"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

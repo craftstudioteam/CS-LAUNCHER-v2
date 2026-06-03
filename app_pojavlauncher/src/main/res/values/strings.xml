@@ -456,6 +456,23 @@
     <string name="mcl_section_instances">Select Instance</string>
     <string name="mcl_button_mod_store">Browse Mods</string>
     <string name="mcl_button_settings">Settings</string>
+    <string name="cursor_customization_title">Cursor Customization</string>
+    <string name="cursor_import">Import Cursor</string>
+    <string name="cursor_create">Create Cursor</string>
+    <string name="cursor_my_cursors">My Cursors</string>
+    <string name="cursor_preview">Cursor Preview</string>
+    <string name="cursor_settings">Settings</string>
+    <string name="cursor_designer_title">Cursor Designer Studio</string>
+    <string name="cursor_tool_pencil">Pencil</string>
+    <string name="cursor_tool_brush">Brush</string>
+    <string name="cursor_tool_eraser">Eraser</string>
+    <string name="cursor_tool_fill">Fill</string>
+    <string name="cursor_effect_glow">Glow Effect</string>
+    <string name="cursor_effect_shadow">Shadow Effect</string>
+    <string name="cursor_size">Cursor Size</string>
+    <string name="cursor_apply">Apply</string>
+    <string name="cursor_save">Save</string>
+
     <string name="mcl_button_manage_mods">Manage Mods</string>
     <string name="mcl_button_resource_packs">Resource Packs</string>
     <string name="mcl_button_shader_packs">Shader Packs</string>

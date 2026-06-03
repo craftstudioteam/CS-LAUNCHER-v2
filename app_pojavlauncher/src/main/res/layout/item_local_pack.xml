@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_card"
+    android:layout_marginVertical="@dimen/padding_small"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="@dimen/_40sdp">
+
+    <!-- Pack icon (optional default) -->
+    <ImageView
+        android:id="@+id/local_pack_icon"
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_32sdp"
+        android:layout_margin="@dimen/padding_moderate"
+        android:src="@drawable/ic_folder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Pack name -->
+    <TextView
+        android:id="@+id/local_pack_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_moderate"
+        android:textColor="@color/primary_text"
+        android:textStyle="bold"
+        android:textSize="@dimen/_12ssp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintStart_toEndOf="@+id/local_pack_icon"
+        app:layout_constraintEnd_toStartOf="@+id/local_pack_delete"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="My Resource Pack" />
+
+    <!-- Delete button -->
+    <ImageButton
+        android:id="@+id/local_pack_delete"
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_32sdp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_menu_delete_forever"
+        android:padding="@dimen/padding_moderate"
+        android:contentDescription="@string/delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
