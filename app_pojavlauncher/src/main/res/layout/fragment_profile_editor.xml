@@ -100,6 +100,68 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/vprof_editor_version_spinner" />
 
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="@string/pvc_jvmArgs"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_version_spinner" />
+
+            <EditText
+                android:id="@+id/vprof_editor_jre_args"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/background_line"
+                android:ems="10"
+                android:hint="@string/use_global_default"
+                android:inputType="text"
+                android:paddingHorizontal="@dimen/padding_heavy"
+                android:textSize="@dimen/_13ssp"
+
+                app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+            <TextView
+                android:id="@+id/vprof_editor_beginPathView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Custom path"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_jre_args" />
+
+            <TextView
+                android:id="@+id/vprof_editor_path"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="@dimen/padding_medium"
+                android:background="@drawable/background_line"
+                android:ems="10"
+                android:maxLines="2"
+                android:ellipsize="end"
+
+                android:hint=".minecraft"
+                android:paddingHorizontal="@dimen/padding_heavy"
+                android:textSize="@dimen/_13ssp"
+
+                app:layout_constraintEnd_toStartOf="@id/vprof_editor_path_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vprof_editor_beginPathView" />
+
+            <Button
+                android:id="@+id/vprof_editor_path_button"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:paddingHorizontal="@dimen/padding_large"
+                android:text="@string/global_select"
+
+                app:layout_constraintBottom_toBottomOf="@id/vprof_editor_path"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/vprof_editor_path" />
+
 
             <TextView
                 android:id="@+id/vprof_editor_instance_tools_header"
