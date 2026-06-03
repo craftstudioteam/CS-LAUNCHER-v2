@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
@@ -69,6 +68,7 @@ public class ModDetailFragment extends Fragment {
     private LinearLayout mSpinnerContainer;
 
     private int mSelectedVersionIndex = -1;
+    private boolean mSuppressSelectionCallback;
     private String mProfileKey;
     private ModIconCache mIconCache;
 
@@ -194,6 +194,7 @@ public class ModDetailFragment extends Fragment {
         mVersionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (mSuppressSelectionCallback) return;
                 if (mModDetail != null && position < mModDetail.versionNames.length) {
                     mSelectedVersionIndex = position;
                     enableDownloadButton(true);
@@ -240,59 +241,55 @@ public class ModDetailFragment extends Fragment {
     }
 
     private void populateVersions(ModDetail detail) {
+        // Use lightweight ArrayAdapter with dark theme dropdown
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 requireContext(),
-                android.R.layout.simple_spinner_item,
+                R.layout.item_spinner_dark,
                 detail.versionNames
-        ) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                TextView tv = (TextView) super.getView(position, convertView, parent);
-                if (tv != null) {
-                    tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary_light));
-                    tv.setTextSize(13);
-                }
-                return tv;
-            }
-
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                TextView tv = (TextView) super.getDropDownView(position, convertView, parent);
-                if (tv != null) {
-                    tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary_light));
-                    tv.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bg_card_dark));
-                    tv.setPadding(16, 12, 16, 12);
-                }
-                return tv;
-            }
-        };
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        );
+        adapter.setDropDownViewResource(R.layout.item_spinner_dropdown_dark);
         mVersionSpinner.setAdapter(adapter);
 
-        // If there is only one version, auto-select it
+        // Store current selection to avoid animation loop during setup
+        // If there is only one version, auto-select it without firing animation
         if (detail.versionNames.length == 1) {
-            mVersionSpinner.setSelection(0);
+            // Suppress onItemSelected during initial setup
+            mSuppressSelectionCallback = true;
+            mVersionSpinner.setSelection(0, false);
+            mSuppressSelectionCallback = false;
+            // Manually set state without animation
+            mSelectedVersionIndex = 0;
+            mDownloadButton.setEnabled(true);
+            mDownloadButton.setBackgroundResource(R.drawable.background_download_button_enabled);
+            mDownloadButton.setText(R.string.detail_download_now);
+            mDownloadButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.neon_green));
+            mDownloadButton.setOnClickListener(v -> handleDownload());
         }
     }
 
     // ── Download Button State ──────────────────────────────────────────
 
     private void enableDownloadButton(boolean enabled) {
+        boolean wasEnabled = mDownloadButton.isEnabled();
         mDownloadButton.setEnabled(enabled);
         if (enabled) {
             mDownloadButton.setBackgroundResource(R.drawable.background_download_button_enabled);
             mDownloadButton.setText(R.string.detail_download_now);
             mDownloadButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.neon_green));
 
-            // Scale-up bounce animation (OvershootInterpolator)
-            mDownloadButton.setScaleX(0.8f);
-            mDownloadButton.setScaleY(0.8f);
-            mDownloadButton.animate()
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setDuration(400)
-                    .setInterpolator(new OvershootInterpolator(1.5f))
-                    .start();
+            // Scale-up bounce animation only on transition from disabled→enabled
+            if (!wasEnabled) {
+                mDownloadButton.setScaleX(0.8f);
+                mDownloadButton.setScaleY(0.8f);
+                mDownloadButton.animate()
+                        .cancel();
+                mDownloadButton.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(400)
+                        .setInterpolator(new OvershootInterpolator(1.5f))
+                        .start();
+            }
 
             mDownloadButton.setOnClickListener(v -> handleDownload());
         } else {
