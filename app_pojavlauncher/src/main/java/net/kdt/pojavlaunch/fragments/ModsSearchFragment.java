@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -105,13 +106,12 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
         mRecyclerview      = view.findViewById(R.id.search_mod_list);
         mStatusTextView    = view.findViewById(R.id.search_mod_status_text);
         mFilterButton      = view.findViewById(R.id.search_mod_filter);
-        com.google.android.material.chip.ChipGroup categoryChips = view.findViewById(R.id.mod_category_chips);
+        LinearLayout categoryChips = view.findViewById(R.id.mod_category_chips);
 
         mDefaultTextColor = mStatusTextView.getTextColors();
 
         mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerview.setAdapter(mModItemAdapter);
-        // mRecyclerview.addOnScrollListener(mOverlayPositionListener); // Removed as header is not floating anymore
 
         mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
             searchMods(mSearchEditText.getText().toString());
@@ -119,30 +119,25 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
             return false;
         });
 
-        /*
-        mOverlay.post(() -> {
-            int overlayHeight = mOverlay.getHeight();
-            mRecyclerview.setPadding(
-                    mRecyclerview.getPaddingLeft(),
-                    mRecyclerview.getPaddingTop() + overlayHeight,
-                    mRecyclerview.getPaddingRight(),
-                    mRecyclerview.getPaddingBottom());
-        });
-        */
-
         if (categoryChips != null) {
-            categoryChips.setOnCheckedChangeListener((group, checkedId) -> {
-                com.google.android.material.chip.Chip chip = group.findViewById(checkedId);
-                if (chip != null) {
-                    String category = chip.getText().toString();
-                    if ("All".equals(category)) {
-                        searchMods(mSearchEditText.getText().toString());
-                    } else {
-                        // For now, just prepend category to search if it's not "All"
-                        searchMods(category + " " + mSearchEditText.getText().toString());
-                    }
+            View.OnClickListener categoryListener = v -> {
+                String category = ((TextView) v).getText().toString();
+                if ("All".equals(category)) {
+                    searchMods(mSearchEditText.getText().toString());
+                } else {
+                    searchMods(category + " " + mSearchEditText.getText().toString());
                 }
-            });
+                
+                // Update selection state visually (simplified)
+                for (int i = 0; i < categoryChips.getChildCount(); i++) {
+                    categoryChips.getChildAt(i).setSelected(false);
+                }
+                v.setSelected(true);
+            };
+
+            for (int i = 0; i < categoryChips.getChildCount(); i++) {
+                categoryChips.getChildAt(i).setOnClickListener(categoryListener);
+            }
         }
 
         mFilterButton.setOnClickListener(v -> displayFilterDialog());
