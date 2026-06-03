@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app2="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     app:key=""
     >
 
-    <net.kdt.pojavlaunch.prefs.BackButtonPreference/>
+    <net.kdt.pojavlaunch.prefs.BackButtonPreference
+        android:layout="@layout/preference_header_back" />
 
     <PreferenceCategory
+        android:layout="@layout/preference_category_modern"
         android:title="@string/preference_category_main_categories"
         >
 
@@ -18,7 +19,8 @@
             android:title="@string/preference_video_title"
             android:summary="@string/preference_video_description"
             android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceVideoFragment"
-            android:icon="@drawable/ic_setting_video"
+            android:icon="@drawable/ic_settings_video"
+            android:layout="@layout/preference_item_modern"
             />
 
 
@@ -27,7 +29,8 @@
             android:title="@string/preference_control_title"
             android:summary="@string/preference_control_description"
             android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceControlFragment"
-            android:icon="@drawable/ic_menu_custom_controls"
+            android:icon="@drawable/ic_settings_control"
+            android:layout="@layout/preference_item_modern"
             />
 
         <Preference
@@ -35,7 +38,8 @@
             android:title="@string/preference_java_title"
             android:summary="@string/preference_java_description"
             android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceJavaFragment"
-            android:icon="@drawable/ic_setting_java_runtime"
+            android:icon="@drawable/ic_settings_java"
+            android:layout="@layout/preference_item_modern"
             />
 
         <Preference
@@ -43,7 +47,8 @@
             android:title="@string/preference_misc_title"
             android:summary="@string/preference_misc_description"
             android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceMiscellaneousFragment"
-            android:icon="@drawable/ic_setting_misc"
+            android:icon="@drawable/ic_settings_misc"
+            android:layout="@layout/preference_item_modern"
             />
 
 
@@ -52,6 +57,8 @@
             android:title="@string/preference_experimental_title"
             android:summary="@string/preference_experimental_description"
             android:fragment="net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceExperimentalFragment"
+            android:icon="@drawable/ic_settings_experimental"
+            android:layout="@layout/preference_item_modern"
             />
     </PreferenceCategory>
 
@@ -59,21 +66,25 @@
         android:title="@string/preference_force_english_title"
         android:key="force_english"
         android:summary="@string/preference_force_english_description"
+        android:layout="@layout/preference_item_modern"
+        android:widgetLayout="@layout/preference_switch_modern"
         />
 
-    <Preference
+    <SwitchPreference
         android:title="@string/preference_ask_for_notification_title"
         android:summary="@string/preference_ask_for_notification_description"
         android:key="notification_permission_request"
+        android:icon="@drawable/ic_settings_notification"
+        android:layout="@layout/preference_item_modern"
+        android:widgetLayout="@layout/preference_switch_modern"
         />
-    <Preference
+    <SwitchPreference
         android:title="@string/preference_ask_for_microphone_title"
         android:summary="@string/preference_ask_for_microphone_description"
         android:key="microphone_permission_request"
+        android:icon="@drawable/ic_settings_microphone"
+        android:layout="@layout/preference_item_modern"
+        android:widgetLayout="@layout/preference_switch_modern"
         />
-
-
-
-
 
 </PreferenceScreen>

@@ -103,4 +103,14 @@
     <color name="play_btn_bg">#3F51B5</color>
     <color name="play_btn_text">#FFFFFF</color>
 
+    <!-- Settings UI Transformation Colors -->
+    <color name="settings_bg">#000000</color>
+    <color name="card_bg">#0D1410</color>
+    <color name="card_bg_pressed">#162018</color>
+    <color name="neon_green">#A6FF3D</color>
+    <color name="neon_green_dim">#3FA6FF3D</color>
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#8FFFFFFF</color>
+    <color name="stroke_neon">#33A6FF3D</color>
+
 </resources>
