@@ -117,7 +117,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/detail_mod_icon"
                 app:layout_constraintTop_toBottomOf="@id/detail_mod_title"
-                tools:text="by jellysquid3 &bull; 5M Downloads" />
+                tools:text="by jellysquid3 • 5M Downloads" />
 
             <!-- Divider -->
             <View

@@ -57,7 +57,7 @@
             app:layout_constraintEnd_toEndOf="@id/mod_title_textview"
             app:layout_constraintStart_toStartOf="@+id/mod_title_textview"
             app:layout_constraintTop_toBottomOf="@+id/mod_title_textview"
-            tools:text="by jellysquid3 &bull; 5M Downloads" />
+            tools:text="by jellysquid3 • 5M Downloads" />
 
         <!-- Short description (max 2 lines, ellipsis) -->
         <TextView
