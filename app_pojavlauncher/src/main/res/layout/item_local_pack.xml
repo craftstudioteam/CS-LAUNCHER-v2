@@ -13,14 +13,13 @@
     android:minHeight="@dimen/_52sdp">
 
     <!-- Pack icon -->
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/local_pack_icon_card"
         android:layout_width="@dimen/_40sdp"
         android:layout_height="@dimen/_40sdp"
         android:layout_margin="@dimen/padding_moderate"
-        app:cardCornerRadius="@dimen/padding_small"
-        app:cardBackgroundColor="@android:color/transparent"
-        app:cardElevation="0dp"
+        android:background="@drawable/background_rounded_icon"
+        android:clipToOutline="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -32,7 +31,7 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_folder" />
             
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
     <!-- Pack name -->
     <TextView
