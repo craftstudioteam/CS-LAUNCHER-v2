@@ -24,6 +24,7 @@ import java.io.File;
 public class ManageModsFragment extends Fragment {
 
     public static final String TAG = "ManageModsFragment";
+    public static final String BUNDLE_PROFILE_KEY = "profile_key";
 
     public ManageModsFragment() {
         super(R.layout.fragment_manage_mods);
@@ -42,11 +43,14 @@ public class ManageModsFragment extends Fragment {
         backButton.setOnClickListener(v -> requireActivity().onBackPressed());
 
         // Add → open mod store — stay in right pane if we're inside one
-        addButton.setOnClickListener(v ->
-                navigateToFragment(ModsSearchFragment.class, ModsSearchFragment.TAG));
+        addButton.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            args.putString(BUNDLE_PROFILE_KEY, getProfileKey());
+            navigateToFragment(ModsSearchFragment.class, ModsSearchFragment.TAG, args);
+        });
 
         // Title: "ProfileName - Mods"
-        String profileName = getCurrentProfileName();
+        String profileName = getProfileName();
         title.setText(profileName.isEmpty()
                 ? getString(R.string.mcl_button_manage_mods)
                 : profileName + " - Mods");
@@ -64,10 +68,9 @@ public class ManageModsFragment extends Fragment {
 
     // ── Helpers ─────────────────────────────────────────────────────────────
 
-    private String getCurrentProfileName() {
+    private String getProfileName() {
         try {
-            String key = LauncherPreferences.DEFAULT_PREF
-                    .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
+            String key = getProfileKey();
             if (key == null || key.isEmpty()) return "";
             LauncherProfiles.load();
             MinecraftProfile profile = LauncherProfiles.mainProfileJson.profiles.get(key);
@@ -80,8 +83,7 @@ public class ManageModsFragment extends Fragment {
 
     private File getModsDir() {
         try {
-            String key = LauncherPreferences.DEFAULT_PREF
-                    .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
+            String key = getProfileKey();
             if (key != null && !key.isEmpty()) {
                 LauncherProfiles.load();
                 MinecraftProfile profile = LauncherProfiles.mainProfileJson.profiles.get(key);
@@ -92,6 +94,15 @@ public class ManageModsFragment extends Fragment {
             }
         } catch (Exception ignored) {}
         return new File(Tools.DIR_GAME_NEW, "mods");
+    }
+
+    private String getProfileKey() {
+        Bundle args = getArguments();
+        if (args != null && args.containsKey(BUNDLE_PROFILE_KEY)) {
+            return args.getString(BUNDLE_PROFILE_KEY);
+        }
+        return LauncherPreferences.DEFAULT_PREF
+                .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
     }
 
     /** Go back — pops the parent's child stack synchronously when inside right pane. */
@@ -106,17 +117,17 @@ public class ManageModsFragment extends Fragment {
     }
 
     /** Navigate to a fragment — stays inside the right pane when running as a child fragment. */
-    private void navigateToFragment(Class<? extends Fragment> fragmentClass, String tag) {
+    private void navigateToFragment(Class<? extends Fragment> fragmentClass, String tag, Bundle args) {
         Fragment parent = getParentFragment();
         if (parent != null) {
             parent.getChildFragmentManager()
                     .beginTransaction()
                     .setReorderingAllowed(true)
-                    .replace(R.id.right_pane_container, fragmentClass, null, tag)
+                    .replace(R.id.right_pane_container, fragmentClass, args, tag)
                     .addToBackStack(tag)
                     .commit();
         } else {
-            Tools.swapFragment(requireActivity(), fragmentClass, tag, null);
+            Tools.swapFragment(requireActivity(), fragmentClass, tag, args);
         }
     }
 }

@@ -88,7 +88,8 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mModpackApi = new ModsInstallApi(context.getString(R.string.curseforge_api_key), mSearchFilters);
+        String profileKey = getArguments() != null ? getArguments().getString(ManageModsFragment.BUNDLE_PROFILE_KEY) : null;
+        mModpackApi = new ModsInstallApi(context.getString(R.string.curseforge_api_key), mSearchFilters, profileKey);
         ((ModsInstallApi) mModpackApi).mActivityContext = context;
     }
 
@@ -236,14 +237,16 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
     private static class ModsInstallApi extends CommonApi {
 
         private final SearchFilters mFilters;
+        private final String mProfileKey;
         private final ModrinthApi mModrinthApi = new ModrinthApi();
         private final Handler mMainHandler = new Handler(Looper.getMainLooper());
         private Context mActivityContext;
         private final net.kdt.pojavlaunch.modloaders.modpacks.api.CurseforgeApi mCurseforgeApi;
 
-        ModsInstallApi(String curseforgeApiKey, SearchFilters filters) {
+        ModsInstallApi(String curseforgeApiKey, SearchFilters filters, String profileKey) {
             super(curseforgeApiKey);
             mFilters = filters;
+            mProfileKey = profileKey;
             mCurseforgeApi = new net.kdt.pojavlaunch.modloaders.modpacks.api.CurseforgeApi(curseforgeApiKey);
         }
 
@@ -433,9 +436,9 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
             return null;
         }
 
-        private static File getModsDir() {
+        private File getModsDir() {
             try {
-                String key = LauncherPreferences.DEFAULT_PREF
+                String key = mProfileKey != null ? mProfileKey : LauncherPreferences.DEFAULT_PREF
                         .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
                 if (key != null && !key.isEmpty()) {
                     LauncherProfiles.load();
