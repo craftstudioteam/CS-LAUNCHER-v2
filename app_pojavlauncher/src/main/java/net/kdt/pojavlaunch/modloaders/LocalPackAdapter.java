@@ -81,12 +81,13 @@ public class LocalPackAdapter extends RecyclerView.Adapter<LocalPackAdapter.Pack
             if (displayName.endsWith(".zip")) displayName = displayName.substring(0, displayName.length() - 4);
             name.setText(displayName);
             
+            final String finalDisplayName = displayName;
             icon.setImageResource(file.isDirectory() ? R.drawable.ic_folder : R.drawable.ic_folder_managed);
 
             delete.setOnClickListener(v -> {
                 Context ctx = v.getContext();
                 new AlertDialog.Builder(ctx)
-                        .setTitle(ctx.getString(R.string.manage_mods_delete_confirm, displayName))
+                        .setTitle(ctx.getString(R.string.manage_mods_delete_confirm, finalDisplayName))
                         .setNegativeButton(android.R.string.cancel, null)
                         .setPositiveButton(android.R.string.ok, (d, i) -> {
                             org.apache.commons.io.FileUtils.deleteQuietly(file);
