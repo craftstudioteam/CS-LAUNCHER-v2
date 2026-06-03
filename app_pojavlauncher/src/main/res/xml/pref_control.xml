@@ -239,7 +239,5 @@
             app:showSeekBarValue="true"
             />
     </PreferenceCategory>
-    </PreferenceCategory>
-
 
 </PreferenceScreen>
