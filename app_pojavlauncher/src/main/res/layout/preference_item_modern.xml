@@ -55,10 +55,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <!-- Hidden views to satisfy AndroidX SeekBarPreference requirements and prevent crashes -->
-    <View android:id="@android:id/seekbar" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
-    <View android:id="@android:id/seekbar_value" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
-
     <ImageView
         android:id="@+id/chevron"
         android:layout_width="20dp"
