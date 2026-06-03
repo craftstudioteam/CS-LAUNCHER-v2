@@ -112,7 +112,14 @@ public class InstalledModAdapter extends RecyclerView.Adapter<InstalledModAdapte
 
         void bind(ModEntry entry) {
             name.setText(entry.displayName());
-            version.setText(entry.file.getName());
+            
+            String sizeStr = "";
+            long bytes = entry.file.length();
+            if (bytes < 1024) sizeStr = bytes + " B";
+            else if (bytes < 1024 * 1024) sizeStr = String.format("%.1f KB", bytes / 1024.0);
+            else sizeStr = String.format("%.1f MB", bytes / (1024.0 * 1024.0));
+            
+            version.setText(entry.file.getName() + " (" + sizeStr + ")");
 
             // Tag the ImageView with the file path so we can verify it hasn't been recycled
             icon.setTag(entry.file.getAbsolutePath());

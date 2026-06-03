@@ -10,18 +10,29 @@
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:minHeight="@dimen/_40sdp">
+    android:minHeight="@dimen/_52sdp">
 
-    <!-- Pack icon (optional default) -->
-    <ImageView
-        android:id="@+id/local_pack_icon"
-        android:layout_width="@dimen/_32sdp"
-        android:layout_height="@dimen/_32sdp"
+    <!-- Pack icon -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/local_pack_icon_card"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
         android:layout_margin="@dimen/padding_moderate"
-        android:src="@drawable/ic_folder"
+        app:cardCornerRadius="@dimen/padding_small"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent">
+        
+        <ImageView
+            android:id="@+id/local_pack_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_folder" />
+            
+    </androidx.cardview.widget.CardView>
 
     <!-- Pack name -->
     <TextView
@@ -34,17 +45,17 @@
         android:textSize="@dimen/_12ssp"
         android:maxLines="1"
         android:ellipsize="end"
-        app:layout_constraintStart_toEndOf="@+id/local_pack_icon"
+        app:layout_constraintStart_toEndOf="@+id/local_pack_icon_card"
         app:layout_constraintEnd_toStartOf="@+id/local_pack_delete"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:text="My Resource Pack" />
+        tools:text="Smooth Pixels Texture Pack" />
 
     <!-- Delete button -->
     <ImageButton
         android:id="@+id/local_pack_delete"
-        android:layout_width="@dimen/_32sdp"
-        android:layout_height="@dimen/_32sdp"
+        android:layout_width="@dimen/_38sdp"
+        android:layout_height="@dimen/_38sdp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_menu_delete_forever"
         android:padding="@dimen/padding_moderate"
