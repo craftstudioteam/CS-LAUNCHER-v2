@@ -38,9 +38,10 @@ import java.io.InputStream;
 public class CursorCustomizationFragment extends Fragment {
     public static final String TAG = "CursorCustomizationFragment";
 
-    private View mPanelCreate, mPanelImport, mPanelCollection;
-    private TextView mTabImport, mTabCreate, mTabMyCursors;
-    private ImageView mCreateLivePreview;
+    private View mPanelCreate, mPanelImport;
+    private RecyclerView mPanelCollection;
+    private TextView mTabImport, mTabCreate, mTabCollection;
+    private ImageView mPreviewSmall, mPreviewMedium, mPreviewLarge;
     private CursorDesignerView mDesigner;
     private SeekBar mSeekSize, mSeekGlow;
     private ImageButton mBtnPencil, mBtnEraser, mBtnFill;
@@ -72,9 +73,12 @@ public class CursorCustomizationFragment extends Fragment {
 
         mTabImport = view.findViewById(R.id.tab_import);
         mTabCreate = view.findViewById(R.id.tab_create);
-        mTabMyCursors = view.findViewById(R.id.tab_my_cursors);
+        mTabCollection = view.findViewById(R.id.tab_collection);
 
-        mCreateLivePreview = view.findViewById(R.id.create_live_preview);
+        mPreviewSmall = view.findViewById(R.id.preview_small);
+        mPreviewMedium = view.findViewById(R.id.preview_medium);
+        mPreviewLarge = view.findViewById(R.id.preview_large);
+        
         mDesigner = view.findViewById(R.id.cursor_designer);
         
         mSeekSize = view.findViewById(R.id.seek_cursor_size);
@@ -88,7 +92,7 @@ public class CursorCustomizationFragment extends Fragment {
 
         mTabImport.setOnClickListener(v -> switchTab(0));
         mTabCreate.setOnClickListener(v -> switchTab(1));
-        mTabMyCursors.setOnClickListener(v -> switchTab(2));
+        mTabCollection.setOnClickListener(v -> switchTab(2));
 
         view.findViewById(R.id.btn_import_png).setOnClickListener(v -> mFilePicker.launch("image/*"));
         
@@ -109,22 +113,15 @@ public class CursorCustomizationFragment extends Fragment {
         view.findViewById(R.id.color_red).setOnClickListener(v -> mDesigner.setColor(Color.RED));
         view.findViewById(R.id.color_blue).setOnClickListener(v -> mDesigner.setColor(Color.BLUE));
         view.findViewById(R.id.color_black).setOnClickListener(v -> mDesigner.setColor(Color.BLACK));
+        view.findViewById(R.id.color_orange).setOnClickListener(v -> mDesigner.setColor(Color.parseColor("#FFBB33")));
+        view.findViewById(R.id.color_purple).setOnClickListener(v -> mDesigner.setColor(Color.parseColor("#AA66CC")));
 
         view.findViewById(R.id.btn_apply_import).setOnClickListener(v -> applyCursor());
 
         mSeekSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                updateGlobalPreview();
-            }
-            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
-
-        mSeekGlow.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                updateGlobalPreview();
+                // Live scale preview update if needed
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -133,7 +130,7 @@ public class CursorCustomizationFragment extends Fragment {
         // Real-time canvas listener
         mDesigner.setOnCanvasChangedListener(bitmap -> {
             mCurrentBitmap = bitmap;
-            updateCreatePreview();
+            updatePreviews();
         });
 
         // Initialize with default
@@ -143,7 +140,7 @@ public class CursorCustomizationFragment extends Fragment {
         mSeekGlow.setProgress(LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS);
         
         switchTab(1); // Default to Create
-        startPreviewAnimations();
+        selectTool(CursorDesignerView.Tool.PENCIL);
     }
 
     private void switchTab(int index) {
@@ -151,53 +148,48 @@ public class CursorCustomizationFragment extends Fragment {
         mPanelImport.setVisibility(index == 0 ? View.VISIBLE : View.GONE);
         mPanelCollection.setVisibility(index == 2 ? View.VISIBLE : View.GONE);
 
-        AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
-        fadeIn.setDuration(300);
-        if (index == 1) mPanelCreate.startAnimation(fadeIn);
-        else if (index == 0) mPanelImport.startAnimation(fadeIn);
-        else mPanelCollection.startAnimation(fadeIn);
-
         mTabImport.setTextColor(index == 0 ? Color.parseColor("#A6FF3D") : Color.LTGRAY);
         mTabCreate.setTextColor(index == 1 ? Color.parseColor("#A6FF3D") : Color.LTGRAY);
-        mTabMyCursors.setTextColor(index == 2 ? Color.parseColor("#A6FF3D") : Color.LTGRAY);
-
-        mTabImport.setTypeface(null, index == 0 ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
-        mTabCreate.setTypeface(null, index == 1 ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
-        mTabMyCursors.setTypeface(null, index == 2 ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
+        mTabCollection.setTextColor(index == 2 ? Color.parseColor("#A6FF3D") : Color.LTGRAY);
         
+        mTabImport.setBackgroundResource(index == 0 ? R.drawable.bg_nav_item_active : 0);
+        mTabCreate.setBackgroundResource(index == 1 ? R.drawable.bg_nav_item_active : 0);
+        mTabCollection.setBackgroundResource(index == 2 ? R.drawable.bg_nav_item_active : 0);
+
         if (index == 1) {
             mCurrentBitmap = mDesigner.getCursorBitmap();
-            updateCreatePreview();
-        } else {
-            updateGlobalPreview();
+            updatePreviews();
         }
     }
 
     private void selectTool(CursorDesignerView.Tool tool) {
         mDesigner.setTool(tool);
-        mBtnPencil.setBackgroundTintList(tool == CursorDesignerView.Tool.PENCIL ? android.content.res.ColorStateList.valueOf(Color.parseColor("#3FA6FF3D")) : null);
-        mBtnFill.setBackgroundTintList(tool == CursorDesignerView.Tool.FILL ? android.content.res.ColorStateList.valueOf(Color.parseColor("#3FA6FF3D")) : null);
-        mBtnEraser.setBackgroundTintList(tool == CursorDesignerView.Tool.ERASER ? android.content.res.ColorStateList.valueOf(Color.parseColor("#3FA6FF3D")) : null);
+        mBtnPencil.setBackgroundResource(tool == CursorDesignerView.Tool.PENCIL ? R.drawable.bg_nav_item_active : R.drawable.background_card);
+        mBtnFill.setBackgroundResource(tool == CursorDesignerView.Tool.FILL ? R.drawable.bg_nav_item_active : R.drawable.background_card);
+        mBtnEraser.setBackgroundResource(tool == CursorDesignerView.Tool.ERASER ? R.drawable.bg_nav_item_active : R.drawable.background_card);
+        
+        int neon = Color.parseColor("#A6FF3D");
+        int gray = Color.LTGRAY;
+        mBtnPencil.setImageTintList(android.content.res.ColorStateList.valueOf(tool == CursorDesignerView.Tool.PENCIL ? neon : gray));
+        mBtnFill.setImageTintList(android.content.res.ColorStateList.valueOf(tool == CursorDesignerView.Tool.FILL ? neon : gray));
+        mBtnEraser.setImageTintList(android.content.res.ColorStateList.valueOf(tool == CursorDesignerView.Tool.ERASER ? neon : gray));
     }
 
     private void handleImportedFile(Uri uri) {
         try (InputStream is = requireContext().getContentResolver().openInputStream(uri)) {
             mCurrentBitmap = BitmapFactory.decodeStream(is);
-            updateGlobalPreview();
+            updatePreviews();
         } catch (Exception e) {
             Toast.makeText(getContext(), "Failed to import image", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void updateCreatePreview() {
+    private void updatePreviews() {
         if (mCurrentBitmap != null) {
-            mCreateLivePreview.setImageBitmap(mCurrentBitmap);
+            mPreviewSmall.setImageBitmap(mCurrentBitmap);
+            mPreviewMedium.setImageBitmap(mCurrentBitmap);
+            mPreviewLarge.setImageBitmap(mCurrentBitmap);
         }
-    }
-
-    private void updateGlobalPreview() {
-        // This used to update panel_generic previews, but I removed them in the latest layout to simplify.
-        // We'll keep the logic if needed for a single apply-button preview.
     }
 
     private void applyCursor() {

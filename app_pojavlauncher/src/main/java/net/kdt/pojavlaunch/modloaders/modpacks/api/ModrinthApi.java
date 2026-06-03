@@ -75,6 +75,8 @@ public class ModrinthApi implements ModpackApi{
                     hit.get("project_type").getAsString().equals("modpack"),
                     hit.get("project_id").getAsString(),
                     hit.get("title").getAsString(),
+                    hit.has("author") ? hit.get("author").getAsString() : null,
+                    hit.has("downloads") ? hit.get("downloads").getAsString() : null,
                     hit.get("description").getAsString(),
                     hit.get("icon_url").getAsString()
             );

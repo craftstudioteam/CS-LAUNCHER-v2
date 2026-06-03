@@ -346,6 +346,12 @@ public class LauncherActivity extends BaseActivity {
             }
         }
 
+        // If we are in settings, pop back to home
+        if (getVisibleFragment(SETTING_FRAGMENT_TAG) != null) {
+            getSupportFragmentManager().popBackStack();
+            return;
+        }
+
         // In landscape two-pane mode: if the right pane has content, pop it instead of exiting
         Fragment rootFrag = getVisibleFragment("ROOT");
         if (rootFrag instanceof MainMenuFragment) {
@@ -358,12 +364,13 @@ public class LauncherActivity extends BaseActivity {
             return;
         }
 
-        // Check if we are at the root then
-        if(getVisibleFragment("ROOT") != null){
-            finish();
+        // Default backstack behavior
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+            getSupportFragmentManager().popBackStack();
+            return;
         }
 
-        super.onBackPressed();
+        finish();
     }
 
     @Override

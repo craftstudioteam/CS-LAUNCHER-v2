@@ -88,8 +88,18 @@ public class MainMenuFragment extends Fragment {
 
     /** Shows/hides the entire bottom bar. GONE collapses it so right pane fills full height. */
     private void setBottomBarVisible(boolean visible) {
-        if (mBottomBar != null)
+        if (mBottomBar != null) {
             mBottomBar.setVisibility(visible ? View.VISIBLE : View.GONE);
+            mBottomBar.requestLayout();
+        }
+    }
+
+    /** Explicitly clears the right pane and resets home UI state */
+    public void refreshHomeState() {
+        clearRightPane();
+        setBottomBarVisible(true);
+        if (mVersionSpinner != null) mVersionSpinner.reloadProfiles();
+        updateSidebarStates(requireView(), R.id.home_button);
     }
 
     // Note: play button visibility during downloads is handled by the activity's
@@ -232,7 +242,7 @@ public class MainMenuFragment extends Fragment {
 
         // ── Sidebar buttons that are hidden in landscape (stubs kept for safety) ──
         if (mHomeButton != null)
-            mHomeButton.setOnClickListener(v -> clearRightPane());
+            mHomeButton.setOnClickListener(v -> refreshHomeState());
 
         // Wiki / Discord are moved to RightPaneHomeFragment in landscape;
         // they stay in the sidebar on portrait via fragment_launcher.xml (no-land).
@@ -344,11 +354,13 @@ public class MainMenuFragment extends Fragment {
                 if (mVersionSpinner != null) mVersionSpinner.reloadProfiles();
             });
         }
+        
+        // Force correct bar state on resume
         if (isTwoPane() && mBottomBar != null) {
-            // Post so this runs after any pending task-listener callbacks
-            // that might incorrectly hide the bar
-            final boolean showBar = getChildFragmentManager().getBackStackEntryCount() == 0;
-            mBottomBar.post(() -> setBottomBarVisible(showBar));
+            mBottomBar.post(() -> {
+                boolean showBar = getChildFragmentManager().getBackStackEntryCount() == 0;
+                setBottomBarVisible(showBar);
+            });
         }
     }
 
