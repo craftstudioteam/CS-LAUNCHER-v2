@@ -113,6 +113,7 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
         mDefaultTextColor = mStatusTextView.getTextColors();
 
         mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerview.addItemDecoration(new net.kdt.pojavlaunch.modloaders.modpacks.SpacesItemDecoration(12));
         mRecyclerview.setAdapter(mModItemAdapter);
         mModItemAdapter.setOnItemClickListener(this::openModDetail);
 
@@ -141,6 +142,24 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
             for (int i = 0; i < categoryChips.getChildCount(); i++) {
                 categoryChips.getChildAt(i).setOnClickListener(categoryListener);
             }
+        }
+
+        // Back button: exit mod store completely
+        ImageButton backButton = view.findViewById(R.id.mod_store_back);
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> {
+                Fragment parent = getParentFragment();
+                if (parent != null) {
+                    // In two-pane: clear right pane back to home
+                    if (parent instanceof MainMenuFragment) {
+                        ((MainMenuFragment) parent).refreshHomeState();
+                    } else {
+                        parent.getChildFragmentManager().popBackStackImmediate();
+                    }
+                } else {
+                    Tools.removeCurrentFragment(requireActivity());
+                }
+            });
         }
 
         mFilterButton.setOnClickListener(v -> displayFilterDialog());

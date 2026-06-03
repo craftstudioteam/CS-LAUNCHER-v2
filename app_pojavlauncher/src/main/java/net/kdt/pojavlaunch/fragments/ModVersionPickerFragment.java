@@ -106,6 +106,7 @@ public class ModVersionPickerFragment extends Fragment {
         });
 
         mVersionList.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mVersionList.addItemDecoration(new net.kdt.pojavlaunch.modloaders.modpacks.SpacesItemDecoration(8));
         mAdapter = new VersionAdapter();
         mVersionList.setAdapter(mAdapter);
         mVersionList.setItemAnimator(null); // Disable default animation, use custom
@@ -153,6 +154,26 @@ public class ModVersionPickerFragment extends Fragment {
         });
     }
 
+    // Simple version comparator — prefers higher MC version strings first,
+    // falls back to original index order for ties.
+    private java.util.Comparator<VersionEntry> sLatestFirst = (a, b) -> {
+        // Parse X.Y.Z numeric prefix from MC version for comparison
+        String mcA = a.mcVersion.replaceAll("[^0-9.]", "");
+        String mcB = b.mcVersion.replaceAll("[^0-9.]", "");
+        String[] partsA = mcA.isEmpty() ? new String[]{"0"} : mcA.split("\.");
+        String[] partsB = mcB.isEmpty() ? new String[]{"0"} : mcB.split("\.");
+        for (int i = 0; i < Math.min(partsA.length, partsB.length); i++) {
+            try {
+                int cmp = Integer.compare(
+                        Integer.parseInt(partsB[i]),
+                        Integer.parseInt(partsA[i]));
+                if (cmp != 0) return cmp;
+            } catch (NumberFormatException ignored) {}
+        }
+        // If MC versions equal, compare the full version name descending
+        return b.name.compareTo(a.name);
+    };
+
     private void buildVersionList(ModDetail detail) {
         mAllVersions.clear();
         for (int i = 0; i < detail.versionNames.length; i++) {
@@ -168,6 +189,9 @@ public class ModVersionPickerFragment extends Fragment {
                     (detail.versionDependencyTypes != null && i < detail.versionDependencyTypes.length) ? detail.versionDependencyTypes[i] : null
             ));
         }
+
+        // Sort: latest MC version first
+        java.util.Collections.sort(mAllVersions, sLatestFirst);
 
         mTotalPages = (int) Math.ceil((double) mAllVersions.size() / PAGE_SIZE);
         if (mTotalPages < 1) mTotalPages = 1;

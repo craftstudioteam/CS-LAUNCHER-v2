@@ -67,6 +67,8 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:paddingVertical="@dimen/_4sdp"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="@dimen/_30sdp"
         android:scrollbars="none" />
 
     <!-- Pagination Footer -->
