@@ -254,7 +254,7 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
         Bundle args = new Bundle();
         args.putSerializable("mod_item", item);
         args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, mProfileKey);
-        navigateToFragment(ModDetailFragment.class, ModDetailFragment.TAG, args);
+        navigateToFragment(ModVersionPickerFragment.class, ModVersionPickerFragment.TAG, args);
     }
 
     private void navigateToFragment(Class<? extends Fragment> fragmentClass, String tag, Bundle args) {

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#121212">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_52sdp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:background="#1E1E1E"
+        android:paddingHorizontal="@dimen/padding_medium">
+
+        <ImageButton
+            android:id="@+id/version_picker_back"
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="@dimen/_38sdp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back_white"
+            android:contentDescription="@string/global_back"
+            app:tint="@color/neon_green"
+            xmlns:app="http://schemas.android.com/apk/res-auto" />
+
+        <TextView
+            android:id="@+id/version_picker_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/padding_moderate"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/_15ssp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            tools:text="Sodium" />
+
+        <!-- Loading spinner -->
+        <ProgressBar
+            android:id="@+id/version_picker_loading"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <!-- Version label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select a version:"
+        android:textColor="#B0B0B0"
+        android:textSize="@dimen/_12ssp"
+        android:paddingHorizontal="@dimen/_16sdp"
+        android:paddingTop="@dimen/_12sdp"
+        android:paddingBottom="@dimen/_4sdp" />
+
+    <!-- RecyclerView for versions -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/version_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingVertical="@dimen/_4sdp"
+        android:scrollbars="none" />
+
+    <!-- Pagination Footer -->
+    <LinearLayout
+        android:id="@+id/pagination_footer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_48sdp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:background="#1E1E1E"
+        android:paddingHorizontal="@dimen/_16sdp"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/pagination_prev"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_chevron_left"
+            android:contentDescription="Previous page" />
+
+        <TextView
+            android:id="@+id/pagination_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="#B0B0B0"
+            android:textSize="@dimen/_12ssp" />
+
+        <ImageButton
+            android:id="@+id/pagination_next"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_chevron_right"
+            android:contentDescription="Next page" />
+
+    </LinearLayout>
+
+    <!-- Error text -->
+    <TextView
+        android:id="@+id/version_picker_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_16sdp"
+        android:gravity="center"
+        android:textColor="#FF4444"
+        android:textSize="@dimen/_13ssp"
+        android:visibility="gone" />
+
+</LinearLayout>
