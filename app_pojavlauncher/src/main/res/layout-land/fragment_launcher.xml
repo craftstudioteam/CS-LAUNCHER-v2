@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    fragment_launcher.xml (Landscape)
-    ─────────────────────────────────
-    Full-screen layout with horizontal top navigation rail.
-    - Left sidebar removed.
-    - Top brand row + icon tabs.
-    - Right pane (full remaining width).
-    - Bottom bar (version spinner | Edit | PLAY).
--->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,77 +8,55 @@
     android:background="@color/bg_launcher_dark">
 
     <!-- ══════════════════════════════════════════════
-         TOP BRANDING ROW
+         SINGLE COMPACT TOP BAR (Brand + Nav + Profile)
     ══════════════════════════════════════════════ -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/top_branding_row"
+        android:id="@+id/top_combined_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_44sdp"
+        android:layout_height="@dimen/_48sdp"
         android:background="@color/bg_header"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- CS Launcher Title -->
+        <!-- Brand title -->
         <TextView
             android:id="@+id/brand_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_12sdp"
             android:text="@string/cs_launcher_title"
             android:textColor="@color/neon_green"
-            android:textSize="@dimen/_14ssp"
+            android:textSize="@dimen/_13ssp"
             android:textStyle="bold"
+            android:layout_marginStart="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Subtitle -->
-        <TextView
-            android:id="@+id/brand_subtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_4sdp"
-            android:text="@string/cs_launcher_subtitle"
-            android:textColor="@color/text_secondary_dim"
-            android:textSize="@dimen/_9ssp"
-            android:layout_marginBottom="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/brand_title"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- Spacer -->
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/brand_barrier"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:barrierDirection="end"
-            app:constraint_referenced_ids="brand_title,brand_subtitle" />
-
-        <!-- Search Field (hidden by default, revealed in State B) -->
+        <!-- Search field (hidden by default, revealed in Mod Store state) -->
         <EditText
             android:id="@+id/top_search_field"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_32sdp"
+            android:layout_height="@dimen/_30sdp"
             android:background="@drawable/background_card"
             android:hint="Search mods..."
-            android:paddingStart="36dp"
-            android:paddingEnd="@dimen/_10sdp"
+            android:paddingStart="32dp"
+            android:paddingEnd="@dimen/_8sdp"
             android:gravity="center_vertical"
             android:textColor="@color/text_primary_light"
             android:textColorHint="@color/text_secondary_dim"
-            android:textSize="@dimen/_12ssp"
+            android:textSize="@dimen/_11ssp"
             android:alpha="0.0"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/profile_card"
-            app:layout_constraintStart_toEndOf="@id/brand_subtitle"
+            app:layout_constraintEnd_toStartOf="@id/top_search_field_end"
+            app:layout_constraintStart_toEndOf="@id/brand_title"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHorizontal_weight="1" />
 
         <!-- Search icon inside field -->
         <ImageView
             android:id="@+id/top_search_icon"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="@dimen/_14sdp"
             android:src="@drawable/ic_search"
             android:alpha="0.0"
             android:visibility="gone"
@@ -96,7 +65,15 @@
             app:layout_constraintTop_toTopOf="@id/top_search_field"
             app:tint="@color/text_secondary_dim" />
 
-        <!-- Profile Card (right-aligned default, slides left in State B) -->
+        <!-- Invisible end anchor for search field -->
+        <View
+            android:id="@+id/top_search_field_end"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toStartOf="@id/profile_card"
+            app:layout_constraintStart_toEndOf="@id/brand_title" />
+
+        <!-- Profile Card (right side) -->
         <LinearLayout
             android:id="@+id/profile_card"
             android:layout_width="wrap_content"
@@ -109,11 +86,12 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView
+                android:id="@+id/profile_welcome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cs_welcome_back_label"
                 android:textColor="@color/text_secondary_dim"
-                android:textSize="@dimen/_10ssp" />
+                android:textSize="@dimen/_9ssp" />
 
             <TextView
                 android:id="@+id/profile_name"
@@ -122,15 +100,14 @@
                 android:layout_marginStart="@dimen/_4sdp"
                 android:text="@string/cs_welcome_username"
                 android:textColor="@color/text_primary_light"
-                android:textSize="@dimen/_12ssp"
+                android:textSize="@dimen/_11ssp"
                 android:textStyle="bold" />
 
-            <!-- Settings gear -->
             <ImageButton
                 android:id="@+id/settings_gear"
-                android:layout_width="@dimen/_32sdp"
-                android:layout_height="@dimen/_32sdp"
-                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginStart="@dimen/_4sdp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_sharp_settings_24"
                 android:contentDescription="@string/mcl_button_settings"
@@ -141,7 +118,24 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- ══════════════════════════════════════════════
-         HORIZONTAL NAVIGATION RAIL (Icon Tabs)
+         RIGHT PANE — Full remaining width
+    ══════════════════════════════════════════════ -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/right_pane_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToOutline="true"
+        app:layout_constraintTop_toBottomOf="@id/top_combined_bar"
+        app:layout_constraintBottom_toTopOf="@id/nav_rail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Fragments inflated here -->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- ══════════════════════════════════════════════
+         BOTTOM NAV RAIL (Icon Tabs)
     ══════════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/nav_rail"
@@ -151,7 +145,9 @@
         android:gravity="center"
         android:background="@color/bg_header"
         android:elevation="2dp"
-        app:layout_constraintTop_toBottomOf="@id/top_branding_row">
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <!-- Home -->
         <FrameLayout
@@ -171,14 +167,14 @@
 
                 <ImageView
                     android:id="@+id/nav_home_icon"
-                    android:layout_width="@dimen/_22sdp"
-                    android:layout_height="@dimen/_22sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:src="@drawable/ic_home"
-                    android:contentDescription="Home" />
+                    android:contentDescription="@string/mcl_tab_home" />
 
                 <View
                     android:id="@+id/nav_home_indicator"
-                    android:layout_width="@dimen/_24sdp"
+                    android:layout_width="@dimen/_20sdp"
                     android:layout_height="2dp"
                     android:background="@color/neon_green"
                     android:visibility="visible" />
@@ -187,7 +183,7 @@
 
         </FrameLayout>
 
-        <!-- Download Mods -->
+        <!-- Download Mods (using download box icon) -->
         <FrameLayout
             android:id="@+id/nav_mod_store"
             android:layout_width="0dp"
@@ -205,14 +201,14 @@
 
                 <ImageView
                     android:id="@+id/nav_mod_store_icon"
-                    android:layout_width="@dimen/_22sdp"
-                    android:layout_height="@dimen/_22sdp"
-                    android:src="@drawable/ic_add"
-                    android:contentDescription="Mod Store" />
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:src="@drawable/ic_download_box"
+                    android:contentDescription="@string/mcl_button_mod_store" />
 
                 <View
                     android:id="@+id/nav_mod_store_indicator"
-                    android:layout_width="@dimen/_24sdp"
+                    android:layout_width="@dimen/_20sdp"
                     android:layout_height="2dp"
                     android:background="@color/neon_green"
                     android:visibility="invisible" />
@@ -239,14 +235,14 @@
 
                 <ImageView
                     android:id="@+id/nav_controls_icon"
-                    android:layout_width="@dimen/_22sdp"
-                    android:layout_height="@dimen/_22sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:src="@drawable/ic_menu_custom_controls"
-                    android:contentDescription="Custom Controls" />
+                    android:contentDescription="@string/mcl_option_customcontrol" />
 
                 <View
                     android:id="@+id/nav_controls_indicator"
-                    android:layout_width="@dimen/_24sdp"
+                    android:layout_width="@dimen/_20sdp"
                     android:layout_height="2dp"
                     android:background="@color/neon_green"
                     android:visibility="invisible" />
@@ -273,14 +269,14 @@
 
                 <ImageView
                     android:id="@+id/nav_cursor_icon"
-                    android:layout_width="@dimen/_22sdp"
-                    android:layout_height="@dimen/_22sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:src="@drawable/ic_mouse_pointer"
-                    android:contentDescription="Cursor" />
+                    android:contentDescription="@string/cursor_customization_title" />
 
                 <View
                     android:id="@+id/nav_cursor_indicator"
-                    android:layout_width="@dimen/_24sdp"
+                    android:layout_width="@dimen/_20sdp"
                     android:layout_height="2dp"
                     android:background="@color/neon_green"
                     android:visibility="invisible" />
@@ -307,14 +303,14 @@
 
                 <ImageView
                     android:id="@+id/nav_tools_icon"
-                    android:layout_width="@dimen/_22sdp"
-                    android:layout_height="@dimen/_22sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:src="@drawable/ic_folder"
-                    android:contentDescription="Tools" />
+                    android:contentDescription="@string/main_install_jar_file" />
 
                 <View
                     android:id="@+id/nav_tools_indicator"
-                    android:layout_width="@dimen/_24sdp"
+                    android:layout_width="@dimen/_20sdp"
                     android:layout_height="2dp"
                     android:background="@color/neon_green"
                     android:visibility="invisible" />
@@ -326,49 +322,32 @@
     </LinearLayout>
 
     <!-- ══════════════════════════════════════════════
-         RIGHT PANE — Full remaining width
-    ══════════════════════════════════════════════ -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/right_pane_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:clipToOutline="true"
-        app:layout_constraintTop_toBottomOf="@id/nav_rail"
-        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Fragments inflated here -->
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- ══════════════════════════════════════════════
          BOTTOM BAR — Version spinner | Edit | PLAY
     ══════════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_54sdp"
+        android:layout_height="@dimen/_50sdp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="@drawable/bg_bottom_bar"
-        android:paddingStart="@dimen/_12sdp"
+        android:paddingStart="@dimen/_10sdp"
         android:paddingEnd="@dimen/_6sdp"
         android:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Minecraft block icon -->
+        <!-- Version icon -->
         <ImageView
             android:id="@+id/iv_version_icon"
-            android:layout_width="@dimen/_34sdp"
-            android:layout_height="@dimen/_34sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_6sdp"
             android:src="@drawable/ic_mc_block"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
-            android:contentDescription="Version icon" />
+            android:contentDescription="Version" />
 
         <!-- Version Spinner -->
         <com.kdt.mcgui.mcVersionSpinner
@@ -387,28 +366,28 @@
         <!-- Edit button -->
         <LinearLayout
             android:id="@+id/edit_profile_container"
-            android:layout_width="@dimen/_52sdp"
+            android:layout_width="@dimen/_48sdp"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginStart="@dimen/_4sdp"
             android:layout_marginEnd="@dimen/_4sdp"
             android:background="?android:attr/selectableItemBackground">
 
             <ImageButton
                 android:id="@+id/edit_profile_button"
-                android:layout_width="@dimen/_22sdp"
-                android:layout_height="@dimen/_22sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_edit_profile"
                 android:scaleType="fitCenter"
-                android:contentDescription="Edit profile" />
+                android:contentDescription="@string/mcl_edit" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/mcl_edit"
-                android:textSize="@dimen/_9ssp"
+                android:textSize="@dimen/_8ssp"
                 android:textColor="@color/text_secondary_light" />
 
         </LinearLayout>
@@ -416,7 +395,7 @@
         <!-- PLAY button -->
         <com.kdt.mcgui.MineButton
             android:id="@+id/play_button"
-            android:layout_width="@dimen/_130sdp"
+            android:layout_width="@dimen/_120sdp"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/_4sdp"
             android:text="@string/main_play"
@@ -424,31 +403,11 @@
 
     </LinearLayout>
 
-    <!-- Hidden sidebar views kept for back-compat (references removed) -->
-    <View
-        android:id="@+id/home_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone" />
-    <View
-        android:id="@+id/mod_store_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone" />
-    <View
-        android:id="@+id/custom_control_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone" />
-    <View
-        android:id="@+id/cursor_customization_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone" />
-    <View
-        android:id="@+id/pane_divider"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone" />
+    <!-- Hidden stubs for old IDs (back-compat) -->
+    <View android:id="@+id/home_button" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <View android:id="@+id/mod_store_button" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <View android:id="@+id/custom_control_button" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <View android:id="@+id/cursor_customization_button" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <View android:id="@+id/pane_divider" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

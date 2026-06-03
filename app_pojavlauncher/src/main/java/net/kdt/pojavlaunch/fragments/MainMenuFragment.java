@@ -284,7 +284,12 @@ public class MainMenuFragment extends Fragment {
         navModStore.setOnClickListener(v -> {
             setActiveNavTab(1);
             if (!mIsModStoreActive) transitionToModStoreState();
-            navigateToModStore();
+            // Open ModsSearchFragment directly (online mod store)
+            Bundle args = new Bundle();
+            args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY,
+                    LauncherPreferences.DEFAULT_PREF
+                            .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null));
+            openPane(ModsSearchFragment.class, ModsSearchFragment.TAG, args);
         });
 
         navControls.setOnClickListener(v -> {
@@ -464,17 +469,7 @@ public class MainMenuFragment extends Fragment {
         if (mToolsIndicator != null) mToolsIndicator.setVisibility(tabIndex == 4 ? View.VISIBLE : View.INVISIBLE);
     }
 
-    private void navigateToModStore() {
-        Bundle args = new Bundle();
-        args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY,
-                LauncherPreferences.DEFAULT_PREF
-                        .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null));
-        getChildFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.right_pane_container, ManageModsFragment.class, args, ManageModsFragment.TAG)
-                .addToBackStack(ManageModsFragment.TAG)
-                .commit();
-    }
+
 
     // ─── Private helpers ────────────────────────────────────────────────────
 
