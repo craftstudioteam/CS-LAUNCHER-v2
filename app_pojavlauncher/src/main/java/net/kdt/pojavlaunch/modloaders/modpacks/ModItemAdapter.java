@@ -2,41 +2,26 @@ package net.kdt.pojavlaunch.modloaders.modpacks;
 
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.kdt.SimpleArrayAdapter;
 
 import net.kdt.pojavlaunch.PojavApplication;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModpackApi;
-import net.kdt.pojavlaunch.modloaders.modpacks.imagecache.ImageReceiver;
 import net.kdt.pojavlaunch.modloaders.modpacks.imagecache.ModIconCache;
-import net.kdt.pojavlaunch.modloaders.modpacks.models.Constants;
-import net.kdt.pojavlaunch.modloaders.modpacks.models.ModDetail;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.SearchFilters;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.SearchResult;
 import net.kdt.pojavlaunch.progresskeeper.TaskCountListener;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.Future;
 
 public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements TaskCountListener {
@@ -44,24 +29,20 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int VIEW_TYPE_MOD_ITEM = 0;
     private static final int VIEW_TYPE_LOADING = 1;
 
-    /* Used when versions haven't loaded yet, default text to reduce layout shifting */
-    private final SimpleArrayAdapter<String> mLoadingAdapter = new SimpleArrayAdapter<>(Collections.singletonList("Loading"));
-    /* This my seem horribly inefficient but it is in fact the most efficient way without effectively writing a weak collection from scratch */
-    private final Set<ViewHolder> mViewHolderSet = Collections.newSetFromMap(new WeakHashMap<>());
+    // unused
     private final ModIconCache mIconCache = new ModIconCache();
     private final SearchResultCallback mSearchResultCallback;
     private ModItem[] mModItems;
     private final ModpackApi mModpackApi;
 
-    /* Cache for ever so slightly rounding the image for the corner not to stick out of the layout */
     private final float mCornerDimensionCache;
-
     private Future<?> mTaskInProgress;
     private SearchFilters mSearchFilters;
     private SearchResult mCurrentResult;
     private boolean mLastPage;
     private boolean mTasksRunning;
 
+    private OnItemClickListener mOnItemClickListener;
 
     public ModItemAdapter(Resources resources, ModpackApi api, SearchResultCallback callback) {
         mCornerDimensionCache = resources.getDimension(R.dimen._1sdp) / 250;
@@ -70,8 +51,12 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mSearchResultCallback = callback;
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mOnItemClickListener = listener;
+    }
+
     public void performSearchQuery(SearchFilters searchFilters) {
-        if(mTaskInProgress != null) {
+        if (mTaskInProgress != null) {
             mTaskInProgress.cancel(true);
             mTaskInProgress = null;
         }
@@ -84,19 +69,16 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
-        View view;
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         switch (viewType) {
             case VIEW_TYPE_MOD_ITEM:
-                // Create a new view, which defines the UI of the list item
-                view = layoutInflater.inflate(R.layout.item_mod_modern, viewGroup, false);
-                return new ViewHolder(view);
+                View view = inflater.inflate(R.layout.item_mod_modern, viewGroup, false);
+                return new ModItemViewHolder(view);
             case VIEW_TYPE_LOADING:
-                // Create a new view, which is actually just the progress bar
-                view = layoutInflater.inflate(R.layout.view_loading, viewGroup, false);
+                view = inflater.inflate(R.layout.view_loading, viewGroup, false);
                 return new LoadingViewHolder(view);
             default:
-                throw new RuntimeException("Unimplemented view type!");
+                throw new RuntimeException("Unimplemented view type: " + viewType);
         }
     }
 
@@ -104,257 +86,135 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case VIEW_TYPE_MOD_ITEM:
-                ((ModItemAdapter.ViewHolder)holder).setStateLimited(mModItems[position]);
+                ((ModItemViewHolder) holder).bind(mModItems[position]);
                 break;
             case VIEW_TYPE_LOADING:
                 loadMoreResults();
                 break;
-            default:
-                throw new RuntimeException("Unimplemented view type!");
         }
     }
 
     @Override
     public int getItemCount() {
-        if(mLastPage || mModItems.length == 0) return mModItems.length;
-        return mModItems.length+1;
+        if (mModItems.length == 0) return 0;
+        return mLastPage ? mModItems.length : mModItems.length + 1;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position >= mModItems.length) return VIEW_TYPE_LOADING;
+        return VIEW_TYPE_MOD_ITEM;
     }
 
     private void loadMoreResults() {
-        if(mTaskInProgress != null) return;
+        if (mTaskInProgress != null) return;
         mTaskInProgress = new SelfReferencingFuture(new SearchApiTask(mSearchFilters, mCurrentResult))
                 .startOnExecutor(PojavApplication.sExecutorService);
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if(position < mModItems.length) return VIEW_TYPE_MOD_ITEM;
-        return VIEW_TYPE_LOADING;
+    public void onTaskCountChanged(int taskCount) {
+        mTasksRunning = taskCount != 0;
     }
 
-    @Override
-    public void onUpdateTaskCount(int taskCount) {
-        Tools.runOnUiThread(()->{
-            mTasksRunning = taskCount != 0;
-            for(ViewHolder viewHolder : mViewHolderSet) {
-                viewHolder.updateInstallButtonState();
-            }
-        });
+    private String formatDownloads(String downloads) {
+        try {
+            long d = Long.parseLong(downloads);
+            if (d >= 1000000) return (d / 1000000) + "M";
+            if (d >= 1000) return (d / 1000) + "K";
+            return String.valueOf(d);
+        } catch (Exception e) {
+            return downloads;
+        }
     }
 
+    private int getSourceDrawable(int apiSource) {
+        switch (apiSource) {
+            case net.kdt.pojavlaunch.modloaders.modpacks.models.Constants.SOURCE_CURSEFORGE:
+                return R.drawable.ic_curseforge;
+            case net.kdt.pojavlaunch.modloaders.modpacks.models.Constants.SOURCE_MODRINTH:
+                return R.drawable.ic_modrinth;
+            default:
+                throw new RuntimeException("Unknown API source");
+        }
+    }
 
-    /**
-     * Basic viewholder with expension capabilities
-     */
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    // ── ViewHolder for compact mod cards ──────────────────────────────────
 
-        private ModDetail mModDetail = null;
-        private ModItem mModItem = null;
-        private final TextView mTitle, mDescription, mInfo;
-        private final ImageView mIconView, mSourceView;
-        private View mExtendedLayout;
-        private Spinner mExtendedSpinner;
-        private Button mExtendedButton;
-        private TextView mExtendedErrorTextView;
-        private Future<?> mExtensionFuture;
-        private Bitmap mThumbnailBitmap;
-        private ImageReceiver mImageReceiver;
-        private boolean mInstallEnabled;
+    public class ModItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final ImageView mIconView;
+        private final ImageView mSourceIconView;
+        private final TextView mTitleView;
+        private final TextView mInfoView;
+        private final TextView mDescriptionView;
+        private final TextView mStatusBadge;
+        private ModItem mCurrentItem;
 
-        /* Used to display available versions of the mod(pack) */
-        private final SimpleArrayAdapter<String> mVersionAdapter = new SimpleArrayAdapter<>(null);
-
-        public ViewHolder(View view) {
-            super(view);
-            mViewHolderSet.add(this);
-            view.setOnClickListener(v -> {
-                if(mExtendedLayout == null){
-                    mExtendedLayout = v.findViewById(R.id.mod_extended_layout);
-                    mExtendedButton = mExtendedLayout.findViewById(R.id.mod_extended_select_version_button);
-                    mExtendedSpinner = mExtendedLayout.findViewById(R.id.mod_extended_version_spinner);
-                    mExtendedErrorTextView = mExtendedLayout.findViewById(R.id.mod_extended_error_textview);
-
-                    mExtendedButton.setOnClickListener(v1 -> mModpackApi.handleInstallation(
-                            mExtendedButton.getContext().getApplicationContext(),
-                            mModDetail,
-                            mExtendedSpinner.getSelectedItemPosition()));
-                    mExtendedSpinner.setAdapter(mLoadingAdapter);
-                }
-
-                if(isExtended()) closeDetailedView();
-                else openDetailedView();
-
-                if(isExtended() && mModDetail == null && mExtensionFuture == null) { // only reload if no reloads are in progress
-                    setDetailedStateDefault();
-                    /*
-                     * Why do we do this?
-                     * The reason is simple: multithreading is difficult as hell to manage
-                     * Let me explain:
-                     */
-                    mExtensionFuture = new SelfReferencingFuture(myFuture -> {
-                        /*
-                         * While we are sitting in the function below doing networking, the view might have already gotten recycled.
-                         * If we didn't use a Future, we would have extended a ViewHolder with completely unrelated content
-                         * or with an error that has never actually happened
-                         */
-                        mModDetail = mModpackApi.getModDetails(mModItem);
-                        System.out.println(mModDetail);
-                        Tools.runOnUiThread(() -> {
-                            /*
-                             * Once we enter here, the state we're in is already defined - no view shuffling can happen on the UI
-                             * thread while we are on the UI thread ourselves. If we were cancelled, this means that the future
-                             * we were supposed to have no longer makes sense, so we return and do not alter the state (since we might
-                             * alter the state of an unrelated item otherwise)
-                             */
-                            if(myFuture.isCancelled()) return;
-                            /*
-                             * We do not null the future before returning since this field might already belong to a different item with its
-                             * own Future, which we don't want to interfere with.
-                             * But if the future is not cancelled, it is the right one for this ViewHolder, and we don't need it anymore, so
-                             * let's help GC clean it up once we exit!
-                             */
-                            mExtensionFuture = null;
-                            setStateDetailed(mModDetail);
-                        });
-                    }).startOnExecutor(PojavApplication.sExecutorService);
-                }
-            });
-
-            // Define click listener for the ViewHolder's View
-            mTitle = view.findViewById(R.id.mod_title_textview);
-            mDescription = view.findViewById(R.id.mod_body_textview);
-            mInfo = view.findViewById(R.id.mod_info_textview);
-            mIconView = view.findViewById(R.id.mod_thumbnail_imageview);
-            mSourceView = view.findViewById(R.id.mod_source_imageview);
+        public ModItemViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mIconView = itemView.findViewById(R.id.mod_thumbnail_imageview);
+            mSourceIconView = itemView.findViewById(R.id.mod_source_imageview);
+            mTitleView = itemView.findViewById(R.id.mod_title_textview);
+            mInfoView = itemView.findViewById(R.id.mod_info_textview);
+            mDescriptionView = itemView.findViewById(R.id.mod_body_textview);
+            mStatusBadge = itemView.findViewById(R.id.mod_status_badge);
+            itemView.setOnClickListener(this);
         }
 
-        /** Display basic info about the moditem */
-        public void setStateLimited(ModItem item) {
-            mModDetail = null;
-            if(mThumbnailBitmap != null) {
-                mIconView.setImageBitmap(null);
-                mThumbnailBitmap.recycle();
-            }
-            if(mImageReceiver != null) {
-                mIconCache.cancelImage(mImageReceiver);
-            }
-            if(mExtensionFuture != null) {
-                /*
-                 * Since this method reinitializes the ViewHolder for a new mod, this Future stops being ours, so we cancel it
-                 * and null it. The rest is handled above
-                 */
-                mExtensionFuture.cancel(true);
-                mExtensionFuture = null;
-            }
+        public void bind(ModItem item) {
+            mCurrentItem = item;
+            mTitleView.setText(item.title);
 
-            mModItem = item;
-            // here the previous reference to the image receiver will disappear
-            mImageReceiver = bm->{
-                mImageReceiver = null;
-                mThumbnailBitmap = bm;
-                mIconView.setImageBitmap(bm);
-            };
-            mIconCache.getImage(mImageReceiver, mModItem.getIconCacheTag(), mModItem.imageUrl);
-            mSourceView.setImageResource(getSourceDrawable(item.apiSource));
-            mTitle.setText(item.title);
-            mDescription.setText(item.description);
-            mDescription.setMaxLines(2);
-
+            // Info line: author + downloads
             StringBuilder info = new StringBuilder();
-            if (item.author != null) info.append("by ").append(item.author);
-            if (item.downloads != null) {
-                if (info.length() > 0) info.append(" • ");
+            if (item.author != null && !item.author.isEmpty()) {
+                info.append("by ").append(item.author);
+            }
+            if (item.downloads != null && !item.downloads.isEmpty()) {
+                if (info.length() > 0) info.append(" \u2022 ");
                 info.append(formatDownloads(item.downloads)).append(" Downloads");
             }
-            mInfo.setText(info.toString());
-            mInfo.setVisibility(info.length() > 0 ? View.VISIBLE : View.GONE);
+            mInfoView.setText(info.toString());
 
-            if(hasExtended()){
-                closeDetailedView();
-            }
-        }
-
-        /** Display extended info/interaction about a modpack */
-        private void setStateDetailed(ModDetail detailedItem) {
-            if(detailedItem != null) {
-                setInstallEnabled(true);
-                mExtendedErrorTextView.setVisibility(View.GONE);
-                mVersionAdapter.setObjects(Arrays.asList(detailedItem.versionNames));
-                mExtendedSpinner.setAdapter(mVersionAdapter);
+            // Description
+            if (item.description != null && !item.description.isEmpty()) {
+                mDescriptionView.setText(item.description);
+                mDescriptionView.setVisibility(View.VISIBLE);
             } else {
-                closeDetailedView();
-                setInstallEnabled(false);
-                mExtendedErrorTextView.setVisibility(View.VISIBLE);
-                mExtendedSpinner.setAdapter(null);
-                mVersionAdapter.setObjects(null);
+                mDescriptionView.setVisibility(View.GONE);
             }
+
+            // Source badge
+            mSourceIconView.setImageResource(getSourceDrawable(item.apiSource));
+
+            // Icon loading
+            mIconView.setImageDrawable(null);
+            mIconCache.getImage(
+                    bitmap -> {
+                        if (mCurrentItem == item) {
+                            if (bitmap != null) {
+                                mIconView.setImageBitmap(bitmap);
+                            } else {
+                                mIconView.setImageResource(R.drawable.ic_launcher_foreground);
+                            }
+                        }
+                    },
+                    item.getIconCacheTag(),
+                    item.imageUrl
+            );
+
+            // Status badge hidden by default; can be set externally
+            mStatusBadge.setVisibility(View.GONE);
         }
 
-        private void openDetailedView() {
-            if (mExtendedLayout != null) {
-                mExtendedLayout.setVisibility(View.VISIBLE);
-                mDescription.setMaxLines(99);
+        @Override
+        public void onClick(View v) {
+            if (mOnItemClickListener != null && mCurrentItem != null) {
+                mOnItemClickListener.onItemClick(mCurrentItem);
             }
-        }
-
-        private void closeDetailedView(){
-            if (mExtendedLayout != null) {
-                mExtendedLayout.setVisibility(View.GONE);
-                mDescription.setMaxLines(2);
-            }
-        }
-
-        private String formatDownloads(String downloads) {
-            try {
-                long d = Long.parseLong(downloads);
-                if (d >= 1000000) return (d / 1000000) + "M";
-                if (d >= 1000) return (d / 1000) + "K";
-                return String.valueOf(d);
-            } catch (Exception e) {
-                return downloads;
-            }
-        }
-
-        private void setDetailedStateDefault() {
-            setInstallEnabled(false);
-            mExtendedSpinner.setAdapter(mLoadingAdapter);
-            mExtendedErrorTextView.setVisibility(View.GONE);
-            openDetailedView();
-        }
-
-        private boolean hasExtended(){
-            return mExtendedLayout != null;
-        }
-
-        private boolean isExtended(){
-            return hasExtended() && mExtendedLayout.getVisibility() == View.VISIBLE;
-        }
-
-        private int getSourceDrawable(int apiSource) {
-            switch (apiSource) {
-                case Constants.SOURCE_CURSEFORGE:
-                    return R.drawable.ic_curseforge;
-                case Constants.SOURCE_MODRINTH:
-                    return R.drawable.ic_modrinth;
-                default:
-                    throw new RuntimeException("Unknown API source");
-            }
-        }
-
-        private void setInstallEnabled(boolean enabled) {
-            mInstallEnabled = enabled;
-            updateInstallButtonState();
-        }
-
-        private void updateInstallButtonState() {
-            if(mExtendedButton != null)
-                mExtendedButton.setEnabled(mInstallEnabled && !mTasksRunning);
         }
     }
 
-    /**
-     * The view holder used to hold the progress bar at the end of the list
-     */
     private static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public LoadingViewHolder(View view) {
             super(view);
@@ -375,7 +235,7 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void run(Future<?> myFuture) {
             SearchResult result = mModpackApi.searchMod(mSearchFilters, mPreviousResult);
             ModItem[] resultModItems = result != null ? result.results : null;
-            if(resultModItems != null && resultModItems.length != 0 && mPreviousResult != null) {
+            if (resultModItems != null && resultModItems.length != 0 && mPreviousResult != null) {
                 ModItem[] newModItems = new ModItem[resultModItems.length + mModItems.length];
                 System.arraycopy(mModItems, 0, newModItems, 0, mModItems.length);
                 System.arraycopy(resultModItems, 0, newModItems, mModItems.length, resultModItems.length);
@@ -383,33 +243,33 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
             ModItem[] finalModItems = resultModItems;
             Tools.runOnUiThread(() -> {
-                if(myFuture.isCancelled()) return;
+                if (myFuture.isCancelled()) return;
                 mTaskInProgress = null;
-                if(finalModItems == null) {
+                if (finalModItems == null) {
                     mSearchResultCallback.onSearchError(SearchResultCallback.ERROR_INTERNAL);
-                }else if(finalModItems.length == 0) {
-                    if(mPreviousResult != null) {
+                } else if (finalModItems.length == 0) {
+                    if (mPreviousResult != null) {
                         mLastPage = true;
                         notifyItemChanged(mModItems.length);
                         mSearchResultCallback.onSearchFinished();
                         return;
                     }
                     mSearchResultCallback.onSearchError(SearchResultCallback.ERROR_NO_RESULTS);
-                }else{
+                } else {
                     mSearchResultCallback.onSearchFinished();
                 }
                 mCurrentResult = result;
-                if(finalModItems == null) {
+                if (finalModItems == null) {
                     mModItems = MOD_ITEMS_EMPTY;
                     notifyDataSetChanged();
                     return;
                 }
-                if(mPreviousResult != null) {
+                if (mPreviousResult != null) {
                     int prevLength = mModItems.length;
                     mModItems = finalModItems;
                     notifyItemChanged(prevLength);
-                    notifyItemRangeInserted(prevLength+1, mModItems.length);
-                }else {
+                    notifyItemRangeInserted(prevLength + 1, mModItems.length);
+                } else {
                     mModItems = finalModItems;
                     notifyDataSetChanged();
                 }
@@ -422,5 +282,9 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         int ERROR_NO_RESULTS = 1;
         void onSearchFinished();
         void onSearchError(int error);
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(ModItem item);
     }
 }

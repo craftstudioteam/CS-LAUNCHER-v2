@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="12dp"
-    android:layout_marginVertical="6dp"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="4dp"
     android:background="@drawable/background_card"
     android:clickable="true"
     android:focusable="true"
@@ -15,13 +15,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:padding="10dp">
 
-        <!-- Mod icon -->
+        <!-- Mod icon with rounded corners -->
         <ImageView
             android:id="@+id/mod_thumbnail_imageview"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="@dimen/_56sdp"
+            android:layout_height="@dimen/_56sdp"
             android:scaleType="centerCrop"
             android:background="@drawable/background_image_rounded"
             android:clipToOutline="true"
@@ -29,42 +29,42 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@mipmap/ic_launcher_foreground" />
 
-        <!-- Mod name -->
+        <!-- Mod title (White, Bold) -->
         <TextView
             android:id="@+id/mod_title_textview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
+            android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/text_primary_light"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/mod_source_imageview"
             app:layout_constraintStart_toEndOf="@+id/mod_thumbnail_imageview"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sodium" />
 
-        <!-- Mod author/version info -->
+        <!-- Subtext: Author + Downloads (muted gray) -->
         <TextView
             android:id="@+id/mod_info_textview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="@color/neon_green"
+            android:textColor="@color/text_secondary_dim"
             android:textSize="11sp"
             app:layout_constraintEnd_toEndOf="@id/mod_title_textview"
             app:layout_constraintStart_toStartOf="@+id/mod_title_textview"
             app:layout_constraintTop_toBottomOf="@+id/mod_title_textview"
-            tools:text="by jellysquid3 • 5M Downloads" />
+            tools:text="by jellysquid3 &bull; 5M Downloads" />
 
-        <!-- Mod description -->
+        <!-- Short description (max 2 lines, ellipsis) -->
         <TextView
             android:id="@+id/mod_body_textview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="@color/text_secondary_dim"
@@ -72,71 +72,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/mod_title_textview"
             app:layout_constraintTop_toBottomOf="@+id/mod_info_textview"
-            tools:text="Modern rendering engine and graphical optimizations for Minecraft." />
+            tools:text="Modern rendering engine and graphical optimizations for Minecraft. Sodium is a free and open-source rendering engine replacement." />
 
-        <!-- Source icon -->
+        <!-- Source badge (Modrinth/CurseForge) -->
         <ImageView
             android:id="@+id/mod_source_imageview"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="@dimen/_14sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/ic_modrinth" />
 
-        <!-- Extended Area (Hidden by default) -->
-        <LinearLayout
-            android:id="@+id/mod_extended_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="vertical"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/mod_thumbnail_imageview"
-            tools:visibility="visible">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/divider_color" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <Spinner
-                    android:id="@+id/mod_extended_version_spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="36dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/background_card"
-                    android:paddingStart="8dp" />
-
-                <com.kdt.mcgui.MineButton
-                    android:id="@+id/mod_extended_select_version_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginStart="8dp"
-                    android:paddingHorizontal="16dp"
-                    android:text="Install"
-                    android:textSize="10sp" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/mod_extended_error_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Error loading versions"
-                android:textColor="#FF4444"
-                android:textSize="10sp"
-                android:visibility="gone" />
-
-        </LinearLayout>
-
-        <!-- Status Chip (e.g. Installed) -->
+        <!-- Status Chip (e.g. INSTALLED) -->
         <TextView
             android:id="@+id/mod_status_badge"
             android:layout_width="wrap_content"

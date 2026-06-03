@@ -569,4 +569,9 @@
     <string name="cs_ready_subtitle">Ready to jump back into your adventure?</string>
     <string name="mcl_edit">Edit</string>
     <string name="mcl_tab_home">Home</string>
+
+    <!-- Mod Detail Page Strings -->
+    <string name="detail_select_version">Select a version</string>
+    <string name="detail_select_version_first">Select a version first</string>
+    <string name="detail_download_now">DOWNLOAD NOW</string>
 </resources>

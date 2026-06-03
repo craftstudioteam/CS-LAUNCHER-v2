@@ -2,7 +2,9 @@ package net.kdt.pojavlaunch.modloaders.modpacks.models;
 
 import androidx.annotation.NonNull;
 
-public class ModItem extends ModSource {
+import java.io.Serializable;
+
+public class ModItem extends ModSource implements Serializable {
 
     public String id;
     public String title;
