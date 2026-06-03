@@ -8,6 +8,7 @@ import static net.kdt.pojavlaunch.Architecture.is32BitsDevice;
 import android.app.Activity;
 import android.content.*;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.DisplayMetrics;
