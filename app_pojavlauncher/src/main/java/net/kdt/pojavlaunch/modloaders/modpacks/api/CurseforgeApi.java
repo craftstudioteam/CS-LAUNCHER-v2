@@ -96,13 +96,22 @@ public class CurseforgeApi implements ModpackApi{
                 Log.i("CurseforgeApi", "Skipping modpack "+dataElement.get("name").getAsString() + " because curseforge sucks");
                 continue;
             }
-            JsonObject logo = dataElement.getAsJsonObject("logo");
             String thumbnailUrl = (logo != null && logo.has("thumbnailUrl") && !logo.get("thumbnailUrl").isJsonNull())
                     ? logo.get("thumbnailUrl").getAsString() : "";
+            
+            String author = null;
+            if (dataElement.has("authors")) {
+                JsonArray authors = dataElement.getAsJsonArray("authors");
+                if (authors.size() > 0) author = authors.get(0).getAsJsonObject().get("name").getAsString();
+            }
+            String downloads = dataElement.has("downloadCount") ? dataElement.get("downloadCount").getAsString() : null;
+
             ModItem modItem = new ModItem(Constants.SOURCE_CURSEFORGE,
                     searchFilters.isModpack,
                     dataElement.get("id").getAsString(),
                     dataElement.get("name").getAsString(),
+                    author,
+                    downloads,
                     dataElement.get("summary").getAsString(),
                     thumbnailUrl);
             modItem.isRestricted = restricted;

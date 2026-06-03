@@ -89,7 +89,7 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         switch (viewType) {
             case VIEW_TYPE_MOD_ITEM:
                 // Create a new view, which defines the UI of the list item
-                view = layoutInflater.inflate(R.layout.view_mod, viewGroup, false);
+                view = layoutInflater.inflate(R.layout.item_mod_modern, viewGroup, false);
                 return new ViewHolder(view);
             case VIEW_TYPE_LOADING:
                 // Create a new view, which is actually just the progress bar
@@ -150,7 +150,7 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private ModDetail mModDetail = null;
         private ModItem mModItem = null;
-        private final TextView mTitle, mDescription;
+        private final TextView mTitle, mDescription, mInfo;
         private final ImageView mIconView, mSourceView;
         private View mExtendedLayout;
         private Spinner mExtendedSpinner;
@@ -168,9 +168,8 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(view);
             mViewHolderSet.add(this);
             view.setOnClickListener(v -> {
-                if(!hasExtended()){
-                    // Inflate the ViewStub
-                    mExtendedLayout = ((ViewStub)v.findViewById(R.id.mod_limited_state_stub)).inflate();
+                if(mExtendedLayout == null){
+                    mExtendedLayout = v.findViewById(R.id.mod_extended_layout);
                     mExtendedButton = mExtendedLayout.findViewById(R.id.mod_extended_select_version_button);
                     mExtendedSpinner = mExtendedLayout.findViewById(R.id.mod_extended_version_spinner);
                     mExtendedErrorTextView = mExtendedLayout.findViewById(R.id.mod_extended_error_textview);
@@ -180,10 +179,10 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             mModDetail,
                             mExtendedSpinner.getSelectedItemPosition()));
                     mExtendedSpinner.setAdapter(mLoadingAdapter);
-                } else {
-                    if(isExtended()) closeDetailedView();
-                    else openDetailedView();
                 }
+
+                if(isExtended()) closeDetailedView();
+                else openDetailedView();
 
                 if(isExtended() && mModDetail == null && mExtensionFuture == null) { // only reload if no reloads are in progress
                     setDetailedStateDefault();
@@ -224,6 +223,7 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             // Define click listener for the ViewHolder's View
             mTitle = view.findViewById(R.id.mod_title_textview);
             mDescription = view.findViewById(R.id.mod_body_textview);
+            mInfo = view.findViewById(R.id.mod_info_textview);
             mIconView = view.findViewById(R.id.mod_thumbnail_imageview);
             mSourceView = view.findViewById(R.id.mod_source_imageview);
         }
@@ -252,14 +252,22 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             mImageReceiver = bm->{
                 mImageReceiver = null;
                 mThumbnailBitmap = bm;
-                RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(mIconView.getResources(), bm);
-                drawable.setCornerRadius(mCornerDimensionCache * bm.getHeight());
-                mIconView.setImageDrawable(drawable);
+                mIconView.setImageBitmap(bm);
             };
             mIconCache.getImage(mImageReceiver, mModItem.getIconCacheTag(), mModItem.imageUrl);
             mSourceView.setImageResource(getSourceDrawable(item.apiSource));
             mTitle.setText(item.title);
             mDescription.setText(item.description);
+            mDescription.setMaxLines(2);
+
+            StringBuilder info = new StringBuilder();
+            if (item.author != null) info.append("by ").append(item.author);
+            if (item.downloads != null) {
+                if (info.length() > 0) info.append(" • ");
+                info.append(formatDownloads(item.downloads)).append(" Downloads");
+            }
+            mInfo.setText(info.toString());
+            mInfo.setVisibility(info.length() > 0 ? View.VISIBLE : View.GONE);
 
             if(hasExtended()){
                 closeDetailedView();
@@ -283,19 +291,28 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         private void openDetailedView() {
-            mExtendedLayout.setVisibility(View.VISIBLE);
-            mDescription.setMaxLines(99);
-
-            // We need to align to the longer section
-            int futureBottom = mDescription.getBottom() + Tools.mesureTextviewHeight(mDescription) - mDescription.getHeight();
-            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) mExtendedLayout.getLayoutParams();
-            params.topToBottom = futureBottom > mIconView.getBottom() ? R.id.mod_body_textview : R.id.mod_thumbnail_imageview;
-            mExtendedLayout.setLayoutParams(params);
+            if (mExtendedLayout != null) {
+                mExtendedLayout.setVisibility(View.VISIBLE);
+                mDescription.setMaxLines(99);
+            }
         }
 
         private void closeDetailedView(){
-            mExtendedLayout.setVisibility(View.GONE);
-            mDescription.setMaxLines(3);
+            if (mExtendedLayout != null) {
+                mExtendedLayout.setVisibility(View.GONE);
+                mDescription.setMaxLines(2);
+            }
+        }
+
+        private String formatDownloads(String downloads) {
+            try {
+                long d = Long.parseLong(downloads);
+                if (d >= 1000000) return (d / 1000000) + "M";
+                if (d >= 1000) return (d / 1000) + "K";
+                return String.valueOf(d);
+            } catch (Exception e) {
+                return downloads;
+            }
         }
 
         private void setDetailedStateDefault() {

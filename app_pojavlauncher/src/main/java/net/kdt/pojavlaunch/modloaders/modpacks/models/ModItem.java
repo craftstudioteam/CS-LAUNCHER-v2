@@ -6,6 +6,8 @@ public class ModItem extends ModSource {
 
     public String id;
     public String title;
+    public String author;
+    public String downloads;
     public String description;
     public String imageUrl;
     /** True if the mod author blocked third-party distribution (CF allowModDistribution=false) */
@@ -20,6 +22,12 @@ public class ModItem extends ModSource {
         this.title = title;
         this.description = description;
         this.imageUrl = imageUrl;
+    }
+
+    public ModItem(int apiSource, boolean isModpack, String id, String title, String author, String downloads, String description, String imageUrl) {
+        this(apiSource, isModpack, id, title, description, imageUrl);
+        this.author = author;
+        this.downloads = downloads;
     }
 
     @NonNull

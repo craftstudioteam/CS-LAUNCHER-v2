@@ -99,18 +99,19 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
         ProgressKeeper.addTaskCountListener(mModItemAdapter);
         mOverlayTopCache = getResources().getDimension(R.dimen.fragment_padding_medium);
 
-        mOverlay           = view.findViewById(R.id.search_mod_overlay);
+        mOverlay           = view.findViewById(R.id.mod_store_header);
         mSearchEditText    = view.findViewById(R.id.search_mod_edittext);
         mSearchProgressBar = view.findViewById(R.id.search_mod_progressbar);
         mRecyclerview      = view.findViewById(R.id.search_mod_list);
         mStatusTextView    = view.findViewById(R.id.search_mod_status_text);
         mFilterButton      = view.findViewById(R.id.search_mod_filter);
+        com.google.android.material.chip.ChipGroup categoryChips = view.findViewById(R.id.mod_category_chips);
 
         mDefaultTextColor = mStatusTextView.getTextColors();
 
         mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerview.setAdapter(mModItemAdapter);
-        mRecyclerview.addOnScrollListener(mOverlayPositionListener);
+        // mRecyclerview.addOnScrollListener(mOverlayPositionListener); // Removed as header is not floating anymore
 
         mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
             searchMods(mSearchEditText.getText().toString());
@@ -118,6 +119,7 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
             return false;
         });
 
+        /*
         mOverlay.post(() -> {
             int overlayHeight = mOverlay.getHeight();
             mRecyclerview.setPadding(
@@ -126,6 +128,22 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
                     mRecyclerview.getPaddingRight(),
                     mRecyclerview.getPaddingBottom());
         });
+        */
+
+        if (categoryChips != null) {
+            categoryChips.setOnCheckedChangeListener((group, checkedId) -> {
+                com.google.android.material.chip.Chip chip = group.findViewById(checkedId);
+                if (chip != null) {
+                    String category = chip.getText().toString();
+                    if ("All".equals(category)) {
+                        searchMods(mSearchEditText.getText().toString());
+                    } else {
+                        // For now, just prepend category to search if it's not "All"
+                        searchMods(category + " " + mSearchEditText.getText().toString());
+                    }
+                }
+            });
+        }
 
         mFilterButton.setOnClickListener(v -> displayFilterDialog());
         mSearchEditText.setHint(R.string.hint_search_mod);
