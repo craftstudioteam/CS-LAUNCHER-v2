@@ -110,7 +110,7 @@ public class CursorCustomizationFragment extends Fragment {
         view.findViewById(R.id.color_blue).setOnClickListener(v -> mDesigner.setColor(Color.BLUE));
         view.findViewById(R.id.color_black).setOnClickListener(v -> mDesigner.setColor(Color.BLACK));
 
-        view.findViewById(R.id.btn_apply_cursor).setOnClickListener(v -> applyCursor());
+        view.findViewById(R.id.btn_apply_import).setOnClickListener(v -> applyCursor());
 
         mSeekSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
