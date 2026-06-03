@@ -6,10 +6,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
 
 import net.kdt.pojavlaunch.LauncherActivity;
 import net.kdt.pojavlaunch.R;
@@ -25,6 +30,15 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         net.kdt.pojavlaunch.theme.ThemeManager.applyToPrefView(view);
         super.onViewCreated(view, savedInstanceState);
+        RecyclerView list = getListView();
+        if (list != null) {
+            LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
+                    getContext(), R.anim.layout_fall_down);
+            list.setLayoutAnimation(controller);
+            list.scheduleLayoutAnimation();
+            list.setItemAnimator(new DefaultItemAnimator());
+            list.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        }
     }
 
     @Override
@@ -34,22 +48,26 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
     }
 
     private void setupNotificationRequestPreference() {
-        Preference mRequestNotificationPermissionPreference = requirePreference("notification_permission_request");
-        Preference mMicrophonePermissionPreference = requirePreference("microphone_permission_request");
+        Preference mRequestNotificationPermissionPreference = findPreference("notification_permission_request");
+        Preference mMicrophonePermissionPreference = findPreference("microphone_permission_request");
         Activity activity = getActivity();
         if(activity instanceof LauncherActivity) {
             LauncherActivity launcherActivity = (LauncherActivity)activity;
-            mRequestNotificationPermissionPreference.setVisible(!launcherActivity.checkForNotificationPermission());
-            mRequestNotificationPermissionPreference.setOnPreferenceClickListener(preference -> {
-                launcherActivity.askForNotificationPermission(()->mRequestNotificationPermissionPreference.setVisible(false));
-                return true;
-            });
-            mMicrophonePermissionPreference.setVisible(!launcherActivity.checkForMicrophonePermission());
-            mMicrophonePermissionPreference.setOnPreferenceClickListener(preference -> {
-                launcherActivity.askForMicrophonePermission(()->mMicrophonePermissionPreference.setVisible(false));
-                return true;
-            });
-        }else{
+            if (mRequestNotificationPermissionPreference != null) {
+                mRequestNotificationPermissionPreference.setVisible(!launcherActivity.checkForNotificationPermission());
+                mRequestNotificationPermissionPreference.setOnPreferenceClickListener(preference -> {
+                    launcherActivity.askForNotificationPermission(()->mRequestNotificationPermissionPreference.setVisible(false));
+                    return true;
+                });
+            }
+            if (mMicrophonePermissionPreference != null) {
+                mMicrophonePermissionPreference.setVisible(!launcherActivity.checkForMicrophonePermission());
+                mMicrophonePermissionPreference.setOnPreferenceClickListener(preference -> {
+                    launcherActivity.askForMicrophonePermission(()->mMicrophonePermissionPreference.setVisible(false));
+                    return true;
+                });
+            }
+        }else if (mRequestNotificationPermissionPreference != null) {
             mRequestNotificationPermissionPreference.setVisible(false);
         }
     }
