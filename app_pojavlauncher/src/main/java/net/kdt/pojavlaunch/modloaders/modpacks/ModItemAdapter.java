@@ -113,7 +113,7 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public void onTaskCountChanged(int taskCount) {
+    public void onUpdateTaskCount(int taskCount) {
         mTasksRunning = taskCount != 0;
     }
 
@@ -195,7 +195,7 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             if (bitmap != null) {
                                 mIconView.setImageBitmap(bitmap);
                             } else {
-                                mIconView.setImageResource(R.drawable.ic_launcher_foreground);
+                                mIconView.setImageResource(R.mipmap.ic_launcher_foreground);
                             }
                         }
                     },

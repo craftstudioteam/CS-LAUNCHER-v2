@@ -168,7 +168,7 @@ public class ModDetailFragment extends Fragment {
                     if (bitmap != null && isAdded()) {
                         mModIcon.setImageBitmap(bitmap);
                     } else if (isAdded()) {
-                        mModIcon.setImageResource(R.drawable.ic_launcher_foreground);
+                        mModIcon.setImageResource(R.mipmap.ic_launcher_foreground);
                     }
                 },
                 mModItem.getIconCacheTag(),
@@ -491,7 +491,7 @@ public class ModDetailFragment extends Fragment {
             case Constants.SOURCE_MODRINTH:
                 return R.drawable.ic_modrinth;
             default:
-                return R.drawable.ic_launcher_foreground;
+                return R.mipmap.ic_launcher_foreground;
         }
     }
 }
