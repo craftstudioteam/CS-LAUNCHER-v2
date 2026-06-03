@@ -34,7 +34,8 @@
             app:min="@integer/memory_seekbar_min"
             app:seekBarIncrement="@integer/memory_seekbar_increment"
             app:selectable="false"
-            android:layout="@layout/preference_item_modern" />
+            android:icon="@drawable/ic_settings_java"
+            android:layout="@layout/preference_seekbar_modern"/>
 
         <SwitchPreference
             android:defaultValue="false"
