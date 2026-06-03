@@ -194,9 +194,8 @@ public class MainMenuFragment extends Fragment {
         Button mNewsButton          = view.findViewById(R.id.news_button);
         Button mDiscordButton       = view.findViewById(R.id.discord_button);
         Button mCustomControlButton = view.findViewById(R.id.custom_control_button);
-        Button mInstallJarButton    = view.findViewById(R.id.install_jar_button);
-        Button mShareLogsButton     = view.findViewById(R.id.share_logs_button);
-        Button mManageModsButton    = view.findViewById(R.id.open_files_button);
+        Button mInstallJarButton   = view.findViewById(R.id.install_jar_button);
+        Button mShareLogsButton    = view.findViewById(R.id.share_logs_button);
         Button mOpenDirectoryButton = view.findViewById(R.id.open_directory_button);
         Button mModStoreButton      = view.findViewById(R.id.mod_store_button);
         Button mHomeButton          = view.findViewById(R.id.home_button);
@@ -268,10 +267,6 @@ public class MainMenuFragment extends Fragment {
         if (mShareLogsButton != null)
             mShareLogsButton.setOnClickListener(v -> shareLog(requireContext()));
 
-        // Manage Mods
-        mManageModsButton.setOnClickListener(v ->
-                openPane(ManageModsFragment.class, ManageModsFragment.TAG, null));
-
         // Open game directory
         if (mOpenDirectoryButton != null) {
             mOpenDirectoryButton.setOnClickListener(v -> {
@@ -312,8 +307,8 @@ public class MainMenuFragment extends Fragment {
         // Play button visibility during downloads handled by activity's ProgressLayout
 
         // Apply Premium Mobile Animations
-        applyPremiumTouchAnimation(mHomeButton, mModStoreButton, mCustomControlButton, mInstallJarButton, 
-                                   mShareLogsButton, mManageModsButton, mOpenDirectoryButton, 
+        applyPremiumTouchAnimation(mHomeButton, mModStoreButton, mCustomControlButton, mInstallJarButton,
+                                   mShareLogsButton, mOpenDirectoryButton,
                                    mPlayBtn, mEditProfileBtn, mVersionSpinner);
 
         // Play

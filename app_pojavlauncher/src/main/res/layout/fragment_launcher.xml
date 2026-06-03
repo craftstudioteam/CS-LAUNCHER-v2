@@ -116,7 +116,8 @@
                 style="@style/LauncherMenuButton.Universal"
                 android:layout_width="match_parent"
                 android:drawableStart="@drawable/ic_folder_managed"
-                android:text="@string/mcl_button_manage_mods" />
+                android:text="@string/mcl_button_manage_mods"
+                android:visibility="gone" />
 
             <!-- OPEN GAME DIRECTORY -->
             <com.kdt.mcgui.LauncherMenuButton

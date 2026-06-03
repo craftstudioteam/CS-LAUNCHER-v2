@@ -53,6 +53,7 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     private MinecraftProfile mTempProfile = null;
     private String mValueToConsume = "";
     private Button mSaveButton, mDeleteButton, mControlSelectButton, mGameDirButton, mVersionSelectButton;
+    private Button mManageModsButton, mResourcePacksButton, mShaderPacksButton;
     private Spinner mDefaultRuntime, mDefaultRenderer;
     private EditText mDefaultName, mDefaultJvmArgument;
     private TextView mDefaultPath, mDefaultVersion, mDefaultControl;
@@ -140,7 +141,33 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         // Set up the icon change click listener
         mProfileIcon.setOnClickListener(v -> CropperUtils.startCropper(mCropperLauncher));
 
+        mManageModsButton.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, mProfileKey);
+            navigateToFragment(ManageModsFragment.class, ManageModsFragment.TAG, args);
+        });
+
+        mResourcePacksButton.setOnClickListener(v -> {
+            File gameDir = Tools.getGameDirPath(mTempProfile);
+            Tools.openPath(v.getContext(), new File(gameDir, "resourcepacks"), false);
+        });
+
+        mShaderPacksButton.setOnClickListener(v -> {
+            File gameDir = Tools.getGameDirPath(mTempProfile);
+            Tools.openPath(v.getContext(), new File(gameDir, "shaderpacks"), false);
+        });
+
         loadValues(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, ""), view.getContext());
+    }
+
+    /** Navigate to a fragment — stays inside the right pane when running as a child fragment. */
+    private void navigateToFragment(Class<? extends Fragment> fragmentClass, String tag, Bundle args) {
+        Fragment parent = getParentFragment();
+        if (parent instanceof MainMenuFragment) {
+            ((MainMenuFragment) parent).openChildPane(fragmentClass, tag, args);
+        } else {
+            Tools.swapFragment(requireActivity(), fragmentClass, tag, args);
+        }
     }
 
     private View.OnClickListener getGameDirListener() {
@@ -151,8 +178,7 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
             bundle.putBoolean(FileSelectorFragment.BUNDLE_SHOW_FILE, false);
             mValueToConsume = FileSelectorFragment.BUNDLE_SELECT_FOLDER;
 
-            Tools.swapFragment(requireActivity(),
-                    FileSelectorFragment.class, FileSelectorFragment.TAG, bundle);
+            navigateToFragment(FileSelectorFragment.class, FileSelectorFragment.TAG, bundle);
         };
     }
 
@@ -163,8 +189,7 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
             bundle.putString(FileSelectorFragment.BUNDLE_ROOT_PATH, Tools.CTRLMAP_PATH);
             mValueToConsume = FileSelectorFragment.BUNDLE_SELECT_FILE;
 
-            Tools.swapFragment(requireActivity(),
-                    FileSelectorFragment.class, FileSelectorFragment.TAG, bundle);
+            navigateToFragment(FileSelectorFragment.class, FileSelectorFragment.TAG, bundle);
         };
     }
 
@@ -254,6 +279,10 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         mVersionSelectButton = view.findViewById(R.id.vprof_editor_version_button);
         mGameDirButton = view.findViewById(R.id.vprof_editor_path_button);
         mProfileIcon = view.findViewById(R.id.vprof_editor_profile_icon);
+
+        mManageModsButton = view.findViewById(R.id.vprof_editor_manage_mods);
+        mResourcePacksButton = view.findViewById(R.id.vprof_editor_resource_packs);
+        mShaderPacksButton = view.findViewById(R.id.vprof_editor_shader_packs);
     }
 
     private void save(){
