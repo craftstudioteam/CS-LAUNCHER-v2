@@ -66,59 +66,91 @@
             android:scrollbars="none"
             app:layout_constraintTop_toBottomOf="@id/search_mod_edittext">
 
-            <com.google.android.material.chip.ChipGroup
+            <LinearLayout
                 android:id="@+id/mod_category_chips"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/padding_medium"
-                app:singleLine="true"
-                app:singleSelection="true">
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/padding_medium">
 
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                <TextView
+                    android:id="@+id/chip_all"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/chip_background_selector"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:layout_marginEnd="8dp"
                     android:text="All"
-                    app:chipBackgroundColor="@color/bg_nav_item_active"
-                    app:chipStrokeWidth="0dp" />
+                    android:textColor="@color/text_primary_light"
+                    android:isSelected="true"/>
 
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                <TextView
+                    android:id="@+id/chip_performance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Performance" />
+                    android:background="@drawable/chip_background_selector"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Performance"
+                    android:textColor="@color/text_primary_light"/>
 
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                <TextView
+                    android:id="@+id/chip_pvp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PvP" />
+                    android:background="@drawable/chip_background_selector"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="PvP"
+                    android:textColor="@color/text_primary_light"/>
 
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                <TextView
+                    android:id="@+id/chip_utility"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Utility" />
+                    android:background="@drawable/chip_background_selector"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Utility"
+                    android:textColor="@color/text_primary_light"/>
 
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                <TextView
+                    android:id="@+id/chip_adventure"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Adventure" />
+                    android:background="@drawable/chip_background_selector"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Adventure"
+                    android:textColor="@color/text_primary_light"/>
 
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                <TextView
+                    android:id="@+id/chip_world"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="World" />
+                    android:background="@drawable/chip_background_selector"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="World"
+                    android:textColor="@color/text_primary_light"/>
 
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                <TextView
+                    android:id="@+id/chip_shaders"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Shaders" />
+                    android:background="@drawable/chip_background_selector"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="Shaders"
+                    android:textColor="@color/text_primary_light"/>
 
-            </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
         </HorizontalScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

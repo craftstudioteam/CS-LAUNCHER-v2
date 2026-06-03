@@ -113,4 +113,6 @@
     <color name="text_secondary">#8FFFFFFF</color>
     <color name="stroke_neon">#33A6FF3D</color>
 
+    <color name="text_primary_light">#FFFFFFFF</color>
+    <color name="bg_nav_item_active">#AAA6FF3D</color>
 </resources>
