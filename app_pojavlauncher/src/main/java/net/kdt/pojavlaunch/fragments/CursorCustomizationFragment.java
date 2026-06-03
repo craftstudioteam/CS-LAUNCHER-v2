@@ -23,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
@@ -209,11 +210,5 @@ public class CursorCustomizationFragment extends Fragment {
             ExtraCore.setValue(ExtraConstants.REFRESH_CURSOR, true);
             Toast.makeText(getContext(), "Cursor Applied!", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void startPreviewAnimations() {
-        ScaleAnimation pulse = new ScaleAnimation(0.95f, 1.05f, 0.95f, 1.05f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        pulse.setDuration(1500); pulse.setRepeatMode(Animation.REVERSE); pulse.setRepeatCount(Animation.INFINITE);
-        mCreateLivePreview.startAnimation(pulse);
     }
 }

@@ -86,6 +86,7 @@ public class CurseforgeApi implements ModpackApi{
         ArrayList<ModItem> modItemList = new ArrayList<>(dataArray.size());
         for(int i = 0; i < dataArray.size(); i++) {
             JsonObject dataElement = dataArray.get(i).getAsJsonObject();
+            JsonObject logo = dataElement.has("logo") ? dataElement.getAsJsonObject("logo") : null;
             JsonElement allowModDistribution = dataElement.get("allowModDistribution");
             // Gson automatically casts null to false, which leans to issues
             // So, only check the distribution flag if it is non-null
