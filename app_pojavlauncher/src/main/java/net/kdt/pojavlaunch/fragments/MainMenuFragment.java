@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -321,7 +322,7 @@ public class MainMenuFragment extends Fragment {
                     refreshHomeState();
                 } else {
                     Tools.swapFragment(requireActivity(), LauncherPreferenceRendererSettingsFragment.class,
-                            LauncherPreferenceRendererSettingsFragment.TAG, null);
+                            "LauncherPreferenceRendererSettingsFragment", null);
                 }
             });
         }
