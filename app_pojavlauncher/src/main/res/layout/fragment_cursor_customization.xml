@@ -40,9 +40,8 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/padding_medium"
                 android:text="Import"
-                android:textColor="@color/neon_green"
-                android:textSize="@dimen/_12ssp"
-                android:textStyle="bold" />
+                android:textColor="@color/text_secondary_light"
+                android:textSize="@dimen/_12ssp" />
 
             <TextView
                 android:id="@+id/tab_create"
@@ -50,8 +49,9 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/padding_medium"
                 android:text="Create"
-                android:textColor="@color/text_secondary_light"
-                android:textSize="@dimen/_12ssp" />
+                android:textColor="@color/neon_green"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tab_my_cursors"
@@ -66,323 +66,169 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Main Content Area -->
-    <FrameLayout
-        android:id="@+id/cursor_content_frame"
+    <!-- CREATE MODE PANEL -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/panel_create"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cursor_top_bar">
 
-        <!-- CREATE MODE (EDITOR) -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/panel_create"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+        <!-- Preview Card -->
+        <FrameLayout
+            android:id="@+id/create_preview_card"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="@dimen/padding_medium"
+            android:background="@drawable/background_card"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <!-- Editor Top Toolbar -->
-            <LinearLayout
-                android:id="@+id/editor_top_toolbar"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="LIVE PREVIEW"
+                android:gravity="center"
+                android:textSize="10sp"
+                android:textColor="@color/neon_green"
+                android:layout_marginTop="8dp"/>
+
+            <ImageView
+                android:id="@+id/create_live_preview"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_mouse_pointer" />
+        </FrameLayout>
+
+        <!-- Canvas -->
+        <net.kdt.pojavlaunch.customcontrols.mouse.CursorDesignerView
+            android:id="@+id/cursor_designer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginVertical="@dimen/padding_small"
+            app:layout_constraintBottom_toTopOf="@id/create_bottom_panel"
+            app:layout_constraintTop_toBottomOf="@id/create_preview_card" />
+
+        <!-- Tools and Colors -->
+        <LinearLayout
+            android:id="@+id/create_bottom_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#222222"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Top bar (Undo/Redo/Clear) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:padding="@dimen/padding_small"
-                android:background="#262626"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageButton
-                    android:id="@+id/btn_undo"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_undo" />
-
-                <ImageButton
-                    android:id="@+id/btn_redo"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_redo" />
-
+                android:paddingHorizontal="@dimen/padding_small">
+                <ImageButton android:id="@+id/btn_undo" android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/ic_undo" android:background="?attr/selectableItemBackgroundBorderless"/>
+                <ImageButton android:id="@+id/btn_redo" android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/ic_redo" android:background="?attr/selectableItemBackgroundBorderless"/>
                 <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
-
-                <ImageButton
-                    android:id="@+id/btn_clear_canvas"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_menu_delete_forever" />
-
+                <ImageButton android:id="@+id/btn_clear_canvas" android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/ic_menu_delete_forever" android:background="?attr/selectableItemBackgroundBorderless"/>
+                <ImageButton android:id="@+id/btn_save_creation" android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/ic_edit_profile" android:background="?attr/selectableItemBackgroundBorderless" android:tint="@color/neon_green"/>
             </LinearLayout>
 
-            <net.kdt.pojavlaunch.customcontrols.mouse.CursorDesignerView
-                android:id="@+id/cursor_designer"
+            <!-- Colors -->
+            <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@id/editor_bottom_toolbar"
-                app:layout_constraintTop_toBottomOf="@id/editor_top_toolbar" />
-
-            <!-- Editor Bottom Toolbar -->
-            <LinearLayout
-                android:id="@+id/editor_bottom_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#262626"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:paddingVertical="@dimen/padding_small">
-
+                android:layout_height="48dp"
+                android:scrollbars="none"
+                android:paddingHorizontal="8dp">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="match_parent" android:orientation="horizontal" android:gravity="center_vertical">
                     <View android:id="@+id/color_white" android:layout_width="32dp" android:layout_height="32dp" android:background="#FFFFFF" android:layout_margin="8dp"/>
                     <View android:id="@+id/color_neon" android:layout_width="32dp" android:layout_height="32dp" android:background="#A6FF3D" android:layout_margin="8dp"/>
                     <View android:id="@+id/color_red" android:layout_width="32dp" android:layout_height="32dp" android:background="#FF0000" android:layout_margin="8dp"/>
                     <View android:id="@+id/color_blue" android:layout_width="32dp" android:layout_height="32dp" android:background="#0000FF" android:layout_margin="8dp"/>
-                    
-                    <ImageButton
-                        android:id="@+id/btn_color_picker"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_edit_profile"
-                        android:tint="@color/neon_green" />
+                    <View android:id="@+id/color_black" android:layout_width="32dp" android:layout_height="32dp" android:background="#000000" android:layout_margin="8dp"/>
                 </LinearLayout>
+            </HorizontalScrollView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <ImageButton
-                        android:id="@+id/btn_tool_pencil"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:src="@drawable/ic_edit_profile"
-                        android:backgroundTint="@color/neon_green_dim" />
-
-                    <ImageButton
-                        android:id="@+id/btn_tool_eraser"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:src="@drawable/ic_menu_delete_forever" />
-
-                    <ImageButton
-                        android:id="@+id/btn_tool_fill"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:src="@drawable/ic_fill" />
-
-                </LinearLayout>
+            <!-- Tool buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <ImageButton android:id="@+id/btn_tool_pencil" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:src="@drawable/ic_edit_profile" android:background="?attr/selectableItemBackground" android:backgroundTint="@color/neon_green_dim"/>
+                <ImageButton android:id="@+id/btn_tool_fill" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:src="@drawable/ic_fill" android:background="?attr/selectableItemBackground"/>
+                <ImageButton android:id="@+id/btn_tool_eraser" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:src="@drawable/ic_menu_delete_forever" android:background="?attr/selectableItemBackground"/>
             </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!-- IMPORT & COLLECTION MODE -->
-        <LinearLayout
-            android:id="@+id/panel_generic"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="10">
-
-            <!-- Left Controls -->
-            <ScrollView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:background="@color/bg_sidebar">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/padding_medium">
-
-                    <com.kdt.mcgui.MineButton
-                        android:id="@+id/btn_import_png"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Import from Device"
-                        android:layout_marginBottom="@dimen/padding_medium"/>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_my_cursors"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
-
-                    <!-- Global Settings -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:background="@drawable/background_card"
-                        android:padding="@dimen/padding_medium">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Global Cursor Settings"
-                            android:textColor="@color/neon_green"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/_11ssp"
-                            android:layout_marginBottom="@dimen/padding_medium"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Size Scale"
-                            android:textColor="@color/text_primary_white"
-                            android:textSize="@dimen/_10ssp"/>
-                        
-                        <SeekBar
-                            android:id="@+id/seek_cursor_size"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:max="300"
-                            android:progress="100"
-                            android:layout_marginBottom="@dimen/padding_small"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Glow Strength"
-                            android:textColor="@color/text_primary_white"
-                            android:textSize="@dimen/_10ssp"/>
-
-                        <SeekBar
-                            android:id="@+id/seek_glow_strength"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:max="100"
-                            android:progress="0"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-            </ScrollView>
-
-            <!-- Right Preview -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="6"
-                android:padding="@dimen/padding_large">
-
-                <TextView
-                    android:id="@+id/preview_header"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Live Preview"
-                    android:textColor="@color/text_primary_white"
-                    android:textSize="@dimen/_14ssp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <FrameLayout
-                    android:id="@+id/cursor_preview_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/padding_medium"
-                    android:background="@drawable/background_card"
-                    app:layout_constraintBottom_toTopOf="@id/btn_apply_cursor"
-                    app:layout_constraintTop_toBottomOf="@id/preview_header">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:gravity="center">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
-                            <ImageView
-                                android:id="@+id/cursor_preview_normal"
-                                android:layout_width="@dimen/_48sdp"
-                                android:layout_height="@dimen/_48sdp"
-                                android:src="@drawable/ic_mouse_pointer" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Normal"
-                                android:textSize="@dimen/_9ssp"
-                                android:textColor="@color/text_secondary_light" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
-                            <ImageView
-                                android:id="@+id/cursor_preview_hover"
-                                android:layout_width="@dimen/_48sdp"
-                                android:layout_height="@dimen/_48sdp"
-                                android:src="@drawable/ic_mouse_pointer"
-                                android:alpha="0.8" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Hover"
-                                android:textSize="@dimen/_9ssp"
-                                android:textColor="@color/text_secondary_light" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
-                            <ImageView
-                                android:id="@+id/cursor_preview_click"
-                                android:layout_width="@dimen/_48sdp"
-                                android:layout_height="@dimen/_48sdp"
-                                android:src="@drawable/ic_mouse_pointer"
-                                android:scaleX="0.9"
-                                android:scaleY="0.9" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Click"
-                                android:textSize="@dimen/_9ssp"
-                                android:textColor="@color/text_secondary_light" />
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </FrameLayout>
-
-                <com.kdt.mcgui.MineButton
-                    android:id="@+id/btn_apply_cursor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Apply to Launcher"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- IMPORT PANEL -->
+    <LinearLayout
+        android:id="@+id/panel_import"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_medium"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cursor_top_bar">
+
+        <com.kdt.mcgui.MineButton
+            android:id="@+id/btn_import_png"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="IMPORT PNG IMAGE"
+            android:layout_marginBottom="16dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/background_card"
+            android:padding="@dimen/padding_medium">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GLOBAL SCALE"
+                android:textColor="@color/neon_green"
+                android:textSize="10sp"/>
+                
+            <SeekBar
+                android:id="@+id/seek_cursor_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="300"
+                android:progress="100"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GLOW STRENGTH"
+                android:textColor="@color/neon_green"
+                android:textSize="10sp"/>
+
+            <SeekBar
+                android:id="@+id/seek_glow_strength"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="0"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- COLLECTION PANEL -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/panel_collection"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="@dimen/padding_medium"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cursor_top_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
