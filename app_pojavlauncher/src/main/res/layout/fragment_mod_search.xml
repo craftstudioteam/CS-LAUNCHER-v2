@@ -82,8 +82,7 @@
                     android:paddingVertical="8dp"
                     android:layout_marginEnd="8dp"
                     android:text="All"
-                    android:textColor="@color/text_primary_light"
-                    android:isSelected="true"/>
+                    android:textColor="@color/text_primary_light"/>
 
                 <TextView
                     android:id="@+id/chip_performance"
