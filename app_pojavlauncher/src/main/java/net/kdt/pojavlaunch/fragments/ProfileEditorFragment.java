@@ -16,16 +16,21 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ImageButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
+import net.kdt.pojavlaunch.modloaders.InstalledModAdapter;
+import net.kdt.pojavlaunch.modloaders.LocalPackAdapter;
 import net.kdt.pojavlaunch.multirt.MultiRTUtils;
 import net.kdt.pojavlaunch.multirt.RTSpinnerAdapter;
 import net.kdt.pojavlaunch.multirt.Runtime;
@@ -52,7 +57,9 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     private MinecraftProfile mTempProfile = null;
     private String mValueToConsume = "";
     private Button mSaveButton, mDeleteButton, mControlSelectButton, mGameDirButton, mVersionSelectButton;
-    private Button mManageModsButton, mResourcePacksButton, mShaderPacksButton;
+    private ImageButton mModsAddButton, mResourcePacksFolder, mShaderPacksFolder;
+    private RecyclerView mModsRecycler, mResourcePacksRecycler, mShaderPacksRecycler;
+    private TextView mModsEmpty, mResourcePacksEmpty, mShaderPacksEmpty;
     private Spinner mDefaultRuntime, mDefaultRenderer;
     private EditText mDefaultName, mDefaultJvmArgument;
     private TextView mDefaultPath, mDefaultVersion, mDefaultControl;
@@ -140,18 +147,18 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         // Set up the icon change click listener
         mProfileIcon.setOnClickListener(v -> CropperUtils.startCropper(mCropperLauncher));
 
-        mManageModsButton.setOnClickListener(v -> {
+        mModsAddButton.setOnClickListener(v -> {
             Bundle args = new Bundle();
             args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, mProfileKey);
             navigateToFragment(ManageModsFragment.class, ManageModsFragment.TAG, args);
         });
 
-        mResourcePacksButton.setOnClickListener(v -> {
+        mResourcePacksFolder.setOnClickListener(v -> {
             File gameDir = Tools.getGameDirPath(mTempProfile);
             Tools.openPath(v.getContext(), new File(gameDir, "resourcepacks"), false);
         });
 
-        mShaderPacksButton.setOnClickListener(v -> {
+        mShaderPacksFolder.setOnClickListener(v -> {
             File gameDir = Tools.getGameDirPath(mTempProfile);
             Tools.openPath(v.getContext(), new File(gameDir, "shaderpacks"), false);
         });
@@ -236,6 +243,27 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         mDefaultName.setText(mTempProfile.name);
         mDefaultPath.setText(mTempProfile.gameDir == null ? "" : mTempProfile.gameDir);
         mDefaultControl.setText(mTempProfile.controlFile == null ? "" : mTempProfile.controlFile);
+
+        setupPacksLists();
+    }
+
+    private void setupPacksLists() {
+        File gameDir = Tools.getGameDirPath(mTempProfile);
+        File modsDir = new File(gameDir, "mods");
+        File resourcePacksDir = new File(gameDir, "resourcepacks");
+        File shaderPacksDir = new File(gameDir, "shaderpacks");
+
+        mModsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        mModsRecycler.setAdapter(new InstalledModAdapter(modsDir, isEmpty -> 
+            mModsEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE)));
+
+        mResourcePacksRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        mResourcePacksRecycler.setAdapter(new LocalPackAdapter(resourcePacksDir, isEmpty -> 
+            mResourcePacksEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE)));
+
+        mShaderPacksRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        mShaderPacksRecycler.setAdapter(new LocalPackAdapter(shaderPacksDir, isEmpty -> 
+            mShaderPacksEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE)));
     }
 
     private MinecraftProfile getProfile(@NonNull String profile){
@@ -279,9 +307,15 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         mGameDirButton = view.findViewById(R.id.vprof_editor_path_button);
         mProfileIcon = view.findViewById(R.id.vprof_editor_profile_icon);
 
-        mManageModsButton = view.findViewById(R.id.vprof_editor_manage_mods);
-        mResourcePacksButton = view.findViewById(R.id.vprof_editor_resource_packs);
-        mShaderPacksButton = view.findViewById(R.id.vprof_editor_shader_packs);
+        mModsAddButton = view.findViewById(R.id.vprof_editor_mods_add);
+        mResourcePacksFolder = view.findViewById(R.id.vprof_editor_resource_packs_folder);
+        mShaderPacksFolder = view.findViewById(R.id.vprof_editor_shader_packs_folder);
+        mModsRecycler = view.findViewById(R.id.vprof_editor_mods_recycler);
+        mResourcePacksRecycler = view.findViewById(R.id.vprof_editor_resource_packs_recycler);
+        mShaderPacksRecycler = view.findViewById(R.id.vprof_editor_shader_packs_recycler);
+        mModsEmpty = view.findViewById(R.id.vprof_editor_mods_empty);
+        mResourcePacksEmpty = view.findViewById(R.id.vprof_editor_resource_packs_empty);
+        mShaderPacksEmpty = view.findViewById(R.id.vprof_editor_shader_packs_empty);
     }
 
     private void save(){

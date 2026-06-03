@@ -76,6 +76,10 @@ public class LauncherPreferences {
 
     public static boolean PREF_MOUSE_GRAB_FORCE = false;
 
+    public static String PREF_CUSTOM_CURSOR_PATH = null;
+    public static boolean PREF_CUSTOM_CURSOR_ENABLED = false;
+    public static int PREF_CUSTOM_CURSOR_GLOW_RADIUS = 0;
+    public static int PREF_CUSTOM_CURSOR_GLOW_COLOR = Color.parseColor("#A6FF3D");
 
     public static void loadPreferences(Context ctx) {
         //Required for CTRLDEF_FILE and MultiRT
@@ -140,6 +144,11 @@ public class LauncherPreferences {
             PREF_DEFAULT_RUNTIME = MultiRTUtils.getInstalledRuntimes().get(0).name;
             LauncherPreferences.DEFAULT_PREF.edit().putString("defaultRuntime",LauncherPreferences.PREF_DEFAULT_RUNTIME).apply();
         }
+
+        PREF_CUSTOM_CURSOR_PATH = DEFAULT_PREF.getString("custom_cursor_path", null);
+        PREF_CUSTOM_CURSOR_ENABLED = DEFAULT_PREF.getBoolean("custom_cursor_enabled", false);
+        PREF_CUSTOM_CURSOR_GLOW_RADIUS = DEFAULT_PREF.getInt("custom_cursor_glow_radius", 0);
+        PREF_CUSTOM_CURSOR_GLOW_COLOR = DEFAULT_PREF.getInt("custom_cursor_glow_color", Color.parseColor("#A6FF3D"));
     }
 
     /**

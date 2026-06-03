@@ -198,6 +198,7 @@ public class MainMenuFragment extends Fragment {
         Button mShareLogsButton    = view.findViewById(R.id.share_logs_button);
         Button mOpenDirectoryButton = view.findViewById(R.id.open_directory_button);
         Button mModStoreButton      = view.findViewById(R.id.mod_store_button);
+        Button mCursorCustomButton  = view.findViewById(R.id.cursor_customization_button);
         Button mHomeButton          = view.findViewById(R.id.home_button);
 
         ImageButton mEditProfileBtn = view.findViewById(R.id.edit_profile_button);
@@ -246,6 +247,11 @@ public class MainMenuFragment extends Fragment {
         mCustomControlButton.setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), CustomControlsActivity.class)));
 
+        // Cursor Customization
+        if (mCursorCustomButton != null)
+            mCursorCustomButton.setOnClickListener(v ->
+                Tools.swapFragment(requireActivity(), CursorCustomizationFragment.class, CursorCustomizationFragment.TAG, null));
+
         // Mod Store
         if (mModStoreButton != null)
             mModStoreButton.setOnClickListener(v ->
@@ -282,14 +288,9 @@ public class MainMenuFragment extends Fragment {
             });
         }
 
-        // Edit profile — open in right pane in landscape, full-screen in portrait
+        // Edit profile — always full-screen
         mEditProfileBtn.setOnClickListener(v -> {
-            if (isTwoPane()) {
-                openPane(net.kdt.pojavlaunch.fragments.ProfileEditorFragment.class,
-                        net.kdt.pojavlaunch.fragments.ProfileEditorFragment.TAG, null);
-            } else {
-                mVersionSpinner.openProfileEditor(requireActivity());
-            }
+            mVersionSpinner.openProfileEditor(requireActivity());
         });
 
         // In landscape: tapping the spinner opens the instance picker in the right pane
@@ -307,7 +308,7 @@ public class MainMenuFragment extends Fragment {
         // Play button visibility during downloads handled by activity's ProgressLayout
 
         // Apply Premium Mobile Animations
-        applyPremiumTouchAnimation(mHomeButton, mModStoreButton, mCustomControlButton, mInstallJarButton,
+        applyPremiumTouchAnimation(mHomeButton, mModStoreButton, mCursorCustomButton, mCustomControlButton, mInstallJarButton,
                                    mShareLogsButton, mOpenDirectoryButton,
                                    mPlayBtn, mEditProfileBtn, mVersionSpinner);
 
@@ -373,7 +374,7 @@ public class MainMenuFragment extends Fragment {
 
     /** Updates the visual state of sidebar buttons to highlight the active one. */
     private void updateSidebarStates(View root, int activeId) {
-        int[] buttonIds = {R.id.home_button, R.id.mod_store_button, R.id.open_files_button};
+        int[] buttonIds = {R.id.home_button, R.id.mod_store_button};
         for (int id : buttonIds) {
             View btn = root.findViewById(id);
             if (btn == null) continue;

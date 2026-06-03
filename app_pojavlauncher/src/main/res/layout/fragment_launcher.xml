@@ -91,6 +91,14 @@
                 android:drawableStart="@drawable/ic_menu_custom_controls"
                 android:text="@string/mcl_option_customcontrol" />
 
+            <!-- CURSOR CUSTOMIZATION -->
+            <com.kdt.mcgui.LauncherMenuButton
+                android:id="@+id/cursor_customization_button"
+                style="@style/LauncherMenuButton.Universal"
+                android:layout_width="match_parent"
+                android:drawableStart="@drawable/ic_mouse_pointer"
+                android:text="@string/cursor_customization_title" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
@@ -109,15 +117,6 @@
                 android:paddingHorizontal="@dimen/padding_heavy"
                 android:paddingTop="@dimen/padding_large"
                 android:paddingBottom="@dimen/padding_medium" />
-
-            <!-- MANAGE MODS & TOOLS -->
-            <com.kdt.mcgui.LauncherMenuButton
-                android:id="@+id/open_files_button"
-                style="@style/LauncherMenuButton.Universal"
-                android:layout_width="match_parent"
-                android:drawableStart="@drawable/ic_folder_managed"
-                android:text="@string/mcl_button_manage_mods"
-                android:visibility="gone" />
 
             <!-- OPEN GAME DIRECTORY -->
             <com.kdt.mcgui.LauncherMenuButton
