@@ -50,12 +50,9 @@ public class MainMenuFragment extends Fragment {
     private OnBackPressedCallback mRightPaneBackCallback;
 
     // ── Top bar state ──
-    private View mTopBrandingRow;
     private View mProfileCard;
     private EditText mTopSearchField;
     private ImageView mTopSearchIcon;
-    private View mBrandTitle;
-    private View mBrandSubtitle;
     private int mCurrentNavTab = 0; // 0=Home, 1=ModStore, ...
     // Nav indicator views
     private View mHomeIndicator, mModStoreIndicator, mControlsIndicator, mCursorIndicator, mToolsIndicator;
@@ -244,12 +241,9 @@ public class MainMenuFragment extends Fragment {
         mToolsIndicator = view.findViewById(R.id.nav_tools_indicator);
 
         // Top bar elements for dynamic states
-        mTopBrandingRow = view.findViewById(R.id.top_branding_row);
         mProfileCard = view.findViewById(R.id.profile_card);
         mTopSearchField = view.findViewById(R.id.top_search_field);
         mTopSearchIcon = view.findViewById(R.id.top_search_icon);
-        mBrandTitle = view.findViewById(R.id.brand_title);
-        mBrandSubtitle = view.findViewById(R.id.brand_subtitle);
 
         // Load home fragment into right pane
         if (isTwoPane()) {
@@ -416,13 +410,7 @@ public class MainMenuFragment extends Fragment {
                 .setInterpolator(mFastOutSlowIn)
                 .start();
 
-        // Collapse brand subtitle for space
-        if (mBrandSubtitle != null) {
-            mBrandSubtitle.animate()
-                    .alpha(0f)
-                    .setDuration(200)
-                    .start();
-        }
+
     }
 
     private void transitionToHomeState() {
@@ -451,12 +439,7 @@ public class MainMenuFragment extends Fragment {
                 .setDuration(200)
                 .start();
 
-        if (mBrandSubtitle != null) {
-            mBrandSubtitle.animate()
-                    .alpha(1f)
-                    .setDuration(200)
-                    .start();
-        }
+
     }
 
     private void setActiveNavTab(int tabIndex) {
