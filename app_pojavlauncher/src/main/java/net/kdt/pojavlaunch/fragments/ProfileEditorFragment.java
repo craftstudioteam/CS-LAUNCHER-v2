@@ -47,6 +47,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import android.net.Uri;
+import android.widget.Toast;
+import androidx.activity.result.contract.ActivityResultContracts;
+import org.apache.commons.io.IOUtils;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.File;
 
 public class ProfileEditorFragment extends Fragment implements CropperUtils.CropperListener{
@@ -57,7 +63,7 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     private MinecraftProfile mTempProfile = null;
     private String mValueToConsume = "";
     private Button mSaveButton, mDeleteButton, mControlSelectButton, mGameDirButton, mVersionSelectButton;
-    private ImageButton mModsAddButton, mResourcePacksFolder, mShaderPacksFolder;
+    private ImageButton mModsAddButton, mResourcePacksFolder, mShaderPacksFolder, mResourcePacksImport, mShaderPacksImport;
     private RecyclerView mModsRecycler, mResourcePacksRecycler, mShaderPacksRecycler;
     private TextView mModsEmpty, mResourcePacksEmpty, mShaderPacksEmpty;
     private Spinner mDefaultRuntime, mDefaultRenderer;
@@ -65,6 +71,16 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     private TextView mDefaultPath, mDefaultVersion, mDefaultControl;
     private ImageView mProfileIcon;
     private final ActivityResultLauncher<?> mCropperLauncher = CropperUtils.registerCropper(this, this);
+
+    private final ActivityResultLauncher<String> mResourcePackPicker = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> handleImport(uri, "resourcepacks")
+    );
+
+    private final ActivityResultLauncher<String> mShaderPackPicker = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> handleImport(uri, "shaderpacks")
+    );
 
     private List<String> mRenderNames;
 
@@ -163,7 +179,31 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
             Tools.openPath(v.getContext(), new File(gameDir, "shaderpacks"), false);
         });
 
+        mResourcePacksImport.setOnClickListener(v -> mResourcePackPicker.launch("*/*"));
+        mShaderPacksImport.setOnClickListener(v -> mShaderPackPicker.launch("*/*"));
+
         loadValues(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, ""), view.getContext());
+    }
+
+    private void handleImport(Uri uri, String subDir) {
+        if (uri == null) return;
+        try (InputStream is = requireContext().getContentResolver().openInputStream(uri)) {
+            File gameDir = Tools.getGameDirPath(mTempProfile);
+            File destDir = new File(gameDir, subDir);
+            if (!destDir.exists()) destDir.mkdirs();
+
+            String fileName = Tools.getFileName(requireContext(), uri);
+            if (fileName == null) fileName = "imported_" + System.currentTimeMillis() + ".zip";
+            
+            File destFile = new File(destDir, fileName);
+            try (FileOutputStream os = new FileOutputStream(destFile)) {
+                IOUtils.copy(is, os);
+            }
+            Toast.makeText(getContext(), "Imported successfully!", Toast.LENGTH_SHORT).show();
+            setupPacksLists(); // Refresh
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Import failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     /** Navigate to a fragment — stays inside the right pane when running as a child fragment. */
@@ -316,6 +356,8 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         mModsEmpty = view.findViewById(R.id.vprof_editor_mods_empty);
         mResourcePacksEmpty = view.findViewById(R.id.vprof_editor_resource_packs_empty);
         mShaderPacksEmpty = view.findViewById(R.id.vprof_editor_shader_packs_empty);
+        mResourcePacksImport = view.findViewById(R.id.vprof_editor_resource_packs_import);
+        mShaderPacksImport = view.findViewById(R.id.vprof_editor_shader_packs_import);
     }
 
     private void save(){

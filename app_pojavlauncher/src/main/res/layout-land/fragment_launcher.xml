@@ -84,6 +84,18 @@
                 android:drawableStart="@drawable/ic_menu_custom_controls"
                 android:text="@string/mcl_option_customcontrol" />
 
+            <!-- ── CURSOR CUSTOMIZATION ── -->
+            <com.kdt.mcgui.LauncherMenuButton
+                android:id="@+id/cursor_customization_button"
+                style="@style/LauncherMenuButton.Universal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                android:drawableStart="@drawable/ic_mouse_pointer"
+                android:text="@string/cursor_customization_title" />
+
             <!-- Divider -->
             <View
                 android:layout_width="match_parent"
@@ -107,18 +119,6 @@
                 android:paddingEnd="@dimen/_14sdp"
                 android:paddingTop="@dimen/_6sdp"
                 android:paddingBottom="@dimen/_4sdp" />
-
-            <!-- ── MANAGE MODS ── -->
-            <com.kdt.mcgui.LauncherMenuButton
-                android:id="@+id/open_files_button"
-                style="@style/LauncherMenuButton.Universal"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_44sdp"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_2sdp"
-                android:drawableStart="@drawable/ic_folder_managed"
-                android:text="@string/mcl_button_manage_mods" />
 
             <!-- ── OPEN DIRECTORY ── -->
             <com.kdt.mcgui.LauncherMenuButton
