@@ -19,6 +19,7 @@ public class CursorDesignerView extends View {
     private Path mPath;
     public enum Tool { PENCIL, ERASER }
     private Tool mCurrentTool = Tool.PENCIL;
+    private int mCurrentColor = Color.WHITE;
     private int mCanvasSize = 32; // Smaller canvas for pixel art
 
     public CursorDesignerView(Context context, @Nullable AttributeSet attrs) {
