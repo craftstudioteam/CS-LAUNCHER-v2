@@ -160,8 +160,8 @@ public class ModVersionPickerFragment extends Fragment {
         // Parse X.Y.Z numeric prefix from MC version for comparison
         String mcA = a.mcVersion.replaceAll("[^0-9.]", "");
         String mcB = b.mcVersion.replaceAll("[^0-9.]", "");
-        String[] partsA = mcA.isEmpty() ? new String[]{"0"} : mcA.split("\.");
-        String[] partsB = mcB.isEmpty() ? new String[]{"0"} : mcB.split("\.");
+        String[] partsA = mcA.isEmpty() ? new String[]{"0"} : mcA.split("\\.");
+        String[] partsB = mcB.isEmpty() ? new String[]{"0"} : mcB.split("\\.");
         for (int i = 0; i < Math.min(partsA.length, partsB.length); i++) {
             try {
                 int cmp = Integer.compare(
