@@ -35,8 +35,8 @@
             app:selectable="false"
             app:min="@integer/resolution_seekbar_min"
             app:seekBarIncrement="@integer/resolution_seekbar_increment"
-            android:icon="@drawable/ic_setting_screen_resolution"
-            android:layout="@layout/preference_item_modern"
+            android:icon="@drawable/ic_settings_video"
+            android:layout="@layout/preference_seekbar_modern"
             />
 
         <SwitchPreference

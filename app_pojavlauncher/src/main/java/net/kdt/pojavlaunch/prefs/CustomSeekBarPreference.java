@@ -61,40 +61,42 @@ public class CustomSeekBarPreference extends SeekBarPreference {
     public void onBindViewHolder(@NonNull PreferenceViewHolder view) {
         super.onBindViewHolder(view);
         TextView titleTextView = (TextView) view.findViewById(android.R.id.title);
-        titleTextView.setTextColor(Color.WHITE);
+        if (titleTextView != null) titleTextView.setTextColor(Color.WHITE);
 
-        mTextView = (TextView) view.findViewById(R.id.seekbar_value);
-        mTextView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-        SeekBar seekBar = (SeekBar) view.findViewById(R.id.seekbar);
+        mTextView = (TextView) view.findViewById(android.R.id.seekbar_value);
+        if (mTextView != null) mTextView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        SeekBar seekBar = (SeekBar) view.findViewById(android.R.id.seekbar);
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        if (seekBar != null && mTextView != null) {
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progress += mMin;
-                progress = progress / getSeekBarIncrement();
-                progress = progress * getSeekBarIncrement();
-                progress -= mMin;
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    progress += mMin;
+                    progress = progress / getSeekBarIncrement();
+                    progress = progress * getSeekBarIncrement();
+                    progress -= mMin;
 
-                mTextView.setText(String.valueOf(progress + mMin));
-                updateTextViewWithSuffix();
-            }
+                    mTextView.setText(String.valueOf(progress + mMin));
+                    updateTextViewWithSuffix();
+                }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
-                int progress = seekBar.getProgress() + mMin;
-                progress /= getSeekBarIncrement();
-                progress *= getSeekBarIncrement();
-                progress -= mMin;
+                    int progress = seekBar.getProgress() + mMin;
+                    progress /= getSeekBarIncrement();
+                    progress *= getSeekBarIncrement();
+                    progress -= mMin;
 
-                setValue(progress + mMin);
-                updateTextViewWithSuffix();
-            }
-        });
+                    setValue(progress + mMin);
+                    updateTextViewWithSuffix();
+                }
+            });
+        }
 
         updateTextViewWithSuffix();
     }
