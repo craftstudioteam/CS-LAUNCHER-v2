@@ -78,6 +78,7 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
     private ColorStateList mDefaultTextColor;
 
     private ModpackApi mModpackApi;
+    private String mProfileKey;
     private final SearchFilters mSearchFilters;
 
     public ModsSearchFragment() {
@@ -91,6 +92,7 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
         super.onAttach(context);
         String profileKey = getArguments() != null ? getArguments().getString(ManageModsFragment.BUNDLE_PROFILE_KEY) : null;
         mModpackApi = new ModsInstallApi(context.getString(R.string.curseforge_api_key), mSearchFilters, profileKey);
+        mProfileKey = profileKey;
         ((ModsInstallApi) mModpackApi).mActivityContext = context;
     }
 
@@ -112,6 +114,7 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
 
         mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerview.setAdapter(mModItemAdapter);
+        mModItemAdapter.setOnItemClickListener(this::openModDetail);
 
         mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
             searchMods(mSearchEditText.getText().toString());
@@ -243,6 +246,29 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
         });
 
         dialog.show();
+    }
+
+
+    // ── Navigation to Detail Page ─────────────────────────────────────
+    private void openModDetail(ModItem item) {
+        Bundle args = new Bundle();
+        args.putSerializable("mod_item", item);
+        args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, mProfileKey);
+        navigateToFragment(ModDetailFragment.class, ModDetailFragment.TAG, args);
+    }
+
+    private void navigateToFragment(Class<? extends Fragment> fragmentClass, String tag, Bundle args) {
+        Fragment parent = getParentFragment();
+        if (parent != null) {
+            parent.getChildFragmentManager()
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.right_pane_container, fragmentClass, args, tag)
+                    .addToBackStack(tag)
+                    .commit();
+        } else if (getActivity() != null) {
+            Tools.swapFragment(getActivity(), fragmentClass, tag, args);
+        }
     }
 
     // ── ModsInstallApi ────────────────────────────────────────────────────────
