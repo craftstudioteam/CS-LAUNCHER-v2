@@ -19,6 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/fragment_padding_medium"
+            android:background="@drawable/bg_profile_editor_card"
+            android:layout_marginHorizontal="@dimen/padding_medium"
+            android:layout_marginTop="@dimen/padding_medium"
             android:paddingBottom="32dp">
 
             <!-- ── PROFILE INFORMATION ── -->
