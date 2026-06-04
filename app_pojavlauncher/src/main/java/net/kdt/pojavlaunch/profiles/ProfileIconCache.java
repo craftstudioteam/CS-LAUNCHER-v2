@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,7 +50,10 @@ public class ProfileIconCache {
 
     private static Drawable fetchDataIcon(Resources resources, String key, @NonNull String icon) {
         Drawable dataIcon = readDataIcon(resources, icon);
-        if(dataIcon == null) dataIcon = fetchFallbackIcon(resources);
+        if(dataIcon == null) {
+            Log.w("ProfileIconCache", "fetchDataIcon decode failed for " + key + " (icon length=" + icon.length() + ")");
+            dataIcon = fetchFallbackIcon(resources);
+        }
         sIconCache.put(key, dataIcon);
         return dataIcon;
     }
@@ -91,9 +95,16 @@ public class ProfileIconCache {
 
     private static Drawable readDataIcon(Resources resources, String icon) {
         byte[] iconData = extractIconData(icon);
-        if(iconData == null) return null;
+        if(iconData == null) {
+            Log.w("ProfileIconCache", "readDataIcon: extractIconData returned null (icon prefix=" +
+                    (icon.length() > 50 ? icon.substring(0, 50) : icon) + ")");
+            return null;
+        }
         Bitmap iconBitmap = BitmapFactory.decodeByteArray(iconData, 0, iconData.length);
-        if(iconBitmap == null) return null;
+        if(iconBitmap == null) {
+            Log.w("ProfileIconCache", "readDataIcon: BitmapFactory.decodeByteArray returned null (bytes=" + iconData.length + ")");
+            return null;
+        }
         return new BitmapDrawable(resources, iconBitmap);
     }
 
