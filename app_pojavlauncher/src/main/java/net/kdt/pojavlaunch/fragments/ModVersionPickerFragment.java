@@ -154,25 +154,30 @@ public class ModVersionPickerFragment extends Fragment {
         });
     }
 
-    // Simple version comparator — prefers higher MC version strings first,
-    // falls back to original index order for ties.
+    // Safe version comparator — guaranteed transitive, never violates TimSort contract.
+    // Handles null, empty, non-numeric suffixes, unequal-length parts.
     private java.util.Comparator<VersionEntry> sLatestFirst = (a, b) -> {
-        // Parse X.Y.Z numeric prefix from MC version for comparison
-        String mcA = a.mcVersion.replaceAll("[^0-9.]", "");
-        String mcB = b.mcVersion.replaceAll("[^0-9.]", "");
-        String[] partsA = mcA.isEmpty() ? new String[]{"0"} : mcA.split("\\.");
-        String[] partsB = mcB.isEmpty() ? new String[]{"0"} : mcB.split("\\.");
-        for (int i = 0; i < Math.min(partsA.length, partsB.length); i++) {
-            try {
-                int cmp = Integer.compare(
-                        Integer.parseInt(partsB[i]),
-                        Integer.parseInt(partsA[i]));
-                if (cmp != 0) return cmp;
-            } catch (NumberFormatException ignored) {}
-        }
-        // If MC versions equal, compare the full version name descending
-        return b.name.compareTo(a.name);
+        String va = a.mcVersion != null ? a.mcVersion : "";
+        String vb = b.mcVersion != null ? b.mcVersion : "";
+        if (va.equals(vb)) return b.name.compareTo(a.name);
+        int result = compareVersionStrings(vb, va);
+        return result != 0 ? result : b.name.compareTo(a.name);
     };
+
+    private static int compareVersionStrings(String v1, String v2) {
+        String clean1 = v1.replaceAll("[^0-9.]", "").replaceAll("\\.$", "");
+        String clean2 = v2.replaceAll("[^0-9.]", "").replaceAll("\\.$", "");
+        String[] parts1 = clean1.isEmpty() ? new String[]{"0"} : clean1.split("\\.");
+        String[] parts2 = clean2.isEmpty() ? new String[]{"0"} : clean2.split("\\.");
+        int len = Math.max(parts1.length, parts2.length);
+        for (int i = 0; i < len; i++) {
+            int n1 = 0, n2 = 0;
+            try { n1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0; } catch (NumberFormatException ignored) {}
+            try { n2 = i < parts2.length ? Integer.parseInt(parts2[i]) : 0; } catch (NumberFormatException ignored) {}
+            if (n1 != n2) return Integer.compare(n1, n2);
+        }
+        return 0;
+    }
 
     private void buildVersionList(ModDetail detail) {
         mAllVersions.clear();

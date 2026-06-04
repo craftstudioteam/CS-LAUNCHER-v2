@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0D0D0D"
+    android:orientation="vertical">
+
+    <!-- ── HEADER ── -->
+    <LinearLayout
+        android:id="@+id/mod_store_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#1C1C1C"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <ImageButton
+                android:id="@+id/mod_store_back"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_arrow_back_white"
+                android:contentDescription="@string/global_back"
+                android:tint="#39FF14" />
+
+            <TextView
+                android:id="@+id/mod_store_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:text="Download"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="8dp">
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/search_bar_bg">
+
+                <EditText
+                    android:id="@+id/search_mod_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:hint="Search mods..."
+                    android:textColorHint="#666666"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="16dp"
+                    android:gravity="center_vertical"
+                    android:inputType="text"
+                    android:imeOptions="actionSearch"
+                    android:singleLine="true" />
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_gravity="start|center_vertical"
+                    android:src="@drawable/ic_search"
+                    android:tint="#666666" />
+            </FrameLayout>
+
+            <ImageButton
+                android:id="@+id/search_mod_filter"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/background_card"
+                android:padding="7dp"
+                android:src="@drawable/ic_filter"
+                android:tint="#39FF14" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- ── TAB BAR ── -->
+    <HorizontalScrollView
+        android:id="@+id/tab_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:scrollbars="none"
+        android:background="#0D0D0D">
+
+        <LinearLayout
+            android:id="@+id/tab_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical" />
+
+    </HorizontalScrollView>
+
+    <!-- ── TAB INDICATOR ── -->
+    <View
+        android:id="@+id/tab_indicator"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#39FF14" />
+
+    <!-- ── VIEWPAGER ── -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/download_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

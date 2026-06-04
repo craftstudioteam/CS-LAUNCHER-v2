@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0D0D0D">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/download_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingVertical="12dp"
+        android:scrollbars="none" />
+
+    <ProgressBar
+        android:id="@+id/download_list_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:progressTint="#39FF14"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/download_list_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="#9CA3AF"
+        android:visibility="gone"
+        android:text="No results found." />
+
+</FrameLayout>

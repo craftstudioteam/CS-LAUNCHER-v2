@@ -49,7 +49,11 @@ public class ModrinthApi implements ModpackApi{
         HashMap<String, Object> params = new HashMap<>();
         StringBuilder facetString = new StringBuilder();
         facetString.append("[");
-        facetString.append(String.format("[\"project_type:%s\"]", searchFilters.isModpack ? "modpack" : "mod"));
+        String projectType = searchFilters.projectType;
+        if (projectType == null || projectType.isEmpty()) {
+            projectType = searchFilters.isModpack ? "modpack" : "mod";
+        }
+        facetString.append(String.format("[\"project_type:%s\"]", projectType));
         if(searchFilters.mcVersion != null && !searchFilters.mcVersion.isEmpty())
             facetString.append(String.format(",[\"versions:%s\"]", searchFilters.mcVersion));
         if(searchFilters.modLoader != null && !searchFilters.modLoader.isEmpty())
