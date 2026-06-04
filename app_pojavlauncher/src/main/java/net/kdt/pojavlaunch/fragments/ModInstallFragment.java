@@ -25,6 +25,8 @@ import com.kdt.mcgui.ProgressLayout;
 import net.kdt.pojavlaunch.PojavApplication;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
+import net.kdt.pojavlaunch.modloaders.modpacks.api.CommonApi;
+import net.kdt.pojavlaunch.modloaders.modpacks.api.ModpackApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.imagecache.ModIconCache;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModDetail;
@@ -258,7 +260,21 @@ public class ModInstallFragment extends Fragment {
         Context ctx = getContext();
         if (ctx == null) return;
 
-        // Check for dependencies
+        // Modpack: use handleInstallation which creates a full instance
+        if (mModItem != null && mModItem.isModpack) {
+            mInstallButton.setEnabled(false);
+            mInstallButton.setText("Installing modpack...");
+            ModpackApi api;
+            if (mModItem.apiSource == Constants.SOURCE_MODRINTH) {
+                api = new ModrinthApi();
+            } else {
+                api = new CommonApi(requireContext().getString(R.string.curseforge_api_key));
+            }
+            api.handleInstallation(ctx, mModDetail, mVersionIndex);
+            return;
+        }
+
+        // Individual mod: check for dependencies
         if (mModDetail != null && mModDetail.versionDependencyIds != null
                 && mVersionIndex >= 0 && mVersionIndex < mModDetail.versionDependencyIds.length) {
             showDependencyDialog(ctx, url, fileName);
