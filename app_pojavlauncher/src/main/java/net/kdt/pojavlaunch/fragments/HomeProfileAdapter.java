@@ -1,6 +1,7 @@
 package net.kdt.pojavlaunch.fragments;
 
-import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.kdt.pojavlaunch.R;
@@ -18,6 +20,8 @@ import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 import java.util.List;
 
 public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.ViewHolder> {
+
+    private static final String TAG = "HomeProfileAdapter";
 
     private final List<MinecraftProfile> mProfileList;
     private final List<String> mProfileKeys;
@@ -62,8 +66,7 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
         }
         holder.tvMeta.setText(meta.toString());
 
-        holder.imgIcon.setImageDrawable(ProfileIconCache.fetchIcon(
-                holder.imgIcon.getResources(), profileKey, profile.icon));
+        bindIcon(holder.imgIcon, profileKey, profile);
 
         holder.cardRoot.setOnClickListener(v -> {
             if (mListener != null) mListener.onProfileEdit(profileKey, profile);
@@ -72,6 +75,47 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
         holder.btnPlay.setOnClickListener(v -> {
             if (mListener != null) mListener.onProfilePlay(profileKey, profile);
         });
+    }
+
+    /**
+     * Binds the graphical icon resource to the profile card image view.
+     * Falls back to a typed icon (fabric / quilt / default) if the data icon
+     * is missing or invalid, eliminating empty/hollow gray boxes.
+     */
+    private void bindIcon(ImageView target, String profileKey, MinecraftProfile profile) {
+        String icon = profile.icon;
+        Drawable drawable = null;
+
+        try {
+            drawable = ProfileIconCache.fetchIcon(target.getResources(), profileKey, icon);
+        } catch (Exception e) {
+            Log.w(TAG, "Icon load failed for " + profileKey, e);
+        }
+
+        if (drawable == null) {
+            drawable = resolveTypeFallback(target, profile.lastVersionId);
+        }
+        if (drawable == null) {
+            drawable = ContextCompat.getDrawable(target.getContext(), R.drawable.ic_pojav_full);
+        }
+        target.setImageDrawable(drawable);
+    }
+
+    /**
+     * Picks a type-aware fallback icon based on the profile's MC version id
+     * (e.g. "fabric-loader-1.20.1" → fabric icon). Avoids empty boxes when
+     * the base64 icon payload is missing or corrupted.
+     */
+    private Drawable resolveTypeFallback(ImageView target, String lastVersionId) {
+        if (lastVersionId == null) return null;
+        String lower = lastVersionId.toLowerCase();
+        int resId = -1;
+        if (lower.contains("fabric")) resId = R.drawable.ic_fabric;
+        else if (lower.contains("quilt")) resId = R.drawable.ic_quilt;
+        else if (lower.contains("forge")) resId = R.drawable.ic_pojav_full;
+        else if (lower.contains("neoforge")) resId = R.drawable.ic_pojav_full;
+        if (resId == -1) return null;
+        return ContextCompat.getDrawable(target.getContext(), resId);
     }
 
     @Override
@@ -96,3 +140,4 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
         }
     }
 }
+

@@ -4,12 +4,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Base64;
 import android.util.Base64OutputStream;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +28,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import net.kdt.pojavlaunch.PojavApplication;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
@@ -47,6 +51,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import android.net.Uri;
 import android.widget.Toast;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -58,6 +63,8 @@ import java.io.File;
 public class ProfileEditorFragment extends Fragment implements CropperUtils.CropperListener{
     public static final String TAG = "ProfileEditorFragment";
     public static final String DELETED_PROFILE = "deleted_profile";
+
+    private static final String TAG_ASYNC = "ProfileEditorAsync";
 
     private String mProfileKey;
     private MinecraftProfile mTempProfile = null;
@@ -88,6 +95,9 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     );
 
     private List<String> mRenderNames;
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService mBgExecutor = PojavApplication.sExecutorService;
+    private boolean mAsyncLoadComplete = false;
 
     public ProfileEditorFragment(){
         super(R.layout.fragment_profile_editor);
@@ -112,6 +122,27 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         bindViews(view);
 
+        // Hardware layer for the entire content block → smooth 60fps animations
+        view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+        // Apply 200ms scale-up reveal with DecelerateInterpolator
+        view.setAlpha(0f);
+        view.setScaleX(0.96f);
+        view.setScaleY(0.96f);
+        view.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(200)
+                .setInterpolator(new DecelerateInterpolator())
+                .withEndAction(() -> {
+                    if (getView() != null) {
+                        getView().setLayerType(View.LAYER_TYPE_NONE, null);
+                    }
+                })
+                .start();
+
+        // Renderer spinner setup (synchronous, fast — just string list)
         Tools.RenderersList renderersList = Tools.getCompatibleRenderers(view.getContext());
         mRenderNames = renderersList.rendererIds;
         List<String> renderList = new ArrayList<>(renderersList.rendererDisplayNames.length + 1);
@@ -121,33 +152,59 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
 
         // Set up behaviors
         mSaveButton.setOnClickListener(v -> {
+            if (mTempProfile == null) return;
+            // 1) Read inputs on the main thread (touching UI state)
+            readInputsFromUi();
             ProfileIconCache.dropIcon(mProfileKey);
-            save();
-            Fragment parentFrag = getParentFragment();
-            if (parentFrag instanceof MainMenuFragment) {
-                MainMenuFragment mmf = (MainMenuFragment) parentFrag;
-                mmf.clearRightPane();
-                mmf.reloadSpinner();
-            } else {
-                Tools.backToMainMenu(requireActivity());
-            }
+            // 2) Disable button immediately to prevent double-tap
+            mSaveButton.setEnabled(false);
+            // 3) JSON write on background thread (expensive)
+            mBgExecutor.execute(() -> {
+                LauncherProfiles.mainProfileJson.profiles.put(mProfileKey, mTempProfile);
+                LauncherProfiles.write();
+                ExtraCore.setValue(ExtraConstants.REFRESH_VERSION_SPINNER, mProfileKey);
+                mMainHandler.post(() -> {
+                    if (!isAdded()) return;
+                    Fragment parentFrag = getParentFragment();
+                    if (parentFrag instanceof MainMenuFragment) {
+                        MainMenuFragment mmf = (MainMenuFragment) parentFrag;
+                        mmf.clearRightPane();
+                        mmf.reloadSpinner();
+                    } else {
+                        Tools.backToMainMenu(requireActivity());
+                    }
+                });
+            });
         });
 
         mDeleteButton.setOnClickListener(v -> {
             if(LauncherProfiles.mainProfileJson.profiles.size() > 1){
                 ProfileIconCache.dropIcon(mProfileKey);
-                LauncherProfiles.mainProfileJson.profiles.remove(mProfileKey);
-                LauncherProfiles.write();
-                ExtraCore.setValue(ExtraConstants.REFRESH_VERSION_SPINNER, ProfileEditorFragment.DELETED_PROFILE);
-            }
-            Fragment parentFrag = getParentFragment();
-            if (parentFrag instanceof MainMenuFragment) {
-                MainMenuFragment mmf = (MainMenuFragment) parentFrag;
-                mmf.clearRightPane();
-                // Reload spinner now so deleted profile is gone immediately
-                mmf.reloadSpinner();
+                mDeleteButton.setEnabled(false);
+                // JSON write off the main thread
+                mBgExecutor.execute(() -> {
+                    LauncherProfiles.mainProfileJson.profiles.remove(mProfileKey);
+                    LauncherProfiles.write();
+                    ExtraCore.setValue(ExtraConstants.REFRESH_VERSION_SPINNER, ProfileEditorFragment.DELETED_PROFILE);
+                    mMainHandler.post(() -> {
+                        if (!isAdded()) return;
+                        Fragment parentFrag = getParentFragment();
+                        if (parentFrag instanceof MainMenuFragment) {
+                            MainMenuFragment mmf = (MainMenuFragment) parentFrag;
+                            mmf.clearRightPane();
+                            mmf.reloadSpinner();
+                        } else {
+                            Tools.removeCurrentFragment(requireActivity());
+                        }
+                    });
+                });
             } else {
-                Tools.removeCurrentFragment(requireActivity());
+                Fragment parentFrag = getParentFragment();
+                if (parentFrag instanceof MainMenuFragment) {
+                    ((MainMenuFragment) parentFrag).clearRightPane();
+                } else {
+                    Tools.removeCurrentFragment(requireActivity());
+                }
             }
         });
 
@@ -191,28 +248,36 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         mResourcePacksImport.setOnClickListener(v -> mResourcePackPicker.launch("*/*"));
         mShaderPacksImport.setOnClickListener(v -> mShaderPackPicker.launch("*/*"));
 
-        loadValues(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, ""), view.getContext());
+        loadValuesAsync(LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, ""), view.getContext());
     }
 
     private void handleImport(Uri uri, String subDir) {
         if (uri == null) return;
-        try (InputStream is = requireContext().getContentResolver().openInputStream(uri)) {
-            File gameDir = Tools.getGameDirPath(mTempProfile);
-            File destDir = new File(gameDir, subDir);
-            if (!destDir.exists()) destDir.mkdirs();
+        mBgExecutor.execute(() -> {
+            try (InputStream is = requireContext().getContentResolver().openInputStream(uri)) {
+                File gameDir = Tools.getGameDirPath(mTempProfile);
+                File destDir = new File(gameDir, subDir);
+                if (!destDir.exists()) destDir.mkdirs();
 
-            String fileName = Tools.getFileName(requireContext(), uri);
-            if (fileName == null) fileName = "imported_" + System.currentTimeMillis() + ".zip";
-            
-            File destFile = new File(destDir, fileName);
-            try (FileOutputStream os = new FileOutputStream(destFile)) {
-                IOUtils.copy(is, os);
+                String fileName = Tools.getFileName(requireContext(), uri);
+                if (fileName == null) fileName = "imported_" + System.currentTimeMillis() + ".zip";
+
+                File destFile = new File(destDir, fileName);
+                try (FileOutputStream os = new FileOutputStream(destFile)) {
+                    IOUtils.copy(is, os);
+                }
+                mMainHandler.post(() -> {
+                    if (!isAdded()) return;
+                    Toast.makeText(getContext(), "Imported successfully!", Toast.LENGTH_SHORT).show();
+                    setupPacksListsAsync();
+                });
+            } catch (Exception e) {
+                mMainHandler.post(() -> {
+                    if (!isAdded()) return;
+                    Toast.makeText(getContext(), "Import failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
             }
-            Toast.makeText(getContext(), "Imported successfully!", Toast.LENGTH_SHORT).show();
-            setupPacksLists(); // Refresh
-        } catch (Exception e) {
-            Toast.makeText(getContext(), "Import failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        });
     }
 
     /** Navigate to a fragment — stays inside the right pane when running as a child fragment. */
@@ -255,79 +320,108 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         });
     }
 
-
-    private void loadValues(@NonNull String profile, @NonNull Context context){
-        if(mTempProfile == null){
+    /**
+     * Loads profile values on a background thread to prevent main-thread jank
+     * (file I/O, JSON parsing, runtime enumeration).
+     */
+    private void loadValuesAsync(@NonNull String profile, @NonNull Context context) {
+        if (mTempProfile == null) {
             mTempProfile = getProfile(profile);
         }
-        // TODO: Remove this jank when it's not relevant anymore
-        // Shitty hack to make OSMZink smoothly transition into kopper
-        if ("vulkan_zink".equals(mTempProfile.pojavRendererName)) mTempProfile.pojavRendererName = "opengles3_desktopgl_zink_kopper";
+
+        // Static UI population (cheap, on UI thread) — only string setters
         mProfileIcon.setImageDrawable(
                 ProfileIconCache.fetchIcon(getResources(), mProfileKey, mTempProfile.icon)
         );
-
-        // Runtime spinner
-        List<Runtime> runtimes = MultiRTUtils.getInstalledRuntimes();
-        int jvmIndex = runtimes.indexOf(new Runtime("<Default>"));
-        if (mTempProfile.javaDir != null) {
-            String selectedRuntime = mTempProfile.javaDir.substring(Tools.LAUNCHERPROFILES_RTPREFIX.length());
-            int nindex = runtimes.indexOf(new Runtime(selectedRuntime));
-            if (nindex != -1) jvmIndex = nindex;
-        }
-        mDefaultRuntime.setAdapter(new RTSpinnerAdapter(context, runtimes));
-        if(jvmIndex == -1) jvmIndex = runtimes.size() - 1;
-        mDefaultRuntime.setSelection(jvmIndex);
-
-        // Renderer spinner
-        int rendererIndex = mDefaultRenderer.getAdapter().getCount() - 1;
-        if(mTempProfile.pojavRendererName != null) {
-            int nindex = mRenderNames.indexOf(mTempProfile.pojavRendererName);
-            if(nindex != -1) rendererIndex = nindex;
-        }
-        mDefaultRenderer.setSelection(rendererIndex);
-
         mDefaultVersion.setText(mTempProfile.lastVersionId);
         mDefaultJvmArgument.setText(mTempProfile.javaArgs == null ? "" : mTempProfile.javaArgs);
         mDefaultName.setText(mTempProfile.name);
         mDefaultPath.setText(mTempProfile.gameDir == null ? "" : mTempProfile.gameDir);
         mDefaultControl.setText(mTempProfile.controlFile == null ? "" : mTempProfile.controlFile);
 
-        setupPacksLists();
+        // TODO: Remove this jank when it's not relevant anymore
+        if ("vulkan_zink".equals(mTempProfile.pojavRendererName)) {
+            mTempProfile.pojavRendererName = "opengles3_desktopgl_zink_kopper";
+        }
+
+        // All expensive work goes to background
+        mBgExecutor.execute(() -> {
+            // Runtime enumeration (file I/O over runtime dir)
+            List<Runtime> runtimes = MultiRTUtils.getInstalledRuntimes();
+            int jvmIndex = runtimes.indexOf(new Runtime("<Default>"));
+            if (mTempProfile.javaDir != null) {
+                String selectedRuntime = mTempProfile.javaDir.substring(Tools.LAUNCHERPROFILES_RTPREFIX.length());
+                int nindex = runtimes.indexOf(new Runtime(selectedRuntime));
+                if (nindex != -1) jvmIndex = nindex;
+            }
+            if (jvmIndex == -1) jvmIndex = runtimes.size() - 1;
+
+            // Directory listings for mods / resourcepacks / shaderpacks
+            File gameDir = Tools.getGameDirPath(mTempProfile);
+            final File modsDir = new File(gameDir, "mods");
+            final File resourcePacksDir = new File(gameDir, "resourcepacks");
+            final File shaderPacksDir = new File(gameDir, "shaderpacks");
+
+            mMainHandler.post(() -> {
+                if (!isAdded()) return;
+                mDefaultRuntime.setAdapter(new RTSpinnerAdapter(context, runtimes));
+                mDefaultRuntime.setSelection(Math.max(0, jvmIndex));
+
+                int rendererIndex = mDefaultRenderer.getAdapter().getCount() - 1;
+                if (mTempProfile.pojavRendererName != null) {
+                    int nindex = mRenderNames.indexOf(mTempProfile.pojavRendererName);
+                    if (nindex != -1) rendererIndex = nindex;
+                }
+                mDefaultRenderer.setSelection(rendererIndex);
+
+                bindPacksAdapters(modsDir, resourcePacksDir, shaderPacksDir);
+                mAsyncLoadComplete = true;
+            });
+        });
     }
 
-    private void setupPacksLists() {
-        File gameDir = Tools.getGameDirPath(mTempProfile);
-        File modsDir = new File(gameDir, "mods");
-        File resourcePacksDir = new File(gameDir, "resourcepacks");
-        File shaderPacksDir = new File(gameDir, "shaderpacks");
-
+    /**
+     * Adapter binding only (directory listings were already collected on the
+     * background thread — this avoids touching the filesystem from the UI thread).
+     */
+    private void bindPacksAdapters(File modsDir, File resourcePacksDir, File shaderPacksDir) {
         mModsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        mModsRecycler.setAdapter(new InstalledModAdapter(modsDir, isEmpty -> 
-            mModsEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE)));
+        mModsRecycler.setItemAnimator(null);
+        mModsRecycler.setAdapter(new InstalledModAdapter(modsDir, isEmpty ->
+                mModsEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE)));
 
         mResourcePacksRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        mResourcePacksRecycler.setAdapter(new LocalPackAdapter(resourcePacksDir, isEmpty -> 
-            mResourcePacksEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE)));
+        mResourcePacksRecycler.setItemAnimator(null);
+        mResourcePacksRecycler.setAdapter(new LocalPackAdapter(resourcePacksDir, isEmpty ->
+                mResourcePacksEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE)));
 
         mShaderPacksRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        mShaderPacksRecycler.setAdapter(new LocalPackAdapter(shaderPacksDir, isEmpty -> 
-            mShaderPacksEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE)));
+        mShaderPacksRecycler.setItemAnimator(null);
+        mShaderPacksRecycler.setAdapter(new LocalPackAdapter(shaderPacksDir, isEmpty ->
+                mShaderPacksEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE)));
+    }
+
+    private void setupPacksListsAsync() {
+        if (!mAsyncLoadComplete) return;
+        mBgExecutor.execute(() -> {
+            if (mTempProfile == null) return;
+            File gameDir = Tools.getGameDirPath(mTempProfile);
+            File modsDir = new File(gameDir, "mods");
+            File resourcePacksDir = new File(gameDir, "resourcepacks");
+            File shaderPacksDir = new File(gameDir, "shaderpacks");
+
+            mMainHandler.post(() -> {
+                if (!isAdded()) return;
+                bindPacksAdapters(modsDir, resourcePacksDir, shaderPacksDir);
+            });
+        });
     }
 
     private MinecraftProfile getProfile(@NonNull String profile){
         MinecraftProfile minecraftProfile;
         if(getArguments() == null) {
-            // EDGE CASE: User leaves Pojav in background. Pojav gets terminated in the background.
-            // Current selected fragment and its arguments are saved.
-            // User returns to Pojav. Android restarts process and reinitializes fragment without
-            // going to the main screen. mainProfileJson and profiles left uninitialized, which
-            // results in a crash.
-            // Reload the profiles to avoid this edge case.
             LauncherProfiles.load();
             MinecraftProfile originalProfile = LauncherProfiles.mainProfileJson.profiles.get(profile);
-            // EDGE CASE: User edits the JSON, so the profile that was edited no longer exists.
-            // Create a brand new profile as a fallback for this case.
             if(originalProfile != null) minecraftProfile = new MinecraftProfile(originalProfile);
             else minecraftProfile = MinecraftProfile.createTemplate();
             mProfileKey = profile;
@@ -369,8 +463,8 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         mShaderPacksImport = view.findViewById(R.id.vprof_editor_shader_packs_import);
     }
 
-    private void save(){
-        //First, check for potential issues in the inputs
+    private void readInputsFromUi() {
+        if (mTempProfile == null) return;
         mTempProfile.lastVersionId = mDefaultVersion.getText().toString();
         mTempProfile.controlFile = mDefaultControl.getText().toString();
         mTempProfile.name = mDefaultName.getText().toString();
@@ -379,32 +473,25 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
                 .trim();
         mTempProfile.gameDir = mDefaultPath.getText().toString();
 
-        if(mTempProfile.controlFile.isEmpty()) mTempProfile.controlFile = null;
-        if(mTempProfile.javaArgs.isEmpty()) mTempProfile.javaArgs = null;
-        if(mTempProfile.gameDir.isEmpty()) mTempProfile.gameDir = null;
+        if(mTempProfile.controlFile != null && mTempProfile.controlFile.isEmpty()) mTempProfile.controlFile = null;
+        if(mTempProfile.javaArgs != null && mTempProfile.javaArgs.isEmpty()) mTempProfile.javaArgs = null;
+        if(mTempProfile.gameDir != null && mTempProfile.gameDir.isEmpty()) mTempProfile.gameDir = null;
 
-        Runtime selectedRuntime = (Runtime) mDefaultRuntime.getSelectedItem();
-        mTempProfile.javaDir = (selectedRuntime.name.equals("<Default>") || selectedRuntime.versionString == null)
-                ? null : Tools.LAUNCHERPROFILES_RTPREFIX + selectedRuntime.name;
+        if (mDefaultRuntime.getSelectedItem() instanceof Runtime) {
+            Runtime selectedRuntime = (Runtime) mDefaultRuntime.getSelectedItem();
+            mTempProfile.javaDir = (selectedRuntime.name.equals("<Default>") || selectedRuntime.versionString == null)
+                    ? null : Tools.LAUNCHERPROFILES_RTPREFIX + selectedRuntime.name;
+        }
 
         if(mDefaultRenderer.getSelectedItemPosition() == mRenderNames.size()) mTempProfile.pojavRendererName = null;
         else mTempProfile.pojavRendererName = mRenderNames.get(mDefaultRenderer.getSelectedItemPosition());
-
-
-        LauncherProfiles.mainProfileJson.profiles.put(mProfileKey, mTempProfile);
-        LauncherProfiles.write();
-        ExtraCore.setValue(ExtraConstants.REFRESH_VERSION_SPINNER, mProfileKey);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // Always drop the icon cache when leaving, even without saving,
-        // so the next reloadProfiles() re-fetches with correct bounds.
         if (mProfileKey != null) {
             ProfileIconCache.dropIcon(mProfileKey);
-            // Reload the spinner so the icon redraws at correct size immediately
-            // (covers Android back button path where reloadSpinner() isn't called explicitly)
             Fragment parent = getParentFragment();
             if (parent instanceof MainMenuFragment) {
                 ((MainMenuFragment) parent).reloadSpinner();
@@ -415,29 +502,29 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     @Override
     public void onCropped(Bitmap contentBitmap) {
         mProfileIcon.setImageBitmap(contentBitmap);
-        Log.i("bitmap", "w="+contentBitmap.getWidth() +" h="+contentBitmap.getHeight());
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try (Base64OutputStream base64OutputStream = new Base64OutputStream(byteArrayOutputStream, Base64.NO_WRAP)) {
-            contentBitmap.compress(
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.R ?
-                    // On Android < 30, there was no distinction between "lossy" and "lossless",
-                    // and the type is picked by the quality parameter. We set the quality to 60.
-                    // so it should be lossy,
-                    Bitmap.CompressFormat.WEBP:
-                    // On Android >= 30, we can explicitly specify that we want lossy compression
-                    // with the visual quality of 60.
-                    Bitmap.CompressFormat.WEBP_LOSSY,
-                60,
-                base64OutputStream
-            );
-            base64OutputStream.flush();
-            byteArrayOutputStream.flush();
-        }catch (IOException e) {
-            Tools.showErrorRemote(e);
-            return;
-        }
-        String iconLine = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
-        mTempProfile.icon = "data:image/webp;base64," + iconLine;
+        Log.i(TAG_ASYNC, "w="+contentBitmap.getWidth() +" h="+contentBitmap.getHeight());
+        mBgExecutor.execute(() -> {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            try (Base64OutputStream base64OutputStream = new Base64OutputStream(byteArrayOutputStream, Base64.NO_WRAP)) {
+                contentBitmap.compress(
+                    Build.VERSION.SDK_INT < Build.VERSION_CODES.R ?
+                        Bitmap.CompressFormat.WEBP:
+                        Bitmap.CompressFormat.WEBP_LOSSY,
+                    60,
+                    base64OutputStream
+                );
+                base64OutputStream.flush();
+                byteArrayOutputStream.flush();
+            }catch (IOException e) {
+                mMainHandler.post(() -> Tools.showErrorRemote(e));
+                return;
+            }
+            String iconLine = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
+            String dataUri = "data:image/webp;base64," + iconLine;
+            mMainHandler.post(() -> {
+                if (mTempProfile != null) mTempProfile.icon = dataUri;
+            });
+        });
     }
 
     @Override

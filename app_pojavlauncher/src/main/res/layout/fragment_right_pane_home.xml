@@ -21,9 +21,33 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingVertical="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="96dp"
         android:overScrollMode="never"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Floating "+" Create Profile button (bottom-center, hardware-accelerated) -->
+    <FrameLayout
+        android:id="@+id/fab_create_profile"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_fab_create_profile"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_add"
+            android:tint="@color/bg_primary"
+            android:contentDescription="Create Profile" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

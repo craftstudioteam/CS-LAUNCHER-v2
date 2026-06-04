@@ -3,6 +3,7 @@ package net.kdt.pojavlaunch.fragments;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
+import net.kdt.pojavlaunch.profiles.ProfileIconCache;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
@@ -44,6 +46,35 @@ public class RightPaneHomeFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.rv_home_profiles);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         setupProfileAdapter();
+
+        // Floating "+" FAB opens the Version Setup Hub (3-category grid)
+        View fab = view.findViewById(R.id.fab_create_profile);
+        if (fab != null) {
+            // Apply 200ms scale-up reveal with DecelerateInterpolator
+            fab.setScaleX(0.6f);
+            fab.setScaleY(0.6f);
+            fab.setAlpha(0f);
+            fab.animate()
+                    .scaleX(1f).scaleY(1f)
+                    .alpha(1f)
+                    .setDuration(200)
+                    .setInterpolator(new DecelerateInterpolator())
+                    .start();
+
+            fab.setOnClickListener(v -> {
+                if (!isAdded() || getContext() == null) return;
+                Fragment parent = getParentFragment();
+                if (parent instanceof MainMenuFragment) {
+                    ((MainMenuFragment) parent).openChildPane(
+                            ProfileTypeSelectFragment.class,
+                            ProfileTypeSelectFragment.TAG, null);
+                } else if (getActivity() != null) {
+                    Tools.swapFragment(getActivity(),
+                            ProfileTypeSelectFragment.class,
+                            ProfileTypeSelectFragment.TAG, null);
+                }
+            });
+        }
     }
 
     @Override
@@ -61,6 +92,14 @@ public class RightPaneHomeFragment extends Fragment {
         LauncherProfiles.load();
         Map<String, MinecraftProfile> profilesMap = LauncherProfiles.mainProfileJson != null
                 ? LauncherProfiles.mainProfileJson.profiles : null;
+
+        // Force icon cache refresh — guarantees fresh base64 decode for any
+        // profile whose icon payload was updated since last reload.
+        if (profilesMap != null) {
+            for (String key : profilesMap.keySet()) {
+                ProfileIconCache.dropIcon(key);
+            }
+        }
 
         List<String> keys = new ArrayList<>();
         List<MinecraftProfile> profiles = new ArrayList<>();

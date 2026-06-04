@@ -49,7 +49,7 @@ public class MainMenuFragment extends Fragment {
     // ── Top bar state ──
     private int mCurrentNavTab = 0; // 0=Home, 1=ModStore, ...
     // Nav indicator views (in activity layout)
-    private View mHomeIndicator, mModStoreIndicator, mControlsIndicator, mCursorIndicator, mToolsIndicator, mCreateProfileIndicator;
+    private View mHomeIndicator, mModStoreIndicator, mControlsIndicator, mCursorIndicator, mToolsIndicator;
     private Interpolator mFastOutSlowIn = new AccelerateDecelerateInterpolator();
 
     // ─── Two-pane helpers ────────────────────────────────────────────────────
@@ -240,7 +240,6 @@ public class MainMenuFragment extends Fragment {
         FrameLayout navControls = requireActivity().findViewById(R.id.nav_custom_controls);
         FrameLayout navCursor = requireActivity().findViewById(R.id.nav_cursor);
         FrameLayout navTools = requireActivity().findViewById(R.id.nav_instance_tools);
-        FrameLayout navCreateProfile = requireActivity().findViewById(R.id.nav_create_profile);
 
         // Indicator underlines (in activity layout)
         mHomeIndicator = requireActivity().findViewById(R.id.nav_home_indicator);
@@ -248,7 +247,6 @@ public class MainMenuFragment extends Fragment {
         mControlsIndicator = requireActivity().findViewById(R.id.nav_controls_indicator);
         mCursorIndicator = requireActivity().findViewById(R.id.nav_cursor_indicator);
         mToolsIndicator = requireActivity().findViewById(R.id.nav_tools_indicator);
-        mCreateProfileIndicator = requireActivity().findViewById(R.id.nav_create_profile_indicator);
 
         // Load home fragment into right pane
         if (isTwoPane()) {
@@ -338,11 +336,8 @@ public class MainMenuFragment extends Fragment {
             }
         });
 
-        navCreateProfile.setOnClickListener(v -> {
-            if (!isFragmentReady()) return;
-            setActiveNavTab(5);
-            openPane(ProfileEditorFragment.class, ProfileEditorFragment.TAG, new Bundle());
-        });
+        // Create profile is now triggered by the floating FAB on the right pane home
+        // (fragment_right_pane_home.xml). Top nav rail no longer hosts the + button.
 
         // Floating settings gear was removed from the top bar. Settings is reachable
         // via the dedicated settings click target on the main layout profile / core setup.
@@ -412,7 +407,6 @@ public class MainMenuFragment extends Fragment {
         if (mControlsIndicator != null) mControlsIndicator.setVisibility(tabIndex == 2 ? View.VISIBLE : View.INVISIBLE);
         if (mCursorIndicator != null) mCursorIndicator.setVisibility(tabIndex == 3 ? View.VISIBLE : View.INVISIBLE);
         if (mToolsIndicator != null) mToolsIndicator.setVisibility(tabIndex == 4 ? View.VISIBLE : View.INVISIBLE);
-        if (mCreateProfileIndicator != null) mCreateProfileIndicator.setVisibility(tabIndex == 5 ? View.VISIBLE : View.INVISIBLE);
     }
 
 
