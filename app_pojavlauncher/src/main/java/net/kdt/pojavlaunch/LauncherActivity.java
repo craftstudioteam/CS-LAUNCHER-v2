@@ -6,6 +6,9 @@ import static net.kdt.pojavlaunch.Tools.hasNoOnlineProfileDialog;
 import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
+import net.kdt.pojavlaunch.fragments.ModsSearchFragment;
+import net.kdt.pojavlaunch.fragments.CursorCustomizationFragment;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -279,6 +282,7 @@ public class LauncherActivity extends BaseActivity {
         );
         getWindow().setBackgroundDrawable(null);
         bindViews();
+        setupNavButtons();
         checkNotificationPermission();
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         ProgressKeeper.addTaskCountListener(mDoubleLaunchPreventionListener);
@@ -455,6 +459,59 @@ public class LauncherActivity extends BaseActivity {
     }
 
     /** Stuff all the view boilerplate here */
+
+    /** Wire up the landscape header bar navigation buttons. */
+    private void setupNavButtons() {
+        View navModStore       = findViewById(R.id.nav_mod_store);
+        View navCustomControls  = findViewById(R.id.nav_custom_controls);
+        View navCursor          = findViewById(R.id.nav_cursor);
+        View navInstanceTools   = findViewById(R.id.nav_instance_tools);
+        View navHome            = findViewById(R.id.nav_home);
+        View btnHomeLogo        = findViewById(R.id.btn_home_logo);
+        View tvLauncherTitle    = findViewById(R.id.tv_launcher_title);
+
+        View.OnClickListener homeListener = v -> {
+            Fragment frag = getVisibleFragment("ROOT");
+            if (frag instanceof MainMenuFragment) {
+                ((MainMenuFragment) frag).refreshHomeState();
+            }
+        };
+
+        if (navHome != null)         navHome.setOnClickListener(homeListener);
+        if (btnHomeLogo != null)     btnHomeLogo.setOnClickListener(homeListener);
+        if (tvLauncherTitle != null) tvLauncherTitle.setOnClickListener(homeListener);
+
+        if (navModStore != null) {
+            navModStore.setOnClickListener(v -> {
+                Fragment frag = getVisibleFragment("ROOT");
+                if (frag instanceof MainMenuFragment) {
+                    ((MainMenuFragment) frag).openChildPane(
+                            ModsSearchFragment.class, ModsSearchFragment.TAG, null);
+                }
+            });
+        }
+
+        if (navCustomControls != null) {
+            navCustomControls.setOnClickListener(v ->
+                    startActivity(new Intent(this, CustomControlsActivity.class)));
+        }
+
+        if (navCursor != null) {
+            navCursor.setOnClickListener(v ->
+                    Tools.swapFragment(this, CursorCustomizationFragment.class,
+                            CursorCustomizationFragment.TAG, null));
+        }
+
+        if (navInstanceTools != null) {
+            navInstanceTools.setOnClickListener(v -> {
+                Fragment frag = getVisibleFragment("ROOT");
+                if (frag instanceof MainMenuFragment) {
+                    ((MainMenuFragment) frag).onNavInstanceToolsClick();
+                }
+            });
+        }
+    }
+
     private void bindViews(){
         mFragmentView = findViewById(R.id.container_fragment);
         mSettingsButton = findViewById(R.id.setting_button);

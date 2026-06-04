@@ -72,7 +72,7 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     private Button mSaveButton, mDeleteButton, mControlSelectButton, mGameDirButton, mVersionSelectButton;
     private ImageButton mModsAddButton, mModsImport, mResourcePacksFolder, mShaderPacksFolder, mResourcePacksImport, mShaderPacksImport;
     private RecyclerView mModsRecycler, mResourcePacksRecycler, mShaderPacksRecycler;
-    private TextView mModsEmpty, mResourcePacksEmpty, mShaderPacksEmpty;
+    private TextView mModsHeader, mModsEmpty, mResourcePacksEmpty, mShaderPacksEmpty;
     private Spinner mDefaultRuntime, mDefaultRenderer;
     private EditText mDefaultName, mDefaultJvmArgument;
     private TextView mDefaultPath, mDefaultVersion, mDefaultControl;
@@ -378,6 +378,17 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
                 mDefaultRenderer.setSelection(finalRendererIndex);
 
                 bindPacksAdapters(modsDir, resourcePacksDir, shaderPacksDir);
+
+                // Hide Mods section for Vanilla & OptiFine profiles — mod loading would crash.
+                if (mTempProfile != null) {
+                    boolean hideMods = mTempProfile.isOptiFine() || mTempProfile.isVanilla();
+                    int visibility = hideMods ? View.GONE : View.VISIBLE;
+                    if (mModsHeader != null) mModsHeader.setVisibility(visibility);
+                    if (mModsImport != null) mModsImport.setVisibility(visibility);
+                    if (mModsAddButton != null) mModsAddButton.setVisibility(visibility);
+                    if (mModsRecycler != null) mModsRecycler.setVisibility(visibility);
+                    if (mModsEmpty != null) mModsEmpty.setVisibility(visibility);
+                }
                 mAsyncLoadComplete = true;
             });
         });
@@ -453,6 +464,7 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         mGameDirButton = view.findViewById(R.id.vprof_editor_path_button);
         mProfileIcon = view.findViewById(R.id.vprof_editor_profile_icon);
 
+        mModsHeader = view.findViewById(R.id.vprof_editor_mods_header);
         mModsAddButton = view.findViewById(R.id.vprof_editor_mods_add);
         mResourcePacksFolder = view.findViewById(R.id.vprof_editor_resource_packs_folder);
         mShaderPacksFolder = view.findViewById(R.id.vprof_editor_shader_packs_folder);
