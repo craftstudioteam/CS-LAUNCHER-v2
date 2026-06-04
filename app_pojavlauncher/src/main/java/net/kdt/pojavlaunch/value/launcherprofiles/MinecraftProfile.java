@@ -56,4 +56,48 @@ public class MinecraftProfile {
 		controlFile = profile.controlFile;
 		resolution = profile.resolution;
 	}
+
+	/**
+	 * True when this profile uses OptiFine as its renderer.
+	 * Heuristic: the selected version id contains "OptiFine" / "optifine"
+	 * (OptiFine install names the version accordingly).
+	 */
+	public boolean isOptiFine() {
+		if (lastVersionId == null) return false;
+		String v = lastVersionId.toLowerCase();
+		return v.contains("optifine");
+	}
+
+	/**
+	 * True when this profile's instance gameDir shows no mod-loader footprint
+	 * (no mods/ folder, or it is empty) and the profile is not OptiFine.
+	 * Best-effort heuristic — it cannot detect loaders that have not yet
+	 * dropped a jar into mods/. Callers that need an authoritative answer
+	 * for the mod store should additionally check {@link #isOptiFine()}.
+	 */
+	public boolean isVanilla() {
+		if (isOptiFine()) return false;
+		try {
+			java.io.File gamedir = net.kdt.pojavlaunch.Tools.getGameDirPath(this);
+			if (gamedir == null) return true;
+			java.io.File modsDir = new java.io.File(gamedir, "mods");
+			if (!modsDir.exists()) return true;
+			String[] children = modsDir.list();
+			return children == null || children.length == 0;
+		} catch (Throwable t) {
+			return true;
+		}
+	}
+
+	/**
+	 * @return the resolved game directory for this profile, or null on failure.
+	 * Caller-side convenience so fragments don't have to catch tools exceptions.
+	 */
+	public java.io.File resolveGameDir() {
+		try {
+			return net.kdt.pojavlaunch.Tools.getGameDirPath(this);
+		} catch (Throwable t) {
+			return null;
+		}
+	}
 }

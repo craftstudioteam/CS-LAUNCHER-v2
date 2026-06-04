@@ -34,6 +34,8 @@ import net.kdt.pojavlaunch.modloaders.modpacks.models.ModDetail;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.SearchFilters;
 import net.kdt.pojavlaunch.profiles.VersionSelectorDialog;
+import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
+import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
 public class ModsSearchFragment extends Fragment {
 
@@ -361,28 +363,51 @@ public class ModsSearchFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        hidePlayPanel(true);
+        applyInstanceRules();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        hidePlayPanel(false);
     }
 
-    private void hidePlayPanel(boolean hide) {
-        if (getActivity() == null) return;
-        View bottomBar = getActivity().findViewById(R.id.bottom_bar);
-        if (bottomBar != null) bottomBar.setVisibility(hide ? View.GONE : View.VISIBLE);
-        View sidePanel = getActivity().findViewById(R.id.right_pane_container);
-        if (sidePanel != null) {
-            ViewGroup.LayoutParams lp = sidePanel.getLayoutParams();
-            if (lp instanceof androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) {
-                ((androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) lp).bottomToBottom = hide
-                        ? androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
-                        : R.id.bottom_bar;
-                sidePanel.requestLayout();
+    /**
+     * Apply version instance rules for the active profile:
+     *  - vanilla profile → block the Mods tab; show only Resource Packs / Shaders / Worlds.
+     *  - OptiFine profile → block the Mods tab; show only Resource Packs / Shaders / Worlds.
+     *  - everything else → leave all four tabs.
+     * If the user has the mod store already open and the rules now ban the Mods tab,
+     * the ViewPager is moved to the first allowed tab.
+     */
+    private void applyInstanceRules() {
+        if (!isAdded() || getView() == null) return;
+        MinecraftProfile profile = resolveActiveProfile();
+        if (profile == null) return;
+        boolean isVanilla = profile.isVanilla();
+        boolean isOptifine = profile.isOptiFine();
+        if (!isVanilla && !isOptifine) return;
+
+        // Mods tab is the first tab; force the ViewPager to the second one (Resource Packs).
+        if (mCurrentTab == 0 && mViewPager != null) {
+            mViewPager.setCurrentItem(1, false);
+            mCurrentTab = 1;
+            updateTabSelection(1);
+        }
+    }
+
+    /** Resolve the active profile either via {@link #mProfileKey} arg or the global pref. */
+    private MinecraftProfile resolveActiveProfile() {
+        try {
+            LauncherProfiles.load();
+            String key = mProfileKey;
+            if (key == null || key.isEmpty()) {
+                key = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF
+                        .getString(net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
             }
+            if (key == null || key.isEmpty()) return null;
+            return LauncherProfiles.mainProfileJson.profiles.get(key);
+        } catch (Throwable t) {
+            return null;
         }
     }
 }
