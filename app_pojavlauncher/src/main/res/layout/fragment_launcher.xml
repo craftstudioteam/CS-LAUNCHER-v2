@@ -19,7 +19,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/mc_version_spinner">
+        app:layout_constraintBottom_toBottomOf="@id/mc_version_spinner">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -142,15 +142,6 @@
                 android:drawableStart="@android:drawable/ic_menu_share"
                 android:text="@string/main_share_logs" />
 
-            <!-- Hidden: kept for back-compat -->
-            <com.kdt.mcgui.LauncherMenuButton
-                android:id="@+id/settings_menu_button"
-                style="@style/LauncherMenuButton.Universal"
-                android:layout_width="match_parent"
-                android:drawableStart="@drawable/ic_sharp_settings_24"
-                android:text="@string/mcl_button_settings"
-                android:visibility="gone" />
-
         </LinearLayout>
     </ScrollView>
 
@@ -165,7 +156,7 @@
         app:drawableStartIntegerScaling="true"
         app:drawableStartSize="@dimen/_36sdp"
         app:drawableEndPadding="@dimen/_1sdp"
-        app:layout_constraintBottom_toTopOf="@id/play_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/edit_profile_button"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -178,25 +169,5 @@
         app:layout_constraintBottom_toBottomOf="@+id/mc_version_spinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/mc_version_spinner" />
-
-    <View
-        android:id="@+id/_background_display_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="?attr/colorBgBottomBar"
-        android:translationZ="-1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@id/mc_version_spinner" />
-
-    <com.kdt.mcgui.MineButton
-        android:id="@+id/play_button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_62sdp"
-        android:layout_marginHorizontal="@dimen/_17sdp"
-        android:layout_marginBottom="@dimen/_15sdp"
-        android:textAllCaps="true"
-        android:text="@string/main_play"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

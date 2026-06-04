@@ -8,8 +8,8 @@
     android:background="@color/bg_launcher_dark">
 
     <!-- ══════════════════════════════════════════════
-         RIGHT PANE — Full remaining space (below header, above bottom bar)
-    ══════════════════════════════════════════════ -->
+         RIGHT PANE — Full remaining space
+     ══════════════════════════════════════════════ -->
     <FrameLayout
         android:id="@+id/right_pane_container"
         android:layout_width="match_parent"
@@ -23,95 +23,5 @@
         <!-- Fragments inflated here -->
 
     </FrameLayout>
-
-    <!-- ══════════════════════════════════════════════
-         BOTTOM BAR — Version spinner | Edit | PLAY
-    ══════════════════════════════════════════════ -->
-    <LinearLayout
-        android:id="@+id/bottom_bar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_50sdp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@drawable/bg_bottom_bar"
-        android:visibility="gone"
-        android:paddingStart="@dimen/_10sdp"
-        android:paddingEnd="@dimen/_6sdp"
-        android:elevation="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Version icon -->
-        <ImageView
-            android:id="@+id/iv_version_icon"
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_marginEnd="@dimen/_6sdp"
-            android:src="@drawable/ic_mc_block"
-            android:scaleType="centerInside"
-            android:adjustViewBounds="true"
-            android:contentDescription="Version" />
-
-        <!-- Version Spinner -->
-        <com.kdt.mcgui.mcVersionSpinner
-            android:id="@+id/mc_version_spinner"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingStart="4dp"
-            android:background="@android:color/transparent"
-            android:drawableEnd="@drawable/spinner_arrow"
-            app:drawableEndPadding="@dimen/_4sdp"
-            app:drawableEndSize="@dimen/_12sdp"
-            app:drawableStartIntegerScaling="true"
-            app:drawableStartSize="0dp" />
-
-        <!-- Edit button -->
-        <LinearLayout
-            android:id="@+id/edit_profile_container"
-            android:layout_width="@dimen/_48sdp"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_marginStart="@dimen/_4sdp"
-            android:layout_marginEnd="@dimen/_4sdp"
-            android:background="?android:attr/selectableItemBackground">
-
-            <ImageButton
-                android:id="@+id/edit_profile_button"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_edit_profile"
-                android:scaleType="fitCenter"
-                android:contentDescription="@string/mcl_edit" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/mcl_edit"
-                android:textSize="@dimen/_8ssp"
-                android:textColor="@color/text_secondary_light" />
-
-        </LinearLayout>
-
-        <!-- PLAY button -->
-        <com.kdt.mcgui.MineButton
-            android:id="@+id/play_button"
-            android:layout_width="@dimen/_120sdp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/_4sdp"
-            android:text="@string/main_play"
-            android:textAllCaps="true" />
-
-    </LinearLayout>
-
-    <!-- Hidden stubs for old IDs (back-compat) -->
-    <View android:id="@+id/home_button" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
-    <View android:id="@+id/mod_store_button" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
-    <View android:id="@+id/custom_control_button" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
-    <View android:id="@+id/cursor_customization_button" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
-    <View android:id="@+id/pane_divider" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

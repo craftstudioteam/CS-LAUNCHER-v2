@@ -42,12 +42,23 @@ public class ManageModsFragment extends Fragment {
         // and landscape two-pane (pop right pane) in one reliable place.
         backButton.setOnClickListener(v -> requireActivity().onBackPressed());
 
-        // Add → open mod store — stay in right pane if we're inside one
-        addButton.setOnClickListener(v -> {
-            Bundle args = new Bundle();
-            args.putString(BUNDLE_PROFILE_KEY, getProfileKey());
-            navigateToFragment(ModsSearchFragment.class, ModsSearchFragment.TAG, args);
-        });
+        // Resolve the active profile so we can apply version instance rules.
+        MinecraftProfile profile = resolveActiveProfile();
+        boolean modsBlocked = profile != null && (profile.isOptiFine() || profile.isVanilla());
+
+        // Add → open mod store — stay in right pane if we're inside one.
+        // For vanilla / OptiFine instances the mod store would crash the game,
+        // so the entry point is hidden. Users can still browse packs/shaders/worlds
+        // through the right-pane home mod-store tab if they need to.
+        if (modsBlocked) {
+            addButton.setVisibility(View.GONE);
+        } else {
+            addButton.setOnClickListener(v -> {
+                Bundle args = new Bundle();
+                args.putString(BUNDLE_PROFILE_KEY, getProfileKey());
+                navigateToFragment(ModsSearchFragment.class, ModsSearchFragment.TAG, args);
+            });
+        }
 
         // Title: "ProfileName - Mods"
         String profileName = getProfileName();
@@ -64,6 +75,18 @@ public class ManageModsFragment extends Fragment {
 
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
         recycler.setAdapter(adapter);
+    }
+
+    /** Resolve the active profile either via the BUNDLE_PROFILE_KEY arg or the global pref. */
+    private MinecraftProfile resolveActiveProfile() {
+        try {
+            String key = getProfileKey();
+            if (key == null || key.isEmpty()) return null;
+            LauncherProfiles.load();
+            return LauncherProfiles.mainProfileJson.profiles.get(key);
+        } catch (Throwable t) {
+            return null;
+        }
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────────

@@ -41,9 +41,7 @@ public class MainMenuFragment extends Fragment {
 
     private mcVersionSpinner mVersionSpinner;
     private ViewGroup mRightPane;
-    private View mPlayButton;
     private View mEditProfileButton;
-    private View mBottomBar;
     private OnBackPressedCallback mRightPaneBackCallback;
 
     // ── Top bar state ──
@@ -93,17 +91,10 @@ public class MainMenuFragment extends Fragment {
         }
     }
 
-    /** Bottom bar is permanently hidden — profile cards handle play/edit. */
-    private void setBottomBarVisible(boolean visible) {
-        if (mBottomBar == null) return;
-        mBottomBar.setVisibility(View.GONE);
-    }
-
     /** Explicitly clears the right pane and resets home UI state */
     public void refreshHomeState() {
         if (!isFragmentReady() || getView() == null) return;
         clearRightPane();
-        setBottomBarVisible(true);
         if (mVersionSpinner != null) mVersionSpinner.reloadProfiles();
         updateSidebarStates(getView(), R.id.home_button);
     }
@@ -167,20 +158,9 @@ public class MainMenuFragment extends Fragment {
                     .replace(R.id.right_pane_container, fragmentClass, args, tag)
                     .addToBackStack(tag)
                     .commit();
-            if (isModPaneFragment(fragmentClass)) {
-                setBottomBarVisible(false);
-            }
         } else {
             Tools.swapFragment(requireActivity(), fragmentClass, tag, args);
         }
-    }
-
-    /** Fragments that should consume the full height under the header (no bottom PLAY bar). */
-    private boolean isModPaneFragment(Class<? extends Fragment> fragmentClass) {
-        return fragmentClass == ModsSearchFragment.class
-                || fragmentClass == ModVersionPickerFragment.class
-                || fragmentClass == ModInstallFragment.class
-                || fragmentClass == ProfileEditorFragment.class;
     }
 
     // ─── Lifecycle ───────────────────────────────────────────────────────────
@@ -216,23 +196,15 @@ public class MainMenuFragment extends Fragment {
     private final androidx.fragment.app.FragmentManager.OnBackStackChangedListener
             mBackStackListener = () -> {
         mRightPaneBackCallback.setEnabled(isRightPaneActive());
-        if (!isTwoPane()) return;
-        // Show bottom bar ONLY on home (back stack empty). Hide on all other panes
-        // including instance picker (it has its own back button in the header).
-        boolean showBar = getChildFragmentManager().getBackStackEntryCount() == 0;
-        setBottomBarVisible(showBar);
     };
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         // ─── Bottom bar views ───────────────────────────────────────
         ImageButton mEditProfileBtn = view.findViewById(R.id.edit_profile_button);
-        Button mPlayBtn = view.findViewById(R.id.play_button);
         mVersionSpinner = view.findViewById(R.id.mc_version_spinner);
         mRightPane = view.findViewById(R.id.right_pane_container);
-        mPlayButton = mPlayBtn;
         mEditProfileButton = mEditProfileBtn;
-        mBottomBar = view.findViewById(R.id.bottom_bar);
 
         // ─── Horizontal Nav Rail (in activity layout) ─────────────────
         FrameLayout navHome = requireActivity().findViewById(R.id.nav_home);
@@ -284,7 +256,6 @@ public class MainMenuFragment extends Fragment {
             if (!isFragmentReady()) return;
             setActiveNavTab(0);
             clearRightPane();
-            setBottomBarVisible(true);
             if (getChildFragmentManager().findFragmentById(R.id.right_pane_container) == null) {
                 getChildFragmentManager().beginTransaction()
                         .setCustomAnimations(
@@ -355,27 +326,13 @@ public class MainMenuFragment extends Fragment {
                 openPane(InstancePickerFragment.class, InstancePickerFragment.TAG, null);
             });
         }
-
-        if (isTwoPane()) {
-            setBottomBarVisible(getChildFragmentManager().getBackStackEntryCount() == 0);
-        }
-
-        // Neon green PLAY button
-        mPlayBtn.setBackgroundResource(R.drawable.play_button_green);
-        mPlayBtn.setTextColor(getResources().getColor(R.color.bg_primary));
-        mPlayBtn.setOnClickListener(v -> {
-            if (!isFragmentReady()) return;
-            ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
-        });
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mRightPane = null;
-        mPlayButton = null;
         mEditProfileButton = null;
-        mBottomBar = null;
         getChildFragmentManager().removeOnBackStackChangedListener(mBackStackListener);
     }
 
@@ -385,15 +342,6 @@ public class MainMenuFragment extends Fragment {
         if (mVersionSpinner != null) {
             mVersionSpinner.post(() -> {
                 if (mVersionSpinner != null) mVersionSpinner.reloadProfiles();
-            });
-        }
-        
-        // Force correct bar state on resume
-        if (isTwoPane() && mBottomBar != null) {
-            mBottomBar.post(() -> {
-                if (!isFragmentReady()) return;
-                boolean showBar = getChildFragmentManager().getBackStackEntryCount() == 0;
-                setBottomBarVisible(showBar);
             });
         }
     }
