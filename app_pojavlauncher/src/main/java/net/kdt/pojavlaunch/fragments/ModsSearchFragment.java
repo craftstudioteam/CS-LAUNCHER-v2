@@ -39,8 +39,8 @@ public class ModsSearchFragment extends Fragment {
 
     public static final String TAG = "ModsSearchFragment";
 
-    private static final String[] TAB_TITLES = {"Mods", "Modpacks", "Resource Packs", "Shaders", "Worlds"};
-    private static final String[] TAB_TYPES  = {"mod", "modpack", "resourcepack", "shader", "world"};
+    private static final String[] TAB_TITLES = {"Mods", "Resource Packs", "Shaders", "Worlds"};
+    private static final String[] TAB_TYPES  = {"mod", "resourcepack", "shader", "world"};
 
     private EditText mSearchEditText;
     private ImageButton mFilterButton;
@@ -230,7 +230,7 @@ public class ModsSearchFragment extends Fragment {
     }
 
     private void onModItemClick(ModItem item, String contentType) {
-        if (contentType.equals("mod") || contentType.equals("modpack")) {
+        if (contentType.equals("mod")) {
             navigateToVersionPicker(item);
         } else {
             downloadDirect(item, contentType);
@@ -275,7 +275,7 @@ public class ModsSearchFragment extends Fragment {
                     String name = item.title;
                     String finalContentType = contentType;
                     Tools.runOnUiThread(() ->
-                            ModDownloadHelper.download(ctx, name, url, finalContentType));
+                            ModDownloadHelper.downloadAndExtract(ctx, name, url, finalContentType));
                 } else {
                     Tools.runOnUiThread(() -> {
                         if (isAdded())

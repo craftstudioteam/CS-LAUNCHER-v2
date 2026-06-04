@@ -1,7 +1,6 @@
 package net.kdt.pojavlaunch.fragments;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -18,7 +17,6 @@ import net.kdt.pojavlaunch.modloaders.modpacks.ModItemAdapter;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.CommonApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModpackApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthApi;
-import net.kdt.pojavlaunch.modloaders.modpacks.models.ModDetail;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.SearchFilters;
 
@@ -71,7 +69,7 @@ public class DownloadListFragment extends Fragment implements ModItemAdapter.Sea
         mRecyclerView.addItemDecoration(new net.kdt.pojavlaunch.modloaders.modpacks.SpacesItemDecoration(12));
 
         // Use ModrinthApi directly for non-standard types (CF doesn't support them)
-        if (mContentType.equals("mod") || mContentType.equals("modpack")) {
+        if (mContentType.equals("mod")) {
             mApi = new CommonApi(requireContext().getString(R.string.curseforge_api_key));
         } else {
             mApi = new ModrinthApi();
@@ -90,11 +88,7 @@ public class DownloadListFragment extends Fragment implements ModItemAdapter.Sea
     }
 
     private void loadContent() {
-        SearchFilters filters = new SearchFilters();
-        filters.projectType = mContentType;
-        filters.isModpack = mContentType.equals("modpack");
-        filters.name = "";
-
+        SearchFilters filters = buildFilters("");
         mProgressBar.setVisibility(View.VISIBLE);
         mAdapter.performSearchQuery(filters);
     }
@@ -104,15 +98,24 @@ public class DownloadListFragment extends Fragment implements ModItemAdapter.Sea
     }
 
     public void filter(String query, @Nullable String mcVersion, @Nullable String modLoader) {
-        SearchFilters filters = new SearchFilters();
-        filters.projectType = mContentType;
-        filters.isModpack = mContentType.equals("modpack");
-        filters.name = query != null ? query : "";
+        SearchFilters filters = buildFilters(query != null ? query : "");
         filters.mcVersion = mcVersion != null && !mcVersion.isEmpty() ? mcVersion : null;
         filters.modLoader = modLoader != null && !modLoader.isEmpty() ? modLoader : null;
-
         mProgressBar.setVisibility(View.VISIBLE);
         mAdapter.performSearchQuery(filters);
+    }
+
+    private SearchFilters buildFilters(String query) {
+        SearchFilters filters = new SearchFilters();
+        filters.name = query;
+        if (mContentType.equals("world")) {
+            // Modrinth : "world" project type nahi hai — "datapack" type + adventure category use karo
+            filters.projectType = "datapack";
+            filters.categories = "adventure";
+        } else {
+            filters.projectType = mContentType;
+        }
+        return filters;
     }
 
     @Override
