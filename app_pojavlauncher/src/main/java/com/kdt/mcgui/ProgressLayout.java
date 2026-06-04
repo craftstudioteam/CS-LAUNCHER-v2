@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.animation.ObjectAnimator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -78,17 +79,33 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
     }
 
 
+    private View mProgressSpinner;
+    private Runnable mRotationRunnable;
     private void init(){
         inflate(getContext(), R.layout.view_progress, this);
         mLinearLayout = findViewById(R.id.progress_linear_layout);
         mTaskNumberDisplayer = findViewById(R.id.progress_textview);
         mFlipArrow = findViewById(R.id.progress_flip_arrow);
+        mProgressSpinner = findViewById(R.id.progress_generic_progressbar);
         setBackgroundColor(getResources().getColor(R.color.background_bottom_bar));
         setOnClickListener(this);
+
+        // Cinematic infinite rotation animation for the circular loader
+        mRotationRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (mProgressSpinner != null) {
+                    mProgressSpinner.animate()
+                            .rotation(mProgressSpinner.getRotation() + 360f)
+                            .setDuration(1200)
+                            .setInterpolator(null)
+                            .withEndAction(mRotationRunnable)
+                            .start();
+                }
+            }
+        };
+        mRotationRunnable.run();
     }
-
-
-    /** Update the progress bar content */
     public static void setProgress(String progressKey, int progress){
         ProgressKeeper.submitProgress(progressKey, progress, -1, (Object)null);
     }
@@ -148,7 +165,16 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
         @Override
         public void onProgressUpdated(int progress, int resid, Object... va) {
             post(()-> {
-                textView.setProgress(progress);
+                // Smooth transition at locked 60 FPS via ObjectAnimator
+                int current = textView.getProgress();
+                if (progress != current && progress >= 0) {
+                    ObjectAnimator.ofInt(textView, "progress", current, progress)
+                            .setDuration(200)
+                            .setInterpolator(new android.view.animation.DecelerateInterpolator())
+                            .start();
+                } else {
+                    textView.setProgress(progress);
+                }
                 if(resid != -1) textView.setText(getContext().getString(resid, va));
                 else if(va.length > 0 && va[0] != null)textView.setText((String)va[0]);
                 else textView.setText("");

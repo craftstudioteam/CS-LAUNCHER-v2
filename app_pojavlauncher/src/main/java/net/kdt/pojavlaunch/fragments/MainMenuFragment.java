@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import android.util.Log;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -96,10 +97,15 @@ public class MainMenuFragment extends Fragment {
 
     /** Explicitly clears the right pane and resets home UI state */
     public void refreshHomeState() {
+        if (getView() == null || !isAdded()) {
+            Log.w("CS_LAUNCHER", "Home state refresh skipped: View not fully inflated yet.");
+            return;
+        }
         clearRightPane();
         setBottomBarVisible(true);
         if (mVersionSpinner != null) mVersionSpinner.reloadProfiles();
-        updateSidebarStates(requireView(), R.id.home_button);
+        View root = getView();
+        if (root != null) updateSidebarStates(root, R.id.home_button);
     }
 
     // Note: play button visibility during downloads is handled by the activity's
@@ -430,14 +436,14 @@ public class MainMenuFragment extends Fragment {
                 switch (event.getAction()) {
                     case android.view.MotionEvent.ACTION_DOWN:
                         view.animate().scaleX(0.94f).scaleY(0.94f).alpha(0.85f)
-                            .setDuration(150)
+                            .setDuration(70)
                             .setInterpolator(new android.view.animation.DecelerateInterpolator())
                             .start();
                         break;
                     case android.view.MotionEvent.ACTION_UP:
                     case android.view.MotionEvent.ACTION_CANCEL:
                         view.animate().scaleX(1f).scaleY(1f).alpha(1f)
-                            .setDuration(200)
+                            .setDuration(120)
                             .setInterpolator(new android.view.animation.DecelerateInterpolator())
                             .start();
                         break;
