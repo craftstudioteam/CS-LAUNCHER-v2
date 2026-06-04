@@ -3,23 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <!-- Hero background image (Corrected asset) -->
-    <ImageView
-        android:id="@+id/iv_hero_bg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/bg_hero_minecraft"
-        android:contentDescription="Hero background" />
-
-    <!-- Dark gradient scrim for text readability -->
-    <View
-        android:id="@+id/hero_scrim"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gradient_hero_scrim" />
+    android:layout_height="match_parent"
+    android:background="@color/bg_launcher_dark">
 
     <!-- Custom wallpaper — invisible by default, loaded dynamically -->
     <ImageView
@@ -30,29 +15,6 @@
         android:visibility="gone"
         android:contentDescription="@null" />
 
-    <!-- Center Logo -->
-    <ImageView
-        android:id="@+id/iv_center_logo"
-        android:layout_width="@dimen/_100sdp"
-        android:layout_height="@dimen/_100sdp"
-        android:src="@drawable/bg_hero_minecraft"
-        android:scaleType="fitCenter"
-        android:contentDescription="Launcher Logo"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/rv_home_profiles"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.35" />
-
-    <!-- Profile list scrim -->
-    <View
-        android:id="@+id/home_profile_scrim"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="#CC0D0D0D"
-        app:layout_constraintTop_toBottomOf="@id/iv_center_logo"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
     <!-- Profile Cards -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_home_profiles"
@@ -61,7 +23,7 @@
         android:clipToPadding="false"
         android:paddingVertical="12dp"
         android:overScrollMode="never"
-        app:layout_constraintTop_toBottomOf="@id/iv_center_logo"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
