@@ -348,13 +348,14 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
         mBgExecutor.execute(() -> {
             // Runtime enumeration (file I/O over runtime dir)
             List<Runtime> runtimes = MultiRTUtils.getInstalledRuntimes();
-            int jvmIndex = runtimes.indexOf(new Runtime("<Default>"));
+            int jvmIdx = runtimes.indexOf(new Runtime("<Default>"));
             if (mTempProfile.javaDir != null) {
                 String selectedRuntime = mTempProfile.javaDir.substring(Tools.LAUNCHERPROFILES_RTPREFIX.length());
                 int nindex = runtimes.indexOf(new Runtime(selectedRuntime));
-                if (nindex != -1) jvmIndex = nindex;
+                if (nindex != -1) jvmIdx = nindex;
             }
-            if (jvmIndex == -1) jvmIndex = runtimes.size() - 1;
+            if (jvmIdx == -1) jvmIdx = runtimes.size() - 1;
+            final int finalJvmIndex = jvmIdx;
 
             // Directory listings for mods / resourcepacks / shaderpacks
             File gameDir = Tools.getGameDirPath(mTempProfile);
@@ -365,14 +366,16 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
             mMainHandler.post(() -> {
                 if (!isAdded()) return;
                 mDefaultRuntime.setAdapter(new RTSpinnerAdapter(context, runtimes));
-                mDefaultRuntime.setSelection(Math.max(0, jvmIndex));
+                mDefaultRuntime.setSelection(Math.max(0, finalJvmIndex));
 
-                int rendererIndex = mDefaultRenderer.getAdapter().getCount() - 1;
+                int rendererIdx = mDefaultRenderer.getAdapter().getCount() - 1;
                 if (mTempProfile.pojavRendererName != null) {
                     int nindex = mRenderNames.indexOf(mTempProfile.pojavRendererName);
-                    if (nindex != -1) rendererIndex = nindex;
+                    if (nindex != -1) rendererIdx = nindex;
                 }
-                mDefaultRenderer.setSelection(rendererIndex);
+                final int finalRendererIndex = rendererIdx;
+
+                mDefaultRenderer.setSelection(finalRendererIndex);
 
                 bindPacksAdapters(modsDir, resourcePacksDir, shaderPacksDir);
                 mAsyncLoadComplete = true;
