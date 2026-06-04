@@ -39,10 +39,29 @@
         android:scaleType="fitCenter"
         android:contentDescription="Launcher Logo"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/rv_home_profiles"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintVertical_bias="0.35" />
 
+    <!-- Profile list scrim -->
+    <View
+        android:id="@+id/home_profile_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#CC0D0D0D"
+        app:layout_constraintTop_toBottomOf="@id/iv_center_logo"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Profile Cards -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_home_profiles"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingVertical="12dp"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/iv_center_logo"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

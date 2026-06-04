@@ -9,22 +9,31 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
+import net.kdt.pojavlaunch.extra.ExtraConstants;
+import net.kdt.pojavlaunch.extra.ExtraCore;
+import net.kdt.pojavlaunch.prefs.LauncherPreferences;
+import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
+import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Default content of the right pane in landscape two-pane mode.
- * Shows a custom background (if set), otherwise a plain transparent pane.
- * Wiki and Discord buttons are pinned at the top.
- */
 public class RightPaneHomeFragment extends Fragment {
 
     public static final String TAG = "RightPaneHomeFragment";
-    /** File path where the custom launcher background image is stored. */
     public static final String CUSTOM_BG_PATH = Tools.DIR_DATA + "/custom_launcher_bg";
+
+    private RecyclerView mRecyclerView;
+    private HomeProfileAdapter mAdapter;
 
     public RightPaneHomeFragment() {
         super(R.layout.fragment_right_pane_home);
@@ -34,7 +43,6 @@ public class RightPaneHomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         loadBackground(view);
 
-        // 1. Premium Fade and Slide In for the whole right pane
         view.setAlpha(0f);
         view.setTranslationX(60f);
         view.animate()
@@ -44,10 +52,10 @@ public class RightPaneHomeFragment extends Fragment {
             .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f))
             .start();
 
-        // 2. Floating effect for Center Logo
         ImageView centerLogo = view.findViewById(R.id.iv_center_logo);
         if (centerLogo != null) {
-            android.animation.ObjectAnimator floatAnim = android.animation.ObjectAnimator.ofFloat(centerLogo, "translationY", 0f, -15f, 0f);
+            android.animation.ObjectAnimator floatAnim = android.animation.ObjectAnimator.ofFloat(
+                    centerLogo, "translationY", 0f, -15f, 0f);
             floatAnim.setDuration(3500);
             floatAnim.setRepeatCount(android.animation.ValueAnimator.INFINITE);
             floatAnim.setRepeatMode(android.animation.ValueAnimator.REVERSE);
@@ -55,27 +63,80 @@ public class RightPaneHomeFragment extends Fragment {
             floatAnim.start();
         }
 
-        // 3. Subtle Parallax/Ken Burns for Hero Background
         ImageView heroBg = view.findViewById(R.id.iv_hero_bg);
         if (heroBg != null) {
-            android.animation.PropertyValuesHolder scaleX = android.animation.PropertyValuesHolder.ofFloat("scaleX", 1.0f, 1.05f, 1.0f);
-            android.animation.PropertyValuesHolder scaleY = android.animation.PropertyValuesHolder.ofFloat("scaleY", 1.0f, 1.05f, 1.0f);
-            android.animation.ObjectAnimator panAnim = android.animation.ObjectAnimator.ofPropertyValuesHolder(heroBg, scaleX, scaleY);
+            android.animation.PropertyValuesHolder scaleX =
+                    android.animation.PropertyValuesHolder.ofFloat("scaleX", 1.0f, 1.05f, 1.0f);
+            android.animation.PropertyValuesHolder scaleY =
+                    android.animation.PropertyValuesHolder.ofFloat("scaleY", 1.0f, 1.05f, 1.0f);
+            android.animation.ObjectAnimator panAnim =
+                    android.animation.ObjectAnimator.ofPropertyValuesHolder(heroBg, scaleX, scaleY);
             panAnim.setDuration(20000);
             panAnim.setRepeatCount(android.animation.ValueAnimator.INFINITE);
             panAnim.setRepeatMode(android.animation.ValueAnimator.REVERSE);
             panAnim.setInterpolator(new android.view.animation.LinearInterpolator());
             panAnim.start();
         }
+
+        mRecyclerView = view.findViewById(R.id.rv_home_profiles);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        setupProfileAdapter();
     }
 
-    /**
-     * Called after saving or removing a custom background so the pane
-     * refreshes without needing a full fragment recreate.
-     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        setupProfileAdapter();
+    }
+
     public void reloadBackground() {
         View v = getView();
         if (v != null) loadBackground(v);
+    }
+
+    private void setupProfileAdapter() {
+        LauncherProfiles.load();
+        Map<String, MinecraftProfile> profilesMap = LauncherProfiles.mainProfileJson != null
+                ? LauncherProfiles.mainProfileJson.profiles : null;
+
+        List<String> keys = new ArrayList<>();
+        List<MinecraftProfile> profiles = new ArrayList<>();
+
+        if (profilesMap != null) {
+            List<Map.Entry<String, MinecraftProfile>> entries =
+                    new ArrayList<>(profilesMap.entrySet());
+            Collections.sort(entries, (a, b) -> {
+                String ua = a.getValue().lastUsed != null ? a.getValue().lastUsed : "";
+                String ub = b.getValue().lastUsed != null ? b.getValue().lastUsed : "";
+                return ub.compareTo(ua);
+            });
+            for (Map.Entry<String, MinecraftProfile> entry : entries) {
+                keys.add(entry.getKey());
+                profiles.add(entry.getValue());
+            }
+        }
+
+        mAdapter = new HomeProfileAdapter(keys, profiles,
+                new HomeProfileAdapter.OnProfileActionListener() {
+            @Override
+            public void onProfilePlay(String profileKey, MinecraftProfile profile) {
+                LauncherPreferences.DEFAULT_PREF.edit()
+                        .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, profileKey)
+                        .apply();
+                ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
+            }
+
+            @Override
+            public void onProfileEdit(String profileKey, MinecraftProfile profile) {
+                LauncherPreferences.DEFAULT_PREF.edit()
+                        .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, profileKey)
+                        .apply();
+                Tools.swapFragment(requireActivity(),
+                        ProfileEditorFragment.class, ProfileEditorFragment.TAG, null);
+            }
+        });
+
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void loadBackground(@NonNull View view) {
@@ -91,8 +152,6 @@ public class RightPaneHomeFragment extends Fragment {
                 return;
             }
         }
-        // No custom bg — show the gradient drawable as the pane background if gradient is on,
-        // otherwise stay transparent (root fragment_launcher bg shows through).
         wallpaper.setImageDrawable(null);
         TypedValue tv = new TypedValue();
         view.getContext().getTheme().resolveAttribute(R.attr.bgMainDrawable, tv, true);

@@ -16,7 +16,11 @@ public class DownloadTabAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return DownloadListFragment.newInstance(mTypes[position]);
+        String type = mTypes[position];
+        if (type.equals("world")) {
+            return new CurseForgeWorldsFragment();
+        }
+        return DownloadListFragment.newInstance(type);
     }
 
     @Override
