@@ -6,7 +6,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -282,10 +285,33 @@ public class MinecraftDownloader {
      */
     private boolean downloadAndProcessMetadata(Activity activity, JMinecraftVersionList.Version verInfo, String versionName) throws IOException, MirrorTamperedException {
         File versionJsonFile;
-        if(verInfo != null) versionJsonFile = downloadGameJson(verInfo);
-        else versionJsonFile = createGameJsonPath(versionName);
+        if(verInfo != null) {
+            versionJsonFile = downloadGameJson(verInfo);
+        } else {
+            JMinecraftVersionList.Version listedVersion = AsyncMinecraftDownloader.getListedVersion(versionName);
+            if(listedVersion != null) {
+                versionJsonFile = downloadGameJson(listedVersion);
+            } else {
+                versionJsonFile = createGameJsonPath(versionName);
+            }
+        }
+        Log.d("CS_LAUNCHER", "Version JSON path: " + versionJsonFile.getAbsolutePath());
+        if(!versionJsonFile.exists() || versionJsonFile.length() == 0) {
+            String message = "Failed to load version: " + versionName + ". Please re-install the version.";
+            Log.e("CS_LAUNCHER", message);
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if(activity != null && !activity.isFinishing()) {
+                    Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+                }
+            });
+            throw new IOException(message);
+        }
         if(versionJsonFile.canRead())  {
-            verInfo = Tools.GLOBAL_GSON.fromJson(Tools.read(versionJsonFile), JMinecraftVersionList.Version.class);
+            String rawJson = Tools.read(versionJsonFile.getAbsolutePath());
+            if(rawJson.trim().isEmpty()) {
+                throw new IOException("Version JSON is empty for: " + versionName);
+            }
+            verInfo = Tools.GLOBAL_GSON.fromJson(rawJson, JMinecraftVersionList.Version.class);
         } else {
             throw new IOException("Unable to read Version JSON for version " + versionName);
         }

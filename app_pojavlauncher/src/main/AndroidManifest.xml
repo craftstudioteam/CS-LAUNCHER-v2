@@ -94,6 +94,7 @@
         <activity
             android:process=":gui_installer"
             android:name=".JavaGUILauncherActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode"
             android:screenOrientation="sensorLandscape" />
         <activity

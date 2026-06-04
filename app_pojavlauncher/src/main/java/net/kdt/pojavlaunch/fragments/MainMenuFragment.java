@@ -93,32 +93,10 @@ public class MainMenuFragment extends Fragment {
         }
     }
 
-    /** Shows/hides the entire bottom bar. GONE collapses it so right pane fills full height. */
+    /** Bottom bar is permanently hidden — profile cards handle play/edit. */
     private void setBottomBarVisible(boolean visible) {
         if (mBottomBar == null) return;
-        if (visible) {
-            if (mBottomBar.getVisibility() == View.VISIBLE) return;
-            mBottomBar.setVisibility(View.VISIBLE);
-            mBottomBar.setAlpha(0f);
-            mBottomBar.setTranslationY(mBottomBar.getHeight() > 0
-                    ? mBottomBar.getHeight() : 200f);
-            mBottomBar.animate()
-                    .alpha(1f)
-                    .translationY(0f)
-                    .setDuration(280)
-                    .setInterpolator(mFastOutSlowIn)
-                    .start();
-        } else {
-            if (mBottomBar.getVisibility() == View.GONE) return;
-            mBottomBar.animate()
-                    .alpha(0f)
-                    .translationY(mBottomBar.getHeight() > 0
-                            ? mBottomBar.getHeight() : 200f)
-                    .setDuration(220)
-                    .setInterpolator(mFastOutSlowIn)
-                    .withEndAction(() -> mBottomBar.setVisibility(View.GONE))
-                    .start();
-        }
+        mBottomBar.setVisibility(View.GONE);
     }
 
     /** Explicitly clears the right pane and resets home UI state */

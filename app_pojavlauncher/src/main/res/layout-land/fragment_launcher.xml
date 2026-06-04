@@ -16,7 +16,7 @@
         android:layout_height="0dp"
         android:clipToOutline="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -34,6 +34,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="@drawable/bg_bottom_bar"
+        android:visibility="gone"
         android:paddingStart="@dimen/_10sdp"
         android:paddingEnd="@dimen/_6sdp"
         android:elevation="4dp"
