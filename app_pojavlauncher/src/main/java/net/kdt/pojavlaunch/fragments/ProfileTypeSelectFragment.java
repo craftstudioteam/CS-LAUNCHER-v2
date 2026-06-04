@@ -35,7 +35,6 @@ public class ProfileTypeSelectFragment extends Fragment {
     }
 
     @Override
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mContent = view.findViewById(R.id.setup_hub_content);
