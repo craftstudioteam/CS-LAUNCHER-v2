@@ -35,6 +35,10 @@ import java.io.File;
 public class MainMenuFragment extends Fragment {
     public static final String TAG = "MainMenuFragment";
 
+    private boolean isFragmentReady() {
+        return isAdded() && getContext() != null && !isDetached() && getActivity() != null;
+    }
+
     private mcVersionSpinner mVersionSpinner;
     private ViewGroup mRightPane;
     private View mPlayButton;
@@ -119,10 +123,11 @@ public class MainMenuFragment extends Fragment {
 
     /** Explicitly clears the right pane and resets home UI state */
     public void refreshHomeState() {
+        if (!isFragmentReady() || getView() == null) return;
         clearRightPane();
         setBottomBarVisible(true);
         if (mVersionSpinner != null) mVersionSpinner.reloadProfiles();
-        updateSidebarStates(requireView(), R.id.home_button);
+        updateSidebarStates(getView(), R.id.home_button);
     }
 
     // Note: play button visibility during downloads is handled by the activity's
@@ -275,12 +280,19 @@ public class MainMenuFragment extends Fragment {
 
         // ─── Logo & Title → Home ─────────────────────────────────────
         View logoFrame = requireActivity().findViewById(R.id.btn_home_logo);
-        if (logoFrame != null) logoFrame.setOnClickListener(v -> navHome.performClick());
+        if (logoFrame != null) logoFrame.setOnClickListener(v -> {
+            if (!isFragmentReady()) return;
+            navHome.performClick();
+        });
         View titleView = requireActivity().findViewById(R.id.tv_launcher_title);
-        if (titleView != null) titleView.setOnClickListener(v -> navHome.performClick());
+        if (titleView != null) titleView.setOnClickListener(v -> {
+            if (!isFragmentReady()) return;
+            navHome.performClick();
+        });
 
         // ─── Nav Tab Click Listeners ────────────────────────────────
         navHome.setOnClickListener(v -> {
+            if (!isFragmentReady()) return;
             setActiveNavTab(0);
             clearRightPane();
             setBottomBarVisible(true);
@@ -294,6 +306,7 @@ public class MainMenuFragment extends Fragment {
         });
 
         navModStore.setOnClickListener(v -> {
+            if (!isFragmentReady()) return;
             setActiveNavTab(1);
             Bundle args = new Bundle();
             args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY,
@@ -303,17 +316,20 @@ public class MainMenuFragment extends Fragment {
         });
 
         navControls.setOnClickListener(v -> {
+            if (!isFragmentReady()) return;
             setActiveNavTab(2);
             startActivity(new Intent(requireContext(), CustomControlsActivity.class));
         });
 
         navCursor.setOnClickListener(v -> {
+            if (!isFragmentReady()) return;
             setActiveNavTab(3);
             Tools.swapFragment(requireActivity(), CursorCustomizationFragment.class,
                     CursorCustomizationFragment.TAG, null);
         });
 
         navTools.setOnClickListener(v -> {
+            if (!isFragmentReady()) return;
             setActiveNavTab(4);
             if (Tools.isDemoProfile(v.getContext())) {
                 hasNoOnlineProfileDialog(getActivity(),
@@ -331,12 +347,16 @@ public class MainMenuFragment extends Fragment {
 
 
         // ─── Bottom bar listeners ────────────────────────────────────
-        mEditProfileBtn.setOnClickListener(v ->
-                mVersionSpinner.openProfileEditor(requireActivity()));
+        mEditProfileBtn.setOnClickListener(v -> {
+            if (!isFragmentReady()) return;
+            mVersionSpinner.openProfileEditor(requireActivity());
+        });
 
         if (isTwoPane()) {
-            mVersionSpinner.setOnClickListener(v ->
-                    openPane(InstancePickerFragment.class, InstancePickerFragment.TAG, null));
+            mVersionSpinner.setOnClickListener(v -> {
+                if (!isFragmentReady()) return;
+                openPane(InstancePickerFragment.class, InstancePickerFragment.TAG, null);
+            });
         }
 
         if (isTwoPane()) {
@@ -346,8 +366,10 @@ public class MainMenuFragment extends Fragment {
         // Neon green PLAY button
         mPlayBtn.setBackgroundResource(R.drawable.play_button_green);
         mPlayBtn.setTextColor(getResources().getColor(R.color.bg_primary));
-        mPlayBtn.setOnClickListener(
-                v -> ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true));
+        mPlayBtn.setOnClickListener(v -> {
+            if (!isFragmentReady()) return;
+            ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
+        });
     }
 
     @Override
@@ -372,6 +394,7 @@ public class MainMenuFragment extends Fragment {
         // Force correct bar state on resume
         if (isTwoPane() && mBottomBar != null) {
             mBottomBar.post(() -> {
+                if (!isFragmentReady()) return;
                 boolean showBar = getChildFragmentManager().getBackStackEntryCount() == 0;
                 setBottomBarVisible(showBar);
             });

@@ -21,7 +21,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.math.MathUtils;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,14 +61,6 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
     public static final String TAG = "ModsSearchFragment";
 
     private View mOverlay;
-    private float mOverlayTopCache;
-
-    private final RecyclerView.OnScrollListener mOverlayPositionListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            mOverlay.setY(MathUtils.clamp(mOverlay.getY() - dy, -mOverlay.getHeight(), mOverlayTopCache));
-        }
-    };
 
     private EditText mSearchEditText;
     private ImageButton mFilterButton;
@@ -102,7 +93,6 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mModItemAdapter = new ModItemAdapter(getResources(), mModpackApi, this);
         ProgressKeeper.addTaskCountListener(mModItemAdapter);
-        mOverlayTopCache = getResources().getDimension(R.dimen.fragment_padding_medium);
 
         mOverlay           = view.findViewById(R.id.mod_store_header);
         mSearchEditText    = view.findViewById(R.id.search_mod_edittext);
@@ -178,7 +168,6 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
     public void onDestroyView() {
         super.onDestroyView();
         ProgressKeeper.removeTaskCountListener(mModItemAdapter);
-        mRecyclerview.removeOnScrollListener(mOverlayPositionListener);
     }
 
     @Override

@@ -21,7 +21,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.math.MathUtils;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,14 +42,6 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
 
     public static final String TAG = "SearchModFragment";
     private View mOverlay;
-    private float mOverlayTopCache; // Padding cache reduce resource lookup
-
-    private final RecyclerView.OnScrollListener mOverlayPositionListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            mOverlay.setY(MathUtils.clamp(mOverlay.getY() - dy, -mOverlay.getHeight(), mOverlayTopCache));
-        }
-    };
 
     private EditText mSearchEditText;
     private ImageButton mFilterButton;
@@ -81,7 +72,6 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
         // You can only access resources after attaching to current context
         mModItemAdapter = new ModItemAdapter(getResources(), modpackApi, this);
         ProgressKeeper.addTaskCountListener(mModItemAdapter);
-        mOverlayTopCache = getResources().getDimension(R.dimen.fragment_padding_medium);
 
         mOverlay = view.findViewById(R.id.mod_store_header);
         mSearchEditText = view.findViewById(R.id.search_mod_edittext);
@@ -115,8 +105,6 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
             }
         });
 
-        mRecyclerview.addOnScrollListener(mOverlayPositionListener);
-
         // Real-time search via TextWatcher with debounce
         Handler mSearchHandler = new Handler(Looper.getMainLooper());
         mSearchEditText.addTextChangedListener(new TextWatcher() {
@@ -139,13 +127,6 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
             return false;
         });
 
-        mOverlay.post(()->{
-           int overlayHeight = mOverlay.getHeight();
-           mRecyclerview.setPadding(mRecyclerview.getPaddingLeft(),
-                   mRecyclerview.getPaddingTop() + overlayHeight,
-                   mRecyclerview.getPaddingRight(),
-                   mRecyclerview.getPaddingBottom());
-        });
         mFilterButton.setOnClickListener(v -> displayFilterDialog());
 
         searchMods(null);
@@ -183,7 +164,6 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
     public void onDestroyView() {
         super.onDestroyView();
         ProgressKeeper.removeTaskCountListener(mModItemAdapter);
-        mRecyclerview.removeOnScrollListener(mOverlayPositionListener);
     }
 
     @Override
