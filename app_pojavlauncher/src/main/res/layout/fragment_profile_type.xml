@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="#0A0A0A"
     android:fillViewport="true"
-    android:scrollbarThumbVertical="#00FF41"
     android:scrollbarSize="3dp"
     android:fadeScrollbars="true"
     android:overScrollMode="never">
