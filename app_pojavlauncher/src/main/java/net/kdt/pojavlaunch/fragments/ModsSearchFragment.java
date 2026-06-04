@@ -6,15 +6,16 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.widget.Toast;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -108,7 +109,6 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
         mRecyclerview      = view.findViewById(R.id.search_mod_list);
         mStatusTextView    = view.findViewById(R.id.search_mod_status_text);
         mFilterButton      = view.findViewById(R.id.search_mod_filter);
-        LinearLayout categoryChips = view.findViewById(R.id.mod_category_chips);
 
         mDefaultTextColor = mStatusTextView.getTextColors();
 
@@ -128,32 +128,27 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
                 .setInterpolator(new android.view.animation.DecelerateInterpolator(1.2f))
                 .start();
 
+        // Real-time search via TextWatcher with debounce
+        Handler mSearchHandler = new Handler(Looper.getMainLooper());
+        mSearchEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void afterTextChanged(Editable s) {}
+
+            private Runnable searchRunnable;
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (searchRunnable != null) mSearchHandler.removeCallbacks(searchRunnable);
+                searchRunnable = () -> searchMods(s.toString());
+                mSearchHandler.postDelayed(searchRunnable, 400);
+            }
+        });
+
         mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
+            mSearchHandler.removeCallbacksAndMessages(null);
             searchMods(mSearchEditText.getText().toString());
             mSearchEditText.clearFocus();
             return false;
         });
-
-        if (categoryChips != null) {
-            View.OnClickListener categoryListener = v -> {
-                String category = ((TextView) v).getText().toString();
-                if ("All".equals(category)) {
-                    searchMods(mSearchEditText.getText().toString());
-                } else {
-                    searchMods(category + " " + mSearchEditText.getText().toString());
-                }
-                
-                // Update selection state visually (simplified)
-                for (int i = 0; i < categoryChips.getChildCount(); i++) {
-                    categoryChips.getChildAt(i).setSelected(false);
-                }
-                v.setSelected(true);
-            };
-
-            for (int i = 0; i < categoryChips.getChildCount(); i++) {
-                categoryChips.getChildAt(i).setOnClickListener(categoryListener);
-            }
-        }
 
         // Back button: exit mod store completely
         ImageButton backButton = view.findViewById(R.id.mod_store_back);
@@ -284,7 +279,7 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
         Bundle args = new Bundle();
         args.putSerializable("mod_item", item);
         args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, mProfileKey);
-        navigateToFragment(ModVersionPickerFragment.class, ModVersionPickerFragment.TAG, args);
+        navigateToFragment(ModDetailFragment.class, ModDetailFragment.TAG, args);
     }
 
     private void navigateToFragment(Class<? extends Fragment> fragmentClass, String tag, Bundle args) {

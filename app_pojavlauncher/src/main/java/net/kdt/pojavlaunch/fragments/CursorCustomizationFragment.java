@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -118,6 +119,14 @@ public class CursorCustomizationFragment extends Fragment {
         view.findViewById(R.id.color_purple).setOnClickListener(v -> mDesigner.setColor(Color.parseColor("#AA66CC")));
 
         view.findViewById(R.id.btn_apply_import).setOnClickListener(v -> applyCursor());
+
+        // Make save buttons neon green
+        Button saveBtn = view.findViewById(R.id.btn_save_creation);
+        saveBtn.setBackgroundResource(R.drawable.play_button_green);
+        saveBtn.setTextColor(Color.parseColor("#0D0D0D"));
+        Button applyBtn = view.findViewById(R.id.btn_apply_import);
+        applyBtn.setBackgroundResource(R.drawable.play_button_green);
+        applyBtn.setTextColor(Color.parseColor("#0D0D0D"));
 
         mSeekSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
