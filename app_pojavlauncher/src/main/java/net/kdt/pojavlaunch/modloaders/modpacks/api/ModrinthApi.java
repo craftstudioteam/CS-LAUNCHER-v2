@@ -58,6 +58,8 @@ public class ModrinthApi implements ModpackApi{
             facetString.append(String.format(",[\"versions:%s\"]", searchFilters.mcVersion));
         if(searchFilters.modLoader != null && !searchFilters.modLoader.isEmpty())
             facetString.append(String.format(",[\"categories:%s\"]", searchFilters.modLoader));
+        if(searchFilters.categories != null && !searchFilters.categories.isEmpty())
+            facetString.append(String.format(",[\"categories:%s\"]", searchFilters.categories));
         facetString.append("]");
         params.put("facets", facetString.toString());
         params.put("query", searchFilters.name);
