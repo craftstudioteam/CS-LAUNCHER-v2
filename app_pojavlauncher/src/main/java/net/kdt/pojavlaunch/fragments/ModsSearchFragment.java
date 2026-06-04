@@ -1,20 +1,21 @@
 package net.kdt.pojavlaunch.fragments;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,105 +23,89 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.kdt.mcgui.ProgressLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import net.kdt.pojavlaunch.PojavApplication;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
-import net.kdt.pojavlaunch.modloaders.modpacks.ModItemAdapter;
-import net.kdt.pojavlaunch.modloaders.modpacks.api.CommonApi;
-import net.kdt.pojavlaunch.modloaders.modpacks.api.ModpackApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModDetail;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.SearchFilters;
-import net.kdt.pojavlaunch.modloaders.modpacks.models.Constants;
-import net.kdt.pojavlaunch.prefs.LauncherPreferences;
-import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
 import net.kdt.pojavlaunch.profiles.VersionSelectorDialog;
-import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
-import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
-import net.kdt.pojavlaunch.utils.DownloadUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-/**
- * Searches and installs individual mods into the current instance's mods folder.
- * - Version filter: when an MC version is selected, only versions matching it are shown.
- * - Dependency dialog: shown before download, matching the ModBundle UI.
- */
-public class ModsSearchFragment extends Fragment implements ModItemAdapter.SearchResultCallback {
+public class ModsSearchFragment extends Fragment {
 
     public static final String TAG = "ModsSearchFragment";
 
-    private View mOverlay;
+    private static final String[] TAB_TITLES = {"Mods", "Modpacks", "Resource Packs", "Shaders", "Worlds"};
+    private static final String[] TAB_TYPES  = {"mod", "modpack", "resourcepack", "shader", "world"};
 
     private EditText mSearchEditText;
     private ImageButton mFilterButton;
-    private RecyclerView mRecyclerview;
-    private ModItemAdapter mModItemAdapter;
-    private ProgressBar mSearchProgressBar;
-    private TextView mStatusTextView;
-    private ColorStateList mDefaultTextColor;
+    private ViewPager2 mViewPager;
+    private DownloadTabAdapter mTabAdapter;
+    private LinearLayout mTabBar;
+    private View mTabIndicator;
+    private HorizontalScrollView mTabScroll;
 
-    private ModpackApi mModpackApi;
+    private int mCurrentTab = 0;
+    private final SearchFilters mSearchFilters = new SearchFilters();
     private String mProfileKey;
-    private final SearchFilters mSearchFilters;
+
+    private final Handler mSearchHandler = new Handler(Looper.getMainLooper());
 
     public ModsSearchFragment() {
-        super(R.layout.fragment_mod_search);
-        mSearchFilters = new SearchFilters();
-        mSearchFilters.isModpack = false;
+        super(R.layout.fragment_mod_search_tabbed);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        String profileKey = getArguments() != null ? getArguments().getString(ManageModsFragment.BUNDLE_PROFILE_KEY) : null;
-        mModpackApi = new ModsInstallApi(context.getString(R.string.curseforge_api_key), mSearchFilters, profileKey);
-        mProfileKey = profileKey;
-        ((ModsInstallApi) mModpackApi).mActivityContext = context;
+        mProfileKey = getArguments() != null
+                ? getArguments().getString(ManageModsFragment.BUNDLE_PROFILE_KEY) : null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mModItemAdapter = new ModItemAdapter(getResources(), mModpackApi, this);
-        ProgressKeeper.addTaskCountListener(mModItemAdapter);
+        mSearchEditText = view.findViewById(R.id.search_mod_edittext);
+        mFilterButton = view.findViewById(R.id.search_mod_filter);
+        mViewPager = view.findViewById(R.id.download_view_pager);
+        mTabBar = view.findViewById(R.id.tab_bar);
+        mTabIndicator = view.findViewById(R.id.tab_indicator);
+        mTabScroll = view.findViewById(R.id.tab_scroll);
 
-        mOverlay           = view.findViewById(R.id.mod_store_header);
-        mSearchEditText    = view.findViewById(R.id.search_mod_edittext);
-        mSearchProgressBar = view.findViewById(R.id.search_mod_progressbar);
-        mRecyclerview      = view.findViewById(R.id.search_mod_list);
-        mStatusTextView    = view.findViewById(R.id.search_mod_status_text);
-        mFilterButton      = view.findViewById(R.id.search_mod_filter);
+        ImageButton backButton = view.findViewById(R.id.mod_store_back);
+        backButton.setOnClickListener(v -> {
+            Fragment parent = getParentFragment();
+            if (parent instanceof MainMenuFragment) {
+                ((MainMenuFragment) parent).refreshHomeState();
+            } else if (parent != null) {
+                parent.getChildFragmentManager().popBackStackImmediate();
+            } else {
+                Tools.removeCurrentFragment(requireActivity());
+            }
+        });
 
-        mDefaultTextColor = mStatusTextView.getTextColors();
+        setupTabs();
 
-        mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerview.addItemDecoration(new net.kdt.pojavlaunch.modloaders.modpacks.SpacesItemDecoration(12));
-        mRecyclerview.setAdapter(mModItemAdapter);
-        mModItemAdapter.setOnItemClickListener(this::openModDetail);
+        mTabAdapter = new DownloadTabAdapter(this, TAB_TYPES);
+        mViewPager.setAdapter(mTabAdapter);
+        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                mCurrentTab = position;
+                updateTabSelection(position);
+                String query = mSearchEditText.getText().toString().trim();
+                DownloadListFragment dlf = getListFragment(TAB_TYPES[position]);
+                if (dlf != null && !query.isEmpty()) {
+                    dlf.filter(query, mSearchFilters.mcVersion, mSearchFilters.modLoader);
+                }
+            }
+        });
 
-        // Seamless fade-in: 12dp item decoration + alpha entrance so cards never
-        // abruptly clamp against the top header bounds.
-        mRecyclerview.setAlpha(0f);
-        mRecyclerview.setTranslationY(24f);
-        mRecyclerview.animate()
-                .alpha(1f)
-                .translationY(0f)
-                .setDuration(260)
-                .setInterpolator(new android.view.animation.DecelerateInterpolator(1.2f))
-                .start();
-
-        // Real-time search via TextWatcher with debounce
-        Handler mSearchHandler = new Handler(Looper.getMainLooper());
         mSearchEditText.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void afterTextChanged(Editable s) {}
@@ -129,73 +114,181 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (searchRunnable != null) mSearchHandler.removeCallbacks(searchRunnable);
-                searchRunnable = () -> searchMods(s.toString());
+                searchRunnable = () -> {
+                    DownloadListFragment dlf = getListFragment(TAB_TYPES[mCurrentTab]);
+                    if (dlf != null) {
+                        dlf.filter(s.toString(), mSearchFilters.mcVersion, mSearchFilters.modLoader);
+                    }
+                };
                 mSearchHandler.postDelayed(searchRunnable, 400);
             }
         });
 
         mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
             mSearchHandler.removeCallbacksAndMessages(null);
-            searchMods(mSearchEditText.getText().toString());
+            DownloadListFragment dlf = getListFragment(TAB_TYPES[mCurrentTab]);
+            if (dlf != null) {
+                dlf.filter(mSearchEditText.getText().toString(),
+                        mSearchFilters.mcVersion, mSearchFilters.modLoader);
+            }
             mSearchEditText.clearFocus();
             return false;
         });
 
-        // Back button: exit mod store completely
-        ImageButton backButton = view.findViewById(R.id.mod_store_back);
-        if (backButton != null) {
-            backButton.setOnClickListener(v -> {
-                Fragment parent = getParentFragment();
-                if (parent != null) {
-                    // In two-pane: clear right pane back to home
-                    if (parent instanceof MainMenuFragment) {
-                        ((MainMenuFragment) parent).refreshHomeState();
-                    } else {
-                        parent.getChildFragmentManager().popBackStackImmediate();
-                    }
-                } else {
-                    Tools.removeCurrentFragment(requireActivity());
-                }
-            });
-        }
-
         mFilterButton.setOnClickListener(v -> displayFilterDialog());
         mSearchEditText.setHint(R.string.hint_search_mod);
-        searchMods(null);
+
+        // Wire up click listeners — handles fragment creation and recreation
+        getChildFragmentManager().registerFragmentLifecycleCallbacks(
+                new FragmentManager.FragmentLifecycleCallbacks() {
+                    @Override
+                    public void onFragmentViewCreated(@NonNull FragmentManager fm, @NonNull Fragment f,
+                                                      @NonNull View v, @Nullable Bundle savedInstanceState) {
+                        if (f instanceof DownloadListFragment) {
+                            DownloadListFragment dlf = (DownloadListFragment) f;
+                            String type = dlf.getContentType();
+                            for (int i = 0; i < TAB_TYPES.length; i++) {
+                                if (TAB_TYPES[i].equals(type)) {
+                                    final int tabPos = i;
+                                    dlf.setOnModItemClickListener(
+                                            item -> onModItemClick(item, TAB_TYPES[tabPos]));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }, true);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ProgressKeeper.removeTaskCountListener(mModItemAdapter);
+    private void setupTabs() {
+        mTabBar.removeAllViews();
+        for (int i = 0; i < TAB_TITLES.length; i++) {
+            TextView tab = new TextView(requireContext());
+            tab.setText(TAB_TITLES[i]);
+            tab.setTextSize(14);
+            tab.setPadding(24, 8, 24, 8);
+            tab.setGravity(android.view.Gravity.CENTER);
+            tab.setTextColor(i == 0 ? Color.parseColor("#39FF14") : Color.parseColor("#9CA3AF"));
+            tab.setTypeface(null, i == 0 ? Typeface.BOLD : Typeface.NORMAL);
+            tab.setTag(i);
+            tab.setOnClickListener(v -> mViewPager.setCurrentItem((int) v.getTag(), true));
+            mTabBar.addView(tab, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+        mTabIndicator.post(() -> {
+            if (mTabBar.getChildCount() > 0) {
+                View firstTab = mTabBar.getChildAt(0);
+                firstTab.post(() -> {
+                    int w = firstTab.getWidth();
+                    if (w > 0) {
+                        mTabIndicator.getLayoutParams().width = w;
+                        mTabIndicator.requestLayout();
+                    }
+                });
+            }
+        });
     }
 
-    @Override
-    public void onSearchFinished() {
-        mSearchProgressBar.setVisibility(View.GONE);
-        mStatusTextView.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onSearchError(int error) {
-        mSearchProgressBar.setVisibility(View.GONE);
-        mStatusTextView.setVisibility(View.VISIBLE);
-        switch (error) {
-            case ERROR_INTERNAL:
-                mStatusTextView.setTextColor(Color.RED);
-                mStatusTextView.setText(R.string.search_mod_error);
-                break;
-            case ERROR_NO_RESULTS:
-                mStatusTextView.setTextColor(mDefaultTextColor);
-                mStatusTextView.setText(R.string.search_mod_no_result);
-                break;
+    private void updateTabSelection(int position) {
+        for (int i = 0; i < mTabBar.getChildCount(); i++) {
+            TextView tab = (TextView) mTabBar.getChildAt(i);
+            if (i == position) {
+                tab.setTextColor(Color.parseColor("#39FF14"));
+                tab.setTypeface(null, Typeface.BOLD);
+            } else {
+                tab.setTextColor(Color.parseColor("#9CA3AF"));
+                tab.setTypeface(null, Typeface.NORMAL);
+            }
+        }
+        View selectedTab = mTabBar.getChildAt(position);
+        if (selectedTab != null) {
+            selectedTab.post(() -> {
+                int targetX = selectedTab.getLeft();
+                int targetWidth = selectedTab.getWidth();
+                if (targetWidth > 0) {
+                    mTabIndicator.setTranslationX(targetX);
+                    ViewGroup.LayoutParams lp = mTabIndicator.getLayoutParams();
+                    lp.width = targetWidth;
+                    mTabIndicator.requestLayout();
+                }
+            });
+            mTabScroll.smoothScrollTo(selectedTab.getLeft() - 50, 0);
         }
     }
 
-    private void searchMods(String name) {
-        mSearchProgressBar.setVisibility(View.VISIBLE);
-        mSearchFilters.name = name == null ? "" : name;
-        mModItemAdapter.performSearchQuery(mSearchFilters);
+    private DownloadListFragment getListFragment(String contentType) {
+        for (Fragment f : getChildFragmentManager().getFragments()) {
+            if (f instanceof DownloadListFragment) {
+                DownloadListFragment dlf = (DownloadListFragment) f;
+                if (contentType.equals(dlf.getContentType())) {
+                    return dlf;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void onModItemClick(ModItem item, String contentType) {
+        if (contentType.equals("mod") || contentType.equals("modpack")) {
+            navigateToVersionPicker(item);
+        } else {
+            downloadDirect(item, contentType);
+        }
+    }
+
+    private void navigateToVersionPicker(ModItem item) {
+        Bundle args = new Bundle();
+        args.putSerializable("mod_item", item);
+        args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, mProfileKey);
+
+        Fragment parent = getParentFragment();
+        if (parent instanceof MainMenuFragment) {
+            ((MainMenuFragment) parent).openChildPane(
+                    ModVersionPickerFragment.class, ModVersionPickerFragment.TAG, args);
+        } else if (parent != null) {
+            parent.getChildFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.fade_in_slide_up, R.anim.fade_out_slide_down,
+                            R.anim.fade_in_slide_up, R.anim.fade_out_slide_down)
+                    .setReorderingAllowed(true)
+                    .replace(R.id.right_pane_container,
+                            ModVersionPickerFragment.class, args, ModVersionPickerFragment.TAG)
+                    .addToBackStack(ModVersionPickerFragment.TAG)
+                    .commit();
+        } else {
+            Tools.swapFragment(requireActivity(),
+                    ModVersionPickerFragment.class, ModVersionPickerFragment.TAG, args);
+        }
+    }
+
+    private void downloadDirect(ModItem item, String contentType) {
+        PojavApplication.sExecutorService.execute(() -> {
+            try {
+                ModrinthApi api = new ModrinthApi();
+                ModDetail detail = api.getModDetails(item, null, null);
+                if (detail != null && detail.versionUrls != null && detail.versionUrls.length > 0) {
+                    String url = detail.versionUrls[0];
+                    Context ctx = getContext();
+                    if (ctx == null) return;
+                    String name = item.title;
+                    String finalContentType = contentType;
+                    Tools.runOnUiThread(() ->
+                            ModDownloadHelper.download(ctx, name, url, finalContentType));
+                } else {
+                    Tools.runOnUiThread(() -> {
+                        if (isAdded())
+                            Toast.makeText(getContext(), "No download available", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            } catch (Exception e) {
+                Tools.runOnUiThread(() -> {
+                    if (isAdded())
+                        Toast.makeText(getContext(), "Download failed", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     private void displayFilterDialog() {
@@ -207,13 +300,12 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
             TextView mSelectedVersion = dialog.findViewById(R.id.search_mod_selected_mc_version_textview);
             Button mSelectVersionButton = dialog.findViewById(R.id.search_mod_mc_version_button);
             Button mApplyButton = dialog.findViewById(R.id.search_mod_apply_filters);
-            android.widget.Spinner mLoaderSpinner = dialog.findViewById(R.id.search_mod_loader_spinner);
+            Spinner mLoaderSpinner = dialog.findViewById(R.id.search_mod_loader_spinner);
 
             assert mSelectedVersion != null;
             assert mSelectVersionButton != null;
             assert mApplyButton != null;
 
-            // Set up loader spinner
             if (mLoaderSpinner != null) {
                 String[] loaderLabels = {"Any loader", "Fabric", "Forge", "Quilt", "NeoForge"};
                 final String[] loaderValues = {"", "fabric", "forge", "quilt", "neoforge"};
@@ -222,7 +314,6 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
                 loaderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 mLoaderSpinner.setAdapter(loaderAdapter);
 
-                // Restore current selection
                 String currentLoader = mSearchFilters.modLoader != null ? mSearchFilters.modLoader : "";
                 for (int i = 0; i < loaderValues.length; i++) {
                     if (loaderValues[i].equals(currentLoader)) {
@@ -241,11 +332,14 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
                     mSearchFilters.mcVersion = mSelectedVersion.getText().toString();
                     int pos = mLoaderSpinner.getSelectedItemPosition();
                     mSearchFilters.modLoader = loaderValues[pos];
-                    searchMods(mSearchEditText.getText().toString());
+                    DownloadListFragment dlf = getListFragment(TAB_TYPES[mCurrentTab]);
+                    if (dlf != null) {
+                        dlf.filter(mSearchEditText.getText().toString(),
+                                mSearchFilters.mcVersion, mSearchFilters.modLoader);
+                    }
                     dialogInterface.dismiss();
                 });
             } else {
-                // Fallback if spinner view not found
                 mSelectVersionButton.setOnClickListener(v ->
                         VersionSelectorDialog.open(v.getContext(), true,
                                 (id, snapshot) -> mSelectedVersion.setText(id)));
@@ -254,7 +348,11 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
 
                 mApplyButton.setOnClickListener(v -> {
                     mSearchFilters.mcVersion = mSelectedVersion.getText().toString();
-                    searchMods(mSearchEditText.getText().toString());
+                    DownloadListFragment dlf = getListFragment(TAB_TYPES[mCurrentTab]);
+                    if (dlf != null) {
+                        dlf.filter(mSearchEditText.getText().toString(),
+                                mSearchFilters.mcVersion, mSearchFilters.modLoader);
+                    }
                     dialogInterface.dismiss();
                 });
             }
@@ -262,7 +360,6 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
 
         dialog.show();
     }
-
 
     @Override
     public void onResume() {
@@ -289,251 +386,6 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
                         : R.id.bottom_bar;
                 sidePanel.requestLayout();
             }
-        }
-    }
-
-    // ── Navigation to Version Picker (Screen 2) ───────────────────────
-    private void openModDetail(ModItem item) {
-        Bundle args = new Bundle();
-        args.putSerializable("mod_item", item);
-        args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, mProfileKey);
-        navigateToFragment(ModVersionPickerFragment.class, ModVersionPickerFragment.TAG, args);
-    }
-
-    private void navigateToFragment(Class<? extends Fragment> fragmentClass, String tag, Bundle args) {
-        Fragment parent = getParentFragment();
-        if (parent instanceof MainMenuFragment) {
-            ((MainMenuFragment) parent).openChildPane(fragmentClass, tag, args);
-        } else if (parent != null) {
-            parent.getChildFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(
-                            R.anim.fade_in_slide_up, R.anim.fade_out_slide_down,
-                            R.anim.fade_in_slide_up, R.anim.fade_out_slide_down)
-                    .setReorderingAllowed(true)
-                    .replace(R.id.right_pane_container, fragmentClass, args, tag)
-                    .addToBackStack(tag)
-                    .commit();
-        } else if (getActivity() != null) {
-            Tools.swapFragment(getActivity(), fragmentClass, tag, args);
-        }
-    }
-
-    // ── ModsInstallApi ────────────────────────────────────────────────────────
-
-    private static class ModsInstallApi extends CommonApi {
-
-        private final SearchFilters mFilters;
-        private final String mProfileKey;
-        private final ModrinthApi mModrinthApi = new ModrinthApi();
-        private final Handler mMainHandler = new Handler(Looper.getMainLooper());
-        private Context mActivityContext;
-        private final net.kdt.pojavlaunch.modloaders.modpacks.api.CurseforgeApi mCurseforgeApi;
-
-        ModsInstallApi(String curseforgeApiKey, SearchFilters filters, String profileKey) {
-            super(curseforgeApiKey);
-            mFilters = filters;
-            mProfileKey = profileKey;
-            mCurseforgeApi = new net.kdt.pojavlaunch.modloaders.modpacks.api.CurseforgeApi(curseforgeApiKey);
-        }
-
-        /**
-         * Override getModDetails to filter versions by the selected MC version.
-         * Only versions matching the filter are shown in the version dropdown.
-         */
-        @Override
-        public ModDetail getModDetails(ModItem item) {
-            if (item.apiSource == net.kdt.pojavlaunch.modloaders.modpacks.models.Constants.SOURCE_MODRINTH) {
-                String filterVer = (mFilters.mcVersion != null && !mFilters.mcVersion.isEmpty())
-                        ? mFilters.mcVersion : null;
-                String filterLoader = (mFilters.modLoader != null && !mFilters.modLoader.isEmpty())
-                        ? mFilters.modLoader : null;
-                return mModrinthApi.getModDetails(item, filterVer, filterLoader);
-            }
-            if (item.apiSource == net.kdt.pojavlaunch.modloaders.modpacks.models.Constants.SOURCE_CURSEFORGE) {
-                String filterVer = (mFilters.mcVersion != null && !mFilters.mcVersion.isEmpty())
-                        ? mFilters.mcVersion : null;
-                return mCurseforgeApi.getModDetails(item, filterVer);
-            }
-            return super.getModDetails(item);
-        }
-
-        @Override
-        public void handleInstallation(Context context, ModDetail modDetail, int selectedVersion) {
-            if (modDetail.isModpack) {
-                super.handleInstallation(context, modDetail, selectedVersion);
-                return;
-            }
-
-            String url = modDetail.versionUrls[selectedVersion];
-
-            // Check if this is a CF-restricted mod using the flag set during search
-            boolean isCfRestricted = modDetail.apiSource == Constants.SOURCE_CURSEFORGE
-                    && (modDetail.isRestricted || url == null || url.isEmpty());
-
-            if (isCfRestricted) {
-                String cfUrl = (modDetail.websiteUrl != null && !modDetail.websiteUrl.isEmpty())
-                        ? modDetail.websiteUrl
-                        : "https://www.curseforge.com/minecraft/mc-mods/" + modDetail.id;
-                Context dialogCtx = mActivityContext != null ? mActivityContext : context;
-                mMainHandler.post(() ->
-                    new AlertDialog.Builder(dialogCtx)
-                        .setTitle(modDetail.title)
-                        .setMessage("This mod restricts third-party downloads.\n\nDownload it manually from CurseForge and place it in your mods folder:\n\n" + cfUrl)
-                        .setPositiveButton("Open CurseForge", (d, w) ->
-                            Tools.openURL((android.app.Activity) dialogCtx, cfUrl))
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .show()
-                );
-                return;
-            }
-
-            if (url == null || url.isEmpty()) {
-                Tools.showErrorRemote(context, R.string.modpack_install_download_failed,
-                        new IOException("No download URL available for this mod"));
-                return;
-            }
-
-            // Extract filename
-            String rawName = url.substring(url.lastIndexOf('/') + 1);
-            if (rawName.contains("?")) rawName = rawName.substring(0, rawName.indexOf('?'));
-            final String fileName = rawName.endsWith(".jar") ? rawName : rawName + ".jar";
-
-            // Check if this version has dependencies
-            String[] depIds   = (modDetail.versionDependencyIds   != null) ? modDetail.versionDependencyIds[selectedVersion]   : null;
-            String[] depTypes = (modDetail.versionDependencyTypes != null) ? modDetail.versionDependencyTypes[selectedVersion] : null;
-
-            if (depIds == null || depIds.length == 0) {
-                // No deps — download directly
-                downloadMod(context, url, fileName, new String[0], new String[0]);
-                return;
-            }
-
-            // Fetch project names for all deps, then show dialog
-            String[] labels = new String[depIds.length];
-            final boolean[] checkedDefaults = new boolean[depIds.length];
-            AtomicInteger remaining = new AtomicInteger(depIds.length);
-
-            for (int i = 0; i < depIds.length; i++) {
-                final int idx = i;
-                final String type = (depTypes != null && idx < depTypes.length) ? depTypes[idx] : "required";
-                final String prefix = "required".equals(type) ? "Required: " : "Optional: ";
-                checkedDefaults[idx] = "required".equals(type);
-
-                final String projectId = depIds[idx];
-                PojavApplication.sExecutorService.execute(() -> {
-                    // Fetch project name from Modrinth
-                    String name = fetchProjectName(projectId);
-                    labels[idx] = prefix + (name != null ? name : projectId);
-                    if (remaining.decrementAndGet() == 0) {
-                        mMainHandler.post(() -> showDepsDialog(context, url, fileName,
-                                depIds, depTypes, labels, checkedDefaults));
-                    }
-                });
-            }
-        }
-
-        private void showDepsDialog(Context context, String url, String fileName,
-                                    String[] depIds, String[] depTypes,
-                                    String[] labels, boolean[] checkedDefaults) {
-            // context here is getApplicationContext() from ModItemAdapter — no window token.
-            // Use the stored Activity reference instead.
-            Context dialogCtx = mActivityContext != null ? mActivityContext : context;
-            boolean[] selected = checkedDefaults.clone();
-
-            new AlertDialog.Builder(dialogCtx)
-                    .setTitle(R.string.mod_deps_title)
-                    .setMultiChoiceItems(labels, selected,
-                            (dialog, which, isChecked) -> selected[which] = isChecked)
-                    .setPositiveButton(R.string.mod_deps_install_selected, (d, w) -> {
-                        List<String> selectedIds = new ArrayList<>();
-                        for (int i = 0; i < depIds.length; i++) {
-                            if (selected[i]) selectedIds.add(depIds[i]);
-                        }
-                        downloadMod(context, url, fileName,
-                                selectedIds.toArray(new String[0]), depTypes);
-                    })
-                    .setNeutralButton(R.string.mod_deps_install_without,
-                            (d, w) -> downloadMod(context, url, fileName, new String[0], new String[0]))
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show();
-        }
-
-        private void downloadMod(Context context, String url, String fileName,
-                                  String[] depIds, String[] depTypes) {
-            File modsDir = getModsDir();
-            if (!modsDir.exists()) modsDir.mkdirs();
-
-            ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK, 0, R.string.global_waiting);
-            PojavApplication.sExecutorService.execute(() -> {
-                try {
-                    // Download main mod
-                    DownloadUtils.downloadFile(url, new File(modsDir, fileName));
-
-                    // Download selected dependencies
-                    for (String depId : depIds) {
-                        if (depId == null || depId.isEmpty()) continue;
-                        downloadDependency(depId, modsDir);
-                    }
-
-                    ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK);
-                    Tools.runOnUiThread(() ->
-                            Toast.makeText(context,
-                                    context.getString(R.string.mod_install_success, fileName),
-                                    Toast.LENGTH_LONG).show());
-                } catch (Exception e) {
-                    ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK);
-                    Tools.showErrorRemote(context, R.string.modpack_install_download_failed, e);
-                }
-            });
-        }
-
-        private void downloadDependency(String projectId, File modsDir) {
-            // Fetch latest version for the current MC version/loader filter
-            try {
-                String filterVer = (mFilters.mcVersion != null && !mFilters.mcVersion.isEmpty())
-                        ? mFilters.mcVersion : "";
-                String filterLoader = (mFilters.modLoader != null && !mFilters.modLoader.isEmpty())
-                        ? mFilters.modLoader : null;
-                ModItem depItem = new ModItem(
-                        net.kdt.pojavlaunch.modloaders.modpacks.models.Constants.SOURCE_MODRINTH,
-                        false, projectId, projectId, "", "");
-                ModDetail depDetail = mModrinthApi.getModDetails(depItem, filterVer.isEmpty() ? null : filterVer, filterLoader);
-                if (depDetail == null || depDetail.versionUrls == null || depDetail.versionUrls.length == 0) return;
-
-                String depUrl = depDetail.versionUrls[0];
-                String depName = depUrl.substring(depUrl.lastIndexOf('/') + 1);
-                if (depName.contains("?")) depName = depName.substring(0, depName.indexOf('?'));
-                if (!depName.endsWith(".jar")) depName += ".jar";
-
-                DownloadUtils.downloadFile(depUrl, new File(modsDir, depName));
-            } catch (Exception e) {
-                Log.w(TAG, "Failed to download dependency " + projectId + ": " + e.getMessage());
-            }
-        }
-
-        private String fetchProjectName(String projectId) {
-            try {
-                net.kdt.pojavlaunch.modloaders.modpacks.api.ApiHandler handler =
-                        new net.kdt.pojavlaunch.modloaders.modpacks.api.ApiHandler("https://api.modrinth.com/v2");
-                com.google.gson.JsonObject obj = handler.get("project/" + projectId,
-                        com.google.gson.JsonObject.class);
-                if (obj != null && obj.has("title")) return obj.get("title").getAsString();
-            } catch (Exception ignored) {}
-            return null;
-        }
-
-        private File getModsDir() {
-            try {
-                String key = mProfileKey != null ? mProfileKey : LauncherPreferences.DEFAULT_PREF
-                        .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
-                if (key != null && !key.isEmpty()) {
-                    LauncherProfiles.load();
-                    MinecraftProfile profile = LauncherProfiles.mainProfileJson.profiles.get(key);
-                    if (profile != null) return new File(Tools.getGameDirPath(profile), "mods");
-                }
-            } catch (Exception ignored) {}
-            return new File(Tools.DIR_GAME_NEW, "mods");
         }
     }
 }
