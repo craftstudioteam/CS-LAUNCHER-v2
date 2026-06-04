@@ -165,13 +165,12 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
         @Override
         public void onProgressUpdated(int progress, int resid, Object... va) {
             post(()-> {
-                // Smooth transition at locked 60 FPS via ObjectAnimator
                 int current = textView.getProgress();
                 if (progress != current && progress >= 0) {
-                    ObjectAnimator.ofInt(textView, "progress", current, progress)
-                            .setDuration(200)
-                            .setInterpolator(new android.view.animation.DecelerateInterpolator())
-                            .start();
+                    ObjectAnimator anim = ObjectAnimator.ofInt(textView, "progress", current, progress);
+                    anim.setDuration(200);
+                    anim.setInterpolator(new android.view.animation.DecelerateInterpolator());
+                    anim.start();
                 } else {
                     textView.setProgress(progress);
                 }
