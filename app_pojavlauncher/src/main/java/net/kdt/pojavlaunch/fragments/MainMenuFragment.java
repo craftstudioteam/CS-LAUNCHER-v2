@@ -142,7 +142,6 @@ public class MainMenuFragment extends Fragment {
         return true;
     }
 
-    /**
 
     /**
      * Called from LauncherActivity when the nav_instance_tools header button is tapped.
@@ -155,6 +154,7 @@ public class MainMenuFragment extends Fragment {
             hasNoOnlineProfileDialog(requireActivity());
         }
     }
+    /**
      * Internal navigation: right pane in landscape, full-screen swap in portrait.
      */
     private void openPane(Class<? extends Fragment> fragmentClass, String tag,
