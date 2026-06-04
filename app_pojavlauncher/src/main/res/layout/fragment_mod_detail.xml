@@ -128,6 +128,35 @@
                 android:background="@color/divider_color"
                 app:layout_constraintTop_toBottomOf="@id/detail_mod_icon" />
 
+            <!-- Screenshot Gallery -->
+            <TextView
+                android:id="@+id/detail_screenshot_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:text="@string/detail_screenshots"
+                android:textColor="@color/neon_green"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/detail_divider" />
+
+            <HorizontalScrollView
+                android:id="@+id/detail_screenshot_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_120sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:scrollbars="none"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/detail_screenshot_label">
+
+                <LinearLayout
+                    android:id="@+id/detail_screenshot_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+
             <!-- Full Description -->
             <TextView
                 android:id="@+id/detail_full_description"
@@ -137,7 +166,7 @@
                 android:lineSpacingExtra="3dp"
                 android:textColor="@color/text_secondary_light"
                 android:textSize="@dimen/_13ssp"
-                app:layout_constraintTop_toBottomOf="@id/detail_divider"
+                app:layout_constraintTop_toBottomOf="@id/detail_screenshot_scroll"
                 tools:text="Sodium is a modern rendering engine and graphical optimization mod for Minecraft. It greatly improves frame rates, reduces stuttering, and fixes many graphical issues while maintaining parity with the vanilla game's look and feel. Sodium has extensive configuration options to fine-tune performance on a wide range of hardware configurations." />
 
             <!-- Version Selection Label -->

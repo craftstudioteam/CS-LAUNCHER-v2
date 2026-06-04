@@ -273,6 +273,12 @@ public class MainMenuFragment extends Fragment {
             }
         }
 
+        // ─── Logo & Title → Home ─────────────────────────────────────
+        View logoFrame = requireActivity().findViewById(R.id.btn_home_logo);
+        if (logoFrame != null) logoFrame.setOnClickListener(v -> navHome.performClick());
+        View titleView = requireActivity().findViewById(R.id.tv_launcher_title);
+        if (titleView != null) titleView.setOnClickListener(v -> navHome.performClick());
+
         // ─── Nav Tab Click Listeners ────────────────────────────────
         navHome.setOnClickListener(v -> {
             setActiveNavTab(0);

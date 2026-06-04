@@ -23,16 +23,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- CS Logo -->
-        <ImageView
-            android:id="@+id/iv_cs_logo"
-            android:layout_width="@dimen/_36sdp"
-            android:layout_height="@dimen/_36sdp"
-            android:src="@drawable/bg_hero_minecraft"
-            android:scaleType="centerCrop"
-            android:contentDescription="CS Logo" />
+        <!-- CS Logo (clickable → home) -->
+        <FrameLayout
+            android:id="@+id/btn_home_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center">
 
-        <!-- CS LAUNCHER v2 -->
+            <ImageView
+                android:id="@+id/iv_cs_logo"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:src="@drawable/bg_hero_minecraft"
+                android:scaleType="centerCrop"
+                android:contentDescription="CS Logo" />
+
+        </FrameLayout>
+
+        <!-- CS LAUNCHER v2 (clickable → home) -->
         <TextView
             android:id="@+id/tv_launcher_title"
             android:layout_width="wrap_content"
@@ -42,36 +53,12 @@
             android:textSize="@dimen/_14ssp"
             android:textStyle="bold"
             android:textColor="@color/neon_green"
-            android:letterSpacing="0.04" />
-
-        <!-- Nav Home -->
-        <FrameLayout
-            android:id="@+id/nav_home"
-            android:layout_width="@dimen/_38sdp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/_4sdp"
+            android:letterSpacing="0.04"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
-                <ImageView
-                    android:id="@+id/nav_home_icon"
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
-                    android:src="@drawable/ic_home"
-                    android:contentDescription="@string/mcl_tab_home" />
-                <View
-                    android:id="@+id/nav_home_indicator"
-                    android:layout_width="14dp"
-                    android:layout_height="2dp"
-                    android:background="@color/neon_green"
-                    android:visibility="visible" />
-            </LinearLayout>
-        </FrameLayout>
+            android:focusable="true"
+            android:paddingHorizontal="@dimen/_6sdp"
+            android:paddingVertical="@dimen/_4sdp" />
 
         <!-- Nav Download Mods -->
         <FrameLayout
@@ -190,6 +177,34 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1" />
+
+        <!-- Nav Home (right side) -->
+        <FrameLayout
+            android:id="@+id/nav_home"
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/nav_home_icon"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:src="@drawable/ic_home"
+                    android:contentDescription="@string/mcl_tab_home" />
+                <View
+                    android:id="@+id/nav_home_indicator"
+                    android:layout_width="14dp"
+                    android:layout_height="2dp"
+                    android:background="@color/neon_green"
+                    android:visibility="visible" />
+            </LinearLayout>
+        </FrameLayout>
 
         <!-- Account Spinner -->
         <com.kdt.mcgui.mcAccountSpinner

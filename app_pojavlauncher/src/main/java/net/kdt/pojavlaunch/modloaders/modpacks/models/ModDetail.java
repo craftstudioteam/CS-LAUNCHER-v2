@@ -17,6 +17,8 @@ public class ModDetail extends ModItem implements Parcelable {
     public String[][] versionDependencyIds;
     /* Per-version dependency types — "required" or "optional" */
     public String[][] versionDependencyTypes;
+    /* Screenshot gallery URLs */
+    public String[] screenshotUrls;
 
     public ModDetail(ModItem item, String[] versionNames, String[] mcVersionNames, String[] versionUrls, String[] hashes) {
         this(item, versionNames, mcVersionNames, versionUrls, hashes, null, null);
@@ -41,6 +43,10 @@ public class ModDetail extends ModItem implements Parcelable {
         }
     }
 
+    public void setScreenshotUrls(String[] urls) {
+        screenshotUrls = urls;
+    }
+
     protected ModDetail(Parcel in) {
         super(in.readInt(), in.readByte() != 0, in.readString(), in.readString(), in.readString(), in.readString());
         isRestricted = in.readByte() != 0;
@@ -52,6 +58,7 @@ public class ModDetail extends ModItem implements Parcelable {
         mcVersionNames = in.createStringArray();
         versionUrls = in.createStringArray();
         versionHashes = in.createStringArray();
+        screenshotUrls = in.createStringArray();
 
         int depCount = in.readInt();
         if (depCount >= 0) {
@@ -114,6 +121,7 @@ public class ModDetail extends ModItem implements Parcelable {
         dest.writeStringArray(mcVersionNames);
         dest.writeStringArray(versionUrls);
         dest.writeStringArray(versionHashes);
+        dest.writeStringArray(screenshotUrls);
 
         dest.writeInt(versionDependencyIds != null ? versionDependencyIds.length : -1);
         if (versionDependencyIds != null) {

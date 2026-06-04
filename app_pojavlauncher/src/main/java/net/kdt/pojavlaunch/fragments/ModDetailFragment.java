@@ -9,6 +9,7 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -68,6 +69,11 @@ public class ModDetailFragment extends Fragment {
     private View mScrollContent;
     private LinearLayout mSpinnerContainer;
 
+    // Screenshot views
+    private TextView mScreenshotLabel;
+    private HorizontalScrollView mScreenshotScroll;
+    private LinearLayout mScreenshotContainer;
+
     private int mSelectedVersionIndex = -1;
     private boolean mSuppressSelectionCallback;
     private String mProfileKey;
@@ -116,6 +122,11 @@ public class ModDetailFragment extends Fragment {
         mBottomBar = view.findViewById(R.id.detail_bottom_bar);
         mScrollContent = view.findViewById(R.id.detail_scroll_content);
         mSpinnerContainer = view.findViewById(R.id.detail_spinner_container);
+
+        // Screenshot views
+        mScreenshotLabel = view.findViewById(R.id.detail_screenshot_label);
+        mScreenshotScroll = view.findViewById(R.id.detail_screenshot_scroll);
+        mScreenshotContainer = view.findViewById(R.id.detail_screenshot_container);
 
         // Set up ModpackApi — determine source from the ModItem
         if (mModItem != null && mModItem.apiSource == Constants.SOURCE_MODRINTH) {
@@ -225,6 +236,7 @@ public class ModDetailFragment extends Fragment {
                     if (detail != null && detail.versionNames != null && detail.versionNames.length > 0) {
                         mModDetail = detail;
                         populateVersions(detail);
+                        populateScreenshots(detail);
                     } else {
                         mVersionError.setVisibility(View.VISIBLE);
                         mVersionError.setText(R.string.search_modpack_download_error);
@@ -265,6 +277,36 @@ public class ModDetailFragment extends Fragment {
             mDownloadButton.setText(R.string.detail_download_now);
             mDownloadButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.neon_green));
             mDownloadButton.setOnClickListener(v -> handleDownload());
+        }
+    }
+
+    // ── Screenshot Gallery ─────────────────────────────────────────────
+    private void populateScreenshots(ModDetail detail) {
+        if (detail.screenshotUrls == null || detail.screenshotUrls.length == 0) return;
+
+        mScreenshotLabel.setVisibility(View.VISIBLE);
+        mScreenshotScroll.setVisibility(View.VISIBLE);
+
+        for (String url : detail.screenshotUrls) {
+            if (url == null || url.isEmpty()) continue;
+            ImageView iv = new ImageView(requireContext());
+            int size = (int) (getResources().getDisplayMetrics().density * 100);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(size, size);
+            lp.setMargins(0, 0, (int) (getResources().getDisplayMetrics().density * 8), 0);
+            iv.setLayoutParams(lp);
+            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            iv.setBackgroundResource(R.drawable.background_image_rounded);
+            iv.setClipToOutline(true);
+            mScreenshotContainer.addView(iv);
+
+            // Load screenshot async
+            mIconCache.getImage(bitmap -> {
+                if (bitmap != null && isAdded()) {
+                    iv.setImageBitmap(bitmap);
+                } else if (isAdded()) {
+                    iv.setImageResource(R.mipmap.ic_launcher_foreground);
+                }
+            }, "screenshot_" + url, url);
         }
     }
 

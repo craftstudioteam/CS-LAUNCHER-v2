@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,7 +25,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import net.kdt.pojavlaunch.ManageModsFragment;
 import net.kdt.pojavlaunch.R;
+import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.modloaders.modpacks.ModItemAdapter;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.CommonApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModpackApi;
@@ -88,10 +94,43 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
 
         mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerview.setAdapter(mModItemAdapter);
+        mModItemAdapter.setOnItemClickListener(item -> {
+            Bundle args = new Bundle();
+            args.putSerializable("mod_item", item);
+            args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, null);
+            Fragment parent = getParentFragment();
+            if (parent instanceof MainMenuFragment) {
+                ((MainMenuFragment) parent).openChildPane(ModDetailFragment.class, ModDetailFragment.TAG, args);
+            } else if (parent != null) {
+                parent.getChildFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.right_pane_container, ModDetailFragment.class, args, ModDetailFragment.TAG)
+                        .addToBackStack(ModDetailFragment.TAG)
+                        .commit();
+            } else {
+                Tools.swapFragment(requireActivity(), ModDetailFragment.class, ModDetailFragment.TAG, args);
+            }
+        });
 
         mRecyclerview.addOnScrollListener(mOverlayPositionListener);
 
+        // Real-time search via TextWatcher with debounce
+        Handler mSearchHandler = new Handler(Looper.getMainLooper());
+        mSearchEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void afterTextChanged(Editable s) {}
+
+            private Runnable searchRunnable;
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (searchRunnable != null) mSearchHandler.removeCallbacks(searchRunnable);
+                searchRunnable = () -> searchMods(s.toString());
+                mSearchHandler.postDelayed(searchRunnable, 400);
+            }
+        });
+
         mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
+            mSearchHandler.removeCallbacksAndMessages(null);
             searchMods(mSearchEditText.getText().toString());
             mSearchEditText.clearFocus();
             return false;
