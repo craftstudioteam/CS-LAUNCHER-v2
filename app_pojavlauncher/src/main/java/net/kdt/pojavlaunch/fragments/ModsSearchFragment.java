@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -274,23 +275,52 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
     }
 
 
-    // ── Navigation to Detail Page ─────────────────────────────────────
+    @Override
+    public void onResume() {
+        super.onResume();
+        hidePlayPanel(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        hidePlayPanel(false);
+    }
+
+    private void hidePlayPanel(boolean hide) {
+        if (getActivity() == null) return;
+        View bottomBar = getActivity().findViewById(R.id.bottom_bar);
+        if (bottomBar != null) bottomBar.setVisibility(hide ? View.GONE : View.VISIBLE);
+        View sidePanel = getActivity().findViewById(R.id.right_pane_container);
+        if (sidePanel != null) {
+            ViewGroup.LayoutParams lp = sidePanel.getLayoutParams();
+            if (lp instanceof androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) {
+                ((androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) lp).bottomToBottom = hide
+                        ? androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+                        : R.id.bottom_bar;
+                sidePanel.requestLayout();
+            }
+        }
+    }
+
+    // ── Navigation to Version Picker (Screen 2) ───────────────────────
     private void openModDetail(ModItem item) {
         Bundle args = new Bundle();
         args.putSerializable("mod_item", item);
         args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, mProfileKey);
-        navigateToFragment(ModDetailFragment.class, ModDetailFragment.TAG, args);
+        navigateToFragment(ModVersionPickerFragment.class, ModVersionPickerFragment.TAG, args);
     }
 
     private void navigateToFragment(Class<? extends Fragment> fragmentClass, String tag, Bundle args) {
         Fragment parent = getParentFragment();
         if (parent instanceof MainMenuFragment) {
-            // Route through MainMenuFragment so the bottom PLAY bar is hidden
-            // and the mod list fills the full vertical space.
             ((MainMenuFragment) parent).openChildPane(fragmentClass, tag, args);
         } else if (parent != null) {
             parent.getChildFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.fade_in_slide_up, R.anim.fade_out_slide_down,
+                            R.anim.fade_in_slide_up, R.anim.fade_out_slide_down)
                     .setReorderingAllowed(true)
                     .replace(R.id.right_pane_container, fragmentClass, args, tag)
                     .addToBackStack(tag)

@@ -235,12 +235,13 @@ public class ModVersionPickerFragment extends Fragment {
         Fragment parent = getParentFragment();
         Bundle args = fragment.getArguments();
         if (parent instanceof MainMenuFragment) {
-            // Route through MainMenuFragment so the bottom PLAY bar stays hidden
-            // and the install screen takes the full vertical space under the header.
             ((MainMenuFragment) parent).openChildPane(ModInstallFragment.class, ModInstallFragment.TAG, args);
         } else if (parent != null) {
             parent.getChildFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.fade_in_slide_up, R.anim.fade_out_slide_down,
+                            R.anim.fade_in_slide_up, R.anim.fade_out_slide_down)
                     .setReorderingAllowed(true)
                     .replace(R.id.right_pane_container, ModInstallFragment.class, args, ModInstallFragment.TAG)
                     .addToBackStack(ModInstallFragment.TAG)

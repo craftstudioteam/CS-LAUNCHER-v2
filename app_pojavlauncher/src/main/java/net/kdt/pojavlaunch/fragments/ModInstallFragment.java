@@ -202,6 +202,21 @@ public class ModInstallFragment extends Fragment {
             }
         }
 
+        // Bounce animation on INSTALL button (on load)
+        if (mInstallButton != null) {
+            mInstallButton.setScaleX(0.8f);
+            mInstallButton.setScaleY(0.8f);
+            mInstallButton.postDelayed(() -> {
+                if (!isAdded()) return;
+                mInstallButton.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(400)
+                        .setInterpolator(new OvershootInterpolator(1.5f))
+                        .start();
+            }, 200);
+        }
+
         // Premium button press scale effect
         if (mInstallButton != null) {
             mInstallButton.setOnTouchListener((v, event) -> {

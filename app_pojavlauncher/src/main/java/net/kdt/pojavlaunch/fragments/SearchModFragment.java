@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -99,15 +100,18 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
             args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, null);
             Fragment parent = getParentFragment();
             if (parent instanceof MainMenuFragment) {
-                ((MainMenuFragment) parent).openChildPane(ModDetailFragment.class, ModDetailFragment.TAG, args);
+                ((MainMenuFragment) parent).openChildPane(ModVersionPickerFragment.class, ModVersionPickerFragment.TAG, args);
             } else if (parent != null) {
                 parent.getChildFragmentManager().beginTransaction()
+                        .setCustomAnimations(
+                                R.anim.fade_in_slide_up, R.anim.fade_out_slide_down,
+                                R.anim.fade_in_slide_up, R.anim.fade_out_slide_down)
                         .setReorderingAllowed(true)
-                        .replace(R.id.right_pane_container, ModDetailFragment.class, args, ModDetailFragment.TAG)
-                        .addToBackStack(ModDetailFragment.TAG)
+                        .replace(R.id.right_pane_container, ModVersionPickerFragment.class, args, ModVersionPickerFragment.TAG)
+                        .addToBackStack(ModVersionPickerFragment.TAG)
                         .commit();
             } else {
-                Tools.swapFragment(requireActivity(), ModDetailFragment.class, ModDetailFragment.TAG, args);
+                Tools.swapFragment(requireActivity(), ModVersionPickerFragment.class, ModVersionPickerFragment.TAG, args);
             }
         });
 
@@ -145,6 +149,34 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
         mFilterButton.setOnClickListener(v -> displayFilterDialog());
 
         searchMods(null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        hidePlayPanel(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        hidePlayPanel(false);
+    }
+
+    private void hidePlayPanel(boolean hide) {
+        if (getActivity() == null) return;
+        View bottomBar = getActivity().findViewById(R.id.bottom_bar);
+        if (bottomBar != null) bottomBar.setVisibility(hide ? View.GONE : View.VISIBLE);
+        View sidePanel = getActivity().findViewById(R.id.right_pane_container);
+        if (sidePanel != null) {
+            ViewGroup.LayoutParams lp = sidePanel.getLayoutParams();
+            if (lp instanceof androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) {
+                ((androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) lp).bottomToBottom = hide
+                        ? androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+                        : R.id.bottom_bar;
+                sidePanel.requestLayout();
+            }
+        }
     }
 
     @Override
