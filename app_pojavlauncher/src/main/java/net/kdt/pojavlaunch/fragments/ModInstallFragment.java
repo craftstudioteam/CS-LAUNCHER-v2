@@ -5,7 +5,12 @@ import static net.kdt.pojavlaunch.modloaders.modpacks.models.Constants.SOURCE_MO
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -52,8 +57,12 @@ public class ModInstallFragment extends Fragment {
     private TextView mModTitle;
     private TextView mVersionBadge;
     private TextView mFullDescription;
-    private TextView mChangelogView;
     private Button mInstallButton;
+
+    // View references for animations
+    private View mTopBar;
+    private View mBottomBar;
+    private View mScrollContent;
 
     public static ModInstallFragment newInstance(ModItem item, ModDetail detail,
                                                   int versionIndex, String profileKey) {
@@ -84,13 +93,16 @@ public class ModInstallFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        // Bind premium ID references
+        mTopBar = view.findViewById(R.id.install_top_bar);
         mBackButton = view.findViewById(R.id.install_back_button);
         mModIcon = view.findViewById(R.id.install_mod_icon);
         mModTitle = view.findViewById(R.id.install_mod_title);
         mVersionBadge = view.findViewById(R.id.install_selected_version_badge);
         mFullDescription = view.findViewById(R.id.install_full_description);
-        mChangelogView = view.findViewById(R.id.install_changelog);
+        mBottomBar = view.findViewById(R.id.install_bottom_bar);
         mInstallButton = view.findViewById(R.id.install_button);
+        mScrollContent = view.findViewById(R.id.install_scroll_content);
 
         // Populate UI
         if (mModItem != null) {
@@ -109,98 +121,155 @@ public class ModInstallFragment extends Fragment {
             );
         }
 
-        if (mModDetail != null && mVersionIndex >= 0
-                && mVersionIndex < mModDetail.versionNames.length) {
-            String versionName = mModDetail.versionNames[mVersionIndex];
-            String mcVer = (mModDetail.mcVersionNames != null
-                    && mVersionIndex < mModDetail.mcVersionNames.length)
-                    ? mModDetail.mcVersionNames[mVersionIndex] : "";
-            String badge = mcVer.isEmpty() ? versionName : versionName + " — " + mcVer;
-            mVersionBadge.setText(badge);
-        }
-
-        if (mModItem != null && mModItem.description != null) {
-            mFullDescription.setText(mModItem.description);
-        }
-
-        // Back
-        mBackButton.setOnClickListener(v -> {
-            if (getParentFragmentManager().getBackStackEntryCount() > 0) {
-                getParentFragmentManager().popBackStack();
-            } else if (getActivity() != null) {
-                getActivity().onBackPressed();
+        if (mModDetail != null) {
+            // Show full description
+            if (mModDetail.description != null && !mModDetail.description.isEmpty()) {
+                mFullDescription.setText(mModDetail.description);
             }
-        });
 
-        // Install button
-        mInstallButton.setOnClickListener(v -> handleInstall());
+            // Show selected version badge
+            if (mVersionIndex >= 0 && mModDetail.versionNames != null
+                    && mVersionIndex < mModDetail.versionNames.length) {
+                mVersionBadge.setText(mModDetail.versionNames[mVersionIndex]);
+            }
 
-        // Entrance animation
-        view.findViewById(R.id.install_scroll_content).setAlpha(0f);
-        view.findViewById(R.id.install_scroll_content).setTranslationY(40f);
-        view.findViewById(R.id.install_scroll_content).animate()
-                .alpha(1f)
-                .translationY(0f)
-                .setDuration(250)
-                .setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator())
-                .start();
+            // Determine the file name from version URL
+            String versionUrl = (mModDetail.versionUrls != null
+                    && mVersionIndex >= 0 && mVersionIndex < mModDetail.versionUrls.length)
+                    ? mModDetail.versionUrls[mVersionIndex] : null;
 
-        mInstallButton.setScaleX(0.9f);
-        mInstallButton.setScaleY(0.9f);
-        mInstallButton.animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .setDuration(350)
-                .setInterpolator(new android.view.animation.OvershootInterpolator(1.3f))
-                .start();
-    }
+            final String fileName;
+            if (versionUrl != null && !versionUrl.isEmpty()) {
+                String raw = versionUrl.substring(versionUrl.lastIndexOf('/') + 1);
+                if (raw.contains("?")) raw = raw.substring(0, raw.indexOf('?'));
+                fileName = raw;
+            } else {
+                fileName = (mModItem != null ? mModItem.title : "mod") + ".jar";
+            }
 
-    private void handleInstall() {
-        if (mModDetail == null || mVersionIndex < 0
-                || mVersionIndex >= mModDetail.versionUrls.length) return;
+            final String finalUrl = versionUrl;
 
-        String url = mModDetail.versionUrls[mVersionIndex];
-        String fileName = url.substring(url.lastIndexOf('/') + 1);
-        if (fileName.contains("?")) fileName = fileName.substring(0, fileName.indexOf('?'));
-        if (!fileName.endsWith(".jar")) fileName += ".jar";
-
-        // Check deps
-        String[] depIds = (mModDetail.versionDependencyIds != null
-                && mVersionIndex < mModDetail.versionDependencyIds.length)
-                ? mModDetail.versionDependencyIds[mVersionIndex] : null;
-        String[] depTypes = (mModDetail.versionDependencyTypes != null
-                && mVersionIndex < mModDetail.versionDependencyTypes.length)
-                ? mModDetail.versionDependencyTypes[mVersionIndex] : null;
-
-        boolean hasRequired = false;
-        List<String> requiredIds = new ArrayList<>();
-        if (depIds != null && depTypes != null) {
-            for (int i = 0; i < depIds.length; i++) {
-                if ("required".equals(depTypes[i])) {
-                    hasRequired = true;
-                    requiredIds.add(depIds[i]);
+            mInstallButton.setOnClickListener(v -> {
+                if (finalUrl == null || finalUrl.isEmpty()) {
+                    Toast.makeText(getContext(),
+                            R.string.modpack_install_download_failed, Toast.LENGTH_SHORT).show();
+                    return;
                 }
-            }
+                startDownload(finalUrl, fileName);
+            });
         }
 
-        if (hasRequired && !requiredIds.isEmpty()) {
-            showDependencyDialog(url, fileName);
-        } else {
-            downloadMod(requireContext(), url, fileName, new String[0], new String[0]);
+        // Back button — pop back to the mod detail / list
+        mBackButton.setOnClickListener(v ->
+                getParentFragmentManager().popBackStack());
+
+        if (getView() != null) {
+            getView().post(this::setupInstallAnimations);
         }
     }
 
-    private void showDependencyDialog(String url, String fileName) {
-        Context ctx = requireContext();
-        if (mModDetail == null || mVersionIndex < 0) return;
+    // ─── Premium Entry Animations ──────────────────────────────────────
 
+    private void setupInstallAnimations() {
+        if (mTopBar != null) {
+            mTopBar.setTranslationY(-60f);
+            mTopBar.setAlpha(0f);
+            mTopBar.animate()
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(260)
+                    .setInterpolator(new AccelerateDecelerateInterpolator())
+                    .start();
+        }
+
+        if (mBottomBar != null) {
+            mBottomBar.setTranslationY(80f);
+            mBottomBar.setAlpha(0f);
+            mBottomBar.animate()
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(280)
+                    .setStartDelay(60)
+                    .setInterpolator(new AccelerateDecelerateInterpolator())
+                    .start();
+        }
+
+        // Start staggered content layout animation
+        if (mScrollContent != null) {
+            View content = mScrollContent;
+            if (content instanceof ViewGroup) {
+                ((ViewGroup) content).startLayoutAnimation();
+            }
+        }
+
+        // Premium button press scale effect
+        if (mInstallButton != null) {
+            mInstallButton.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        v.animate().scaleX(0.97f).scaleY(0.97f).setDuration(80).start();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(120)
+                                .setInterpolator(new OvershootInterpolator(1.5f))
+                                .start();
+                        break;
+                }
+                return false;
+            });
+        }
+
+        // Premium back button press scale effect
+        if (mBackButton != null) {
+            mBackButton.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        v.animate().scaleX(0.90f).scaleY(0.90f).setDuration(70).start();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                        break;
+                }
+                return false;
+            });
+        }
+    }
+
+    // ─── Download & Dependency Logic ──────────────────────────────────
+
+    private void startDownload(String url, String fileName) {
+        Context ctx = getContext();
+        if (ctx == null) return;
+
+        // Check for dependencies
+        if (mModDetail != null && mModDetail.versionDependencyIds != null
+                && mVersionIndex >= 0 && mVersionIndex < mModDetail.versionDependencyIds.length) {
+            showDependencyDialog(ctx, url, fileName);
+        } else {
+            downloadMod(ctx, url, fileName,
+                    new String[0], new String[0]);
+        }
+    }
+
+    private void showDependencyDialog(Context ctx, String url, String fileName) {
         String[] depIds = mModDetail.versionDependencyIds[mVersionIndex];
+        String[] depNames = new String[depIds != null ? depIds.length : 0];
+        if (depIds != null) {
+            for (int i = 0; i < depIds.length; i++) {
+                depNames[i] = "Dependency: " + depIds[i];
+            }
+        }
         String[] depTypes = mModDetail.versionDependencyTypes[mVersionIndex];
-        String[] depNames = new String[depIds.length];
+        if (depIds == null || depIds.length == 0) {
+            downloadMod(ctx, url, fileName, new String[0], new String[0]);
+            return;
+        }
+
         boolean[] selected = new boolean[depIds.length];
         for (int i = 0; i < depIds.length; i++) {
             selected[i] = true;
-            depNames[i] = "Dependency: " + depIds[i];
         }
 
         new androidx.appcompat.app.AlertDialog.Builder(ctx)
@@ -212,10 +281,12 @@ public class ModInstallFragment extends Fragment {
                     for (int i = 0; i < depIds.length; i++) {
                         if (selected[i]) list.add(depIds[i]);
                     }
-                    downloadMod(ctx, url, fileName, list.toArray(new String[0]), depTypes);
+                    downloadMod(ctx, url, fileName,
+                            list.toArray(new String[0]), depTypes);
                 })
                 .setNeutralButton(R.string.mod_deps_install_without,
-                        (d, w) -> downloadMod(ctx, url, fileName, new String[0], new String[0]))
+                        (d, w) -> downloadMod(ctx, url, fileName,
+                                new String[0], new String[0]))
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
@@ -227,7 +298,7 @@ public class ModInstallFragment extends Fragment {
 
         ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK, 0, R.string.global_waiting);
         mInstallButton.setEnabled(false);
-        mInstallButton.setText("INSTALLING...");
+        mInstallButton.setText(R.string.mod_installing);
 
         PojavApplication.sExecutorService.execute(() -> {
             try {
@@ -253,7 +324,7 @@ public class ModInstallFragment extends Fragment {
                 Tools.runOnUiThread(() -> {
                     if (!isAdded()) return;
                     mInstallButton.setEnabled(true);
-                    mInstallButton.setText("INSTALL NOW");
+                    mInstallButton.setText(R.string.mod_install_now);
                     Tools.showErrorRemote(ctx, R.string.modpack_install_download_failed, e);
                 });
             }

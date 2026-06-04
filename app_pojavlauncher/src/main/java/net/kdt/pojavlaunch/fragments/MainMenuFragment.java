@@ -326,12 +326,6 @@ public class MainMenuFragment extends Fragment {
             });
         }
 
-        // Profile name
-        TextView profileName = view.findViewById(R.id.profile_name);
-        if (profileName != null) {
-            profileName.setText(LauncherPreferences.DEFAULT_PREF
-                    .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "STEVE"));
-        }
 
         // ─── Bottom bar listeners ────────────────────────────────────
         mEditProfileBtn.setOnClickListener(v ->

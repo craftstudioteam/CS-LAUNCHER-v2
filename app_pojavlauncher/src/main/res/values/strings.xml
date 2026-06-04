@@ -574,4 +574,10 @@
     <string name="detail_select_version">Select a version</string>
     <string name="detail_select_version_first">Select a version first</string>
     <string name="detail_download_now">DOWNLOAD NOW</string>
+    <!-- Mod Install Screen Strings -->
+    <string name="mod_install_title">Install Mod</string>
+    <string name="mod_install_now">INSTALL NOW</string>
+    <string name="mod_installing">INSTALLING...</string>
+    <string name="mod_description_label">Description</string>
+
 </resources>

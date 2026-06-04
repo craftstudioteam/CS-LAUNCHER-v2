@@ -32,6 +32,7 @@ import net.kdt.pojavlaunch.modloaders.modpacks.api.ModrinthApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.imagecache.ModIconCache;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModDetail;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.ModItem;
+import net.kdt.pojavlaunch.fragments.ModInstallFragment;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.Constants;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
@@ -305,43 +306,20 @@ public class ModDetailFragment extends Fragment {
     private void handleDownload() {
         if (mModDetail == null || mSelectedVersionIndex < 0) return;
 
-        String url = mModDetail.versionUrls[mSelectedVersionIndex];
-        String fileName = url.substring(url.lastIndexOf('/') + 1);
-        if (fileName.contains("?")) fileName = fileName.substring(0, fileName.indexOf('?'));
-        if (!fileName.endsWith(".jar")) fileName += ".jar";
-
-        // Check for dependencies
-        String[] depIds = (mModDetail.versionDependencyIds != null
-                && mSelectedVersionIndex < mModDetail.versionDependencyIds.length)
-                ? mModDetail.versionDependencyIds[mSelectedVersionIndex] : null;
-        String[] depTypes = (mModDetail.versionDependencyTypes != null
-                && mSelectedVersionIndex < mModDetail.versionDependencyTypes.length)
-                ? mModDetail.versionDependencyTypes[mSelectedVersionIndex] : null;
-
-        boolean hasRequiredDeps = false;
-        List<String> requiredDepNames = new ArrayList<>();
-        if (depIds != null && depTypes != null) {
-            for (int i = 0; i < depIds.length; i++) {
-                if (depTypes[i] != null && depTypes[i].equals("required")) {
-                    hasRequiredDeps = true;
-                    requiredDepNames.add(depIds[i]);
-                }
-            }
-        }
-
-        if (hasRequiredDeps && requiredDepNames.size() > 0) {
-            String[] reqIds = requiredDepNames.toArray(new String[0]);
-            String[] reqTypes = new String[reqIds.length];
-            // Map back to original types for the required ones
-            int idx = 0;
-            for (int i = 0; i < depIds.length; i++) {
-                if (depTypes[i] != null && depTypes[i].equals("required")) {
-                    reqTypes[idx++] = depTypes[i];
-                }
-            }
-            showDependencyDialog(reqIds, reqTypes, url, fileName);
-        } else {
-            downloadMod(requireContext(), url, fileName, new String[0], new String[0]);
+        // Navigate to the full-screen ModInstallFragment (Step 3)
+        ModInstallFragment fragment = ModInstallFragment.newInstance(
+                mModItem, mModDetail, mSelectedVersionIndex, mProfileKey);
+        Bundle args = fragment.getArguments();
+        Fragment parent = getParentFragment();
+        if (parent != null) {
+            parent.getChildFragmentManager()
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.right_pane_container, ModInstallFragment.class, args, ModInstallFragment.TAG)
+                    .addToBackStack(ModInstallFragment.TAG)
+                    .commit();
+        } else if (getActivity() != null) {
+            Tools.swapFragment(getActivity(), ModInstallFragment.class, ModInstallFragment.TAG, args);
         }
     }
 

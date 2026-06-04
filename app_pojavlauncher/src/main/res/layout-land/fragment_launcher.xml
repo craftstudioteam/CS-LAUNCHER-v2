@@ -26,7 +26,6 @@
             android:gravity="center_vertical">
 
             <!-- Brand title -->
-            <TextView
                 android:id="@+id/brand_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -227,24 +226,6 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="@dimen/_6sdp">
 
-                <TextView
-                    android:id="@+id/profile_welcome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cs_welcome_back_label"
-                    android:textColor="@color/text_secondary_dim"
-                    android:textSize="@dimen/_9ssp" />
-
-                <TextView
-                    android:id="@+id/profile_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_4sdp"
-                    android:text="@string/cs_welcome_username"
-                    android:textColor="@color/text_primary_light"
-                    android:textSize="@dimen/_11ssp"
-                    android:textStyle="bold" />
-
                 <ImageButton
                     android:id="@+id/settings_gear"
                     android:layout_width="@dimen/_28sdp"
@@ -372,7 +353,6 @@
                 android:scaleType="fitCenter"
                 android:contentDescription="@string/mcl_edit" />
 
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/mcl_edit"
