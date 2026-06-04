@@ -15,6 +15,9 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.animation.LayoutTransition;
+import android.view.animation.DecelerateInterpolator;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -121,6 +124,24 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         bindViews(view);
+
+        // Smooth 60/90 FPS layout animations
+        View rootLayout = view.findViewById(R.id.fragment_profile_editor_root);
+        if (rootLayout instanceof ViewGroup) {
+            LayoutTransition transition = new LayoutTransition();
+            transition.enableTransitionType(LayoutTransition.CHANGING);
+            transition.setDuration(250);
+            transition.setInterpolator(LayoutTransition.CHANGE_APPEARING,
+                    new DecelerateInterpolator());
+            ((ViewGroup) rootLayout).setLayoutTransition(transition);
+        }
+
+        // Hardware acceleration
+        if (getActivity() != null) {
+            getActivity().getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+        }
 
         // Hardware layer for the entire content block → smooth 60fps animations
         view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
