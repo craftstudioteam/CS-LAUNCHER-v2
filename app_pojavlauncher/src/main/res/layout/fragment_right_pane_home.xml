@@ -42,38 +42,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.35" />
+        app:layout_constraintVertical_bias="0.5" />
 
-    <!-- "About Launcher" Text Block -->
-    <TextView
-        android:id="@+id/tv_about_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="About Launcher"
-        android:textSize="@dimen/_18ssp"
-        android:textStyle="bold"
-        android:textColor="@color/text_primary_white"
-        android:textAllCaps="true"
-        android:letterSpacing="0.05"
-        app:layout_constraintTop_toBottomOf="@id/iv_center_logo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/_12sdp" />
-
-    <TextView
-        android:id="@+id/tv_about_content"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Welcome to CS Launcher v2. This launcher is designed to provide a modern and customizable experience for your Minecraft adventures. More detailed information will be available here soon."
-        android:textSize="@dimen/_11ssp"
-        android:textColor="@color/text_secondary_light"
-        android:gravity="center"
-        android:lineSpacingExtra="@dimen/_2sdp"
-        android:layout_marginStart="@dimen/_40sdp"
-        android:layout_marginEnd="@dimen/_40sdp"
-        android:layout_marginTop="@dimen/_8sdp"
-        app:layout_constraintTop_toBottomOf="@id/tv_about_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

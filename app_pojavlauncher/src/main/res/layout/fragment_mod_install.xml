@@ -4,25 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212">
+    android:background="@drawable/bg_install_screen_gradient"
+    android:clipToPadding="false">
 
-    <!-- Top Bar -->
+    <!-- ════════════════════════════════════════
+         Top Navigation Bar
+    ════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/install_top_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_52sdp"
+        android:layout_gravity="top"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="#1E1E1E"
-        android:paddingHorizontal="@dimen/padding_medium">
+        android:background="#171717"
+        android:elevation="8dp"
+        android:paddingStart="@dimen/padding_medium"
+        android:paddingEnd="@dimen/padding_medium">
 
         <ImageButton
             android:id="@+id/install_back_button"
             android:layout_width="@dimen/_38sdp"
             android:layout_height="@dimen/_38sdp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_arrow_back_white"
             android:contentDescription="@string/global_back"
+            android:padding="@dimen/_8sdp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_arrow_back_white"
             app:tint="@color/neon_green" />
 
         <TextView
@@ -31,45 +39,73 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="@dimen/padding_moderate"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/mod_install_title"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/_15ssp"
             android:textStyle="bold"
-            android:maxLines="1"
-            android:ellipsize="end"
             tools:text="Install Mod" />
 
     </LinearLayout>
 
-    <!-- Scrollable Content -->
+    <!-- ════════════════════════════════════════
+         Scrollable Content Area
+    ════════════════════════════════════════ -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/install_scroll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/_72sdp"
+        android:layout_marginTop="@dimen/_52sdp"
+        android:layout_marginBottom="92dp"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/_16sdp">
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:paddingBottom="8dp"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/_16sdp">
+            android:animateLayoutChanges="true"
+            android:layoutAnimation="@anim/install_content_layout_animation"
+            android:paddingStart="@dimen/_16sdp"
+            android:paddingTop="@dimen/_16sdp"
+            android:paddingEnd="@dimen/_16sdp"
+            android:paddingBottom="@dimen/_24sdp">
 
-            <!-- Header: Icon + Title + Version Badge -->
+            <!-- ── Hero Card: Icon + Title + Version ── -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_install_card"
+                android:elevation="2dp"
+                android:padding="@dimen/_14sdp">
 
-                <ImageView
-                    android:id="@+id/install_mod_icon"
-                    android:layout_width="@dimen/_72sdp"
-                    android:layout_height="@dimen/_72sdp"
-                    android:background="@drawable/background_image_rounded"
-                    android:clipToOutline="true"
-                    android:scaleType="centerCrop"
-                    tools:src="@mipmap/ic_launcher_foreground" />
+                <FrameLayout
+                    android:layout_width="78dp"
+                    android:layout_height="78dp">
+
+                    <!-- Glow behind icon -->
+                    <View
+                        android:layout_width="58dp"
+                        android:layout_height="58dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_icon_glow" />
+
+                    <ImageView
+                        android:id="@+id/install_mod_icon"
+                        android:layout_width="@dimen/_72sdp"
+                        android:layout_height="@dimen/_72sdp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/background_image_rounded"
+                        android:clipToOutline="true"
+                        android:scaleType="centerCrop"
+                        tools:src="@mipmap/ic_launcher_foreground" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -94,66 +130,73 @@
                         android:layout_marginTop="@dimen/_6sdp"
                         android:paddingHorizontal="@dimen/_10sdp"
                         android:paddingVertical="@dimen/_4sdp"
-                        android:textColor="@color/neon_green"
+                        android:background="@drawable/bg_green_pill"
+                        android:textColor="#121212"
                         android:textSize="@dimen/_11ssp"
                         android:textStyle="bold"
-                        android:background="@drawable/bg_version_badge"
                         tools:text="Fabric 1.21.1" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
-            <!-- Divider -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="@dimen/_16sdp"
-                android:background="#333333" />
-
-            <!-- Description Label -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Description"
-                android:textColor="#FFFFFF"
-                android:textSize="@dimen/_14ssp"
-                android:textStyle="bold" />
-
-            <!-- Full Description -->
-            <TextView
-                android:id="@+id/install_full_description"
+            <!-- ── Description Section ── -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:textColor="#B0B0B0"
-                android:textSize="@dimen/_13ssp"
-                android:lineSpacingExtra="3dp"
-                tools:text="Sodium is a modern rendering engine and graphical optimization mod for Minecraft. It greatly improves frame rates and reduces stuttering while maintaining parity with the vanilla game's look and feel." />
+                android:orientation="vertical"
+                android:background="@drawable/bg_neon_overlay"
+                android:padding="@dimen/_14sdp">
 
-            <!-- Changelog placeholder -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mod_description_label"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_14ssp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05" />
+
+                <TextView
+                    android:id="@+id/install_full_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:textColor="#B0B0B0"
+                    android:textSize="@dimen/_13ssp"
+                    android:lineSpacingExtra="3dp"
+                    tools:text="Sodium is a modern rendering engine and graphical optimization mod for Minecraft. It greatly improves frame rates and reduces stuttering while maintaining parity with the vanilla game's look and feel." />
+
+            </LinearLayout>
+
+            <!-- ── Changelog Section ── -->
             <TextView
                 android:id="@+id/install_changelog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_12sdp"
                 android:textColor="#909090"
                 android:textSize="@dimen/_12ssp"
                 android:lineSpacingExtra="2dp"
-                android:visibility="gone" />
+                android:padding="@dimen/_12sdp"
+                android:background="@drawable/bg_neon_overlay"
+                android:visibility="gone"
+                tools:text="• Fixed crash on startup\n• Improved performance\n• Updated to 1.21.1" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom Sticky Install Button -->
+    <!-- ════════════════════════════════════════
+         Bottom Sticky Action Bar
+    ════════════════════════════════════════ -->
     <FrameLayout
         android:id="@+id/install_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/bg_bottom_bar"
-        android:elevation="8dp"
+        android:background="#D9161616"
+        android:elevation="12dp"
         android:paddingHorizontal="@dimen/_16sdp"
         android:paddingVertical="@dimen/_12sdp">
 
@@ -162,12 +205,12 @@
             style="@style/Widget.AppCompat.Button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_52sdp"
-            android:background="@drawable/background_download_button_enabled"
+            android:background="@drawable/bg_install_primary_button"
             android:enabled="true"
             android:stateListAnimator="@null"
-            android:text="INSTALL NOW"
+            android:text="@string/mod_install_now"
             android:textAllCaps="true"
-            android:textColor="@color/neon_green"
+            android:textColor="#121212"
             android:textSize="@dimen/_15ssp"
             android:textStyle="bold" />
 
