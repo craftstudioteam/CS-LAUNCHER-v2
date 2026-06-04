@@ -3,8 +3,6 @@ package net.kdt.pojavlaunch.fragments;
 import static net.kdt.pojavlaunch.Tools.hasNoOnlineProfileDialog;
 import static net.kdt.pojavlaunch.Tools.hasOnlineProfile;
 import static net.kdt.pojavlaunch.Tools.openPath;
-import static net.kdt.pojavlaunch.Tools.shareLog;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,13 +10,9 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
-
-import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,16 +43,10 @@ public class MainMenuFragment extends Fragment {
     private OnBackPressedCallback mRightPaneBackCallback;
 
     // ── Top bar state ──
-    private View mProfileCard;
-    private EditText mTopSearchField;
-    private ImageView mTopSearchIcon;
     private int mCurrentNavTab = 0; // 0=Home, 1=ModStore, ...
-    // Nav indicator views
+    // Nav indicator views (in activity layout)
     private View mHomeIndicator, mModStoreIndicator, mControlsIndicator, mCursorIndicator, mToolsIndicator;
     private Interpolator mFastOutSlowIn = new AccelerateDecelerateInterpolator();
-
-    // Runtime checks to prevent animation overlap
-    private boolean mIsModStoreActive = false;
 
     // ─── Two-pane helpers ────────────────────────────────────────────────────
 
@@ -257,24 +245,19 @@ public class MainMenuFragment extends Fragment {
         mEditProfileButton = mEditProfileBtn;
         mBottomBar = view.findViewById(R.id.bottom_bar);
 
-        // ─── Horizontal Nav Rail ────────────────────────────────────
-        FrameLayout navHome = view.findViewById(R.id.nav_home);
-        FrameLayout navModStore = view.findViewById(R.id.nav_mod_store);
-        FrameLayout navControls = view.findViewById(R.id.nav_custom_controls);
-        FrameLayout navCursor = view.findViewById(R.id.nav_cursor);
-        FrameLayout navTools = view.findViewById(R.id.nav_instance_tools);
+        // ─── Horizontal Nav Rail (in activity layout) ─────────────────
+        FrameLayout navHome = requireActivity().findViewById(R.id.nav_home);
+        FrameLayout navModStore = requireActivity().findViewById(R.id.nav_mod_store);
+        FrameLayout navControls = requireActivity().findViewById(R.id.nav_custom_controls);
+        FrameLayout navCursor = requireActivity().findViewById(R.id.nav_cursor);
+        FrameLayout navTools = requireActivity().findViewById(R.id.nav_instance_tools);
 
-        // Indicator underlines
-        mHomeIndicator = view.findViewById(R.id.nav_home_indicator);
-        mModStoreIndicator = view.findViewById(R.id.nav_mod_store_indicator);
-        mControlsIndicator = view.findViewById(R.id.nav_controls_indicator);
-        mCursorIndicator = view.findViewById(R.id.nav_cursor_indicator);
-        mToolsIndicator = view.findViewById(R.id.nav_tools_indicator);
-
-        // Top bar elements for dynamic states
-        mProfileCard = view.findViewById(R.id.profile_card);
-        mTopSearchField = view.findViewById(R.id.top_search_field);
-        mTopSearchIcon = view.findViewById(R.id.top_search_icon);
+        // Indicator underlines (in activity layout)
+        mHomeIndicator = requireActivity().findViewById(R.id.nav_home_indicator);
+        mModStoreIndicator = requireActivity().findViewById(R.id.nav_mod_store_indicator);
+        mControlsIndicator = requireActivity().findViewById(R.id.nav_controls_indicator);
+        mCursorIndicator = requireActivity().findViewById(R.id.nav_cursor_indicator);
+        mToolsIndicator = requireActivity().findViewById(R.id.nav_tools_indicator);
 
         // Load home fragment into right pane
         if (isTwoPane()) {
@@ -293,10 +276,8 @@ public class MainMenuFragment extends Fragment {
         // ─── Nav Tab Click Listeners ────────────────────────────────
         navHome.setOnClickListener(v -> {
             setActiveNavTab(0);
-            if (mIsModStoreActive) transitionToHomeState();
             clearRightPane();
             setBottomBarVisible(true);
-            // Ensure home fragment is showing
             if (getChildFragmentManager().findFragmentById(R.id.right_pane_container) == null) {
                 getChildFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
@@ -308,8 +289,6 @@ public class MainMenuFragment extends Fragment {
 
         navModStore.setOnClickListener(v -> {
             setActiveNavTab(1);
-            if (!mIsModStoreActive) transitionToModStoreState();
-            // Open ModsSearchFragment directly (online mod store)
             Bundle args = new Bundle();
             args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY,
                     LauncherPreferences.DEFAULT_PREF
@@ -319,20 +298,17 @@ public class MainMenuFragment extends Fragment {
 
         navControls.setOnClickListener(v -> {
             setActiveNavTab(2);
-            if (mIsModStoreActive) transitionToHomeState();
             startActivity(new Intent(requireContext(), CustomControlsActivity.class));
         });
 
         navCursor.setOnClickListener(v -> {
             setActiveNavTab(3);
-            if (mIsModStoreActive) transitionToHomeState();
             Tools.swapFragment(requireActivity(), CursorCustomizationFragment.class,
                     CursorCustomizationFragment.TAG, null);
         });
 
         navTools.setOnClickListener(v -> {
             setActiveNavTab(4);
-            if (mIsModStoreActive) transitionToHomeState();
             if (Tools.isDemoProfile(v.getContext())) {
                 hasNoOnlineProfileDialog(getActivity(),
                         getString(R.string.demo_unsupported),
@@ -361,6 +337,9 @@ public class MainMenuFragment extends Fragment {
             setBottomBarVisible(getChildFragmentManager().getBackStackEntryCount() == 0);
         }
 
+        // Neon green PLAY button
+        mPlayBtn.setBackgroundResource(R.drawable.play_button_green);
+        mPlayBtn.setTextColor(getResources().getColor(R.color.bg_primary));
         mPlayBtn.setOnClickListener(
                 v -> ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true));
     }
@@ -393,69 +372,6 @@ public class MainMenuFragment extends Fragment {
         }
     }
 
-
-    // ─── Dynamic Top Bar State Transitions ────────────────────────────
-
-    private void transitionToModStoreState() {
-        if (mIsModStoreActive || mTopSearchField == null || mProfileCard == null) return;
-        mIsModStoreActive = true;
-
-        // Show search field (invisible initially, then fade in)
-        mTopSearchField.setVisibility(View.VISIBLE);
-        mTopSearchIcon.setVisibility(View.VISIBLE);
-        mTopSearchField.setAlpha(0f);
-        mTopSearchIcon.setAlpha(0f);
-
-        // Animate: profile slides left, search fades in from right
-        mProfileCard.animate()
-                .translationX(-280f)
-                .setDuration(300)
-                .setInterpolator(mFastOutSlowIn)
-                .start();
-
-        mTopSearchField.animate()
-                .alpha(1f)
-                .setDuration(300)
-                .setInterpolator(mFastOutSlowIn)
-                .start();
-
-        mTopSearchIcon.animate()
-                .alpha(1f)
-                .setDuration(300)
-                .setInterpolator(mFastOutSlowIn)
-                .start();
-
-
-    }
-
-    private void transitionToHomeState() {
-        if (!mIsModStoreActive) return;
-        mIsModStoreActive = false;
-
-        // Slide profile back, fade search out
-        mProfileCard.animate()
-                .translationX(0f)
-                .setDuration(300)
-                .setInterpolator(mFastOutSlowIn)
-                .start();
-
-        mTopSearchField.animate()
-                .alpha(0f)
-                .setDuration(250)
-                .setInterpolator(mFastOutSlowIn)
-                .withEndAction(() -> {
-                    mTopSearchField.setVisibility(View.GONE);
-                    mTopSearchIcon.setVisibility(View.GONE);
-                })
-                .start();
-
-        mTopSearchIcon.animate()
-                .alpha(0f)
-                .setDuration(200)
-                .start();
-
-
-    }
 
     private void setActiveNavTab(int tabIndex) {
         mCurrentNavTab = tabIndex;
