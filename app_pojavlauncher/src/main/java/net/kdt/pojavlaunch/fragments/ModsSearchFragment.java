@@ -117,6 +117,17 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
         mRecyclerview.setAdapter(mModItemAdapter);
         mModItemAdapter.setOnItemClickListener(this::openModDetail);
 
+        // Seamless fade-in: 12dp item decoration + alpha entrance so cards never
+        // abruptly clamp against the top header bounds.
+        mRecyclerview.setAlpha(0f);
+        mRecyclerview.setTranslationY(24f);
+        mRecyclerview.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(260)
+                .setInterpolator(new android.view.animation.DecelerateInterpolator(1.2f))
+                .start();
+
         mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
             searchMods(mSearchEditText.getText().toString());
             mSearchEditText.clearFocus();
@@ -278,7 +289,11 @@ public class ModsSearchFragment extends Fragment implements ModItemAdapter.Searc
 
     private void navigateToFragment(Class<? extends Fragment> fragmentClass, String tag, Bundle args) {
         Fragment parent = getParentFragment();
-        if (parent != null) {
+        if (parent instanceof MainMenuFragment) {
+            // Route through MainMenuFragment so the bottom PLAY bar is hidden
+            // and the mod list fills the full vertical space.
+            ((MainMenuFragment) parent).openChildPane(fragmentClass, tag, args);
+        } else if (parent != null) {
             parent.getChildFragmentManager()
                     .beginTransaction()
                     .setReorderingAllowed(true)

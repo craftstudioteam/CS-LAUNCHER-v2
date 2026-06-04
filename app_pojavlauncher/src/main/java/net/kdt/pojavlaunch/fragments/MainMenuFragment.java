@@ -32,7 +32,6 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
-import net.kdt.pojavlaunch.prefs.screens.LauncherPreferenceRendererSettingsFragment;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
@@ -104,9 +103,29 @@ public class MainMenuFragment extends Fragment {
 
     /** Shows/hides the entire bottom bar. GONE collapses it so right pane fills full height. */
     private void setBottomBarVisible(boolean visible) {
-        if (mBottomBar != null) {
-            mBottomBar.setVisibility(visible ? View.VISIBLE : View.GONE);
-            mBottomBar.requestLayout();
+        if (mBottomBar == null) return;
+        if (visible) {
+            if (mBottomBar.getVisibility() == View.VISIBLE) return;
+            mBottomBar.setVisibility(View.VISIBLE);
+            mBottomBar.setAlpha(0f);
+            mBottomBar.setTranslationY(mBottomBar.getHeight() > 0
+                    ? mBottomBar.getHeight() : 200f);
+            mBottomBar.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(280)
+                    .setInterpolator(mFastOutSlowIn)
+                    .start();
+        } else {
+            if (mBottomBar.getVisibility() == View.GONE) return;
+            mBottomBar.animate()
+                    .alpha(0f)
+                    .translationY(mBottomBar.getHeight() > 0
+                            ? mBottomBar.getHeight() : 200f)
+                    .setDuration(220)
+                    .setInterpolator(mFastOutSlowIn)
+                    .withEndAction(() -> mBottomBar.setVisibility(View.GONE))
+                    .start();
         }
     }
 
@@ -160,6 +179,8 @@ public class MainMenuFragment extends Fragment {
 
     /**
      * Internal navigation: right pane in landscape, full-screen swap in portrait.
+     * Mod-store / mod-version-picker / mod-install fragments get the bottom bar
+     * explicitly collapsed so the list container fills the full vertical space.
      */
     private void openPane(Class<? extends Fragment> fragmentClass, String tag,
                           @Nullable Bundle args) {
@@ -170,9 +191,19 @@ public class MainMenuFragment extends Fragment {
                     .replace(R.id.right_pane_container, fragmentClass, args, tag)
                     .addToBackStack(tag)
                     .commit();
+            if (isModPaneFragment(fragmentClass)) {
+                setBottomBarVisible(false);
+            }
         } else {
             Tools.swapFragment(requireActivity(), fragmentClass, tag, args);
         }
+    }
+
+    /** Fragments that should consume the full height under the header (no bottom PLAY bar). */
+    private boolean isModPaneFragment(Class<? extends Fragment> fragmentClass) {
+        return fragmentClass == ModsSearchFragment.class
+                || fragmentClass == ModVersionPickerFragment.class
+                || fragmentClass == ModInstallFragment.class;
     }
 
     // ─── Lifecycle ───────────────────────────────────────────────────────────
@@ -313,18 +344,8 @@ public class MainMenuFragment extends Fragment {
             }
         });
 
-        // Settings gear
-        ImageButton settingsGear = view.findViewById(R.id.settings_gear);
-        if (settingsGear != null) {
-            settingsGear.setOnClickListener(v -> {
-                if (isRightPaneActive()) {
-                    refreshHomeState();
-                } else {
-                    Tools.swapFragment(requireActivity(), LauncherPreferenceRendererSettingsFragment.class,
-                            "LauncherPreferenceRendererSettingsFragment", null);
-                }
-            });
-        }
+        // Floating settings gear was removed from the top bar. Settings is reachable
+        // via the dedicated settings click target on the main layout profile / core setup.
 
 
         // ─── Bottom bar listeners ────────────────────────────────────

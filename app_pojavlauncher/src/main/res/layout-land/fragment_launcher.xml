@@ -26,6 +26,7 @@
             android:gravity="center_vertical">
 
             <!-- Brand title -->
+            <TextView
                 android:id="@+id/brand_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -226,16 +227,6 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="@dimen/_6sdp">
 
-                <ImageButton
-                    android:id="@+id/settings_gear"
-                    android:layout_width="@dimen/_28sdp"
-                    android:layout_height="@dimen/_28sdp"
-                    android:layout_marginStart="@dimen/_4sdp"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_sharp_settings_24"
-                    android:contentDescription="@string/mcl_button_settings"
-                    app:tint="@color/text_secondary_light" />
-
             </LinearLayout>
 
         </LinearLayout>
@@ -353,6 +344,7 @@
                 android:scaleType="fitCenter"
                 android:contentDescription="@string/mcl_edit" />
 
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/mcl_edit"
