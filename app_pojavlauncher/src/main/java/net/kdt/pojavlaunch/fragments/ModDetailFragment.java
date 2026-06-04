@@ -350,7 +350,7 @@ public class ModDetailFragment extends Fragment {
 
         // Navigate to the full-screen ModInstallFragment (Step 3)
         ModInstallFragment fragment = ModInstallFragment.newInstance(
-                mModItem, mModDetail, mSelectedVersionIndex, mProfileKey);
+                mModItem, mModDetail, mSelectedVersionIndex, mProfileKey, "mod");
         Bundle args = fragment.getArguments();
         Fragment parent = getParentFragment();
         if (parent != null) {
