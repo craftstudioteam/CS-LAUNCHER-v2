@@ -71,48 +71,56 @@
     <color name="ar_text_primary">#E0F7FA</color>
     <color name="ar_text_secondary">#80C8D4</color>
 
-    <!-- ── CS Launcher v2 Colors (Refined Theme) ── -->
+    <!-- ── CS Launcher v2 Colors (Dark Gaming Theme) ── -->
     <!-- Base backgrounds -->
-    <color name="bg_launcher_dark">#121212</color>
+    <color name="bg_primary">#0D0D0D</color>
+    <color name="bg_launcher_dark">#0D0D0D</color>
     <color name="bg_sidebar">#181818</color>
     <color name="bg_header">#1E1E1E</color>
     <color name="bg_bottom_bar">#222222</color>
+    <color name="bg_card">#1C1C1C</color>
     <color name="bg_card_dark">#2C2C2C</color>
+    <color name="bg_elevated">#242424</color>
 
-    <!-- Accent colors (Professional Blue instead of neon green) -->
-    <color name="accent_primary">#3F51B5</color>
-    <color name="accent_light">#7986CB</color>
+    <!-- Accent colors (Neon Green + Purple) -->
+    <color name="accent_primary">#39FF14</color>
+    <color name="accent_light">#00FF88</color>
+    <color name="accent_purple">#9B59E8</color>
     <color name="accent_bg_subtle">#1A1C2C</color>
-    <color name="accent_border">#3F51B5</color>
+    <color name="accent_border">#39FF14</color>
 
-    <!-- Legacy/Alias colors (kept to avoid immediate breakage, but updated) -->
-    <color name="accent_green">#3F51B5</color>
-    <color name="accent_green_light">#7986CB</color>
+    <!-- Legacy/Alias colors (kept for back-compat) -->
+    <color name="accent_green">#39FF14</color>
+    <color name="accent_green_light">#00FF88</color>
     <color name="accent_green_bg">#1A1C2C</color>
-    <color name="accent_green_border">#3F51B5</color>
+    <color name="accent_green_border">#39FF14</color>
 
     <!-- Text -->
     <color name="text_primary_white">#FFFFFF</color>
-    <color name="text_secondary_light">#B0B0B0</color>
-    <color name="text_secondary_dim">#707070</color>
+    <color name="text_primary_light">#FFFFFF</color>
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary_light">#9CA3AF</color>
+    <color name="text_secondary_dim">#6B7280</color>
+    <color name="text_secondary">#8FFFFFFF</color>
 
-    <!-- Dividers -->
+    <!-- Dividers / Borders -->
+    <color name="border_default">#2A2A2A</color>
+    <color name="border_hover">#39FF14</color>
     <color name="divider_color">#333333</color>
 
-    <!-- PLAY button (Updated to follow new theme) -->
-    <color name="play_btn_bg">#3F51B5</color>
-    <color name="play_btn_text">#FFFFFF</color>
+    <!-- PLAY button -->
+    <color name="play_btn_bg">#39FF14</color>
+    <color name="play_btn_text">#0D0D0D</color>
 
-    <!-- Settings UI Transformation Colors -->
+    <!-- Settings UI Colors -->
     <color name="settings_bg">#000000</color>
     <color name="card_bg">#0D1410</color>
     <color name="card_bg_pressed">#162018</color>
-    <color name="neon_green">#A6FF3D</color>
-    <color name="neon_green_dim">#3FA6FF3D</color>
-    <color name="text_primary">#FFFFFFFF</color>
-    <color name="text_secondary">#8FFFFFFF</color>
-    <color name="stroke_neon">#33A6FF3D</color>
+    <color name="neon_green">#39FF14</color>
+    <color name="neon_green_dim">#3F39FF14</color>
+    <color name="stroke_neon">#3339FF14</color>
+    <color name="like_active">#FF4444</color>
+    <color name="installed_color">#22C55E</color>
 
-    <color name="text_primary_light">#FFFFFFFF</color>
-    <color name="bg_nav_item_active">#AAA6FF3D</color>
+    <color name="bg_nav_item_active">#AA39FF14</color>
 </resources>

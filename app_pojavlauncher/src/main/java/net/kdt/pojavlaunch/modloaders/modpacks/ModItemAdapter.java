@@ -1,10 +1,14 @@
 package net.kdt.pojavlaunch.modloaders.modpacks;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -147,17 +151,21 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final TextView mTitleView;
         private final TextView mInfoView;
         private final TextView mDescriptionView;
-        private final TextView mStatusBadge;
+        private final ImageButton mLikeButton;
+        private final ImageButton mInstallButton;
         private ModItem mCurrentItem;
+        private final SharedPreferences mLikedPrefs;
 
         public ModItemViewHolder(@NonNull View itemView) {
             super(itemView);
+            mLikedPrefs = itemView.getContext().getSharedPreferences("liked_mods", Context.MODE_PRIVATE);
             mIconView = itemView.findViewById(R.id.mod_thumbnail_imageview);
             mSourceIconView = itemView.findViewById(R.id.mod_source_imageview);
             mTitleView = itemView.findViewById(R.id.mod_title_textview);
             mInfoView = itemView.findViewById(R.id.mod_info_textview);
             mDescriptionView = itemView.findViewById(R.id.mod_body_textview);
-            mStatusBadge = itemView.findViewById(R.id.mod_status_badge);
+            mLikeButton = itemView.findViewById(R.id.btn_like);
+            mInstallButton = itemView.findViewById(R.id.btn_install);
             itemView.setOnClickListener(this);
         }
 
@@ -203,8 +211,24 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     item.imageUrl
             );
 
-            // Status badge hidden by default; can be set externally
-            mStatusBadge.setVisibility(View.GONE);
+            // Like button — restore persisted state
+            String modId = item.id;
+            boolean isLiked = mLikedPrefs.getBoolean(modId, false);
+            mLikeButton.setImageResource(isLiked ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
+            mLikeButton.setColorFilter(isLiked ? Color.parseColor("#FF4444") : Color.parseColor("#9CA3AF"));
+            mLikeButton.setOnClickListener(v -> {
+                boolean nowLiked = !mLikedPrefs.getBoolean(modId, false);
+                mLikedPrefs.edit().putBoolean(modId, nowLiked).apply();
+                mLikeButton.setImageResource(nowLiked ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
+                mLikeButton.setColorFilter(nowLiked ? Color.parseColor("#FF4444") : Color.parseColor("#9CA3AF"));
+            });
+
+            // Install button — triggers same navigation as card click
+            mInstallButton.setOnClickListener(v -> {
+                if (mOnItemClickListener != null && mCurrentItem != null) {
+                    mOnItemClickListener.onItemClick(mCurrentItem);
+                }
+            });
         }
 
         @Override

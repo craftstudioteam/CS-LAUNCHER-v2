@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_launcher_dark">
+    android:background="@color/bg_primary">
 
     <!-- ── HEADER ── -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -70,6 +70,8 @@
             android:textColor="@color/text_primary_light"
             android:textColorHint="@color/text_secondary_dim"
             android:textSize="14sp"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
             app:layout_constraintEnd_toStartOf="@id/search_mod_filter"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/mod_store_title" />
@@ -196,9 +198,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingVertical="8dp"
-        android:requiresFadingEdge="vertical"
-        android:fadingEdgeLength="@dimen/_30sdp"
+        android:paddingVertical="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_mod_progressbar" />
 
