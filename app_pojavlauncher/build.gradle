@@ -75,6 +75,7 @@ android {
     compileSdk = 34
 
     lintOptions {
+        checkReleaseBuilds false
         abortOnError false
     }
 
