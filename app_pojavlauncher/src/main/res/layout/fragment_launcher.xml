@@ -196,6 +196,7 @@
         android:layout_marginBottom="@dimen/_15sdp"
         android:textAllCaps="true"
         android:text="@string/main_play"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
