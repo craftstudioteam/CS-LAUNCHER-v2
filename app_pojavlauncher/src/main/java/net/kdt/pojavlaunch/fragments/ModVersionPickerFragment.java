@@ -35,12 +35,14 @@ public class ModVersionPickerFragment extends Fragment {
 
     public static final String TAG = "ModVersionPickerFragment";
     private static final String ARG_MOD_ITEM = "mod_item";
+    private static final String ARG_CONTENT_TYPE = "content_type";
     private static final String ARG_PROFILE_KEY = "profile_key";
 
     private static final int PAGE_SIZE = 15;
 
     private ModItem mModItem;
     private ModDetail mModDetail;
+    private String mContentType;
     private String mProfileKey;
 
     // Views
@@ -59,11 +61,13 @@ public class ModVersionPickerFragment extends Fragment {
     private int mCurrentPage = 0;
     private int mTotalPages = 0;
 
-    public static ModVersionPickerFragment newInstance(ModItem item, String profileKey) {
+    public static ModVersionPickerFragment newInstance(ModItem item, String profileKey,
+                                                       String contentType) {
         ModVersionPickerFragment f = new ModVersionPickerFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_MOD_ITEM, item);
         args.putString(ARG_PROFILE_KEY, profileKey);
+        args.putString(ARG_CONTENT_TYPE, contentType != null ? contentType : "mod");
         f.setArguments(args);
         return f;
     }
@@ -77,6 +81,7 @@ public class ModVersionPickerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mModItem = (ModItem) getArguments().getSerializable(ARG_MOD_ITEM);
+            mContentType = getArguments().getString(ARG_CONTENT_TYPE);
             mProfileKey = getArguments().getString(ARG_PROFILE_KEY);
         }
     }
@@ -236,7 +241,7 @@ public class ModVersionPickerFragment extends Fragment {
 
     private void openInstallScreen(VersionEntry entry) {
         ModInstallFragment fragment = ModInstallFragment.newInstance(
-                mModItem, mModDetail, entry.index, mProfileKey);
+                mModItem, mModDetail, entry.index, mProfileKey, mContentType);
         Fragment parent = getParentFragment();
         Bundle args = fragment.getArguments();
         if (parent instanceof MainMenuFragment) {

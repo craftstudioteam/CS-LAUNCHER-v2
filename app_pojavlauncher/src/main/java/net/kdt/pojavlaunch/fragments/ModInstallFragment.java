@@ -9,7 +9,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -48,11 +47,13 @@ public class ModInstallFragment extends Fragment {
     private static final String ARG_MOD_DETAIL = "mod_detail";
     private static final String ARG_VERSION_INDEX = "version_index";
     private static final String ARG_PROFILE_KEY = "profile_key";
+    private static final String ARG_CONTENT_TYPE = "content_type";
 
     private ModItem mModItem;
     private ModDetail mModDetail;
     private int mVersionIndex;
     private String mProfileKey;
+    private String mContentType;
 
     private ImageView mBackButton;
     private ImageView mModIcon;
@@ -67,13 +68,15 @@ public class ModInstallFragment extends Fragment {
     private View mScrollContent;
 
     public static ModInstallFragment newInstance(ModItem item, ModDetail detail,
-                                                  int versionIndex, String profileKey) {
+                                                  int versionIndex, String profileKey,
+                                                  String contentType) {
         ModInstallFragment f = new ModInstallFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_MOD_ITEM, item);
         args.putSerializable(ARG_MOD_DETAIL, detail);
         args.putInt(ARG_VERSION_INDEX, versionIndex);
         args.putString(ARG_PROFILE_KEY, profileKey);
+        args.putString(ARG_CONTENT_TYPE, contentType != null ? contentType : "mod");
         f.setArguments(args);
         return f;
     }
@@ -90,6 +93,7 @@ public class ModInstallFragment extends Fragment {
             mModDetail = (ModDetail) getArguments().getSerializable(ARG_MOD_DETAIL);
             mVersionIndex = getArguments().getInt(ARG_VERSION_INDEX);
             mProfileKey = getArguments().getString(ARG_PROFILE_KEY);
+            mContentType = getArguments().getString(ARG_CONTENT_TYPE, "mod");
         }
     }
 
@@ -151,6 +155,18 @@ public class ModInstallFragment extends Fragment {
 
             final String finalUrl = versionUrl;
 
+            switch (mContentType) {
+                case "resourcepack":
+                    mInstallButton.setText("DOWNLOAD PACK");
+                    break;
+                case "world":
+                    mInstallButton.setText("DOWNLOAD WORLD");
+                    break;
+                default:
+                    mInstallButton.setText(R.string.mod_install_now);
+                    break;
+            }
+
             mInstallButton.setOnClickListener(v -> {
                 if (finalUrl == null || finalUrl.isEmpty()) {
                     Toast.makeText(getContext(),
@@ -166,7 +182,14 @@ public class ModInstallFragment extends Fragment {
                 getParentFragmentManager().popBackStack());
 
         if (getView() != null) {
-            getView().post(this::setupInstallAnimations);
+            getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            getView().post(() -> {
+                setupInstallAnimations();
+                // Restore software layer after animation completes
+                if (getView() != null) {
+                    getView().postDelayed(() -> { if (isAdded()) getView().setLayerType(View.LAYER_TYPE_NONE, null); }, 500);
+                }
+            });
         }
     }
 
@@ -324,26 +347,36 @@ public class ModInstallFragment extends Fragment {
 
     private void downloadMod(Context ctx, String url, String fileName,
                               String[] depIds, String[] depTypes) {
-        File modsDir = getModsDir();
-        if (!modsDir.exists()) modsDir.mkdirs();
+        File targetDir = getContentDir();
+        if (!targetDir.exists()) {
+            boolean created = targetDir.mkdirs();
+            if (created) Log.d("CS_LAUNCHER", "Created directory: " + targetDir.getAbsolutePath());
+        }
 
         ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK, 0, R.string.global_waiting);
         mInstallButton.setEnabled(false);
-        mInstallButton.setText(R.string.mod_installing);
+        mInstallButton.setText("Downloading...");
 
         PojavApplication.sExecutorService.execute(() -> {
             try {
-                DownloadUtils.downloadFile(url, new File(modsDir, fileName));
+                File targetFile = new File(targetDir, fileName);
+                DownloadUtils.downloadFile(url, targetFile);
+
+                // For worlds, extract ZIP and delete archive
+                if ("world".equals(mContentType)) {
+                    boolean ok = extractZip(targetFile, targetDir);
+                    if (ok) targetFile.delete();
+                }
+
                 for (String depId : depIds) {
                     if (depId == null || depId.isEmpty()) continue;
-                    downloadDependency(depId, modsDir);
+                    downloadDependency(depId, targetDir);
                 }
                 ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK);
                 Tools.runOnUiThread(() -> {
                     if (!isAdded()) return;
-                    Toast.makeText(ctx,
-                            ctx.getString(R.string.mod_install_success, fileName),
-                            Toast.LENGTH_LONG).show();
+                    String msg = ctx.getString(R.string.mod_install_success, fileName);
+                    Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
                     // Pop back stack to mod list
                     getParentFragmentManager().popBackStack(
                             ModsSearchFragment.TAG,
@@ -362,7 +395,34 @@ public class ModInstallFragment extends Fragment {
         });
     }
 
-    private void downloadDependency(String projectId, File modsDir) {
+    private boolean extractZip(File zipFile, File destDir) {
+        try (java.util.zip.ZipInputStream zis =
+                     new java.util.zip.ZipInputStream(new java.io.FileInputStream(zipFile))) {
+            java.util.zip.ZipEntry entry;
+            byte[] buffer = new byte[4096];
+            while ((entry = zis.getNextEntry()) != null) {
+                File outFile = new File(destDir, entry.getName());
+                if (entry.isDirectory()) {
+                    outFile.mkdirs();
+                } else {
+                    outFile.getParentFile().mkdirs();
+                    try (java.io.FileOutputStream fos = new java.io.FileOutputStream(outFile)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
+                    }
+                }
+                zis.closeEntry();
+            }
+            return true;
+        } catch (Exception e) {
+            Log.w(TAG, "Failed to extract " + zipFile.getName(), e);
+            return false;
+        }
+    }
+
+    private void downloadDependency(String projectId, File depDir) {
         try {
             ModrinthApi api = new ModrinthApi();
             ModItem depItem = new ModItem(SOURCE_MODRINTH, false,
@@ -374,23 +434,26 @@ public class ModInstallFragment extends Fragment {
             String depName = depUrl.substring(depUrl.lastIndexOf('/') + 1);
             if (depName.contains("?")) depName = depName.substring(0, depName.indexOf('?'));
             if (!depName.endsWith(".jar")) depName += ".jar";
-            DownloadUtils.downloadFile(depUrl, new File(modsDir, depName));
+            DownloadUtils.downloadFile(depUrl, new File(depDir, depName));
         } catch (Exception e) {
             Log.w(TAG, "Failed to download dependency " + projectId);
         }
     }
 
-    private File getModsDir() {
+    private File getContentDir() {
         try {
             String key = mProfileKey != null ? mProfileKey
                     : LauncherPreferences.DEFAULT_PREF.getString(
                             LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
+            File profileDir = null;
             if (key != null && !key.isEmpty()) {
                 LauncherProfiles.load();
                 MinecraftProfile profile = LauncherProfiles.mainProfileJson.profiles.get(key);
-                if (profile != null) return new File(Tools.getGameDirPath(profile), "mods");
+                if (profile != null) profileDir = Tools.getGameDirPath(profile);
             }
+            File baseDir = profileDir != null ? profileDir : new File(Tools.DIR_GAME_NEW);
+            return ModDownloadHelper.getDestinationDir(baseDir, mContentType);
         } catch (Exception ignored) {}
-        return new File(Tools.DIR_GAME_NEW, "mods");
+        return ModDownloadHelper.getDestinationDir(new File(Tools.DIR_GAME_NEW), mContentType);
     }
 }

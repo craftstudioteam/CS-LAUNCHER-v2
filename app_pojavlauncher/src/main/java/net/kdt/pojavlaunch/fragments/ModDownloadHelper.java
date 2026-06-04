@@ -22,6 +22,21 @@ import java.util.zip.ZipInputStream;
 
 public class ModDownloadHelper {
 
+    public static File getDestinationDir(File baseDir, String contentType) {
+        switch (contentType) {
+            case "mod":
+                return new File(baseDir, "mods");
+            case "resourcepack":
+                return new File(baseDir, "resourcepacks");
+            case "shader":
+                return new File(baseDir, "shaderpacks");
+            case "world":
+                return new File(baseDir, "saves");
+            default:
+                return new File(baseDir, "downloads");
+        }
+    }
+
     public static File getDestinationDir(Context context, String contentType) {
         File mcDir = new File(Tools.DIR_GAME_NEW);
 

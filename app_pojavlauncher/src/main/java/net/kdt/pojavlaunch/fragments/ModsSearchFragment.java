@@ -230,16 +230,13 @@ public class ModsSearchFragment extends Fragment {
     }
 
     private void onModItemClick(ModItem item, String contentType) {
-        if (contentType.equals("mod")) {
-            navigateToVersionPicker(item);
-        } else {
-            downloadDirect(item, contentType);
-        }
+        navigateToVersionPicker(item, contentType);
     }
 
-    private void navigateToVersionPicker(ModItem item) {
+    private void navigateToVersionPicker(ModItem item, String contentType) {
         Bundle args = new Bundle();
         args.putSerializable("mod_item", item);
+        args.putString("content_type", contentType);
         args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, mProfileKey);
 
         Fragment parent = getParentFragment();
