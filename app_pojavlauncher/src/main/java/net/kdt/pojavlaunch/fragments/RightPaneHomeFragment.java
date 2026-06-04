@@ -2,7 +2,6 @@ package net.kdt.pojavlaunch.fragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -23,7 +22,6 @@ import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,42 +39,7 @@ public class RightPaneHomeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        loadBackground(view);
-
-        view.setAlpha(0f);
-        view.setTranslationX(60f);
-        view.animate()
-            .alpha(1f)
-            .translationX(0f)
-            .setDuration(250)
-            .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f))
-            .start();
-
-        ImageView centerLogo = view.findViewById(R.id.iv_center_logo);
-        if (centerLogo != null) {
-            android.animation.ObjectAnimator floatAnim = android.animation.ObjectAnimator.ofFloat(
-                    centerLogo, "translationY", 0f, -15f, 0f);
-            floatAnim.setDuration(3500);
-            floatAnim.setRepeatCount(android.animation.ValueAnimator.INFINITE);
-            floatAnim.setRepeatMode(android.animation.ValueAnimator.REVERSE);
-            floatAnim.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
-            floatAnim.start();
-        }
-
-        ImageView heroBg = view.findViewById(R.id.iv_hero_bg);
-        if (heroBg != null) {
-            android.animation.PropertyValuesHolder scaleX =
-                    android.animation.PropertyValuesHolder.ofFloat("scaleX", 1.0f, 1.05f, 1.0f);
-            android.animation.PropertyValuesHolder scaleY =
-                    android.animation.PropertyValuesHolder.ofFloat("scaleY", 1.0f, 1.05f, 1.0f);
-            android.animation.ObjectAnimator panAnim =
-                    android.animation.ObjectAnimator.ofPropertyValuesHolder(heroBg, scaleX, scaleY);
-            panAnim.setDuration(20000);
-            panAnim.setRepeatCount(android.animation.ValueAnimator.INFINITE);
-            panAnim.setRepeatMode(android.animation.ValueAnimator.REVERSE);
-            panAnim.setInterpolator(new android.view.animation.LinearInterpolator());
-            panAnim.start();
-        }
+        loadCustomWallpaper(view);
 
         mRecyclerView = view.findViewById(R.id.rv_home_profiles);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -91,7 +54,7 @@ public class RightPaneHomeFragment extends Fragment {
 
     public void reloadBackground() {
         View v = getView();
-        if (v != null) loadBackground(v);
+        if (v != null) loadCustomWallpaper(v);
     }
 
     private void setupProfileAdapter() {
@@ -139,7 +102,7 @@ public class RightPaneHomeFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private void loadBackground(@NonNull View view) {
+    private void loadCustomWallpaper(@NonNull View view) {
         ImageView wallpaper = view.findViewById(R.id.right_pane_wallpaper);
         File bgFile = new File(CUSTOM_BG_PATH);
         if (bgFile.exists()) {
@@ -153,14 +116,7 @@ public class RightPaneHomeFragment extends Fragment {
             }
         }
         wallpaper.setImageDrawable(null);
-        TypedValue tv = new TypedValue();
-        view.getContext().getTheme().resolveAttribute(R.attr.bgMainDrawable, tv, true);
-        if (tv.resourceId != 0) {
-            wallpaper.setBackgroundResource(tv.resourceId);
-            wallpaper.setVisibility(View.VISIBLE);
-        } else {
-            wallpaper.setBackground(null);
-            wallpaper.setVisibility(View.GONE);
-        }
+        wallpaper.setBackground(null);
+        wallpaper.setVisibility(View.GONE);
     }
 }
