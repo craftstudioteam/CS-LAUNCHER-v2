@@ -143,6 +143,18 @@ public class MainMenuFragment extends Fragment {
     }
 
     /**
+
+    /**
+     * Called from LauncherActivity when the nav_instance_tools header button is tapped.
+     * Delegates to the install-jar flow (same as the old install_jar_button).
+     */
+    public void onNavInstanceToolsClick() {
+        if (hasOnlineProfile()) {
+            runInstallerWithConfirmation(false);
+        } else {
+            hasNoOnlineProfileDialog(requireActivity());
+        }
+    }
      * Internal navigation: right pane in landscape, full-screen swap in portrait.
      */
     private void openPane(Class<? extends Fragment> fragmentClass, String tag,
