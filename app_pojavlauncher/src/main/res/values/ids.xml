@@ -3,4 +3,6 @@
     <item name="bottom_bar" type="id" />
     <item name="home_button" type="id" />
     <item name="mod_store_button" type="id" />
+    <item name="play_button" type="id" />
+    <item name="_background_display_view" type="id" />
 </resources>
