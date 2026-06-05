@@ -181,17 +181,15 @@ public class ModInstallFragment extends Fragment {
         mBackButton.setOnClickListener(v ->
                 getParentFragmentManager().popBackStack());
 
-        if (getView() != null) {
-            getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            getView().post(() -> {
-                setupInstallAnimations();
-                // Restore software layer after animation completes
-                if (getView() != null) {
-                    getView().postDelayed(() -> { if (isAdded()) getView().setLayerType(View.LAYER_TYPE_NONE, null); }, 500);
-                }
-            });
-        }
+        // Use the view parameter directly (avoids NullPointerException if fragment is detached)
+        view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        view.post(() -> {
+            setupInstallAnimations();
+            // Restore software layer after animation completes
+            view.postDelayed(() -> { if (isAdded()) view.setLayerType(View.LAYER_TYPE_NONE, null); }, 500);
+        });
     }
+
 
     // ─── Premium Entry Animations ──────────────────────────────────────
 
