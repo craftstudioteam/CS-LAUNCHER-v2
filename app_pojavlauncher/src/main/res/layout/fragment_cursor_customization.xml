@@ -4,48 +4,81 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_launcher_dark">
+    android:background="#050505"
+    android:animateLayoutChanges="true">
 
-    <!-- ── TOP BAR ── -->
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ✦ TOP BAR (Compact Horizontal)         -->
+    <!-- ═══════════════════════════════════════ -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cursor_top_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_52sdp"
-        android:background="@color/bg_header"
+        android:layout_height="@dimen/_44sdp"
+        android:background="@drawable/bg_top_bar_gradient"
+        android:paddingHorizontal="10dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/cursor_back_button"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/padding_medium"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:background="@drawable/bg_icon_button_round"
             android:src="@drawable/ic_arrow_back_white"
+            android:padding="8dp"
+            app:tint="#00FF41"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_small"
-            android:text="Cursor Customization"
-            android:textColor="@color/text_primary_light"
-            android:textSize="@dimen/_14ssp"
-            android:textStyle="bold"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/cursor_back_button"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
+            <View
+                android:layout_width="3dp"
+                android:layout_height="22dp"
+                android:background="@drawable/bg_neon_indicator_small"
+                android:layout_marginEnd="8dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cursor Customization"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Design your style"
+                    android:textColor="#666666"
+                    android:textSize="9sp"
+                    android:letterSpacing="0.05"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Modern Tab Switcher -->
         <LinearLayout
             android:id="@+id/cursor_tab_container"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_32sdp"
-            android:layout_marginEnd="@dimen/padding_medium"
-            android:background="@drawable/background_card"
+            android:background="@drawable/bg_tab_container"
             android:gravity="center"
             android:orientation="horizontal"
-            android:paddingHorizontal="4dp"
+            android:padding="3dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -55,402 +88,648 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:paddingHorizontal="@dimen/padding_medium"
+                android:paddingHorizontal="14dp"
                 android:text="Import"
-                android:textColor="@color/text_secondary_light"
-                android:textSize="@dimen/_10ssp" />
+                android:textColor="#888888"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"/>
 
             <TextView
                 android:id="@+id/tab_create"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@drawable/bg_nav_item_active"
+                android:background="@drawable/bg_tab_active"
                 android:gravity="center"
-                android:paddingHorizontal="@dimen/padding_medium"
+                android:paddingHorizontal="14dp"
                 android:text="Create"
-                android:textColor="@color/neon_green"
-                android:textSize="@dimen/_10ssp"
-                android:textStyle="bold" />
+                android:textColor="#000000"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"/>
 
             <TextView
                 android:id="@+id/tab_collection"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:paddingHorizontal="@dimen/padding_medium"
+                android:paddingHorizontal="14dp"
                 android:text="Collection"
-                android:textColor="@color/text_secondary_light"
-                android:textSize="@dimen/_10ssp" />
-
+                android:textColor="#888888"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"/>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- ── MAIN CONTENT AREA ── -->
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ✦ CREATE PANEL (Horizontal Layout)     -->
+    <!-- ═══════════════════════════════════════ -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/panel_create"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="8dp"
         app:layout_constraintBottom_toTopOf="@id/tools_bottom_panel"
         app:layout_constraintTop_toBottomOf="@id/cursor_top_bar">
 
-        <!-- Left: Canvas -->
-        <net.kdt.pojavlaunch.customcontrols.mouse.CursorDesignerView
-            android:id="@+id/cursor_designer"
+        <!-- Canvas Card -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/canvas_container"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:background="@drawable/bg_canvas_card"
+            android:padding="6dp"
             app:layout_constraintEnd_toStartOf="@id/right_preview_panel"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_weight="0.7"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Right: Preview Panel -->
+            <!-- Canvas Label -->
+            <LinearLayout
+                android:id="@+id/canvas_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_label_chip"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:layout_margin="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <View
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:background="@drawable/bg_neon_dot_small"
+                    android:layout_marginEnd="5dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CANVAS"
+                    android:textColor="#00FF41"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.15"/>
+            </LinearLayout>
+
+            <net.kdt.pojavlaunch.customcontrols.mouse.CursorDesignerView
+                android:id="@+id/cursor_designer"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="4dp"
+                app:layout_constraintTop_toBottomOf="@id/canvas_header"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Preview Panel -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/right_preview_panel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@color/bg_sidebar"
+            android:background="@drawable/bg_preview_card"
+            android:layout_marginStart="6dp"
+            android:padding="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_weight="0.3"
-            app:layout_constraintStart_toEndOf="@id/cursor_designer">
+            app:layout_constraintStart_toEndOf="@id/canvas_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-            <TextView
-                android:id="@+id/preview_label"
+            <!-- Preview Header -->
+            <LinearLayout
+                android:id="@+id/preview_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_medium"
-                android:text="LIVE PREVIEW"
-                android:textColor="@color/neon_green"
-                android:textSize="@dimen/_10ssp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_label_chip"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent">
 
+                <View
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:background="@drawable/bg_neon_dot_small"
+                    android:layout_marginEnd="5dp"/>
+
+                <TextView
+                    android:id="@+id/preview_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="LIVE"
+                    android:textColor="#00FF41"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.15"/>
+            </LinearLayout>
+
+            <!-- Preview Stack - Horizontal Layout -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:gravity="center"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/preview_label">
+                android:layout_marginTop="6dp"
+                app:layout_constraintTop_toBottomOf="@id/preview_header"
+                app:layout_constraintBottom_toBottomOf="parent">
 
                 <!-- Large Preview -->
-                <TextView
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/preview_large"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_preview_box"
+                        android:padding="8dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_mouse_pointer" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|end"
+                        android:text="64"
+                        android:textColor="#00FF41"
+                        android:textSize="8sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_size_chip"
+                        android:paddingHorizontal="4dp"
+                        android:paddingVertical="1dp"
+                        android:translationX="4dp"
+                        android:translationY="-4dp"/>
+                </FrameLayout>
+
+                <!-- Medium + Small in Row -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Large (64px)"
-                    android:textColor="@color/text_secondary_dim"
-                    android:textSize="10sp" />
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical">
 
-                <ImageView
-                    android:id="@+id/preview_large"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:layout_marginVertical="8dp"
-                    android:background="@drawable/background_card"
-                    android:padding="8dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_mouse_pointer" />
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
 
-                <!-- Medium Preview -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Medium (32px)"
-                    android:textColor="@color/text_secondary_dim"
-                    android:textSize="10sp" />
+                        <ImageView
+                            android:id="@+id/preview_medium"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_preview_box"
+                            android:padding="6dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_mouse_pointer" />
 
-                <ImageView
-                    android:id="@+id/preview_medium"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginVertical="8dp"
-                    android:background="@drawable/background_card"
-                    android:padding="8dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_mouse_pointer" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="top|end"
+                            android:text="32"
+                            android:textColor="#00FF41"
+                            android:textSize="7sp"
+                            android:textStyle="bold"
+                            android:background="@drawable/bg_size_chip"
+                            android:paddingHorizontal="3dp"
+                            android:paddingVertical="1dp"
+                            android:translationX="4dp"
+                            android:translationY="-4dp"/>
+                    </FrameLayout>
 
-                <!-- Small Preview -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="Small (16px)"
-                    android:textColor="@color/text_secondary_dim"
-                    android:textSize="10sp" />
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp">
 
-                <ImageView
-                    android:id="@+id/preview_small"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginVertical="8dp"
-                    android:background="@drawable/background_card"
-                    android:padding="6dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_mouse_pointer" />
+                        <ImageView
+                            android:id="@+id/preview_small"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@drawable/bg_preview_box"
+                            android:padding="4dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_mouse_pointer" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="top|end"
+                            android:text="16"
+                            android:textColor="#00FF41"
+                            android:textSize="6sp"
+                            android:textStyle="bold"
+                            android:background="@drawable/bg_size_chip"
+                            android:paddingHorizontal="3dp"
+                            android:paddingVertical="1dp"
+                            android:translationX="3dp"
+                            android:translationY="-3dp"/>
+                    </FrameLayout>
+                </LinearLayout>
 
             </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- ── TOOLS BOTTOM PANEL ── -->
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ✦ BOTTOM TOOLS PANEL (Horizontal)      -->
+    <!-- ═══════════════════════════════════════ -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tools_bottom_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/bg_sidebar"
-        android:paddingBottom="@dimen/padding_small"
+        android:background="@drawable/bg_bottom_panel"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Tool Selectors -->
+        <!-- Tools Row (Left Side) -->
         <LinearLayout
             android:id="@+id/tool_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/padding_small"
             android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_tool_group"
+            android:padding="4dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageButton
                 android:id="@+id/btn_tool_pencil"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginHorizontal="6dp"
-                android:background="@drawable/bg_nav_item_active"
+                android:layout_width="@dimen/_34sdp"
+                android:layout_height="@dimen/_34sdp"
+                android:layout_marginHorizontal="2dp"
+                android:background="@drawable/bg_tool_active"
                 android:src="@drawable/ic_edit_profile"
-                app:tint="@color/neon_green" />
+                android:padding="6dp"
+                app:tint="#000000" />
 
             <ImageButton
                 android:id="@+id/btn_tool_eraser"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginHorizontal="6dp"
-                android:background="@drawable/background_card"
+                android:layout_width="@dimen/_34sdp"
+                android:layout_height="@dimen/_34sdp"
+                android:layout_marginHorizontal="2dp"
+                android:background="@drawable/bg_tool_inactive"
                 android:src="@drawable/ic_menu_delete_forever"
-                app:tint="@color/text_secondary_light" />
+                android:padding="6dp"
+                app:tint="#888888" />
 
             <ImageButton
                 android:id="@+id/btn_tool_fill"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginHorizontal="6dp"
-                android:background="@drawable/background_card"
+                android:layout_width="@dimen/_34sdp"
+                android:layout_height="@dimen/_34sdp"
+                android:layout_marginHorizontal="2dp"
+                android:background="@drawable/bg_tool_inactive"
                 android:src="@drawable/ic_fill"
-                app:tint="@color/text_secondary_light" />
+                android:padding="6dp"
+                app:tint="#888888" />
 
             <View
                 android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginVertical="8dp"
-                android:background="@color/divider_color" />
+                android:layout_height="24dp"
+                android:layout_marginHorizontal="6dp"
+                android:background="#2A2A2A" />
 
             <ImageButton
                 android:id="@+id/btn_undo"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginHorizontal="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="@dimen/_34sdp"
+                android:layout_height="@dimen/_34sdp"
+                android:layout_marginHorizontal="2dp"
+                android:background="@drawable/bg_tool_inactive"
                 android:src="@drawable/ic_undo"
-                app:tint="@color/text_secondary_light" />
+                android:padding="6dp"
+                app:tint="#00FF41" />
 
             <ImageButton
                 android:id="@+id/btn_redo"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginHorizontal="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="@dimen/_34sdp"
+                android:layout_height="@dimen/_34sdp"
+                android:layout_marginHorizontal="2dp"
+                android:background="@drawable/bg_tool_inactive"
                 android:src="@drawable/ic_redo"
-                app:tint="@color/text_secondary_light" />
+                android:padding="6dp"
+                app:tint="#00FF41" />
 
             <ImageButton
                 android:id="@+id/btn_clear_canvas"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginHorizontal="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="@dimen/_34sdp"
+                android:layout_height="@dimen/_34sdp"
+                android:layout_marginHorizontal="2dp"
+                android:background="@drawable/bg_tool_inactive"
                 android:src="@drawable/ic_menu_delete_forever"
-                app:tint="@color/text_secondary_dim" />
-
+                android:padding="6dp"
+                app:tint="#FF4444" />
         </LinearLayout>
 
-        <!-- Color Row -->
+        <!-- Color Palette (Center) -->
         <HorizontalScrollView
-            android:layout_width="wrap_content"
+            android:id="@+id/color_scroll"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginHorizontal="8dp"
             android:scrollbars="none"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tool_container">
+            android:background="@drawable/bg_tool_group"
+            android:padding="4dp"
+            app:layout_constraintStart_toEndOf="@id/tool_container"
+            app:layout_constraintEnd_toStartOf="@id/btn_save_creation"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingBottom="4dp">
+                android:orientation="horizontal">
 
                 <View
                     android:id="@+id/color_white"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_margin="6dp"
-                    android:background="#FFFFFF" />
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_color_white" />
 
                 <View
                     android:id="@+id/color_neon"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_margin="6dp"
-                    android:background="#A6FF3D" />
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_color_neon" />
 
                 <View
                     android:id="@+id/color_red"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_margin="6dp"
-                    android:background="#FF4444" />
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_color_red" />
 
                 <View
                     android:id="@+id/color_blue"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_margin="6dp"
-                    android:background="#4444FF" />
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_color_blue" />
 
                 <View
                     android:id="@+id/color_black"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_margin="6dp"
-                    android:background="#000000" />
-                
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_color_black" />
+
                 <View
                     android:id="@+id/color_orange"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_margin="6dp"
-                    android:background="#FFBB33" />
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_color_orange" />
 
                 <View
                     android:id="@+id/color_purple"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_margin="6dp"
-                    android:background="#AA66CC" />
-
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/bg_color_purple" />
             </LinearLayout>
         </HorizontalScrollView>
 
+        <!-- Save Button (Right) -->
         <com.kdt.mcgui.MineButton
             android:id="@+id/btn_save_creation"
-            android:layout_width="@dimen/_120sdp"
-            android:layout_height="@dimen/_36sdp"
-            android:layout_marginEnd="@dimen/padding_medium"
-            android:layout_marginBottom="@dimen/padding_small"
-            android:text="SAVE CURSOR"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_42sdp"
+            android:text="SAVE"
+            android:textColor="#000000"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.1"
+            android:paddingHorizontal="20dp"
+            android:background="@drawable/bg_save_button"
+            android:stateListAnimator="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- ── IMPORT PANEL ── -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ✦ IMPORT PANEL (Mobile Optimized)      -->
+    <!-- ═══════════════════════════════════════ -->
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/panel_import"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/bg_launcher_dark"
+        android:background="#050505"
         android:visibility="gone"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cursor_top_bar">
 
         <LinearLayout
-            android:layout_width="@dimen/_300sdp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_card"
-            android:orientation="vertical"
-            android:padding="@dimen/padding_medium"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="12dp">
 
-            <TextView
-                android:layout_width="match_parent"
+            <!-- Left: Import Button Card -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:text="Import Custom Cursor"
-                android:textColor="@color/neon_green"
-                android:textSize="@dimen/_12ssp"
-                android:textStyle="bold" />
+                android:background="@drawable/bg_section_card"
+                android:padding="16dp"
+                android:minHeight="200dp">
 
-            <com.kdt.mcgui.MineButton
-                android:id="@+id/btn_import_png"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:text="CHOOSE PNG / GIF IMAGE" />
+                <FrameLayout
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_icon_badge_neon"
+                    android:layout_marginBottom="12dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CURSOR SCALE"
-                android:textColor="@color/text_secondary_dim"
-                android:textSize="10sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="📁"
+                        android:textSize="22sp"/>
+                </FrameLayout>
 
-            <SeekBar
-                android:id="@+id/seek_cursor_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="8dp"
-                android:max="300"
-                android:progress="100"
-                android:progressTint="@color/neon_green"
-                android:thumbTint="@color/neon_green" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Import Cursor"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="GLOW INTENSITY"
-                android:textColor="@color/text_secondary_dim"
-                android:textSize="10sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PNG / GIF supported"
+                    android:textColor="#666666"
+                    android:textSize="10sp"
+                    android:layout_marginBottom="16dp"/>
 
-            <SeekBar
-                android:id="@+id/seek_glow_strength"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="8dp"
-                android:max="100"
-                android:progress="0"
-                android:progressTint="@color/neon_green"
-                android:thumbTint="@color/neon_green" />
+                <com.kdt.mcgui.MineButton
+                    android:id="@+id/btn_import_png"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:text="CHOOSE FILE"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05"
+                    android:background="@drawable/bg_save_button"
+                    android:stateListAnimator="@null"/>
+            </LinearLayout>
 
-            <com.kdt.mcgui.MineButton
-                android:id="@+id/btn_apply_import"
-                android:layout_width="match_parent"
+            <!-- Right: Settings Card -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="APPLY &amp; SAVE" />
+                android:layout_weight="1.3"
+                android:layout_marginStart="6dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_section_card"
+                android:padding="14dp">
+
+                <!-- Cursor Scale -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="4dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="4dp"
+                        android:background="@drawable/bg_neon_dot_small"
+                        android:layout_marginEnd="6dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="CURSOR SCALE"
+                        android:textColor="#00FF41"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100%"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seek_cursor_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="2dp"
+                    android:max="300"
+                    android:progress="100"
+                    android:progressTint="#00FF41"
+                    android:thumbTint="#00FF41"
+                    android:progressBackgroundTint="#2A2A2A"/>
+
+                <!-- Glow Intensity -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="4dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="4dp"
+                        android:background="@drawable/bg_neon_dot_small"
+                        android:layout_marginEnd="6dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="GLOW INTENSITY"
+                        android:textColor="#00FF41"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0%"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seek_glow_strength"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="2dp"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="#00FF41"
+                    android:thumbTint="#00FF41"
+                    android:progressBackgroundTint="#2A2A2A"/>
+
+                <com.kdt.mcgui.MineButton
+                    android:id="@+id/btn_apply_import"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="14dp"
+                    android:text="APPLY &amp; SAVE"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05"
+                    android:background="@drawable/bg_save_button"
+                    android:stateListAnimator="@null"/>
+            </LinearLayout>
 
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- ── COLLECTION PANEL ── -->
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ✦ COLLECTION PANEL                     -->
+    <!-- ═══════════════════════════════════════ -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/panel_collection"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/bg_launcher_dark"
-        android:padding="@dimen/padding_medium"
+        android:background="#050505"
+        android:padding="8dp"
+        android:clipToPadding="false"
         android:visibility="gone"
+        android:overScrollMode="never"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cursor_top_bar" />
 
