@@ -1,223 +1,288 @@
 package net.kdt.pojavlaunch.fragments;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.net.Uri;
+import android.animation.*;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
+import android.view.animation.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-
-import net.kdt.pojavlaunch.R;
-import net.kdt.pojavlaunch.Tools;
-import net.kdt.pojavlaunch.customcontrols.mouse.CursorDesignerView;
-import net.kdt.pojavlaunch.customcontrols.mouse.CursorManager;
-import net.kdt.pojavlaunch.extra.ExtraConstants;
-import net.kdt.pojavlaunch.extra.ExtraCore;
-import net.kdt.pojavlaunch.prefs.LauncherPreferences;
-
-import java.io.File;
-import java.io.InputStream;
 
 public class CursorCustomizationFragment extends Fragment {
-    public static final String TAG = "CursorCustomizationFragment";
 
-    private View mPanelCreate, mPanelImport;
-    private RecyclerView mPanelCollection;
-    private TextView mTabImport, mTabCreate, mTabCollection;
-    private ImageView mPreviewSmall, mPreviewMedium, mPreviewLarge;
-    private CursorDesignerView mDesigner;
-    private SeekBar mSeekSize, mSeekGlow;
-    private ImageButton mBtnPencil, mBtnEraser, mBtnFill;
+    private View currentTab;
     
-    private Bitmap mCurrentBitmap;
-
-    private final ActivityResultLauncher<String> mFilePicker = registerForActivityResult(
-            new ActivityResultContracts.GetContent(),
-            uri -> {
-                if (uri != null) {
-                    handleImportedFile(uri);
-                }
-            }
-    );
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_cursor_customization, container, false);
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        mPanelCreate = view.findViewById(R.id.panel_create);
-        mPanelImport = view.findViewById(R.id.panel_import);
-        mPanelCollection = view.findViewById(R.id.panel_collection);
-
-        mTabImport = view.findViewById(R.id.tab_import);
-        mTabCreate = view.findViewById(R.id.tab_create);
-        mTabCollection = view.findViewById(R.id.tab_collection);
-
-        mPreviewSmall = view.findViewById(R.id.preview_small);
-        mPreviewMedium = view.findViewById(R.id.preview_medium);
-        mPreviewLarge = view.findViewById(R.id.preview_large);
         
-        mDesigner = view.findViewById(R.id.cursor_designer);
+        // Setup entrance animations
+        animateInitialEntry(view);
         
-        mSeekSize = view.findViewById(R.id.seek_cursor_size);
-        mSeekGlow = view.findViewById(R.id.seek_glow_strength);
-
-        mBtnPencil = view.findViewById(R.id.btn_tool_pencil);
-        mBtnFill = view.findViewById(R.id.btn_tool_fill);
-        mBtnEraser = view.findViewById(R.id.btn_tool_eraser);
-
-        view.findViewById(R.id.cursor_back_button).setOnClickListener(v -> Tools.removeCurrentFragment(requireActivity()));
-
-        mTabImport.setOnClickListener(v -> switchTab(0));
-        mTabCreate.setOnClickListener(v -> switchTab(1));
-        mTabCollection.setOnClickListener(v -> switchTab(2));
-
-        view.findViewById(R.id.btn_import_png).setOnClickListener(v -> mFilePicker.launch("image/*"));
+        // Setup tab switching
+        setupTabAnimations(view);
         
-        // Editor Actions
-        view.findViewById(R.id.btn_undo).setOnClickListener(v -> mDesigner.undo());
-        view.findViewById(R.id.btn_redo).setOnClickListener(v -> mDesigner.redo());
-        view.findViewById(R.id.btn_clear_canvas).setOnClickListener(v -> mDesigner.clear());
-        view.findViewById(R.id.btn_save_creation).setOnClickListener(v -> applyCursor());
+        // Setup button press animations
+        setupAllButtonAnimations(view);
+        
+        // Setup color picker animations
+        setupColorPickerAnimations(view);
+    }
 
-        // Tool Selectors
-        mBtnPencil.setOnClickListener(v -> selectTool(CursorDesignerView.Tool.PENCIL));
-        mBtnFill.setOnClickListener(v -> selectTool(CursorDesignerView.Tool.FILL));
-        mBtnEraser.setOnClickListener(v -> selectTool(CursorDesignerView.Tool.ERASER));
+    /**
+     * Smooth initial entrance animation
+     */
+    private void animateInitialEntry(View root) {
+        View topBar = root.findViewById(R.id.cursor_top_bar);
+        View createPanel = root.findViewById(R.id.panel_create);
+        View bottomPanel = root.findViewById(R.id.tools_bottom_panel);
+        
+        // Top bar slides down
+        topBar.setTranslationY(-100f);
+        topBar.setAlpha(0f);
+        topBar.animate()
+            .translationY(0f)
+            .alpha(1f)
+            .setDuration(400)
+            .setInterpolator(new DecelerateInterpolator(1.5f))
+            .start();
+        
+        // Create panel fades in with scale
+        createPanel.setAlpha(0f);
+        createPanel.setScaleX(0.95f);
+        createPanel.setScaleY(0.95f);
+        createPanel.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(500)
+            .setStartDelay(150)
+            .setInterpolator(new DecelerateInterpolator(1.5f))
+            .start();
+        
+        // Bottom panel slides up
+        bottomPanel.setTranslationY(100f);
+        bottomPanel.setAlpha(0f);
+        bottomPanel.animate()
+            .translationY(0f)
+            .alpha(1f)
+            .setDuration(450)
+            .setStartDelay(200)
+            .setInterpolator(new DecelerateInterpolator(1.5f))
+            .start();
+    }
 
-        // Color Selectors
-        view.findViewById(R.id.color_white).setOnClickListener(v -> mDesigner.setColor(Color.WHITE));
-        view.findViewById(R.id.color_neon).setOnClickListener(v -> mDesigner.setColor(Color.parseColor("#A6FF3D")));
-        view.findViewById(R.id.color_red).setOnClickListener(v -> mDesigner.setColor(Color.RED));
-        view.findViewById(R.id.color_blue).setOnClickListener(v -> mDesigner.setColor(Color.BLUE));
-        view.findViewById(R.id.color_black).setOnClickListener(v -> mDesigner.setColor(Color.BLACK));
-        view.findViewById(R.id.color_orange).setOnClickListener(v -> mDesigner.setColor(Color.parseColor("#FFBB33")));
-        view.findViewById(R.id.color_purple).setOnClickListener(v -> mDesigner.setColor(Color.parseColor("#AA66CC")));
+    /**
+     * Tab switching with smooth transitions
+     */
+    private void setupTabAnimations(View root) {
+        View tabImport = root.findViewById(R.id.tab_import);
+        View tabCreate = root.findViewById(R.id.tab_create);
+        View tabCollection = root.findViewById(R.id.tab_collection);
+        
+        View panelCreate = root.findViewById(R.id.panel_create);
+        View panelImport = root.findViewById(R.id.panel_import);
+        View panelCollection = root.findViewById(R.id.panel_collection);
+        
+        currentTab = tabCreate;
+        
+        tabImport.setOnClickListener(v -> {
+            switchTab((TextView) v, (TextView) tabCreate, (TextView) tabCollection);
+            switchPanel(panelImport, panelCreate, panelCollection);
+        });
+        
+        tabCreate.setOnClickListener(v -> {
+            switchTab((TextView) v, (TextView) tabImport, (TextView) tabCollection);
+            switchPanel(panelCreate, panelImport, panelCollection);
+        });
+        
+        tabCollection.setOnClickListener(v -> {
+            switchTab((TextView) v, (TextView) tabImport, (TextView) tabCreate);
+            switchPanel(panelCollection, panelImport, panelCreate);
+        });
+    }
 
-        view.findViewById(R.id.btn_apply_import).setOnClickListener(v -> applyCursor());
+    private void switchTab(TextView activeTab, TextView... otherTabs) {
+        if (currentTab == activeTab) return;
+        
+        // Activate selected tab with smooth animation
+        activeTab.animate()
+            .scaleX(1.05f)
+            .scaleY(1.05f)
+            .setDuration(150)
+            .setInterpolator(new OvershootInterpolator(2f))
+            .withEndAction(() -> {
+                activeTab.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(150)
+                    .start();
+            })
+            .start();
+        
+        activeTab.setBackgroundResource(R.drawable.bg_tab_active);
+        activeTab.setTextColor(0xFF000000);
+        
+        // Deactivate other tabs
+        for (TextView tab : otherTabs) {
+            tab.setBackground(null);
+            tab.setTextColor(0xFF888888);
+        }
+        
+        currentTab = activeTab;
+    }
 
-        // Make save buttons neon green
-        Button saveBtn = view.findViewById(R.id.btn_save_creation);
-        saveBtn.setBackgroundResource(R.drawable.play_button_green);
-        saveBtn.setTextColor(Color.parseColor("#0D0D0D"));
-        Button applyBtn = view.findViewById(R.id.btn_apply_import);
-        applyBtn.setBackgroundResource(R.drawable.play_button_green);
-        applyBtn.setTextColor(Color.parseColor("#0D0D0D"));
-
-        mSeekSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // Live scale preview update if needed
+    private void switchPanel(View showPanel, View... hidePanels) {
+        // Hide other panels with fade out
+        for (View panel : hidePanels) {
+            if (panel.getVisibility() == View.VISIBLE) {
+                panel.animate()
+                    .alpha(0f)
+                    .translationY(20f)
+                    .setDuration(200)
+                    .withEndAction(() -> {
+                        panel.setVisibility(View.GONE);
+                        panel.setTranslationY(0f);
+                    })
+                    .start();
             }
-            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+        }
+        
+        // Show new panel with fade in + scale
+        showPanel.setVisibility(View.VISIBLE);
+        showPanel.setAlpha(0f);
+        showPanel.setTranslationY(20f);
+        showPanel.setScaleX(0.97f);
+        showPanel.setScaleY(0.97f);
+        
+        showPanel.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(350)
+            .setStartDelay(150)
+            .setInterpolator(new DecelerateInterpolator(1.5f))
+            .start();
+    }
+
+    /**
+     * Smooth button press animation with bounce
+     */
+    private void setupAllButtonAnimations(View root) {
+        int[] buttonIds = {
+            R.id.cursor_back_button,
+            R.id.btn_tool_pencil, R.id.btn_tool_eraser, R.id.btn_tool_fill,
+            R.id.btn_undo, R.id.btn_redo, R.id.btn_clear_canvas,
+            R.id.btn_save_creation, R.id.btn_import_png, R.id.btn_apply_import
+        };
+        
+        for (int id : buttonIds) {
+            View btn = root.findViewById(id);
+            if (btn != null) {
+                applyPressAnimation(btn);
+            }
+        }
+    }
+
+    private void applyPressAnimation(View view) {
+        view.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    v.animate()
+                        .scaleX(0.90f)
+                        .scaleY(0.90f)
+                        .setDuration(80)
+                        .setInterpolator(new AccelerateDecelerateInterpolator())
+                        .start();
+                    break;
+                    
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    v.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(200)
+                        .setInterpolator(new OvershootInterpolator(2.5f))
+                        .start();
+                    break;
+            }
+            return false;
         });
-
-        // Real-time canvas listener
-        mDesigner.setOnCanvasChangedListener(bitmap -> {
-            mCurrentBitmap = bitmap;
-            updatePreviews();
-        });
-
-        // Initialize with default
-        mCurrentBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_mouse_pointer);
-        
-        mSeekSize.setProgress((int) (LauncherPreferences.PREF_MOUSESCALE * 100));
-        mSeekGlow.setProgress(LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS);
-        
-        switchTab(1); // Default to Create
-        selectTool(CursorDesignerView.Tool.PENCIL);
     }
 
-    private void switchTab(int index) {
-        mPanelCreate.setVisibility(index == 1 ? View.VISIBLE : View.GONE);
-        mPanelImport.setVisibility(index == 0 ? View.VISIBLE : View.GONE);
-        mPanelCollection.setVisibility(index == 2 ? View.VISIBLE : View.GONE);
-
-        mTabImport.setTextColor(index == 0 ? Color.parseColor("#A6FF3D") : Color.LTGRAY);
-        mTabCreate.setTextColor(index == 1 ? Color.parseColor("#A6FF3D") : Color.LTGRAY);
-        mTabCollection.setTextColor(index == 2 ? Color.parseColor("#A6FF3D") : Color.LTGRAY);
+    /**
+     * Color picker selection animation
+     */
+    private void setupColorPickerAnimations(View root) {
+        int[] colorIds = {
+            R.id.color_white, R.id.color_neon, R.id.color_red,
+            R.id.color_blue, R.id.color_black, R.id.color_orange, R.id.color_purple
+        };
         
-        mTabImport.setBackgroundResource(index == 0 ? R.drawable.bg_nav_item_active : 0);
-        mTabCreate.setBackgroundResource(index == 1 ? R.drawable.bg_nav_item_active : 0);
-        mTabCollection.setBackgroundResource(index == 2 ? R.drawable.bg_nav_item_active : 0);
-
-        if (index == 1) {
-            mCurrentBitmap = mDesigner.getCursorBitmap();
-            updatePreviews();
+        for (int id : colorIds) {
+            View color = root.findViewById(id);
+            if (color != null) {
+                color.setOnClickListener(v -> {
+                    // Selection pulse
+                    AnimatorSet pulse = new AnimatorSet();
+                    pulse.playTogether(
+                        ObjectAnimator.ofFloat(v, "scaleX", 1f, 1.3f, 1.1f),
+                        ObjectAnimator.ofFloat(v, "scaleY", 1f, 1.3f, 1.1f)
+                    );
+                    pulse.setDuration(300);
+                    pulse.setInterpolator(new OvershootInterpolator(3f));
+                    pulse.start();
+                    
+                    // Reset other colors
+                    for (int otherId : colorIds) {
+                        if (otherId != id) {
+                            View other = root.findViewById(otherId);
+                            if (other != null && other.getScaleX() != 1f) {
+                                other.animate()
+                                    .scaleX(1f)
+                                    .scaleY(1f)
+                                    .setDuration(200)
+                                    .start();
+                            }
+                        }
+                    }
+                });
+            }
         }
     }
 
-    private void selectTool(CursorDesignerView.Tool tool) {
-        mDesigner.setTool(tool);
-        mBtnPencil.setBackgroundResource(tool == CursorDesignerView.Tool.PENCIL ? R.drawable.bg_nav_item_active : R.drawable.background_card);
-        mBtnFill.setBackgroundResource(tool == CursorDesignerView.Tool.FILL ? R.drawable.bg_nav_item_active : R.drawable.background_card);
-        mBtnEraser.setBackgroundResource(tool == CursorDesignerView.Tool.ERASER ? R.drawable.bg_nav_item_active : R.drawable.background_card);
+    /**
+     * Tool selection animation
+     */
+    public void selectTool(View selectedTool, View... otherTools) {
+        // Active tool animation
+        selectedTool.setBackgroundResource(R.drawable.bg_tool_active);
+        selectedTool.animate()
+            .scaleX(1.1f)
+            .scaleY(1.1f)
+            .setDuration(150)
+            .setInterpolator(new OvershootInterpolator(2f))
+            .withEndAction(() -> {
+                selectedTool.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(150)
+                    .start();
+            })
+            .start();
         
-        int neon = Color.parseColor("#A6FF3D");
-        int gray = Color.LTGRAY;
-        mBtnPencil.setImageTintList(android.content.res.ColorStateList.valueOf(tool == CursorDesignerView.Tool.PENCIL ? neon : gray));
-        mBtnFill.setImageTintList(android.content.res.ColorStateList.valueOf(tool == CursorDesignerView.Tool.FILL ? neon : gray));
-        mBtnEraser.setImageTintList(android.content.res.ColorStateList.valueOf(tool == CursorDesignerView.Tool.ERASER ? neon : gray));
-    }
-
-    private void handleImportedFile(Uri uri) {
-        try (InputStream is = requireContext().getContentResolver().openInputStream(uri)) {
-            mCurrentBitmap = BitmapFactory.decodeStream(is);
-            updatePreviews();
-        } catch (Exception e) {
-            Toast.makeText(getContext(), "Failed to import image", Toast.LENGTH_SHORT).show();
+        if (selectedTool instanceof ImageButton) {
+            ((ImageButton) selectedTool).setColorFilter(0xFF000000);
         }
-    }
-
-    private void updatePreviews() {
-        if (mCurrentBitmap != null) {
-            mPreviewSmall.setImageBitmap(mCurrentBitmap);
-            mPreviewMedium.setImageBitmap(mCurrentBitmap);
-            mPreviewLarge.setImageBitmap(mCurrentBitmap);
-        }
-    }
-
-    private void applyCursor() {
-        if (mCurrentBitmap == null) return;
         
-        String fileName = "custom_cursor_" + System.currentTimeMillis();
-        if (CursorManager.saveCursor(mCurrentBitmap, fileName)) {
-            String path = new File(Tools.DIR_CURSORS, fileName + ".png").getAbsolutePath();
-            LauncherPreferences.DEFAULT_PREF.edit()
-                    .putString("custom_cursor_path", path)
-                    .putBoolean("custom_cursor_enabled", true)
-                    .putInt("mousescale", mSeekSize.getProgress())
-                    .putInt("custom_cursor_glow_radius", mSeekGlow.getProgress())
-                    .apply();
-            
-            LauncherPreferences.loadPreferences(requireContext());
-            ExtraCore.setValue(ExtraConstants.REFRESH_CURSOR, true);
-            Toast.makeText(getContext(), "Cursor Applied!", Toast.LENGTH_SHORT).show();
+        // Inactive tools
+        for (View tool : otherTools) {
+            tool.setBackgroundResource(R.drawable.bg_tool_inactive);
+            if (tool instanceof ImageButton) {
+                ((ImageButton) tool).setColorFilter(0xFF888888);
+            }
         }
     }
 }
