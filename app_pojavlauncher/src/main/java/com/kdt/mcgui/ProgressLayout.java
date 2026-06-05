@@ -5,8 +5,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.animation.ObjectAnimator;
 
@@ -61,7 +61,13 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
     private LinearLayout mLinearLayout;
     private TextView mTaskNumberDisplayer;
     private ImageView mFlipArrow;
-
+    private KineticProgressView mKineticProgress;
+    private TextView mStatusText;
+    private TextView mDetailText;
+    private TextView mSpeedText;
+    private String mLastProgressingKey;
+    private int mLastProgress = 0;
+    private String mLastDetailText = "";
 
 
     public void observe(String progressKey){
@@ -79,33 +85,19 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
     }
 
 
-    private View mProgressSpinner;
-    private Runnable mRotationRunnable;
     private void init(){
         inflate(getContext(), R.layout.view_progress, this);
         mLinearLayout = findViewById(R.id.progress_linear_layout);
         mTaskNumberDisplayer = findViewById(R.id.progress_textview);
         mFlipArrow = findViewById(R.id.progress_flip_arrow);
-        mProgressSpinner = findViewById(R.id.progress_generic_progressbar);
+        mKineticProgress = findViewById(R.id.kinetic_progress);
+        mStatusText = findViewById(R.id.progress_status_text);
+        mDetailText = findViewById(R.id.progress_detail_text);
+        mSpeedText = findViewById(R.id.progress_speed_text);
         setBackgroundColor(getResources().getColor(R.color.background_bottom_bar));
         setOnClickListener(this);
-
-        // Cinematic infinite rotation animation for the circular loader
-        mRotationRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (mProgressSpinner != null) {
-                    mProgressSpinner.animate()
-                            .rotation(mProgressSpinner.getRotation() + 360f)
-                            .setDuration(1200)
-                            .setInterpolator(null)
-                            .withEndAction(mRotationRunnable)
-                            .start();
-                }
-            }
-        };
-        mRotationRunnable.run();
     }
+
     public static void setProgress(String progressKey, int progress){
         ProgressKeeper.submitProgress(progressKey, progress, -1, (Object)null);
     }
@@ -165,6 +157,7 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
         @Override
         public void onProgressUpdated(int progress, int resid, Object... va) {
             post(()-> {
+                // Update individual task bar in the expandable list
                 int current = textView.getProgress();
                 if (progress != current && progress >= 0) {
                     ObjectAnimator anim = ObjectAnimator.ofInt(textView, "progress", current, progress);
@@ -177,6 +170,28 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
                 if(resid != -1) textView.setText(getContext().getString(resid, va));
                 else if(va.length > 0 && va[0] != null)textView.setText((String)va[0]);
                 else textView.setText("");
+
+                // Update the kinetic progress circle and detail texts
+                if (progress >= 0) {
+                    mKineticProgress.setProgress(progress);
+                    mLastProgress = progress;
+                }
+                mLastProgressingKey = this.progressKey;
+
+                if (va.length > 0 && va[0] != null) {
+                    String msg = va[0] instanceof String ? (String) va[0] : String.valueOf(va[0]);
+                    mStatusText.setText(msg.toUpperCase());
+                } else if (resid != -1) {
+                    mStatusText.setText(getContext().getString(resid).toUpperCase());
+                }
+
+                // Show detail text if available
+                if (va.length > 1 && va[1] != null) {
+                    mDetailText.setText(String.valueOf(va[1]));
+                    mDetailText.setVisibility(VISIBLE);
+                } else {
+                    mDetailText.setVisibility(GONE);
+                }
             });
         }
 

@@ -1,48 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Change the layout to merge tag once done -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_bottom_bar"
+    android:padding="12dp">
 
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ✦ KINETIC PROGRESS CIRCLE              -->
+    <!-- ═══════════════════════════════════════ -->
+    <com.kdt.mcgui.KineticProgressView
+        android:id="@+id/kinetic_progress"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_80sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-    >
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ✦ DOWNLOAD DETAILS                     -->
+    <!-- ═══════════════════════════════════════ -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="12dp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@id/kinetic_progress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <TextView
+            android:id="@+id/progress_status_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DOWNLOADING LATEST MODS..."
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.03"
+            tools:text="DOWNLOADING LATEST MODS..."/>
 
-    <ProgressBar
-        android:id="@+id/progress_generic_progressbar"
-        android:layout_width="@dimen/_40sdp"
-        android:layout_height="@dimen/_30sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/progress_detail_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MODS &amp; MAPS INCLUDED"
+            android:textColor="#666666"
+            android:textSize="9sp"
+            android:layout_marginTop="2dp"
+            tools:text="MODS &amp; MAPS INCLUDED: Fabric, OptiFine"/>
 
+        <TextView
+            android:id="@+id/progress_speed_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#888888"
+            android:textSize="9sp"
+            android:layout_marginTop="2dp"
+            tools:text="SPEED: 12MB/S | ETA: 1MIN REMAINING"/>
+
+    </LinearLayout>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ✦ TASK COUNT & EXPAND (keep existing)  -->
+    <!-- ═══════════════════════════════════════ -->
     <TextView
         android:id="@+id/progress_textview"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center"
-        android:textSize="@dimen/_12ssp"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textSize="@dimen/_10ssp"
         android:textColor="@android:color/white"
-        android:paddingEnd="@dimen/_40sdp"
-
-        tools:text="5 tasks in progress"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/progress_flip_arrow"
-        app:layout_constraintStart_toEndOf="@+id/progress_generic_progressbar"
-        app:layout_constraintTop_toTopOf="@+id/progress_generic_progressbar"
-        tools:ignore="RtlSymmetry" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="5 tasks in progress"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/progress_flip_arrow"
         android:layout_width="@dimen/padding_extra_large"
         android:layout_height="@dimen/padding_extra_large"
         android:layout_marginEnd="@dimen/_8sdp"
-        app:layout_constraintBottom_toBottomOf="@id/progress_generic_progressbar"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/progress_generic_progressbar"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/spinner_arrow" />
 
     <LinearLayout
@@ -53,13 +102,9 @@
         android:visibility="gone"
         android:paddingHorizontal="@dimen/padding_heavy"
         android:paddingTop="@dimen/padding_heavy"
-        android:weightSum="3"
-
-
-        app:layout_constraintBottom_toTopOf="@+id/progress_generic_progressbar"
+        app:layout_constraintBottom_toTopOf="@+id/kinetic_progress"
         tools:layout_height="@dimen/_100sdp"
-        tools:visibility="visible"
-        >
+        tools:visibility="visible">
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

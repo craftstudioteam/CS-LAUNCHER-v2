@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer glow border -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#1A1A1A"/>
+            <stroke android:width="2dp" android:color="#00FF41"/>
+            <corners android:radius="10dp"/>
+        </shape>
+    </item>
+    <!-- Inner background -->
+    <item android:left="1dp" android:right="1dp" android:top="1dp" android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#1E1E1E"/>
+            <corners android:radius="9dp"/>
+        </shape>
+    </item>
+</layer-list>
