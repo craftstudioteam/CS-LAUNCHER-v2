@@ -1,5 +1,10 @@
 package net.kdt.pojavlaunch.fragments;
 
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.fragment.app.Fragment;
+import net.kdt.pojavlaunch.R;
 import android.animation.*;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -11,6 +16,7 @@ import androidx.annotation.Nullable;
 
 public class CursorCustomizationFragment extends Fragment {
 
+    public static final String TAG = "CursorCustomizationFragment";
     private View currentTab;
     
     @Override
