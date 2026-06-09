@@ -92,7 +92,7 @@ public class FastClientHomeFragment extends Fragment {
             if (head != null) {
                 ivPlayerHead.setImageBitmap(head);
             } else {
-                ivPlayerHead.setImageResource(R.drawable.ic_steve);
+                ivPlayerHead.setImageResource(R.drawable.ic_pojav_full);
             }
             
             boolean isOnline = account.accessToken != null && !account.accessToken.equals("0");
