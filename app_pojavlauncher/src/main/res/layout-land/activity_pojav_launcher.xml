@@ -172,6 +172,35 @@
             </LinearLayout>
         </FrameLayout>
 
+        <!-- Nav Skin Management -->
+        <FrameLayout
+            android:id="@+id/nav_skin_manager"
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/nav_skin_icon"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:src="@drawable/ic_steve"
+                    android:tint="#00FF41"
+                    android:contentDescription="Skin Management" />
+                <View
+                    android:id="@+id/nav_skin_indicator"
+                    android:layout_width="14dp"
+                    android:layout_height="2dp"
+                    android:background="@color/neon_green"
+                    android:visibility="invisible" />
+            </LinearLayout>
+        </FrameLayout>
+
         <!-- Nav Create Profile (removed — replaced by floating FAB on home) -->
 
         <!-- Spacer -->
