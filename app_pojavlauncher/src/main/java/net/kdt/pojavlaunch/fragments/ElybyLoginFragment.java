@@ -132,7 +132,7 @@ public class ElybyLoginFragment extends Fragment {
                 Log.e(TAG, "Ely.by login exception", e);
                 new Handler(Looper.getMainLooper()).post(() -> {
                     mLoginButton.setEnabled(true);
-                    Tools.showError(requireContext(), e.toString());
+                    Tools.showError(requireContext(), e);
                 });
             }
         }).start();
