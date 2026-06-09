@@ -158,7 +158,11 @@ public class SkinManagerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (mSkinPreviewSurface != null) {
-            mSkinPreviewSurface.onResume();
+            try {
+                mSkinPreviewSurface.onResume();
+            } catch (Exception e) {
+                Log.w(TAG, "GLSurfaceView onResume failed, renderer likely not set.", e);
+            }
         }
     }
 
@@ -166,7 +170,11 @@ public class SkinManagerFragment extends Fragment {
     public void onPause() {
         super.onPause();
         if (mSkinPreviewSurface != null) {
-            mSkinPreviewSurface.onPause();
+            try {
+                mSkinPreviewSurface.onPause();
+            } catch (Exception e) {
+                Log.w(TAG, "GLSurfaceView onPause failed, renderer likely not set.", e);
+            }
         }
     }
 }
