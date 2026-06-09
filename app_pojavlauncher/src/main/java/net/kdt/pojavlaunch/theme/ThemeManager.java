@@ -20,7 +20,7 @@ public class ThemeManager {
     public  static final String KEY_GRADIENT = "enable_bg_gradient";
 
     public static final Preset[] PRESETS = {
-        new Preset("Default (Copper)",  R.style.AppTheme,            R.style.AppTheme_Gradient),
+        new Preset("Default (CS Launcher)",  R.style.AppTheme,            R.style.AppTheme_Gradient),
         new Preset("Midnight Blue",     R.style.AppTheme_MidnightBlue, R.style.AppTheme_MidnightBlue_Gradient),
         new Preset("Forest Green",      R.style.AppTheme_ForestGreen,  R.style.AppTheme_ForestGreen_Gradient),
         new Preset("Crimson",           R.style.AppTheme_Crimson,      R.style.AppTheme_Crimson_Gradient),
