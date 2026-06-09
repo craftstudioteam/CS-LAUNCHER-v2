@@ -249,13 +249,16 @@ public class LauncherActivity extends BaseActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         // If we don't have a back stack root yet...
         if(fragmentManager.getBackStackEntryCount() < 1) {
+            // Check if FastClient is enabled
+            android.content.SharedPreferences p = getSharedPreferences("fastclient_prefs", android.content.Context.MODE_PRIVATE);
+            boolean fcEnabled = p.getBoolean("fc_enabled", false);
+            Class<? extends Fragment> rootFragment = fcEnabled ? net.kdt.pojavlaunch.fragments.FastClientHomeFragment.class : MainMenuFragment.class;
+
             // Manually add the first fragment to the backstack to get easily back to it
-            // There must be a better way to handle the root though...
-            // (artDev: No, there is not. I've spent days researching this for another unrelated project.)
             fragmentManager.beginTransaction()
                     .setReorderingAllowed(true)
                     .addToBackStack("ROOT")
-                    .add(R.id.container_fragment, MainMenuFragment.class, null, "ROOT").commit();
+                    .add(R.id.container_fragment, rootFragment, null, "ROOT").commit();
         }
 
 

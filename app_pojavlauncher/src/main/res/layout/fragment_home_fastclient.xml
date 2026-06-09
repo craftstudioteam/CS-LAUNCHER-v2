@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/home_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/bg_launcher_dark"
+    android:padding="@dimen/_10sdp">
+
+    <!-- LEFT PANE -->
+    <LinearLayout
+        android:id="@+id/left_pane"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.8"
+        android:orientation="vertical"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:background="@drawable/bg_fastclient_card"
+        android:padding="@dimen/_16sdp">
+
+        <!-- Profile Row -->
+        <LinearLayout
+            android:id="@+id/card_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/_14sdp">
+
+            <FrameLayout
+                android:layout_width="@dimen/_56sdp"
+                android:layout_height="@dimen/_56sdp"
+                android:layout_marginEnd="@dimen/_12sdp">
+
+                <ImageView
+                    android:id="@+id/iv_player_head"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_play_arrow"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/bg_player_head"
+                    android:contentDescription="Player Head" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="bottom|end"
+                    android:background="@drawable/bg_dot_online"
+                    android:layout_margin="2dp" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:id="@+id/tv_player_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Player"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/_16ssp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="@dimen/_8sdp" />
+
+                    <TextView
+                        android:id="@+id/tv_player_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Online"
+                        android:textColor="#00CC44"
+                        android:textSize="@dimen/_10ssp"
+                        android:textStyle="bold"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="2dp"
+                        android:background="@drawable/bg_badge_online" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/_13sdp"
+                        android:layout_height="@dimen/_13sdp"
+                        android:src="@drawable/ic_folder"
+                        android:tint="#AAAAAA"
+                        android:layout_marginEnd="4dp"
+                        android:contentDescription="Profile folder" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Profile: "
+                        android:textColor="#AAAAAA"
+                        android:textSize="@dimen/_11ssp" />
+
+                    <TextView
+                        android:id="@+id/tv_profile_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Default"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/_11ssp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Info Chips Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/_14sdp">
+
+            <TextView
+                android:id="@+id/chip_version"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_26sdp"
+                android:text="1.21.4"
+                android:textColor="#CCCCCC"
+                android:textSize="@dimen/_11ssp"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:background="@drawable/bg_chip_dark"
+                android:layout_marginEnd="@dimen/_6sdp" />
+
+            <TextView
+                android:id="@+id/chip_loader"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_26sdp"
+                android:text="Fabric"
+                android:textColor="#CCCCCC"
+                android:textSize="@dimen/_11ssp"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:background="@drawable/bg_chip_dark"
+                android:layout_marginEnd="@dimen/_6sdp" />
+
+            <TextView
+                android:id="@+id/chip_java"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_26sdp"
+                android:text="Java 21+"
+                android:textColor="#CCCCCC"
+                android:textSize="@dimen/_11ssp"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:background="@drawable/bg_chip_dark"
+                android:layout_marginEnd="@dimen/_6sdp" />
+
+            <TextView
+                android:id="@+id/chip_ram"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_26sdp"
+                android:text="3.5GB"
+                android:textColor="#CCCCCC"
+                android:textSize="@dimen/_11ssp"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:background="@drawable/bg_chip_dark" />
+
+        </LinearLayout>
+
+        <!-- Folder Row -->
+        <LinearLayout
+            android:id="@+id/btn_open_folder"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:background="@drawable/bg_folder_row"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="@dimen/_14sdp">
+
+            <ImageView
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="@dimen/_18sdp"
+                android:src="@drawable/ic_folder"
+                android:tint="#FF8C00"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:contentDescription="Open folder" />
+
+            <TextView
+                android:id="@+id/tv_folder_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Default"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/_12ssp" />
+
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:src="@drawable/spinner_arrow_right"
+                android:tint="#888888"
+                android:contentDescription="Arrow" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#2A2A2A"
+            android:layout_marginBottom="@dimen/_14sdp" />
+
+        <!-- PLAY Button -->
+        <TextView
+            android:id="@+id/btn_play_main"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_52sdp"
+            android:text="▶  PLAY"
+            android:textColor="#000000"
+            android:textSize="@dimen/_16ssp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:gravity="center"
+            android:background="@drawable/bg_btn_play_orange"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+    <!-- RIGHT PANE -->
+    <LinearLayout
+        android:id="@+id/right_pane"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@drawable/bg_fastclient_card"
+        android:padding="@dimen/_12sdp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/_12sdp">
+
+            <ImageView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:src="@drawable/ic_menu_settings"
+                android:tint="#FF8C00"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:contentDescription="Servers icon" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_partner_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Partner Servers"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_partner_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Click to quick join"
+                    android:textColor="#888888"
+                    android:textSize="@dimen/_10ssp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_view_all_servers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View All Servers"
+                android:textColor="#888888"
+                android:textSize="@dimen/_10ssp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground" />
+
+        </LinearLayout>
+
+        <!-- Server 1 -->
+        <LinearLayout
+            android:id="@+id/card_server_1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_52sdp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:background="@drawable/bg_server_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="@dimen/_6sdp">
+
+            <FrameLayout
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginEnd="@dimen/_10sdp">
+
+                <ImageView
+                    android:id="@+id/iv_server_icon_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_play_arrow"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/bg_server_icon"
+                    android:contentDescription="BananaSMP" />
+
+                <TextView
+                    android:id="@+id/tv_server_rank_1"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:text="#1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_8ssp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/bg_rank_badge_gold"
+                    android:layout_gravity="top|start" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_server_name_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BananaSMP"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_server_address_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="bananasmp.net"
+                    android:textColor="#888888"
+                    android:textSize="@dimen/_10ssp" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/iv_server_status_1"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:background="@drawable/bg_dot_online"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/tv_server_players_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="906/2500"
+                android:textColor="#AAAAAA"
+                android:textSize="@dimen/_10ssp" />
+
+        </LinearLayout>
+
+        <!-- Server 2 -->
+        <LinearLayout
+            android:id="@+id/card_server_2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_52sdp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:background="@drawable/bg_server_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="@dimen/_6sdp">
+
+            <FrameLayout
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginEnd="@dimen/_10sdp">
+
+                <ImageView
+                    android:id="@+id/iv_server_icon_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_play_arrow"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/bg_server_icon"
+                    android:contentDescription="AscendiaMC" />
+
+                <TextView
+                    android:id="@+id/tv_server_rank_2"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:text="#2"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_8ssp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/bg_rank_badge_purple"
+                    android:layout_gravity="top|start" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_server_name_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AscendiaMC"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_server_address_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="fast.ascendiamc.com"
+                    android:textColor="#888888"
+                    android:textSize="@dimen/_10ssp" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/iv_server_status_2"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:background="@drawable/bg_dot_online"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/tv_server_players_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="14/300"
+                android:textColor="#AAAAAA"
+                android:textSize="@dimen/_10ssp" />
+
+        </LinearLayout>
+
+        <!-- Server 3 -->
+        <LinearLayout
+            android:id="@+id/card_server_3"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_52sdp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:background="@drawable/bg_server_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="@dimen/_6sdp">
+
+            <FrameLayout
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginEnd="@dimen/_10sdp">
+
+                <ImageView
+                    android:id="@+id/iv_server_icon_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_play_arrow"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/bg_server_icon"
+                    android:contentDescription="HappyMC" />
+
+                <TextView
+                    android:id="@+id/tv_server_rank_3"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:text="#3"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_8ssp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/bg_rank_badge_blue"
+                    android:layout_gravity="top|start" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_server_name_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HappyMC"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_server_address_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="play.happymc.fun"
+                    android:textColor="#888888"
+                    android:textSize="@dimen/_10ssp" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/iv_server_status_3"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:background="@drawable/bg_dot_online"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/tv_server_players_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="81/999"
+                android:textColor="#AAAAAA"
+                android:textSize="@dimen/_10ssp" />
+
+        </LinearLayout>
+
+        <!-- Server 4 -->
+        <LinearLayout
+            android:id="@+id/card_server_4"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_52sdp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:background="@drawable/bg_server_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="@dimen/_6sdp">
+
+            <FrameLayout
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginEnd="@dimen/_10sdp">
+
+                <ImageView
+                    android:id="@+id/iv_server_icon_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_play_arrow"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/bg_server_icon"
+                    android:contentDescription="InSane SMP" />
+
+                <TextView
+                    android:id="@+id/tv_server_rank_4"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:text="#4"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_8ssp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/bg_rank_badge_blue"
+                    android:layout_gravity="top|start" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_server_name_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="InSane SMP"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_server_address_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="insanesmp.net"
+                    android:textColor="#888888"
+                    android:textSize="@dimen/_10ssp" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/iv_server_status_4"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:background="@drawable/bg_dot_online"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/tv_server_players_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="237/690"
+                android:textColor="#AAAAAA"
+                android:textSize="@dimen/_10ssp" />
+
+        </LinearLayout>
+
+        <!-- Server 5 -->
+        <LinearLayout
+            android:id="@+id/card_server_5"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_52sdp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:background="@drawable/bg_server_card"
+            android:clickable="true"
+            android:focusable="true">
+
+            <FrameLayout
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_marginEnd="@dimen/_10sdp">
+
+                <ImageView
+                    android:id="@+id/iv_server_icon_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_play_arrow"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/bg_server_icon"
+                    android:contentDescription="EternalNetwork" />
+
+                <TextView
+                    android:id="@+id/tv_server_rank_5"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:text="#5"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_8ssp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/bg_rank_badge_pink"
+                    android:layout_gravity="top|start" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_server_name_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EternalNetwork"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_server_address_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="fast.eternalnetwork.club"
+                    android:textColor="#888888"
+                    android:textSize="@dimen/_10ssp" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/iv_server_status_5"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:background="@drawable/bg_dot_online"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/tv_server_players_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2/2026"
+                android:textColor="#AAAAAA"
+                android:textSize="@dimen/_10ssp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
