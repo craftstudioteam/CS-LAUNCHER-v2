@@ -468,6 +468,7 @@ public class LauncherActivity extends BaseActivity {
         View navModStore       = findViewById(R.id.nav_mod_store);
         View navCustomControls  = findViewById(R.id.nav_custom_controls);
         View navCursor          = findViewById(R.id.nav_cursor);
+        View navSkinManager     = findViewById(R.id.nav_skin_manager);
         View navInstanceTools   = findViewById(R.id.nav_instance_tools);
         View navHome            = findViewById(R.id.nav_home);
         View btnHomeLogo        = findViewById(R.id.btn_home_logo);
@@ -485,6 +486,12 @@ public class LauncherActivity extends BaseActivity {
         if (navHome != null)         navHome.setOnClickListener(homeListener);
         if (btnHomeLogo != null)     btnHomeLogo.setOnClickListener(homeListener);
         if (tvLauncherTitle != null) tvLauncherTitle.setOnClickListener(homeListener);
+
+        if (navSkinManager != null) {
+            navSkinManager.setOnClickListener(v -> 
+                Tools.swapFragment(this, net.kdt.pojavlaunch.fragments.SkinManagerFragment.class, net.kdt.pojavlaunch.fragments.SkinManagerFragment.TAG, null)
+            );
+        }
 
         if (navModStore != null) {
             navModStore.setOnClickListener(v -> {
