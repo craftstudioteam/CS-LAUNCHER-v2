@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_fastclient_version"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_fastclient"
+    android:padding="@dimen/_20sdp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🚀  Select FastClient Version"
+        android:textColor="#FF8C00"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold"
+        android:layout_marginBottom="@dimen/_16sdp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#2A2A2A"
+        android:layout_marginBottom="@dimen/_12sdp" />
+
+    <RadioGroup
+        android:id="@+id/rg_version_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rb_version_1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:text="FastClient  v1.6.2   [LATEST]"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/_12ssp"
+            android:checked="true"
+            android:buttonTint="#FF8C00"
+            android:paddingStart="@dimen/_10sdp"
+            android:background="@drawable/bg_version_item_selected"
+            android:layout_marginBottom="6dp" />
+
+        <RadioButton
+            android:id="@+id/rb_version_2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:text="FastClient  v1.6.1"
+            android:textColor="#CCCCCC"
+            android:textSize="@dimen/_12ssp"
+            android:buttonTint="#FF8C00"
+            android:paddingStart="@dimen/_10sdp"
+            android:background="@drawable/bg_version_item_normal"
+            android:layout_marginBottom="6dp" />
+
+        <RadioButton
+            android:id="@+id/rb_version_3"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:text="FastClient  v1.6.0"
+            android:textColor="#CCCCCC"
+            android:textSize="@dimen/_12ssp"
+            android:buttonTint="#FF8C00"
+            android:paddingStart="@dimen/_10sdp"
+            android:background="@drawable/bg_version_item_normal"
+            android:layout_marginBottom="6dp" />
+
+        <RadioButton
+            android:id="@+id/rb_version_4"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:text="FastClient  v1.5.9"
+            android:textColor="#CCCCCC"
+            android:textSize="@dimen/_12ssp"
+            android:buttonTint="#FF8C00"
+            android:paddingStart="@dimen/_10sdp"
+            android:background="@drawable/bg_version_item_normal" />
+
+    </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#2A2A2A"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_14sdp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/btn_cancel_fastclient"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_38sdp"
+            android:text="CANCEL"
+            android:textColor="#888888"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_18sdp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginEnd="@dimen/_8sdp" />
+
+        <TextView
+            android:id="@+id/btn_install_fastclient"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_38sdp"
+            android:text="INSTALL"
+            android:textColor="#000000"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_22sdp"
+            android:background="@drawable/bg_btn_orange"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+</LinearLayout>
