@@ -121,6 +121,22 @@
 
                 </LinearLayout>
 
+                <!-- Profile Setting Button -->
+                <TextView
+                    android:id="@+id/btn_profile_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚙  Profile Setting"
+                    android:textColor="#FF8C00"
+                    android:textSize="@dimen/_10ssp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="6dp"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:background="@drawable/bg_chip_dark"
+                    android:clickable="true"
+                    android:focusable="true" />
+
             </LinearLayout>
 
         </LinearLayout>
