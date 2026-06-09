@@ -42,8 +42,8 @@ public class FastClientHelper {
 
         sw.setOnCheckedChangeListener((btn, isChecked) -> {
             if (isChecked) {
-                sw.setChecked(false); // dialog confirm hone tak false raho
-                showVersionDialog(ctx, fm, sw, tvVersion, p);
+                sw.setChecked(false); // Revert switch immediately
+                android.widget.Toast.makeText(ctx, "FastClient feature is Coming Soon!", android.widget.Toast.LENGTH_SHORT).show();
             } else {
                 p.edit().putBoolean(KEY_ENABLED, false).apply();
                 tvVersion.setVisibility(View.GONE);
