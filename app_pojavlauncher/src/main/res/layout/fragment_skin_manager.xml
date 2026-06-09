@@ -116,31 +116,22 @@
                 android:trackTint="#333333"
                 android:layout_marginBottom="24dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="LOCAL TEXTURES"
-                android:textColor="#00FF41"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp" />
-
             <!-- Change Skin Button -->
             <LinearLayout
                 android:id="@+id/btn_change_skin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp"
+                android:padding="16dp"
                 android:background="@drawable/bg_profile_button"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Change Local Skin"
+                    android:text="Change Minecraft Skin"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -163,15 +154,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp"
+                android:padding="16dp"
                 android:background="@drawable/bg_profile_button"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:layout_marginBottom="24dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Change Local Cape"
+                    android:text="Change Minecraft Cape"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -187,6 +179,25 @@
                     android:maxLines="1"
                     android:ellipsize="middle" />
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/btn_save_changes"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="SAVE CHANGES"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="@drawable/bg_profile_button_highlight"
+                android:clickable="true"
+                android:focusable="true" />
+
 
         </LinearLayout>
     </LinearLayout>
