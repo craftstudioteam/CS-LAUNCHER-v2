@@ -28,9 +28,7 @@ public class SelectAuthFragment extends Fragment {
 
         mMicrosoftButton.setOnClickListener(v -> navigateTo(MicrosoftLoginFragment.class, MicrosoftLoginFragment.TAG, null));
         
-        mElybyButton.setOnClickListener(v -> {
-            android.widget.Toast.makeText(requireContext(), "Ely.by Auth feature is coming soon!", android.widget.Toast.LENGTH_SHORT).show();
-        });
+        mElybyButton.setOnClickListener(v -> navigateTo(ElybyLoginFragment.class, ElybyLoginFragment.TAG, null));
 
         mLocalButton.setOnClickListener(v -> hasNoOnlineProfileDialog(requireActivity(),
                 () -> navigateTo(LocalLoginFragment.class, LocalLoginFragment.TAG, null)));

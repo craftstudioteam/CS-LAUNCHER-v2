@@ -37,7 +37,7 @@
                 android:layout_width="@dimen/_28sdp"
                 android:layout_height="@dimen/_28sdp"
                 android:layout_gravity="center"
-                android:src="@drawable/bg_hero_minecraft"
+                android:src="@mipmap/ic_launcher_round"
                 android:scaleType="fitCenter"
                 android:contentDescription="CS Logo" />
 
