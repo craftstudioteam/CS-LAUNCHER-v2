@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_launcher_dark">
+
+    <LinearLayout
+        android:id="@+id/card_elyby_login"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_fastclient_card"
+        android:padding="@dimen/_16sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ely.by Login"
+            android:textColor="#FF4081"
+            android:textSize="@dimen/_16ssp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/_16sdp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Username / Email"
+            android:textColor="#AAAAAA"
+            android:textSize="@dimen/_11ssp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/login_edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:background="@drawable/bg_folder_row"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/_13ssp"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:inputType="textEmailAddress"
+            android:layout_marginBottom="@dimen/_12sdp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:textColor="#AAAAAA"
+            android:textSize="@dimen/_11ssp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/login_edit_password"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:background="@drawable/bg_folder_row"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/_13ssp"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:inputType="textPassword"
+            android:layout_marginBottom="@dimen/_16sdp" />
+
+        <TextView
+            android:id="@+id/login_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_36sdp"
+            android:text="LOGIN"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:background="@drawable/bg_btn_play_orange"
+            android:backgroundTint="#FF4081"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

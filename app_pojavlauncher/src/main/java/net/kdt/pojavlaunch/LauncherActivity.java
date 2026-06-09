@@ -474,6 +474,8 @@ public class LauncherActivity extends BaseActivity {
         View tvLauncherTitle    = findViewById(R.id.tv_launcher_title);
 
         View.OnClickListener homeListener = v -> {
+            // Always pop to ROOT when clicking home
+            getSupportFragmentManager().popBackStackImmediate("ROOT", 0);
             Fragment frag = getVisibleFragment("ROOT");
             if (frag instanceof MainMenuFragment) {
                 ((MainMenuFragment) frag).refreshHomeState();
@@ -490,6 +492,8 @@ public class LauncherActivity extends BaseActivity {
                 if (frag instanceof MainMenuFragment) {
                     ((MainMenuFragment) frag).openChildPane(
                             ModsSearchFragment.class, ModsSearchFragment.TAG, null);
+                } else {
+                    Tools.swapFragment(this, ModsSearchFragment.class, ModsSearchFragment.TAG, null);
                 }
             });
         }
@@ -510,6 +514,16 @@ public class LauncherActivity extends BaseActivity {
                 Fragment frag = getVisibleFragment("ROOT");
                 if (frag instanceof MainMenuFragment) {
                     ((MainMenuFragment) frag).onNavInstanceToolsClick();
+                } else {
+                    if (Tools.hasOnlineProfile()) {
+                        if (ProgressKeeper.getTaskCount() == 0) {
+                            Tools.installMod(this, false);
+                        } else {
+                            android.widget.Toast.makeText(this, R.string.tasks_ongoing, android.widget.Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Tools.hasNoOnlineProfileDialog(this);
+                    }
                 }
             });
         }
