@@ -6,6 +6,10 @@
     app:key=""
     >
 
+    <net.kdt.pojavlaunch.prefs.FastClientPreference
+        android:key="fastclient_preference"
+        android:layout="@layout/fragment_settings_fastclient" />
+
     <net.kdt.pojavlaunch.prefs.BackButtonPreference
         android:layout="@layout/preference_header_back" />
 
