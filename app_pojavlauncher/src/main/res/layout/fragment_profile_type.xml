@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.kdt.DefocusableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0A0A0A"
@@ -16,8 +15,7 @@
         android:paddingHorizontal="20dp"
         android:paddingTop="24dp"
         android:paddingBottom="40dp"
-        android:orientation="vertical"
-        android:animateLayoutChanges="true">
+        android:orientation="vertical">
 
         <!-- ═══ TOP HEADER ═══ -->
         <LinearLayout
@@ -25,8 +23,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:background="@drawable/bg_header_card"
             android:padding="16dp"
+            android:background="@drawable/bg_fastclient_card"
             android:layout_marginBottom="24dp">
 
             <View
@@ -47,237 +45,268 @@
                     android:layout_height="wrap_content"
                     android:text="Create Profile"
                     android:textColor="#00FF41"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:letterSpacing="0.05"
-                    android:fontFamily="sans-serif-medium" />
+                    android:letterSpacing="0.05" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Choose how you want to play"
                     android:textColor="#888888"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:layout_marginTop="2dp" />
             </LinearLayout>
         </LinearLayout>
 
         <!-- ═══ SECTION 1: Vanilla Releases ═══ -->
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="12dp">
+            android:text="VANILLA LIKE"
+            android:textColor="#00FF41"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
 
-            <View
-                android:layout_width="6dp"
-                android:layout_height="6dp"
-                android:background="@drawable/bg_neon_dot"
-                android:layout_marginEnd="10dp"/>
-
-            <TextView
-                android:id="@+id/section_vanilla_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/create_profile_vanilla_like_versions"
-                android:textAllCaps="true"
-                android:textSize="12sp"
-                android:letterSpacing="0.12"
-                android:textColor="#00FF41"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="2"
-                android:layout_marginStart="12dp"
-                android:background="@drawable/divider_neon_fade"/>
-        </LinearLayout>
-
-        <com.kdt.mcgui.MineButton
+        <LinearLayout
             android:id="@+id/vanilla_profile"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:text="@string/create_profile_vanilla"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
             android:background="@drawable/bg_profile_button"
-            android:stateListAnimator="@null"
-            android:gravity="center"
-            android:paddingHorizontal="16dp" />
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="10dp">
 
-        <com.kdt.mcgui.MineButton
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/bg_hero_minecraft"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vanilla Profile"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/optifine_profile"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/create_profile_optifine"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
             android:background="@drawable/bg_profile_button"
-            android:stateListAnimator="@null"
-            android:gravity="center"
-            android:paddingHorizontal="16dp" />
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_menu_settings"
+                android:tint="#AAAAAA"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OptiFine Profile"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <!-- ═══ SECTION 2: Mod Loaders ═══ -->
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="28dp"
-            android:layout_marginBottom="12dp">
+            android:text="MODDED VERSIONS"
+            android:textColor="#00FF41"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="12dp" />
 
-            <View
-                android:layout_width="6dp"
-                android:layout_height="6dp"
-                android:background="@drawable/bg_neon_dot"
-                android:layout_marginEnd="10dp"/>
-
-            <TextView
-                android:id="@+id/section_modloaders_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/create_profile_modded_versions"
-                android:textAllCaps="true"
-                android:textSize="12sp"
-                android:letterSpacing="0.12"
-                android:textColor="#00FF41"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="2"
-                android:layout_marginStart="12dp"
-                android:background="@drawable/divider_neon_fade"/>
-        </LinearLayout>
-
-        <com.kdt.mcgui.MineButton
+        <LinearLayout
             android:id="@+id/modded_profile_fabric"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:text="@string/modloader_dl_install_fabric"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:background="@drawable/bg_profile_button"
-            android:stateListAnimator="@null"
-            android:gravity="center"
-            android:paddingHorizontal="16dp" />
-
-        <com.kdt.mcgui.MineButton
-            android:id="@+id/modded_profile_quilt"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/modloader_dl_install_quilt"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:background="@drawable/bg_profile_button"
-            android:stateListAnimator="@null"
-            android:gravity="center"
-            android:paddingHorizontal="16dp" />
-
-        <com.kdt.mcgui.MineButton
-            android:id="@+id/modded_profile_forge"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/modloader_dl_install_forge"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:background="@drawable/bg_profile_button"
-            android:stateListAnimator="@null"
-            android:gravity="center"
-            android:paddingHorizontal="16dp" />
-
-        <com.kdt.mcgui.MineButton
-            android:id="@+id/modded_profile_neoforge"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/modloader_dl_install_neoforge"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:background="@drawable/bg_profile_button"
-            android:stateListAnimator="@null"
-            android:gravity="center"
-            android:paddingHorizontal="16dp" />
-
-        <!-- ═══ SECTION 3: Online Modpacks Library ═══ -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="28dp"
-            android:layout_marginBottom="12dp">
+            android:paddingHorizontal="16dp"
+            android:background="@drawable/bg_profile_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="10dp">
 
-            <View
-                android:layout_width="6dp"
-                android:layout_height="6dp"
-                android:background="@drawable/bg_neon_dot"
-                android:layout_marginEnd="10dp"/>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_fabric"
+                android:layout_marginEnd="12dp" />
 
             <TextView
-                android:id="@+id/section_modpacks_title"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/modpack_install_button"
-                android:textAllCaps="true"
-                android:textSize="12sp"
-                android:letterSpacing="0.12"
-                android:textColor="#00FF41"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="2"
-                android:layout_marginStart="12dp"
-                android:background="@drawable/divider_neon_fade"/>
+                android:text="Fabric Loader"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
-        <com.kdt.mcgui.MineButton
+        <LinearLayout
+            android:id="@+id/modded_profile_quilt"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:background="@drawable/bg_profile_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="10dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_quilt"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quilt Loader"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/modded_profile_forge"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:background="@drawable/bg_profile_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="10dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_pojav_full"
+                android:tint="#AAAAAA"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forge Loader"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/modded_profile_neoforge"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:background="@drawable/bg_profile_button"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_pojav_full"
+                android:tint="#AAAAAA"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NeoForge Loader"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- ═══ SECTION 3: Modpacks ═══ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MODPACKS"
+            android:textColor="#00FF41"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
             android:id="@+id/modded_profile_modpack"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:text="@string/modpack_install_button"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            android:textStyle="bold"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
             android:background="@drawable/bg_profile_button_highlight"
-            android:stateListAnimator="@null"
-            android:gravity="center"
-            android:paddingHorizontal="16dp" />
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="10dp">
 
-        <com.kdt.mcgui.MineButton
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_download_box"
+                android:tint="#000000"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Install Modpack"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/modded_profile_bta"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/create_bta_profile"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
             android:background="@drawable/bg_profile_button"
-            android:stateListAnimator="@null"
-            android:gravity="center"
-            android:paddingHorizontal="16dp" />
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/bg_hero_minecraft"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Better Than Adventure"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
     </LinearLayout>
 </com.kdt.DefocusableScrollView>
