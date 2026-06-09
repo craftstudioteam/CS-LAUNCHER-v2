@@ -197,9 +197,9 @@
 
         </LinearLayout>
 
-        <!-- Folder Row -->
+        <!-- Profile Selector Row -->
         <LinearLayout
-            android:id="@+id/btn_open_folder"
+            android:id="@+id/btn_select_profile"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_44sdp"
             android:orientation="horizontal"
@@ -216,7 +216,7 @@
                 android:src="@drawable/ic_folder"
                 android:tint="#FF8C00"
                 android:layout_marginEnd="@dimen/_10sdp"
-                android:contentDescription="Open folder" />
+                android:contentDescription="Select profile" />
 
             <TextView
                 android:id="@+id/tv_folder_name"
