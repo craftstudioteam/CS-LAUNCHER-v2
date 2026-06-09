@@ -57,24 +57,20 @@ public class FastClientHomeFragment extends Fragment {
             ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
         });
 
-        // 4. Profile Setting Functionality
+        // 4. Profile Selection & Settings
+        View btnSelectProfile = view.findViewById(R.id.btn_select_profile);
+        if (btnSelectProfile != null) {
+            btnSelectProfile.setOnClickListener(v -> {
+                Tools.swapFragment(requireActivity(), InstancePickerFragment.class, InstancePickerFragment.TAG, null);
+            });
+        }
+
         View btnProfileSetting = view.findViewById(R.id.btn_profile_setting);
         if (btnProfileSetting != null) {
             btnProfileSetting.setOnClickListener(v -> {
                 Tools.swapFragment(requireActivity(), ProfileEditorFragment.class, ProfileEditorFragment.TAG, null);
             });
         }
-
-        // 5. Other Buttons
-        LinearLayout btnFolder = view.findViewById(R.id.btn_open_folder);
-        btnFolder.setOnClickListener(v -> {
-            File profileDir = getCurrentProfileDirectory();
-            if (hasOnlineProfile()) {
-                Tools.openPath(requireContext(), profileDir, false);
-            } else {
-                Tools.hasNoOnlineProfileDialog(requireActivity());
-            }
-        });
 
         // Server cards click listeners
         setupServerCards(view);
