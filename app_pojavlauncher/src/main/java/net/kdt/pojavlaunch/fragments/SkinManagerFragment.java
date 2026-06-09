@@ -41,6 +41,9 @@ public class SkinManagerFragment extends Fragment {
     private TextView mTvSkinPath;
     private TextView mTvCapePath;
 
+    private String mPendingSkinUri;
+    private String mPendingCapeUri;
+
     // Placeholder for the custom SkinRenderer (integration required with provided classes)
     // private SkinRenderer mSkinRenderer;
 
@@ -54,6 +57,13 @@ public class SkinManagerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // 1. Authentication Guard
+        if (net.kdt.pojavlaunch.PojavProfile.getCurrentProfileContent(requireContext(), null) == null) {
+            Tools.dialog(requireContext(), "Authentication Required", "Please log in or create an account first before managing textures.");
+            getParentFragmentManager().popBackStack();
+            return;
+        }
+
         mSkinPreviewSurface = view.findViewById(R.id.skin_preview_surface);
         mSwitchModelType = view.findViewById(R.id.switch_model_type);
         mTvSkinPath = view.findViewById(R.id.tv_skin_path);
@@ -61,23 +71,23 @@ public class SkinManagerFragment extends Fragment {
 
         // Setup OpenGL Surface
         mSkinPreviewSurface.setEGLContextClientVersion(2);
+        // 2. Fix 3D Preview Container
         // mSkinRenderer = new SkinRenderer(requireContext());
         // mSkinPreviewSurface.setRenderer(mSkinRenderer);
         // mSkinPreviewSurface.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
-        // Load Preferences
+        // Load Preferences initially
         SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        String skinUriStr = prefs.getString(KEY_SKIN_URI, null);
-        String capeUriStr = prefs.getString(KEY_CAPE_URI, null);
+        mPendingSkinUri = prefs.getString(KEY_SKIN_URI, null);
+        mPendingCapeUri = prefs.getString(KEY_CAPE_URI, null);
         String modelType = prefs.getString(KEY_TEXTURE_MODEL, "default");
 
         mSwitchModelType.setChecked("slim".equals(modelType));
-        updatePathText(mTvSkinPath, skinUriStr, "Select PNG from storage");
-        updatePathText(mTvCapePath, capeUriStr, "Select PNG from storage");
+        updatePathText(mTvSkinPath, mPendingSkinUri, "Select PNG from storage");
+        updatePathText(mTvCapePath, mPendingCapeUri, "Select PNG from storage");
 
         // Model Type Toggle
         mSwitchModelType.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            prefs.edit().putString(KEY_TEXTURE_MODEL, isChecked ? "slim" : "default").apply();
             updatePreview();
         });
 
@@ -86,6 +96,16 @@ public class SkinManagerFragment extends Fragment {
 
         // Change Cape Button
         view.findViewById(R.id.btn_change_cape).setOnClickListener(v -> openFilePicker(REQUEST_CODE_CAPE));
+
+        // Save Changes Button
+        view.findViewById(R.id.btn_save_changes).setOnClickListener(v -> {
+            prefs.edit()
+                .putString(KEY_SKIN_URI, mPendingSkinUri)
+                .putString(KEY_CAPE_URI, mPendingCapeUri)
+                .putString(KEY_TEXTURE_MODEL, mSwitchModelType.isChecked() ? "slim" : "default")
+                .apply();
+            Toast.makeText(requireContext(), "Texture Saved Successfully!", Toast.LENGTH_SHORT).show();
+        });
 
         updatePreview();
     }
@@ -104,13 +124,12 @@ public class SkinManagerFragment extends Fragment {
             Uri uri = data.getData();
             requireContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-            SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
             if (requestCode == REQUEST_CODE_SKIN) {
-                prefs.edit().putString(KEY_SKIN_URI, uri.toString()).apply();
-                updatePathText(mTvSkinPath, uri.toString(), "Select PNG from storage");
+                mPendingSkinUri = uri.toString();
+                updatePathText(mTvSkinPath, mPendingSkinUri, "Select PNG from storage");
             } else if (requestCode == REQUEST_CODE_CAPE) {
-                prefs.edit().putString(KEY_CAPE_URI, uri.toString()).apply();
-                updatePathText(mTvCapePath, uri.toString(), "Select PNG from storage");
+                mPendingCapeUri = uri.toString();
+                updatePathText(mTvCapePath, mPendingCapeUri, "Select PNG from storage");
             }
             updatePreview();
         }
@@ -126,12 +145,8 @@ public class SkinManagerFragment extends Fragment {
     }
 
     private void updatePreview() {
-        SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        String skinUriStr = prefs.getString(KEY_SKIN_URI, null);
-        String capeUriStr = prefs.getString(KEY_CAPE_URI, null);
-
-        Bitmap skinBitmap = loadBitmapFromUri(skinUriStr);
-        Bitmap capeBitmap = loadBitmapFromUri(capeUriStr);
+        Bitmap skinBitmap = loadBitmapFromUri(mPendingSkinUri);
+        Bitmap capeBitmap = loadBitmapFromUri(mPendingCapeUri);
 
         // if (mSkinRenderer != null && skinBitmap != null) {
         //     mSkinRenderer.setTexture(skinBitmap, capeBitmap);
