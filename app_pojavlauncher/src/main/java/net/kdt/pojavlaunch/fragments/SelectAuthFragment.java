@@ -22,10 +22,16 @@ public class SelectAuthFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Button mMicrosoftButton = view.findViewById(R.id.button_microsoft_authentication);
-        Button mLocalButton = view.findViewById(R.id.button_local_authentication);
+        View mMicrosoftButton = view.findViewById(R.id.button_microsoft_authentication);
+        View mElybyButton = view.findViewById(R.id.button_elyby_authentication);
+        View mLocalButton = view.findViewById(R.id.button_local_authentication);
 
         mMicrosoftButton.setOnClickListener(v -> navigateTo(MicrosoftLoginFragment.class, MicrosoftLoginFragment.TAG, null));
+        
+        mElybyButton.setOnClickListener(v -> {
+            android.widget.Toast.makeText(requireContext(), "Ely.by Auth feature is coming soon!", android.widget.Toast.LENGTH_SHORT).show();
+        });
+
         mLocalButton.setOnClickListener(v -> hasNoOnlineProfileDialog(requireActivity(),
                 () -> navigateTo(LocalLoginFragment.class, LocalLoginFragment.TAG, null)));
     }
