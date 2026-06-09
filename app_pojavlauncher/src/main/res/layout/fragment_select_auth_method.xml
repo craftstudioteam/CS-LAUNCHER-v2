@@ -1,55 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:background="@color/background_app"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:paddingHorizontal="@dimen/fragment_padding_medium">
+    android:background="@color/bg_launcher_dark">
 
-    <View
-        android:id="@+id/login_menu"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_200sdp"
+    <!-- CS LAUNCHER v2 Branding -->
+    <LinearLayout
+        android:id="@+id/auth_branding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/card_auth_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="@dimen/_16sdp">
 
-        android:background="@drawable/background_card"
-        android:translationZ="-1dp"
+        <ImageView
+            android:layout_width="@dimen/_48sdp"
+            android:layout_height="@dimen/_48sdp"
+            android:src="@drawable/bg_hero_minecraft"
+            android:scaleType="fitCenter"
+            android:layout_marginBottom="@dimen/_8sdp"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CS LAUNCHER v2"
+            android:textColor="#A6FF3D"
+            android:textSize="@dimen/_18ssp"
+            android:textStyle="bold"
+            android:letterSpacing="0.04" />
+            
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Authentication Method"
+            android:textColor="#AAAAAA"
+            android:textSize="@dimen/_11ssp"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/card_auth_container"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_fastclient_card"
+        android:padding="@dimen/_16sdp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Microsoft Account Button -->
+        <LinearLayout
+            android:id="@+id/button_microsoft_authentication"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_folder_row"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_10sdp">
 
-    <com.kdt.mcgui.MineButton
-        android:id="@+id/button_microsoft_authentication"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Microsoft Account"
-        android:textSize="@dimen/_12ssp"
-        android:layout_marginHorizontal="@dimen/_25sdp"
-        android:layout_marginBottom="@dimen/_20sdp"
-        app:layout_constraintBottom_toTopOf="@+id/button_local_authentication"
-        app:layout_constraintEnd_toEndOf="@+id/login_menu"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/login_menu"
-        app:layout_constraintTop_toTopOf="@id/login_menu"
-        app:layout_constraintVertical_chainStyle="packed"
-        />
+            <ImageView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:src="@drawable/ic_menu_news" 
+                android:tint="#00A4EF"
+                android:layout_marginEnd="@dimen/_12sdp"/>
 
-    <com.kdt.mcgui.MineButton
-        android:id="@+id/button_local_authentication"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Local account"
-        android:textSize="@dimen/_12ssp"
-        android:layout_marginHorizontal="@dimen/_25sdp"
-        app:layout_constraintBottom_toBottomOf="@id/login_menu"
-        app:layout_constraintEnd_toEndOf="@+id/login_menu"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/login_menu"
-        app:layout_constraintTop_toBottomOf="@+id/button_microsoft_authentication" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Microsoft Account"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold"/>
+                
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:src="@drawable/spinner_arrow_right"
+                android:tint="#888888"/>
+        </LinearLayout>
+
+        <!-- Ely.by Account Button -->
+        <LinearLayout
+            android:id="@+id/button_elyby_authentication"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_folder_row"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_10sdp">
+
+            <ImageView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:src="@drawable/ic_play_arrow"
+                android:tint="#FF4081"
+                android:layout_marginEnd="@dimen/_12sdp"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ely.by Account"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Skins"
+                android:textColor="#FF4081"
+                android:textSize="@dimen/_9ssp"
+                android:textStyle="bold"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"
+                android:background="@drawable/bg_badge_online"
+                android:backgroundTint="#20FF4081"
+                android:layout_marginEnd="8dp"/>
+                
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:src="@drawable/spinner_arrow_right"
+                android:tint="#888888"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#2A2A2A"
+            android:layout_marginBottom="@dimen/_10sdp"/>
+
+        <!-- Local Account Button -->
+        <LinearLayout
+            android:id="@+id/button_local_authentication"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_folder_row"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingHorizontal="@dimen/_12sdp">
+
+            <ImageView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:src="@drawable/ic_pojav_full"
+                android:tint="#AAAAAA"
+                android:layout_marginEnd="@dimen/_12sdp"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Local Account"
+                android:textColor="#AAAAAA"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold"/>
+                
+            <ImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:src="@drawable/spinner_arrow_right"
+                android:tint="#888888"/>
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
