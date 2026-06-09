@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
+import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.R;
 
 import java.io.InputStream;
