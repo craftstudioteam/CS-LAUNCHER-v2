@@ -47,6 +47,14 @@ public class FastClientHelper {
             } else {
                 p.edit().putBoolean(KEY_ENABLED, false).apply();
                 tvVersion.setVisibility(View.GONE);
+                
+                // Restore normal home
+                fm.popBackStackImmediate("ROOT", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fm.beginTransaction()
+                  .setReorderingAllowed(true)
+                  .addToBackStack("ROOT")
+                  .add(R.id.container_fragment, net.kdt.pojavlaunch.fragments.MainMenuFragment.class, null, "ROOT")
+                  .commit();
             }
         });
     }

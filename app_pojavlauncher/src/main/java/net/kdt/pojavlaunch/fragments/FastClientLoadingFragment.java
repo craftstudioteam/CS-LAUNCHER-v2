@@ -66,8 +66,14 @@ public class FastClientLoadingFragment extends Fragment {
                 if (idx == msgs.length - 1) {
                     h.postDelayed(() -> {
                         if (onComplete != null) onComplete.run();
-                        if (getParentFragmentManager().getBackStackEntryCount() > 0)
-                            getParentFragmentManager().popBackStack();
+                        
+                        // Exit the app to apply the new UI on restart
+                        h.postDelayed(() -> {
+                            if (getActivity() != null) {
+                                getActivity().finishAffinity();
+                                System.exit(0);
+                            }
+                        }, 1000);
                     }, 600);
                 }
             }, delay[i]);
