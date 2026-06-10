@@ -81,11 +81,15 @@
     <color name="bg_card">#1C1C1C</color>
     <color name="bg_card_dark">#2C2C2C</color>
     <color name="bg_elevated">#242424</color>
+    <color name="bg_client_features">#1A0A2E</color>
+    <color name="bg_client_features_card">#2D1B4E</color>
 
     <!-- Accent colors (Neon Green + Purple) -->
     <color name="accent_primary">#39FF14</color>
     <color name="accent_light">#00FF88</color>
     <color name="accent_purple">#9B59E8</color>
+    <color name="accent_purple_client">#9B59B6</color>
+    <color name="accent_purple_deep">#7B2FBE</color>
     <color name="accent_bg_subtle">#1A1C2C</color>
     <color name="accent_border">#39FF14</color>
 

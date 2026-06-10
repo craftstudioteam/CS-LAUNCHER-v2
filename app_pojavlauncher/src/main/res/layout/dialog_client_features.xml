@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/bg_client_features">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="✦ Client Features"
+        android:textColor="@color/text_primary_white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select mod version to install"
+        android:textColor="@color/text_secondary_light"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_mod_versions"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="16dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_install_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="INSTALL SELECTED VERSION"
+        android:backgroundTint="@color/accent_purple_deep"
+        app:cornerRadius="12dp"
+        android:textColor="@color/text_primary_white" />
+
+</LinearLayout>
