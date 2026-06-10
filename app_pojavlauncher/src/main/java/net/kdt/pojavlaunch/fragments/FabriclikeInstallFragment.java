@@ -66,6 +66,18 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         super.onViewCreated(view, savedInstanceState);
         mStartButton = view.findViewById(R.id.fabric_installer_start_button);
         mStartButton.setOnClickListener(this::onClickStart);
+        mStartButton.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case android.view.MotionEvent.ACTION_DOWN:
+                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start();
+                    break;
+                case android.view.MotionEvent.ACTION_UP:
+                case android.view.MotionEvent.ACTION_CANCEL:
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                    break;
+            }
+            return false;
+        });
         mGameVersionSpinner = view.findViewById(R.id.fabric_installer_game_ver_spinner);
         mGameVersionSpinner.setOnItemSelectedListener(new GameVersionSelectedListener());
         mLoaderVersionSpinner = view.findViewById(R.id.fabric_installer_loader_ver_spinner);
@@ -106,6 +118,11 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         proxy.attachListener(this);
         setListenerProxy(proxy);
         mStartButton.setEnabled(false);
+        mStartButton.animate().alpha(0f).translationY(20f).setDuration(250).withEndAction(() -> mStartButton.setVisibility(View.INVISIBLE)).start();
+        mProgressBar.setAlpha(0f);
+        mProgressBar.setTranslationY(20f);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mProgressBar.animate().alpha(1f).translationY(0f).setDuration(300).start();
         new Thread(fabricDownloadTask).start();
     }
 
@@ -121,13 +138,20 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         updateLoaderVersions();
     }
 
+    private void restoreUiState() {
+        mStartButton.setVisibility(View.VISIBLE);
+        mStartButton.setEnabled(true);
+        mStartButton.animate().alpha(1f).translationY(0f).setDuration(250).start();
+        mProgressBar.animate().alpha(0f).translationY(20f).setDuration(200).withEndAction(() -> mProgressBar.setVisibility(View.GONE)).start();
+    }
+
     @Override
     public void onDownloadFinished(File downloadedFile) {
         Tools.runOnUiThread(()->{
 
             getListenerProxy().detachListener();
             setListenerProxy(null);
-            mStartButton.setEnabled(true);
+            restoreUiState();
             // This works because the due to the fact that we have transitioned here
             // without adding a transaction to the back stack, which caused the previous
             // transaction to be amended (i guess?? thats how the back stack dump looks like)
@@ -144,7 +168,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
             Context context = requireContext();
             getListenerProxy().detachListener();
             setListenerProxy(null);
-            mStartButton.setEnabled(true);
+            restoreUiState();
             Tools.dialog(context,
                     context.getString(R.string.global_error),
                     context.getString(R.string.fabric_dl_cant_read_meta, mFabriclikeUtils.getName()));
@@ -157,7 +181,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
             Context context = requireContext();
             getListenerProxy().detachListener();
             setListenerProxy(null);
-            mStartButton.setEnabled(true);
+            restoreUiState();
             Tools.showError(context, e);
         });
     }
@@ -243,7 +267,9 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
 
     private void updateLoaderSpinner() {
         if(mLoaderVersionArray == null) return;
+        mLoaderVersionSpinner.setAlpha(0f);
         mLoaderVersionSpinner.setAdapter(createAdapter(mLoaderVersionArray, mOnlyStableCheckbox.isChecked()));
+        mLoaderVersionSpinner.animate().alpha(1f).setDuration(300).start();
     }
 
     class GameVersionSelectedListener implements AdapterView.OnItemSelectedListener {
@@ -290,7 +316,9 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
 
     private void updateGameSpinner() {
         if(mGameVersionArray == null) return;
+        mGameVersionSpinner.setAlpha(0f);
         mGameVersionSpinner.setAdapter(createAdapter(mGameVersionArray, mOnlyStableCheckbox.isChecked()));
+        mGameVersionSpinner.animate().alpha(1f).setDuration(300).start();
     }
 
     private ModloaderListenerProxy getListenerProxy() {
