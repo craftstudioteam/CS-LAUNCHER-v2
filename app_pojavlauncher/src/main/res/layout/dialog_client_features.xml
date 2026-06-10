@@ -29,14 +29,13 @@
         android:layout_height="300dp"
         android:layout_marginTop="16dp" />
 
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/btn_install_version"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="INSTALL SELECTED VERSION"
-        android:backgroundTint="@color/accent_purple_deep"
-        app:cornerRadius="12dp"
+        android:background="@drawable/bg_client_features_btn_filled"
         android:textColor="@color/text_primary_white" />
 
 </LinearLayout>

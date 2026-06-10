@@ -476,7 +476,7 @@ public class LauncherActivity extends BaseActivity {
         View navHome            = findViewById(R.id.nav_home);
         View btnHomeLogo        = findViewById(R.id.btn_home_logo);
         View tvLauncherTitle    = findViewById(R.id.tv_launcher_title);
-        final com.google.android.material.button.MaterialButton btnClientFeatures = findViewById(R.id.btn_client_features);
+        final android.widget.Button btnClientFeatures = findViewById(R.id.btn_client_features);
 
         View.OnClickListener homeListener = v -> {
             // Always pop to ROOT when clicking home
@@ -583,16 +583,15 @@ public class LauncherActivity extends BaseActivity {
         }
     }
 
-    private void updateClientFeaturesButton(com.google.android.material.button.MaterialButton btn, boolean enabled) {
-        btn.setChecked(enabled);
+    private void updateClientFeaturesButton(android.widget.Button btn, boolean enabled) {
         if (enabled) {
             btn.setText("✦ Client Features: ON");
-            btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getResources().getColor(R.color.accent_purple_deep)));
+            btn.setBackgroundResource(R.drawable.bg_client_features_btn_filled);
             btn.setTextColor(android.graphics.Color.WHITE);
         } else {
             btn.setText("✦ Enable Client Features");
-            btn.setBackgroundTintList(null);
-            btn.setTextColor(getResources().getColor(R.color.accent_purple));
+            btn.setBackgroundResource(R.drawable.bg_client_features_btn);
+            btn.setTextColor(android.graphics.Color.parseColor("#B39DDB"));
         }
     }
 

@@ -238,18 +238,14 @@
         </FrameLayout>
 
         <!-- Client Features Toggle Button -->
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/btn_client_features"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_8sdp"
-            android:text="✦ Client Features"
-            android:checkable="true"
-            android:textColor="@color/accent_purple"
-            app:strokeColor="@color/accent_purple"
-            app:cornerRadius="12dp"
-            app:icon="@drawable/ic_star"
+            android:text="✦ Enable Client Features"
+            android:textColor="#B39DDB"
+            android:background="@drawable/bg_client_features_btn"
             android:padding="12dp" />
 
         <!-- Account Spinner -->
