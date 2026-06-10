@@ -3,10 +3,13 @@ package net.kdt.pojavlaunch;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +22,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import net.kdt.pojavlaunch.modloaders.FabricVersion;
+import net.kdt.pojavlaunch.modloaders.FabriclikeDownloadTask;
+import net.kdt.pojavlaunch.modloaders.FabriclikeUtils;
+import net.kdt.pojavlaunch.modloaders.ModloaderDownloadListener;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
@@ -30,6 +37,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 public class ClientFeaturesManager {
 
@@ -58,9 +66,14 @@ public class ClientFeaturesManager {
     }
 
     public void showVersionSelector(final Runnable onInstallSuccess) {
-        final BottomSheetDialog dialog = new BottomSheetDialog(mActivity, R.style.Theme_AppCompat_Dialog);
+        final BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
         View view = mActivity.getLayoutInflater().inflate(R.layout.dialog_client_features, null);
         dialog.setContentView(view);
+        
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
 
         RecyclerView rv = view.findViewById(R.id.rv_mod_versions);
         rv.setLayoutManager(new LinearLayoutManager(mActivity));
@@ -68,7 +81,7 @@ public class ClientFeaturesManager {
             @Override
             public void onVersionSelected(ModVersionAdapter.ModrinthVersion version) {
                 dialog.dismiss();
-                startDownload(version, onInstallSuccess);
+                checkAndInstallFabric(version, onInstallSuccess);
             }
         });
         rv.setAdapter(adapter);
@@ -109,6 +122,94 @@ public class ClientFeaturesManager {
         }).start();
     }
 
+    private void checkAndInstallFabric(final ModVersionAdapter.ModrinthVersion version, final Runnable onInstallSuccess) {
+        final String mcVersion = version.game_versions != null && !version.game_versions.isEmpty() ? version.game_versions.get(0) : null;
+        if (mcVersion == null) {
+            Toast.makeText(mActivity, "Invalid version selected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LauncherProfiles.load();
+                Map<String, MinecraftProfile> profileMap = LauncherProfiles.mainProfileJson.profiles;
+                String fabricProfileKey = null;
+
+                // Step A: Check if a Fabric profile for this MC version exists
+                for (Map.Entry<String, MinecraftProfile> entry : profileMap.entrySet()) {
+                    MinecraftProfile prof = entry.getValue();
+                    if (prof != null && prof.lastVersionId != null && prof.lastVersionId.contains("fabric-loader") && prof.lastVersionId.contains(mcVersion)) {
+                        fabricProfileKey = entry.getKey();
+                        break;
+                    }
+                }
+
+                if (fabricProfileKey != null) {
+                    // Fabric exists, proceed to mod download
+                    final String finalKey = fabricProfileKey;
+                    mActivity.runOnUiThread(() -> {
+                        LauncherPreferences.DEFAULT_PREF.edit().putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, finalKey).apply();
+                        startDownload(version, onInstallSuccess);
+                    });
+                } else {
+                    // Step B: Fabric missing, install it first
+                    installFabricAndDownloadMod(mcVersion, version, onInstallSuccess);
+                }
+            }
+        }).start();
+    }
+
+    private void installFabricAndDownloadMod(final String mcVersion, final ModVersionAdapter.ModrinthVersion version, final Runnable onInstallSuccess) {
+        mActivity.runOnUiThread(() -> Toast.makeText(mActivity, "Installing Fabric for " + mcVersion + "...", Toast.LENGTH_LONG).show());
+        
+        new Thread(() -> {
+            try {
+                FabricVersion[] loaders = FabriclikeUtils.FABRIC_UTILS.downloadLoaderVersions(mcVersion);
+                if (loaders == null || loaders.length == 0) {
+                    throw new IOException("No Fabric loader found for " + mcVersion);
+                }
+                String loaderVersion = loaders[0].loader.version;
+
+                FabriclikeDownloadTask task = new FabriclikeDownloadTask(new ModloaderDownloadListener() {
+                    @Override
+                    public void onDownloadFinished(Object result) {
+                        mActivity.runOnUiThread(() -> {
+                            // Find the newly created profile key
+                            LauncherProfiles.load();
+                            String newKey = null;
+                            for (Map.Entry<String, MinecraftProfile> entry : LauncherProfiles.mainProfileJson.profiles.entrySet()) {
+                                if (entry.getValue().lastVersionId.contains(loaderVersion) && entry.getValue().lastVersionId.contains(mcVersion)) {
+                                    newKey = entry.getKey();
+                                    break;
+                                }
+                            }
+                            if (newKey != null) {
+                                LauncherPreferences.DEFAULT_PREF.edit().putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, newKey).apply();
+                            }
+                            startDownload(version, onInstallSuccess);
+                        });
+                    }
+
+                    @Override
+                    public void onDownloadError(Exception e) {
+                        mActivity.runOnUiThread(() -> Toast.makeText(mActivity, "Fabric install failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                    }
+
+                    @Override
+                    public void onDataNotAvailable() {
+                        mActivity.runOnUiThread(() -> Toast.makeText(mActivity, "Fabric data not available", Toast.LENGTH_SHORT).show());
+                    }
+                }, FabriclikeUtils.FABRIC_UTILS, mcVersion, loaderVersion, true);
+
+                task.run();
+            } catch (Exception e) {
+                Log.e("ClientFeatures", "Fabric setup failed", e);
+                mActivity.runOnUiThread(() -> Toast.makeText(mActivity, "Fabric setup failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            }
+        }).start();
+    }
+
     private void startDownload(final ModVersionAdapter.ModrinthVersion version, final Runnable onInstallSuccess) {
         if (version.files == null || version.files.isEmpty()) return;
         final ModVersionAdapter.ModrinthVersion.ModrinthFile file = version.files.get(0);
@@ -117,6 +218,11 @@ public class ClientFeaturesManager {
                 .setView(R.layout.dialog_downloading)
                 .setCancelable(false)
                 .create();
+        
+        Window window = downloadDialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
         downloadDialog.show();
 
         final ProgressBar pb = downloadDialog.findViewById(R.id.pb_download);
@@ -142,9 +248,23 @@ public class ClientFeaturesManager {
                 try {
                     String mcVersion = version.game_versions != null && !version.game_versions.isEmpty() ? version.game_versions.get(0) : "unknown";
                     
+                    // 1. Fix Null Profile Directory Crash
                     String selectedProfile = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
+                    LauncherProfiles.load();
                     MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(selectedProfile);
-                    File modsDir = new File(Tools.getGameDirPath(prof), "mods");
+                    
+                    File gamedir;
+                    if (prof != null) {
+                        gamedir = Tools.getGameDirPath(prof);
+                    } else {
+                        // Fallback guard loop
+                        gamedir = new File(Tools.DIR_GAME_NEW);
+                        if (!gamedir.exists() && !gamedir.mkdirs()) {
+                            gamedir = mActivity.getFilesDir();
+                        }
+                    }
+
+                    File modsDir = new File(gamedir, "mods");
                     if (!modsDir.exists()) modsDir.mkdirs();
 
                     File destFile = new File(modsDir, file.filename);
@@ -163,7 +283,6 @@ public class ClientFeaturesManager {
                         outputStream.write(buffer, 0, read);
                         downloaded += read;
                         final int progress = (int) ((downloaded * 100) / totalBytes);
-                        final long finalDownloaded = downloaded;
                         mActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
