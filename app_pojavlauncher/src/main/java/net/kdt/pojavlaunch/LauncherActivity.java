@@ -471,8 +471,6 @@ public class LauncherActivity extends BaseActivity {
         View navModStore       = findViewById(R.id.nav_mod_store);
         View navCustomControls  = findViewById(R.id.nav_custom_controls);
         View navCursor          = findViewById(R.id.nav_cursor);
-        View navSkinManager     = findViewById(R.id.nav_skin_manager);
-        View navInstanceTools   = findViewById(R.id.nav_instance_tools);
         View navHome            = findViewById(R.id.nav_home);
         View btnHomeLogo        = findViewById(R.id.btn_home_logo);
         View tvLauncherTitle    = findViewById(R.id.tv_launcher_title);
@@ -500,42 +498,6 @@ public class LauncherActivity extends BaseActivity {
                 } else {
                     mClientFeaturesManager.setEnabled(false);
                     updateClientFeaturesButton(btnClientFeatures, false);
-                }
-            });
-        }
-
-        if (navSkinManager != null) {
-            navSkinManager.setOnClickListener(v -> {
-                if (mClientFeaturesManager.isEnabled()) {
-                    String selectedProfile = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
-                    if (LauncherProfiles.mainProfileJson != null && LauncherProfiles.mainProfileJson.profiles.containsKey(selectedProfile)) {
-                        MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(selectedProfile);
-                        String modFilename = getSharedPreferences("cs_client_features", Context.MODE_PRIVATE).getString(ClientFeaturesManager.KEY_FILENAME, "");
-                        
-                        if (prof != null && modFilename != null && !modFilename.isEmpty()) {
-                            File modsDir = new File(Tools.getGameDirPath(prof), "mods");
-                            File modFile = new File(modsDir, modFilename);
-
-                            if (modFile.exists()) {
-                                // Launch game directly
-                                ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
-                            } else {
-                                mClientFeaturesManager.showVersionSelector(() -> {
-                                    if (btnClientFeatures != null) updateClientFeaturesButton(btnClientFeatures, true);
-                                });
-                            }
-                        } else {
-                            mClientFeaturesManager.showVersionSelector(() -> {
-                                if (btnClientFeatures != null) updateClientFeaturesButton(btnClientFeatures, true);
-                            });
-                        }
-                    } else {
-                        Toast.makeText(this, R.string.error_no_version, Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    mClientFeaturesManager.showEnablePrompt(() ->
-                        Tools.swapFragment(this, net.kdt.pojavlaunch.fragments.SkinManagerFragment.class, net.kdt.pojavlaunch.fragments.SkinManagerFragment.TAG, null)
-                    );
                 }
             });
         }
@@ -585,11 +547,11 @@ public class LauncherActivity extends BaseActivity {
 
     private void updateClientFeaturesButton(android.widget.Button btn, boolean enabled) {
         if (enabled) {
-            btn.setText("✦ Client Features: ON");
+            btn.setText("✦");
             btn.setBackgroundResource(R.drawable.bg_client_features_btn_filled);
             btn.setTextColor(android.graphics.Color.WHITE);
         } else {
-            btn.setText("✦ Enable Client Features");
+            btn.setText("✦");
             btn.setBackgroundResource(R.drawable.bg_client_features_btn);
             btn.setTextColor(android.graphics.Color.parseColor("#B39DDB"));
         }

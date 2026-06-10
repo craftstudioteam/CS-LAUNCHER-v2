@@ -58,27 +58,22 @@ public class ClientFeaturesManager {
     }
 
     public void showVersionSelector(final Runnable onInstallSuccess) {
-        final BottomSheetDialog dialog = new BottomSheetDialog(mActivity);
+        final BottomSheetDialog dialog = new BottomSheetDialog(mActivity, R.style.Theme_AppCompat_Dialog);
         View view = mActivity.getLayoutInflater().inflate(R.layout.dialog_client_features, null);
         dialog.setContentView(view);
 
         RecyclerView rv = view.findViewById(R.id.rv_mod_versions);
         rv.setLayoutManager(new LinearLayoutManager(mActivity));
-        final ModVersionAdapter adapter = new ModVersionAdapter(null);
-        rv.setAdapter(adapter);
-
-        view.findViewById(R.id.btn_install_version).setOnClickListener(new View.OnClickListener() {
+        final ModVersionAdapter adapter = new ModVersionAdapter(new ModVersionAdapter.OnVersionSelectedListener() {
             @Override
-            public void onClick(View v) {
-                ModVersionAdapter.ModrinthVersion selected = adapter.getSelectedVersion();
-                if (selected != null) {
-                    dialog.dismiss();
-                    startDownload(selected, onInstallSuccess);
-                } else {
-                    Toast.makeText(mActivity, "Please select a version first", Toast.LENGTH_SHORT).show();
-                }
+            public void onVersionSelected(ModVersionAdapter.ModrinthVersion version) {
+                dialog.dismiss();
+                startDownload(version, onInstallSuccess);
             }
         });
+        rv.setAdapter(adapter);
+
+        view.findViewById(R.id.btn_install_version).setVisibility(View.GONE);
 
         dialog.show();
 
