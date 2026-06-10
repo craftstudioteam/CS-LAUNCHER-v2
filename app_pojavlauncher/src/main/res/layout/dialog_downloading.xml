@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center"
+    android:background="@color/bg_client_features_card">
+
+    <ImageView
+        android:id="@+id/iv_download_anim"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/ic_star"
+        android:tint="@color/accent_purple_client" />
+
+    <ImageView
+        android:id="@+id/iv_download_success"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/ic_check"
+        android:tint="#4CAF50"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Downloading mod..."
+        android:textColor="@color/text_primary_white"
+        android:layout_marginTop="16dp" />
+
+    <ProgressBar
+        android:id="@+id/pb_download"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_marginTop="16dp"
+        android:progressDrawable="@drawable/pb_purple_gradient" />
+
+    <TextView
+        android:id="@+id/tv_download_percentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0%"
+        android:textColor="@color/text_primary_white"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/tv_download_filename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_secondary_light"
+        android:textSize="12sp"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>

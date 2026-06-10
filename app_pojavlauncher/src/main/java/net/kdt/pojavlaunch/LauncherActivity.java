@@ -102,6 +102,7 @@ public class LauncherActivity extends BaseActivity {
     private ProgressServiceKeeper mProgressServiceKeeper;
     private ModloaderInstallTracker mInstallTracker;
     private NotificationManager mNotificationManager;
+    private ClientFeaturesManager mClientFeaturesManager;
 
     /* Allows to switch from one button "type" to another */
     private final FragmentManager.FragmentLifecycleCallbacks mFragmentCallbackListener = new FragmentManager.FragmentLifecycleCallbacks() {
@@ -301,6 +302,7 @@ public class LauncherActivity extends BaseActivity {
         new AsyncVersionList().getVersionList(versions -> ExtraCore.setValue(ExtraConstants.RELEASE_TABLE, versions), false);
 
         mInstallTracker = new ModloaderInstallTracker(this);
+        mClientFeaturesManager = new ClientFeaturesManager(this);
 
         mProgressLayout.observe(ProgressLayout.DOWNLOAD_MINECRAFT);
         mProgressLayout.observe(ProgressLayout.UNPACK_RUNTIME);
@@ -473,6 +475,7 @@ public class LauncherActivity extends BaseActivity {
         View navHome            = findViewById(R.id.nav_home);
         View btnHomeLogo        = findViewById(R.id.btn_home_logo);
         View tvLauncherTitle    = findViewById(R.id.tv_launcher_title);
+        final com.google.android.material.button.MaterialButton btnClientFeatures = findViewById(R.id.btn_client_features);
 
         View.OnClickListener homeListener = v -> {
             // Always pop to ROOT when clicking home
@@ -487,10 +490,53 @@ public class LauncherActivity extends BaseActivity {
         if (btnHomeLogo != null)     btnHomeLogo.setOnClickListener(homeListener);
         if (tvLauncherTitle != null) tvLauncherTitle.setOnClickListener(homeListener);
 
+        if (btnClientFeatures != null) {
+            updateClientFeaturesButton(btnClientFeatures, mClientFeaturesManager.isEnabled());
+            btnClientFeatures.setOnClickListener(v -> {
+                boolean nextState = !mClientFeaturesManager.isEnabled();
+                if (nextState) {
+                    mClientFeaturesManager.showVersionSelector(() -> updateClientFeaturesButton(btnClientFeatures, true));
+                } else {
+                    mClientFeaturesManager.setEnabled(false);
+                    updateClientFeaturesButton(btnClientFeatures, false);
+                }
+            });
+        }
+
         if (navSkinManager != null) {
-            navSkinManager.setOnClickListener(v -> 
-                Tools.swapFragment(this, net.kdt.pojavlaunch.fragments.SkinManagerFragment.class, net.kdt.pojavlaunch.fragments.SkinManagerFragment.TAG, null)
-            );
+            navSkinManager.setOnClickListener(v -> {
+                if (mClientFeaturesManager.isEnabled()) {
+                    String selectedProfile = LauncherPreferences.DEFAULT_PREF.getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
+                    if (LauncherProfiles.mainProfileJson != null && LauncherProfiles.mainProfileJson.profiles.containsKey(selectedProfile)) {
+                        MinecraftProfile prof = LauncherProfiles.mainProfileJson.profiles.get(selectedProfile);
+                        String modFilename = getSharedPreferences("cs_client_features", Context.MODE_PRIVATE).getString(ClientFeaturesManager.KEY_FILENAME, "");
+                        
+                        if (prof != null && modFilename != null && !modFilename.isEmpty()) {
+                            File modsDir = new File(Tools.getGameDirPath(prof), "mods");
+                            File modFile = new File(modsDir, modFilename);
+
+                            if (modFile.exists()) {
+                                // Launch game directly
+                                ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
+                            } else {
+                                mClientFeaturesManager.showVersionSelector(() -> {
+                                    if (btnClientFeatures != null) updateClientFeaturesButton(btnClientFeatures, true);
+                                });
+                            }
+                        } else {
+                            mClientFeaturesManager.showVersionSelector(() -> {
+                                if (btnClientFeatures != null) updateClientFeaturesButton(btnClientFeatures, true);
+                            });
+                        }
+                    } else {
+                        Toast.makeText(this, R.string.error_no_version, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    mClientFeaturesManager.showEnablePrompt(() ->
+                        Tools.swapFragment(this, net.kdt.pojavlaunch.fragments.SkinManagerFragment.class, net.kdt.pojavlaunch.fragments.SkinManagerFragment.TAG, null)
+                    );
+                }
+            });
         }
 
         if (navModStore != null) {
@@ -533,6 +579,19 @@ public class LauncherActivity extends BaseActivity {
                     }
                 }
             });
+        }
+    }
+
+    private void updateClientFeaturesButton(com.google.android.material.button.MaterialButton btn, boolean enabled) {
+        btn.setChecked(enabled);
+        if (enabled) {
+            btn.setText("✦ Client Features: ON");
+            btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getResources().getColor(R.color.accent_purple_deep)));
+            btn.setTextColor(android.graphics.Color.WHITE);
+        } else {
+            btn.setText("✦ Enable Client Features");
+            btn.setBackgroundTintList(null);
+            btn.setTextColor(getResources().getColor(R.color.accent_purple));
         }
     }
 
