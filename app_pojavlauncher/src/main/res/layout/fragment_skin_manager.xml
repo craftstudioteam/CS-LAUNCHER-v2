@@ -186,7 +186,7 @@
                 android:layout_weight="1" />
 
             <TextView
-                android:id="@+id/btn_save_changes"
+                android:id="@+id/btn_save_skin_changes"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text="SAVE CHANGES"

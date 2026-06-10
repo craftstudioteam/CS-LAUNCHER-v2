@@ -98,7 +98,7 @@ public class SkinManagerFragment extends Fragment {
         view.findViewById(R.id.btn_change_cape).setOnClickListener(v -> openFilePicker(REQUEST_CODE_CAPE));
 
         // Save Changes Button
-        view.findViewById(R.id.btn_save_changes).setOnClickListener(v -> {
+        view.findViewById(R.id.btn_save_skin_changes).setOnClickListener(v -> {
             prefs.edit()
                 .putString(KEY_SKIN_URI, mPendingSkinUri)
                 .putString(KEY_CAPE_URI, mPendingCapeUri)
@@ -212,6 +212,7 @@ public class SkinManagerFragment extends Fragment {
 
         @Override
         public void onSurfaceCreated(javax.microedition.khronos.opengles.GL10 gl, javax.microedition.khronos.egl.EGLConfig config) {
+            if (mSkinBitmap == null) mSkinBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_pojav_full);
             android.opengl.GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             android.opengl.GLES20.glEnable(android.opengl.GLES20.GL_DEPTH_TEST);
         }
