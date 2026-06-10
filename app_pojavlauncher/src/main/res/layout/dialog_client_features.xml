@@ -1,42 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@color/bg_launcher_dark">
+    app:cardCornerRadius="20dp"
+    app:cardBackgroundColor="@color/bg_launcher_dark"
+    app:cardElevation="0dp"
+    android:layout_margin="8dp">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="✦ Client Features"
-        android:textColor="@color/neon_green"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:padding="24dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Select mod version to install"
-        android:textColor="@color/secondary_text"
-        android:textSize="14sp"
-        android:layout_marginTop="4dp" />
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#33FFFFFF"
+            android:layout_marginBottom="16dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_mod_versions"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="16dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="✦ Client Features"
+            android:textColor="@color/neon_green"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.02" />
 
-    <Button
-        android:id="@+id/btn_install_version"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="INSTALL SELECTED VERSION"
-        android:background="@drawable/bg_client_features_btn_filled"
-        android:textColor="@color/text_primary_white"
-        android:visibility="gone" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select mod version to install"
+            android:textColor="@color/secondary_text"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:alpha="0.7" />
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_mod_versions"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:layout_marginTop="20dp"
+            android:overScrollMode="never" />
+
+        <Button
+            android:id="@+id/btn_install_version"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="16dp"
+            android:text="INSTALL SELECTED VERSION"
+            android:background="@drawable/bg_client_features_btn_filled"
+            android:textColor="@color/text_primary_white"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
