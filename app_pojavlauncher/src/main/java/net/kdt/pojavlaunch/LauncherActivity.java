@@ -524,25 +524,6 @@ public class LauncherActivity extends BaseActivity {
                     Tools.swapFragment(this, CursorCustomizationFragment.class,
                             CursorCustomizationFragment.TAG, null));
         }
-
-        if (navInstanceTools != null) {
-            navInstanceTools.setOnClickListener(v -> {
-                Fragment frag = getVisibleFragment("ROOT");
-                if (frag instanceof MainMenuFragment) {
-                    ((MainMenuFragment) frag).onNavInstanceToolsClick();
-                } else {
-                    if (Tools.hasOnlineProfile()) {
-                        if (ProgressKeeper.getTaskCount() == 0) {
-                            Tools.installMod(this, false);
-                        } else {
-                            android.widget.Toast.makeText(this, R.string.tasks_ongoing, android.widget.Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                        Tools.hasNoOnlineProfileDialog(this);
-                    }
-                }
-            });
-        }
     }
 
     private void updateClientFeaturesButton(android.widget.Button btn, boolean enabled) {
