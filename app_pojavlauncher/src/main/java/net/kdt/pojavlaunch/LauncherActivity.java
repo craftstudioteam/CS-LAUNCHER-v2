@@ -287,6 +287,7 @@ public class LauncherActivity extends BaseActivity {
         );
         getWindow().setBackgroundDrawable(null);
         bindViews();
+        mClientFeaturesManager = new ClientFeaturesManager(this);
         setupNavButtons();
         checkNotificationPermission();
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -303,7 +304,6 @@ public class LauncherActivity extends BaseActivity {
         new AsyncVersionList().getVersionList(versions -> ExtraCore.setValue(ExtraConstants.RELEASE_TABLE, versions), false);
 
         mInstallTracker = new ModloaderInstallTracker(this);
-        mClientFeaturesManager = new ClientFeaturesManager(this);
 
         mProgressLayout.observe(ProgressLayout.DOWNLOAD_MINECRAFT);
         mProgressLayout.observe(ProgressLayout.UNPACK_RUNTIME);
