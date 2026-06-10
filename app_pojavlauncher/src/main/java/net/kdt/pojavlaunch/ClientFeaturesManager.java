@@ -169,11 +169,11 @@ public class ClientFeaturesManager {
                 if (loaders == null || loaders.length == 0) {
                     throw new IOException("No Fabric loader found for " + mcVersion);
                 }
-                String loaderVersion = loaders[0].loader.version;
+                String loaderVersion = loaders[0].version;
 
                 FabriclikeDownloadTask task = new FabriclikeDownloadTask(new ModloaderDownloadListener() {
                     @Override
-                    public void onDownloadFinished(Object result) {
+                    public void onDownloadFinished(File downloadedFile) {
                         mActivity.runOnUiThread(() -> {
                             // Find the newly created profile key
                             LauncherProfiles.load();
