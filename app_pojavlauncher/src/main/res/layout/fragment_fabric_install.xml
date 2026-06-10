@@ -5,41 +5,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#1A0A2E">
+    android:background="#120821">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/fragment_padding_medium"
-        android:paddingBottom="16dp">
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="20dp">
 
+        <!-- Header -->
         <TextView
             android:id="@+id/title_textview"
-            style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_large"
+            android:layout_marginTop="28dp"
             android:text="@string/fabric_dl_loader_title"
             android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Neon accent line under title -->
         <View
             android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#33FFFFFF"
-            android:layout_marginTop="@dimen/padding_large"
+            android:layout_width="48dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="10dp"
+            android:background="#00FFCC"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title_textview" />
 
+        <!-- Game version section -->
         <TextView
             android:id="@+id/fabric_installer_label_game_ver"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:text="@string/fabric_dl_game_version"
-            android:textColor="#CCFFFFFF"
+            android:textAllCaps="true"
+            android:textColor="#00FFCC"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view" />
 
@@ -47,12 +58,13 @@
             android:id="@+id/fabric_installer_game_ver_spinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/background_spinner_neon"
-            android:minHeight="56dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:popupBackground="#1A0A2E"
+            android:minHeight="58dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:popupBackground="#221038"
+            android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/fabric_installer_label_game_ver" />
@@ -63,18 +75,24 @@
             android:paddingHorizontal="@dimen/_8sdp"
             android:rotation="180"
             android:src="@drawable/spinner_arrow"
+            android:elevation="4dp"
             app:tint="#00FFCC"
             app:layout_constraintBottom_toBottomOf="@+id/fabric_installer_game_ver_spinner"
             app:layout_constraintEnd_toEndOf="@+id/fabric_installer_game_ver_spinner"
             app:layout_constraintTop_toTopOf="@+id/fabric_installer_game_ver_spinner" />
 
+        <!-- Loader version section -->
         <TextView
             android:id="@+id/fabric_installer_label_loader_ver"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="26dp"
             android:text="@string/fabric_dl_loader_version"
-            android:textColor="#CCFFFFFF"
+            android:textAllCaps="true"
+            android:textColor="#00FFCC"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fabric_installer_game_ver_spinner" />
 
@@ -82,12 +100,13 @@
             android:id="@+id/fabric_installer_loader_ver_spinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/background_spinner_neon"
-            android:minHeight="56dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:popupBackground="#1A0A2E"
+            android:minHeight="58dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:popupBackground="#221038"
+            android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fabric_installer_label_loader_ver" />
@@ -98,18 +117,24 @@
             android:paddingHorizontal="@dimen/_8sdp"
             android:rotation="180"
             android:src="@drawable/spinner_arrow"
+            android:elevation="4dp"
             app:tint="#00FFCC"
             app:layout_constraintBottom_toBottomOf="@+id/fabric_installer_loader_ver_spinner"
             app:layout_constraintEnd_toEndOf="@+id/fabric_installer_loader_ver_spinner"
             app:layout_constraintTop_toTopOf="@+id/fabric_installer_loader_ver_spinner" />
 
+        <!-- Options section -->
         <TextView
             android:id="@+id/fabric_installer_label_options"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="26dp"
             android:text="@string/mcl_options"
-            android:textColor="#CCFFFFFF"
+            android:textAllCaps="true"
+            android:textColor="#00FFCC"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.12"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fabric_installer_loader_ver_spinner" />
 
@@ -117,21 +142,27 @@
             android:id="@+id/fabric_installer_only_stable_checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:text="@string/fabric_dl_only_stable"
-            android:textColor="#FFFFFF"
-            android:minHeight="@dimen/_30sdp"
+            android:textColor="#E6FFFFFF"
+            android:textSize="14sp"
+            android:minHeight="48dp"
             android:checked="true"
+            android:buttonTint="#00FFCC"
+            android:paddingStart="6dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fabric_installer_label_options" />
 
+        <!-- Error / retry strip -->
         <LinearLayout
             android:id="@+id/fabric_installer_retry_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="@dimen/fragment_padding_medium"
-            android:paddingBottom="@dimen/fragment_padding_medium"
+            android:gravity="center_vertical"
+            android:background="#26FF4444"
+            android:padding="14dp"
+            android:layout_marginTop="16dp"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/fabric_installer_start_button"
             app:layout_constraintTop_toBottomOf="@id/fabric_installer_only_stable_checkbox"
@@ -139,12 +170,12 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
+                android:layout_marginEnd="12dp"
                 android:text="@string/modloader_dl_failed_to_load_list"
-                android:textColor="#FF4444"
+                android:textColor="#FF6B6B"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
             <Button
@@ -153,22 +184,27 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="#FF4444"
                 android:textColor="#FFFFFF"
+                android:textStyle="bold"
                 android:text="@string/global_retry" />
         </LinearLayout>
 
+        <!-- Install button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/fabric_installer_start_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginBottom="14dp"
             android:background="@drawable/bg_neon_button"
             android:enabled="false"
             android:text="@string/fabric_dl_install"
+            android:textAllCaps="true"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:paddingVertical="12dp"
+            android:letterSpacing="0.08"
+            android:paddingVertical="14dp"
+            android:elevation="6dp"
             app:layout_constraintBottom_toTopOf="@+id/fabric_installer_progress_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -184,6 +220,7 @@
             android:layout_marginBottom="8dp"
             android:indeterminate="true"
             android:visibility="invisible"
+            android:indeterminateTint="#00FFCC"
             android:progressTint="#00FFCC"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
