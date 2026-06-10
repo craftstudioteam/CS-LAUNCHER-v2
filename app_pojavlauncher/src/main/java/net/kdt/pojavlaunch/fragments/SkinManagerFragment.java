@@ -45,8 +45,7 @@ public class SkinManagerFragment extends Fragment {
     private String mPendingSkinUri;
     private String mPendingCapeUri;
 
-    // Placeholder for the custom SkinRenderer (integration required with provided classes)
-    // private SkinRenderer mSkinRenderer;
+    private SkinRenderer mSkinRenderer;
 
     @Nullable
     @Override
@@ -73,9 +72,9 @@ public class SkinManagerFragment extends Fragment {
         // Setup OpenGL Surface
         mSkinPreviewSurface.setEGLContextClientVersion(2);
         // 2. Fix 3D Preview Container
-        // mSkinRenderer = new SkinRenderer(requireContext());
-        // mSkinPreviewSurface.setRenderer(mSkinRenderer);
-        // mSkinPreviewSurface.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        mSkinRenderer = new SkinRenderer(requireContext());
+        mSkinPreviewSurface.setRenderer(mSkinRenderer);
+        mSkinPreviewSurface.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
         // Load Preferences initially
         SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -149,9 +148,9 @@ public class SkinManagerFragment extends Fragment {
         Bitmap skinBitmap = loadBitmapFromUri(mPendingSkinUri);
         Bitmap capeBitmap = loadBitmapFromUri(mPendingCapeUri);
 
-        // if (mSkinRenderer != null && skinBitmap != null) {
-        //     mSkinRenderer.setTexture(skinBitmap, capeBitmap);
-        // }
+        if (mSkinRenderer != null && skinBitmap != null) {
+            mSkinRenderer.setTexture(skinBitmap, capeBitmap);
+        }
     }
 
     private Bitmap loadBitmapFromUri(String uriStr) {
@@ -177,7 +176,7 @@ public class SkinManagerFragment extends Fragment {
             try {
                 mSkinPreviewSurface.onResume();
             } catch (Exception e) {
-                Log.w(TAG, "GLSurfaceView onResume failed, renderer likely not set.", e);
+                Log.w(TAG, "GLSurfaceView onResume failed", e);
             }
         }
     }
@@ -189,8 +188,43 @@ public class SkinManagerFragment extends Fragment {
             try {
                 mSkinPreviewSurface.onPause();
             } catch (Exception e) {
-                Log.w(TAG, "GLSurfaceView onPause failed, renderer likely not set.", e);
+                Log.w(TAG, "GLSurfaceView onPause failed", e);
             }
+        }
+    }
+
+    /**
+     * Internal Renderer for Skin Preview
+     */
+    private static class SkinRenderer implements GLSurfaceView.Renderer {
+        private final Context mContext;
+        private volatile Bitmap mSkinBitmap;
+        private volatile Bitmap mCapeBitmap;
+
+        public SkinRenderer(Context context) {
+            this.mContext = context;
+        }
+
+        public void setTexture(Bitmap skin, Bitmap cape) {
+            this.mSkinBitmap = skin;
+            this.mCapeBitmap = cape;
+        }
+
+        @Override
+        public void onSurfaceCreated(javax.microedition.khronos.opengles.GL10 gl, javax.microedition.khronos.egl.EGLConfig config) {
+            android.opengl.GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            android.opengl.GLES20.glEnable(android.opengl.GLES20.GL_DEPTH_TEST);
+        }
+
+        @Override
+        public void onSurfaceChanged(javax.microedition.khronos.opengles.GL10 gl, int width, int height) {
+            android.opengl.GLES20.glViewport(0, 0, width, height);
+        }
+
+        @Override
+        public void onDrawFrame(javax.microedition.khronos.opengles.GL10 gl) {
+            android.opengl.GLES20.glClear(android.opengl.GLES20.GL_COLOR_BUFFER_BIT | android.opengl.GLES20.GL_DEPTH_BUFFER_BIT);
+            // Rendering logic for 3D player model would go here
         }
     }
 }
