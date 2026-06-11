@@ -1,78 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="?attr/bgMainDrawable"
-    android:paddingHorizontal="@dimen/fragment_padding_medium">
+    android:background="?attr/colorBgApp">
 
-
-    <TextView
-        android:id="@+id/title_textview"
-        style="@style/TextAppearance.AppCompat.Title"
+    <ViewFlipper
+        android:id="@+id/mod_dl_step_flipper"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:gravity="center"
-        android:layout_marginTop="@dimen/padding_large"
-        android:text="@string/forge_dl_select_version" />
+        android:layout_height="match_parent"
+        android:inAnimation="@anim/slide_in_up">
 
-    <View
-        android:id="@+id/view"
-        style="@style/ThickDivider"
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/padding_large"
-        app:layout_constraintTop_toBottomOf="@+id/title_textview"
-        android:paddingBottom="@dimen/fragment_padding_medium"
-        />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text=""
-        android:textColor="?attr/colorTextPrimary" />
-
-    <ExpandableListView
-        android:scrollbarThumbVertical="?attr/copperAccent"
-        android:id="@+id/mod_dl_expandable_version_list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-    </ExpandableListView>
-
-    <LinearLayout
-        android:id="@+id/mod_dl_retry_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/fragment_padding_medium"
-        android:paddingBottom="@dimen/fragment_padding_medium"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="0dp"
+        <!-- ============================================== -->
+        <!-- SCREEN 1: VERSIONS                             -->
+        <!-- ============================================== -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="@string/modloader_dl_failed_to_load_list"
-            android:textColor="#FFFF0000"
-            android:textStyle="bold" />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/forge_installer_retry_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/global_retry" />
-    </LinearLayout>
+            <!-- Sticky Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:background="?attr/colorBgBottomBar"
+                android:elevation="8dp">
 
-    <ProgressBar
-        android:id="@+id/mod_dl_list_progress"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="true" />
-</LinearLayout>
+                <TextView
+                    android:id="@+id/title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/forge_dl_select_version"
+                    android:textColor="?attr/colorTextPrimary"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <!-- Search Bar Placeholder -->
+                <EditText
+                    android:id="@+id/mod_dl_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_version_item_normal"
+                    android:hint="Search versions..."
+                    android:textColorHint="?attr/colorTextSecondary"
+                    android:textColor="?attr/colorTextPrimary"
+                    android:paddingHorizontal="16dp"
+                    android:singleLine="true"
+                    android:drawableStart="@android:drawable/ic_menu_search"
+                    android:drawableTint="?attr/colorTextSecondary"
+                    android:drawablePadding="10dp" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/mod_dl_list_progress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/mod_dl_retry_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/modloader_dl_failed_to_load_list"
+                    android:textColor="#FF4444"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <Button
+                    android:id="@+id/forge_installer_retry_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:text="@string/global_retry"
+                    android:background="@drawable/bg_version_item_normal"
+                    android:textColor="?attr/colorTextPrimary" />
+            </LinearLayout>
+
+            <!-- Scrollable List -->
+            <ExpandableListView
+                android:id="@+id/mod_dl_expandable_version_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0dp"
+                android:childDivider="@android:color/transparent"
+                android:groupIndicator="@null"
+                android:clipToPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="20dp" />
+        </LinearLayout>
+
+        <!-- ============================================== -->
+        <!-- SCREEN 2: INSTALL SCREEN                       -->
+        <!-- ============================================== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Sticky Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="20dp"
+                android:background="?attr/colorBgBottomBar"
+                android:elevation="8dp"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/mod_dl_step2_back_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_revert"
+                    app:tint="?attr/colorTextPrimary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Ready to Install"
+                    android:textColor="?attr/colorTextPrimary"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/mod_dl_label_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_loader_badge"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Fixed Bottom Action Bar -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorBgBottomBar"
+                android:elevation="16dp"
+                android:padding="20dp">
+
+                <Button
+                    android:id="@+id/mod_dl_start_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="INSTALL"
+                    android:background="@drawable/bg_install_button_fabric"
+                    android:textColor="?attr/colorBgApp"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05" />
+
+            </FrameLayout>
+        </LinearLayout>
+    </ViewFlipper>
+</androidx.constraintlayout.widget.ConstraintLayout>

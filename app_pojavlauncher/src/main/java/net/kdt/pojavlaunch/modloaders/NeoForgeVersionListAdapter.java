@@ -88,9 +88,9 @@ public class NeoForgeVersionListAdapter extends BaseExpandableListAdapter implem
     @Override
     public View getGroupView(int i, boolean b, View convertView, ViewGroup viewGroup) {
         if(convertView == null)
-            convertView = mLayoutInflater.inflate(android.R.layout.simple_expandable_list_item_1, viewGroup, false);
+            convertView = mLayoutInflater.inflate(net.kdt.pojavlaunch.R.layout.list_item_mod_group, viewGroup, false);
 
-        ((TextView) convertView).setText(getGameVersion(i));
+        ((TextView) convertView.findViewById(android.R.id.text1)).setText(getGameVersion(i));
 
         return convertView;
     }
@@ -98,8 +98,12 @@ public class NeoForgeVersionListAdapter extends BaseExpandableListAdapter implem
     @Override
     public View getChildView(int i, int i1, boolean b, View convertView, ViewGroup viewGroup) {
         if(convertView == null)
-            convertView = mLayoutInflater.inflate(android.R.layout.simple_expandable_list_item_1, viewGroup, false);
-        ((TextView) convertView).setText(getNeoForgeVersion(i, i1));
+            convertView = mLayoutInflater.inflate(net.kdt.pojavlaunch.R.layout.list_item_mod_version, viewGroup, false);
+        ((TextView) convertView.findViewById(android.R.id.text1)).setText(getNeoForgeVersion(i, i1));
+        android.widget.ImageView icon = convertView.findViewById(net.kdt.pojavlaunch.R.id.mod_icon);
+        if (icon != null) {
+            icon.setImageResource(net.kdt.pojavlaunch.R.drawable.ic_forge);
+        }
         return convertView;
     }
 
