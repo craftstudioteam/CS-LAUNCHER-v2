@@ -112,7 +112,7 @@
                         android:text="Stable Only"
                         android:textColor="#A0B0C0"
                         android:textSize="12sp"
-                        android:checked="true"
+                        android:checked="false"
                         android:buttonTint="#00E5CC"/>
                 </RelativeLayout>
 
@@ -129,15 +129,21 @@
                     android:layout_marginBottom="12dp"
                     android:singleLine="true" />
 
-                <!-- Height Managed List -->
-                <ListView
-                    android:id="@+id/fabric_game_ver_list"
+                <!-- Height Managed List wrapped in NestedScrollView -->
+                <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:nestedScrollingEnabled="true"
-                    android:divider="#22FFFFFF"
-                    android:dividerHeight="1dp" />
+                    android:fillViewport="true">
+                    
+                    <ListView
+                        android:id="@+id/fabric_game_ver_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="true"
+                        android:divider="#22FFFFFF"
+                        android:dividerHeight="1dp" />
+                </androidx.core.widget.NestedScrollView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -165,14 +171,20 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp"/>
 
-                <ListView
-                    android:id="@+id/fabric_loader_ver_list"
+                <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:nestedScrollingEnabled="true"
-                    android:divider="#22FFFFFF"
-                    android:dividerHeight="1dp" />
+                    android:fillViewport="true">
+                    
+                    <ListView
+                        android:id="@+id/fabric_loader_ver_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="true"
+                        android:divider="#22FFFFFF"
+                        android:dividerHeight="1dp" />
+                </androidx.core.widget.NestedScrollView>
                     
                 <Button
                     android:id="@+id/fabric_step2_back_btn"
