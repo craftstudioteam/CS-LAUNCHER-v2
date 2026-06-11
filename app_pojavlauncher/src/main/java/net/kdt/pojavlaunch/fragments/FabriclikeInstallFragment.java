@@ -337,6 +337,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         mLoaderVersionSpinner.animate().alpha(1f).setDuration(300).start();
         if (mLoaderVerList != null) {
             mLoaderVerList.setAdapter(adapter);
+            mLoaderVerList.post(() -> mLoaderVerList.requestLayout());
         }
     }
 
@@ -390,6 +391,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         mGameVersionSpinner.animate().alpha(1f).setDuration(300).start();
         if (mGameVerList != null) {
             mGameVerList.setAdapter(adapter);
+            mGameVerList.post(() -> mGameVerList.requestLayout());
         }
     }
 
