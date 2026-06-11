@@ -56,6 +56,10 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         this.mExtraTag = mFragmentTag + "_proxy";
     }
 
+    private android.widget.ViewFlipper mStepFlipper;
+    private android.widget.ListView mGameVerList;
+    private android.widget.ListView mLoaderVerList;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -88,6 +92,61 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         mOnlyStableCheckbox.setOnCheckedChangeListener(this);
         view.findViewById(R.id.fabric_installer_retry_button).setOnClickListener(this::onClickRetry);
         ((TextView)view.findViewById(R.id.fabric_installer_label_loader_ver)).setText(getString(R.string.fabric_dl_loader_version, mFabriclikeUtils.getName()));
+        
+        mStepFlipper = view.findViewById(R.id.fabric_step_flipper);
+        mGameVerList = view.findViewById(R.id.fabric_game_ver_list);
+        mLoaderVerList = view.findViewById(R.id.fabric_loader_ver_list);
+
+        mGameVerList.setOnItemClickListener((parent, v, position, id) -> {
+            FabricVersion selected = (FabricVersion) parent.getItemAtPosition(position);
+            ArrayAdapter<FabricVersion> spinnerAdapter = (ArrayAdapter<FabricVersion>) mGameVersionSpinner.getAdapter();
+            for (int i = 0; i < spinnerAdapter.getCount(); i++) {
+                if (spinnerAdapter.getItem(i) == selected) {
+                    mGameVersionSpinner.setSelection(i);
+                    break;
+                }
+            }
+            mStepFlipper.setInAnimation(requireContext(), R.anim.slide_in_right);
+            mStepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_left);
+            mStepFlipper.setDisplayedChild(1);
+        });
+
+        mLoaderVerList.setOnItemClickListener((parent, v, position, id) -> {
+            FabricVersion selected = (FabricVersion) parent.getItemAtPosition(position);
+            ArrayAdapter<FabricVersion> spinnerAdapter = (ArrayAdapter<FabricVersion>) mLoaderVersionSpinner.getAdapter();
+            for (int i = 0; i < spinnerAdapter.getCount(); i++) {
+                if (spinnerAdapter.getItem(i) == selected) {
+                    mLoaderVersionSpinner.setSelection(i);
+                    break;
+                }
+            }
+            mStepFlipper.setInAnimation(requireContext(), R.anim.slide_in_right);
+            mStepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_left);
+            mStepFlipper.setDisplayedChild(2);
+        });
+
+        view.findViewById(R.id.fabric_step2_back_btn).setOnClickListener(v -> {
+            mStepFlipper.setInAnimation(requireContext(), R.anim.slide_in_left);
+            mStepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_right);
+            mStepFlipper.setDisplayedChild(0);
+        });
+        view.findViewById(R.id.fabric_step3_back_btn).setOnClickListener(v -> {
+            mStepFlipper.setInAnimation(requireContext(), R.anim.slide_in_left);
+            mStepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_right);
+            mStepFlipper.setDisplayedChild(1);
+        });
+
+        android.widget.EditText searchGameVer = view.findViewById(R.id.fabric_search_game_ver);
+        searchGameVer.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (mGameVerList.getAdapter() != null && mGameVerList.getAdapter() instanceof ArrayAdapter) {
+                    ((ArrayAdapter<?>) mGameVerList.getAdapter()).getFilter().filter(s);
+                }
+            }
+            @Override public void afterTextChanged(android.text.Editable s) {}
+        });
+
         ModloaderListenerProxy proxy = getListenerProxy();
         if(proxy != null) {
             mStartButton.setEnabled(false);
@@ -268,8 +327,12 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     private void updateLoaderSpinner() {
         if(mLoaderVersionArray == null) return;
         mLoaderVersionSpinner.setAlpha(0f);
-        mLoaderVersionSpinner.setAdapter(createAdapter(mLoaderVersionArray, mOnlyStableCheckbox.isChecked()));
+        ArrayAdapter<FabricVersion> adapter = createAdapter(mLoaderVersionArray, false);
+        mLoaderVersionSpinner.setAdapter(adapter);
         mLoaderVersionSpinner.animate().alpha(1f).setDuration(300).start();
+        if (mLoaderVerList != null) {
+            mLoaderVerList.setAdapter(adapter);
+        }
     }
 
     class GameVersionSelectedListener implements AdapterView.OnItemSelectedListener {
@@ -317,8 +380,12 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     private void updateGameSpinner() {
         if(mGameVersionArray == null) return;
         mGameVersionSpinner.setAlpha(0f);
-        mGameVersionSpinner.setAdapter(createAdapter(mGameVersionArray, mOnlyStableCheckbox.isChecked()));
+        ArrayAdapter<FabricVersion> adapter = createAdapter(mGameVersionArray, mOnlyStableCheckbox.isChecked());
+        mGameVersionSpinner.setAdapter(adapter);
         mGameVersionSpinner.animate().alpha(1f).setDuration(300).start();
+        if (mGameVerList != null) {
+            mGameVerList.setAdapter(adapter);
+        }
     }
 
     private ModloaderListenerProxy getListenerProxy() {
