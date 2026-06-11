@@ -13,6 +13,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.AnimationUtils;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
@@ -36,6 +39,14 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
         this.mExtraTag = mFragmentTag + "_proxy";
     }
 
+    private void applyListAnimations(ExpandableListView listView) {
+        if (listView == null) return;
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
+            requireContext(), R.anim.list_item_enter);
+        listView.setLayoutAnimation(controller);
+        listView.scheduleLayoutAnimation();
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -55,6 +66,20 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
         android.widget.ViewFlipper stepFlipper = view.findViewById(R.id.mod_dl_step_flipper);
         android.widget.Button startButton = view.findViewById(R.id.mod_dl_start_button);
         if (startButton != null) {
+            startButton.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case android.view.MotionEvent.ACTION_DOWN:
+                        v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100)
+                            .setInterpolator(new FastOutSlowInInterpolator()).start();
+                        break;
+                    case android.view.MotionEvent.ACTION_UP:
+                    case android.view.MotionEvent.ACTION_CANCEL:
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(150)
+                            .setInterpolator(new FastOutSlowInInterpolator()).start();
+                        break;
+                }
+                return false;
+            });
             startButton.setOnClickListener(v -> {
                 Object selectedVersion = net.kdt.pojavlaunch.extra.ExtraCore.getValue("SELECTED_MOD_VERSION_" + mExtraTag);
                 if(selectedVersion == null) return;
@@ -74,8 +99,8 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
             backBtn.setOnClickListener(v -> {
                 if(startButton != null) startButton.clearAnimation();
                 if(stepFlipper != null) {
-                    stepFlipper.setInAnimation(requireContext(), R.anim.slide_in_left);
-                    stepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_right);
+                    stepFlipper.setInAnimation(requireContext(), R.anim.screen_slide_in);
+                    stepFlipper.setOutAnimation(requireContext(), R.anim.screen_slide_out);
                     stepFlipper.setDisplayedChild(0);
                 }
             });
@@ -105,6 +130,7 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
             Tools.runOnUiThread(()->{
                 if(versions != null) {
                     mExpandableListView.setAdapter(createAdapter(versions, mInflater));
+                    applyListAnimations(mExpandableListView);
                 }else{
                     mRetryView.setVisibility(View.VISIBLE);
                 }
@@ -149,8 +175,8 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
 
         android.widget.ViewFlipper stepFlipper = requireView().findViewById(R.id.mod_dl_step_flipper);
         if (stepFlipper != null) {
-            stepFlipper.setInAnimation(requireContext(), R.anim.slide_in_right);
-            stepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_left);
+            stepFlipper.setInAnimation(requireContext(), R.anim.screen_slide_in);
+            stepFlipper.setOutAnimation(requireContext(), R.anim.screen_slide_out);
             stepFlipper.setDisplayedChild(1);
         }
 

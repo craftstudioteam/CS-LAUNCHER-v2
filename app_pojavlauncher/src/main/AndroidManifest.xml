@@ -58,6 +58,7 @@
         <activity
             android:name=".LauncherActivity"
             android:label="@string/app_short_name"
+            android:hardwareAccelerated="true"
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize"/>
         <activity

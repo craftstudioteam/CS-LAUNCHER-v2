@@ -17,6 +17,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.AnimationUtils;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import net.kdt.pojavlaunch.PojavApplication;
 import net.kdt.pojavlaunch.R;
@@ -60,6 +63,14 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     private android.widget.ListView mGameVerList;
     private android.widget.ListView mLoaderVerList;
 
+    private void applyListAnimations(android.widget.ListView listView) {
+        if (listView == null || listView.getAdapter() == null) return;
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
+            requireContext(), R.anim.list_item_enter);
+        listView.setLayoutAnimation(controller);
+        listView.scheduleLayoutAnimation();
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -73,11 +84,13 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         mStartButton.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case android.view.MotionEvent.ACTION_DOWN:
-                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start();
+                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100)
+                        .setInterpolator(new FastOutSlowInInterpolator()).start();
                     break;
                 case android.view.MotionEvent.ACTION_UP:
                 case android.view.MotionEvent.ACTION_CANCEL:
-                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(150)
+                        .setInterpolator(new FastOutSlowInInterpolator()).start();
                     break;
             }
             return false;
@@ -114,8 +127,8 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
             TextView badge = view.findViewById(R.id.fabric_installer_label_loader_ver);
             if (badge != null) badge.setText(selected.version);
 
-            mStepFlipper.setInAnimation(requireContext(), R.anim.slide_in_right);
-            mStepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_left);
+            mStepFlipper.setInAnimation(requireContext(), R.anim.screen_slide_in);
+            mStepFlipper.setOutAnimation(requireContext(), R.anim.screen_slide_out);
             mStepFlipper.setDisplayedChild(1);
             
             android.view.animation.Animation pulseAnim = android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.pulse_animation);
@@ -135,8 +148,8 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
 
         view.findViewById(R.id.fabric_step2_back_btn).setOnClickListener(v -> {
             mStartButton.clearAnimation();
-            mStepFlipper.setInAnimation(requireContext(), R.anim.slide_in_left);
-            mStepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_right);
+            mStepFlipper.setInAnimation(requireContext(), R.anim.screen_slide_in);
+            mStepFlipper.setOutAnimation(requireContext(), R.anim.screen_slide_out);
             mStepFlipper.setDisplayedChild(0);
         });
         view.findViewById(R.id.fabric_step3_back_btn).setOnClickListener(v -> {});
@@ -326,9 +339,8 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         mLoaderVersionSpinner.setAdapter(adapter);
         mLoaderVersionSpinner.animate().alpha(1f).setDuration(300).start();
         if (mLoaderVerList != null) {
-            mLoaderVerList.setLayoutAnimation(android.view.animation.AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_animation_fall_down));
             mLoaderVerList.setAdapter(adapter);
-            mLoaderVerList.post(() -> mLoaderVerList.requestLayout());
+            applyListAnimations(mLoaderVerList);
         }
     }
 
@@ -381,9 +393,8 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         mGameVersionSpinner.setAdapter(adapter);
         mGameVersionSpinner.animate().alpha(1f).setDuration(300).start();
         if (mGameVerList != null) {
-            mGameVerList.setLayoutAnimation(android.view.animation.AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_animation_fall_down));
             mGameVerList.setAdapter(adapter);
-            mGameVerList.post(() -> mGameVerList.requestLayout());
+            applyListAnimations(mGameVerList);
         }
     }
 
