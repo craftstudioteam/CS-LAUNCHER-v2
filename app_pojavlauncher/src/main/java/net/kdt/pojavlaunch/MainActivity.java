@@ -316,6 +316,30 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         if(PREF_ENABLE_GYRO) mGyroControl.enable();
         CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_FOCUSED, 1);
         CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 1);
+        applyDisplayRefreshRate();
+    }
+
+    private void applyDisplayRefreshRate() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            android.view.Window window = getWindow();
+            android.view.WindowManager.LayoutParams params = window.getAttributes();
+            android.view.Display.Mode[] modes = getWindowManager().getDefaultDisplay().getSupportedModes();
+
+            android.view.Display.Mode maxMode = null;
+            float maxRefreshRate = 0;
+
+            for (android.view.Display.Mode mode : modes) {
+                if (mode.getRefreshRate() > maxRefreshRate) {
+                    maxRefreshRate = mode.getRefreshRate();
+                    maxMode = mode;
+                }
+            }
+
+            if (maxMode != null) {
+                params.preferredDisplayModeId = maxMode.getModeId();
+                window.setAttributes(params);
+            }
+        }
     }
 
     @Override

@@ -446,7 +446,7 @@ public class MinecraftGLSurface extends View implements GrabListener, DirectGame
             for (float altHz : getDisplay().getMode().getAlternativeRefreshRates()) {
                 maxHz = Math.max(maxHz, altHz);
             }
-            surface.setFrameRate(maxHz, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT, Surface.CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS);
+            surface.setFrameRate(maxHz, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT, Surface.CHANGE_FRAME_RATE_ALWAYS);
         }
 
         //Load Minecraft options:
