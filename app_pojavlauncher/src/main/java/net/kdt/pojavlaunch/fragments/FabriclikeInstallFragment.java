@@ -270,7 +270,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
             if(!onlyStable || fabricVersion.stable) filteredVersions.add(fabricVersion);
         }
         filteredVersions.trimToSize();
-        return new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, filteredVersions);
+        return new ArrayAdapter<>(requireContext(), R.layout.item_fabric_version, filteredVersions);
     }
 
     private void onException(Future<?> myFuture, Exception e) {
