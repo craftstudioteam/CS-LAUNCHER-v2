@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Platform"/>
   <img src="https://img.shields.io/badge/Min%20SDK-26-2196F3?style=for-the-badge&logo=android&logoColor=white" alt="Min SDK"/>
   <img src="https://img.shields.io/badge/Version-V2-FF6F00?style=for-the-badge" alt="Version"/>
-  <img src="https://img.shields.io/badge/License-LGPL--3.0-blueviolet?style=for-the-badge" alt="License"/>
+  <img src="https://img.shields.io/badge/License-GPL--3.0-blueviolet?style=for-the-badge" alt="License"/>
 </p>
 
 <p>
@@ -261,7 +261,8 @@ Check the **issue tracker** for known issues and their status. Found a new bug? 
 
 ## 📜 License
 
-**CS LAUNCHER V2** is licensed under the **[GNU LGPL v3.0](LICENSE)** — free as in freedom. 🕊️
+**CS LAUNCHER V2** is licensed under the **GNU GPL v3.0**.
+See the LICENSE file for details.
 
 <br>
 
@@ -275,7 +276,7 @@ Check the **issue tracker** for known issues and their status. Found a new bug? 
 | Project | Purpose | License |
 |:---|:---|:---|
 | [Boardwalk](https://github.com/zhuowei/Boardwalk) | JVM Launcher | [Apache 2.0](https://github.com/zhuowei/Boardwalk/blob/master/LICENSE) / GPLv2 |
-| [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) | Base launcher | [GLGPL](https://github.com/PojavLauncherTeam/PojavLauncher/blob/v3_openjdk/LICENSE) |
+| [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) | Base launcher | [GPLv3](https://github.com/PojavLauncherTeam/PojavLauncher/blob/v3_openjdk/LICENSE) |
 | [Amethyst](https://github.com/AngelAuraMC/Amethyst-Android/) | Upstream fork | [LGPL-3.0](https://github.com/AngelAuraMC/Amethyst-Android/blob/v3_openjdk/LICENSE) |
 | [MojoLauncher](https://github.com/MojoLauncher/MojoLauncher/) | Components | [LGPL-3.0](https://github.com/AngelAuraMC/Amethyst-Android/blob/v3_openjdk/LICENSE) |
 | Android Support Libraries | UI framework | [Apache 2.0](https://android.googlesource.com/platform/prebuilts/maven_repo/android/+/master/NOTICE.txt) |
