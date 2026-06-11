@@ -1,403 +1,271 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
     android:background="@drawable/bg_fabric_install_screen">
 
-    <LinearLayout
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- PRESERVED CORE IDs (HIDDEN)                 -->
+    <!-- ═══════════════════════════════════════════ -->
+    <Spinner android:id="@+id/fabric_installer_game_ver_spinner" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"/>
+    <Spinner android:id="@+id/fabric_installer_loader_ver_spinner" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"/>
+    <TextView android:id="@+id/fabric_installer_label_game_ver" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"/>
+    <TextView android:id="@+id/fabric_installer_label_loader_ver" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"/>
+    <TextView android:id="@+id/fabric_installer_label_options" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"/>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- HERO HEADER CARD                            -->
+    <!-- ═══════════════════════════════════════════ -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/hero_header_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingBottom="32dp"
-        android:paddingTop="0dp">
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- ═══════════════════════════════════════════ -->
-        <!-- HERO HEADER CARD                            -->
-        <!-- ═══════════════════════════════════════════ -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="6dp"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_fabric_header_card"
-                android:paddingHorizontal="24dp"
-                android:paddingTop="28dp"
-                android:paddingBottom="24dp"
-                android:gravity="center_horizontal">
-
-                <!-- Fabric Logo Icon -->
-                <ImageView
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:src="@drawable/ic_fabric"
-                    android:background="@drawable/bg_fabric_icon_circle"
-                    android:padding="14dp"
-                    android:scaleType="fitCenter" />
-
-                <!-- Glow Spacer -->
-                <View
-                    android:layout_width="60dp"
-                    android:layout_height="2dp"
-                    android:layout_marginTop="18dp"
-                    android:background="@drawable/divider_neon_gradient" />
-
-                <!-- Title -->
-                <TextView
-                    android:id="@+id/title_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:text="@string/fabric_dl_loader_title"
-                    android:textColor="#FFFFFF"
-                    android:textSize="26sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.04"
-                    android:gravity="center" />
-
-                <!-- Subtitle -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Configure &amp; Install Fabric Loader"
-                    android:textColor="#99B8D4FF"
-                    android:textSize="13sp"
-                    android:letterSpacing="0.03"
-                    android:gravity="center" />
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- ═══════════════════════════════════════════ -->
-        <!-- GAME VERSION CARD                           -->
-        <!-- ═══════════════════════════════════════════ -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_fabric_section_card"
-                android:paddingHorizontal="20dp"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp">
-
-                <!-- Label Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
-
-                    <View
-                        android:layout_width="4dp"
-                        android:layout_height="18dp"
-                        android:background="@drawable/bg_fabric_accent_bar_cyan"
-                        android:layout_marginEnd="10dp" />
-
-                    <TextView
-                        android:id="@+id/fabric_installer_label_game_ver"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/fabric_dl_game_version"
-                        android:textAllCaps="true"
-                        android:textColor="#00E5CC"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.14" />
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/ic_download"
-                        app:tint="#4400E5CC"
-                        android:scaleType="fitCenter" />
-
-                </LinearLayout>
-
-                <!-- Game Version Spinner -->
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <Spinner
-                        android:id="@+id/fabric_installer_game_ver_spinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_fabric_spinner"
-                        android:minHeight="54dp"
-                        android:paddingStart="18dp"
-                        android:paddingEnd="48dp"
-                        android:popupBackground="@drawable/bg_fabric_popup"
-                        android:elevation="4dp" />
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_vertical|end"
-                        android:layout_marginEnd="16dp"
-                        android:rotation="180"
-                        android:src="@drawable/spinner_arrow"
-                        android:elevation="6dp"
-                        app:tint="#00E5CC"
-                        android:scaleType="fitCenter" />
-
-                </FrameLayout>
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- ═══════════════════════════════════════════ -->
-        <!-- LOADER VERSION CARD                         -->
-        <!-- ═══════════════════════════════════════════ -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_fabric_section_card"
-                android:paddingHorizontal="20dp"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp">
-
-                <!-- Label Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
-
-                    <View
-                        android:layout_width="4dp"
-                        android:layout_height="18dp"
-                        android:background="@drawable/bg_fabric_accent_bar_purple"
-                        android:layout_marginEnd="10dp" />
-
-                    <TextView
-                        android:id="@+id/fabric_installer_label_loader_ver"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/fabric_dl_loader_version"
-                        android:textAllCaps="true"
-                        android:textColor="#C084FC"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.14" />
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/ic_settings_java"
-                        app:tint="#44C084FC"
-                        android:scaleType="fitCenter" />
-
-                </LinearLayout>
-
-                <!-- Loader Version Spinner -->
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <Spinner
-                        android:id="@+id/fabric_installer_loader_ver_spinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_fabric_spinner_purple"
-                        android:minHeight="54dp"
-                        android:paddingStart="18dp"
-                        android:paddingEnd="48dp"
-                        android:popupBackground="@drawable/bg_fabric_popup"
-                        android:elevation="4dp" />
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_vertical|end"
-                        android:layout_marginEnd="16dp"
-                        android:rotation="180"
-                        android:src="@drawable/spinner_arrow"
-                        android:elevation="6dp"
-                        app:tint="#C084FC"
-                        android:scaleType="fitCenter" />
-
-                </FrameLayout>
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- ═══════════════════════════════════════════ -->
-        <!-- OPTIONS CARD                                -->
-        <!-- ═══════════════════════════════════════════ -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_fabric_section_card"
-                android:paddingHorizontal="20dp"
-                android:paddingTop="18dp"
-                android:paddingBottom="8dp">
-
-                <!-- Label Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
-
-                    <View
-                        android:layout_width="4dp"
-                        android:layout_height="18dp"
-                        android:background="@drawable/bg_fabric_accent_bar_orange"
-                        android:layout_marginEnd="10dp" />
-
-                    <TextView
-                        android:id="@+id/fabric_installer_label_options"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mcl_options"
-                        android:textAllCaps="true"
-                        android:textColor="#FDBA74"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.14" />
-
-                </LinearLayout>
-
-                <!-- Stable Only Checkbox -->
-                <CheckBox
-                    android:id="@+id/fabric_installer_only_stable_checkbox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="@string/fabric_dl_only_stable"
-                    android:textColor="#DDE8FFFF"
-                    android:textSize="14sp"
-                    android:minHeight="52dp"
-                    android:checked="true"
-                    android:buttonTint="#00E5CC"
-                    android:paddingStart="6dp" />
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- ═══════════════════════════════════════════ -->
-        <!-- ERROR / RETRY STRIP                         -->
-        <!-- ═══════════════════════════════════════════ -->
         <LinearLayout
-            android:id="@+id/fabric_installer_retry_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="@drawable/bg_fabric_error_strip"
-            android:padding="16dp"
-            android:layout_marginTop="14dp"
-            android:visibility="gone">
+            android:orientation="vertical"
+            android:background="@drawable/bg_fabric_header_card"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="20dp"
+            android:gravity="center_horizontal">
 
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/ic_fill"
-                app:tint="#FF6B6B"
-                android:layout_marginEnd="12dp"
-                android:scaleType="fitCenter" />
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:src="@drawable/ic_fabric"
+                android:background="@drawable/bg_fabric_icon_circle"
+                android:padding="12dp" />
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="12dp"
-                android:text="@string/modloader_dl_failed_to_load_list"
-                android:textColor="#FF8A8A"
-                android:textSize="13sp" />
-
-            <Button
-                android:id="@+id/fabric_installer_retry_button"
+                android:id="@+id/title_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_fabric_retry_button"
+                android:layout_marginTop="10dp"
+                android:text="@string/fabric_dl_loader_title"
                 android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:textSize="12sp"
-                android:paddingHorizontal="18dp"
-                android:paddingVertical="8dp"
-                android:text="@string/global_retry" />
+                android:textSize="22sp"
+                android:textStyle="bold" />
         </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-        <!-- ═══════════════════════════════════════════ -->
-        <!-- INSTALL BUTTON                              -->
-        <!-- ═══════════════════════════════════════════ -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/fabric_installer_start_button"
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- 3-STEP SELECTION WORKFLOW                   -->
+    <!-- ═══════════════════════════════════════════ -->
+    <ViewFlipper
+        android:id="@+id/fabric_step_flipper"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        android:inAnimation="@anim/install_screen_enter"
+        app:layout_constraintTop_toBottomOf="@id/hero_header_card"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- STEP 1: Minecraft Version Selection -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@drawable/bg_fabric_section_card"
+                android:padding="16dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp">
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="1. Select Game Version"
+                        android:textColor="#00E5CC"
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
+
+                    <CheckBox
+                        android:id="@+id/fabric_installer_only_stable_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:text="Stable Only"
+                        android:textColor="#A0B0C0"
+                        android:textSize="12sp"
+                        android:checked="true"
+                        android:buttonTint="#00E5CC"/>
+                </RelativeLayout>
+
+                <!-- Sticky Search Bar -->
+                <EditText
+                    android:id="@+id/fabric_search_game_ver"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_fabric_header_card"
+                    android:hint="Search versions..."
+                    android:textColorHint="#60FFFFFF"
+                    android:textColor="#FFFFFF"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="12dp"
+                    android:singleLine="true" />
+
+                <!-- Height Managed List -->
+                <ListView
+                    android:id="@+id/fabric_game_ver_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="#22FFFFFF"
+                    android:dividerHeight="1dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- STEP 2: Fabric Loader Selection -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@drawable/bg_fabric_section_card"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2. Select Fabric Loader"
+                    android:textColor="#C084FC"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp"/>
+
+                <ListView
+                    android:id="@+id/fabric_loader_ver_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:divider="#22FFFFFF"
+                    android:dividerHeight="1dp" />
+                    
+                <Button
+                    android:id="@+id/fabric_step2_back_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="12dp"
+                    android:text="&lt;- Back to Game Versions"
+                    android:background="@drawable/bg_fabric_retry_button"
+                    android:textColor="#A0B0C0"
+                    android:textAllCaps="false"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- STEP 3: Action / Installation Bar -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/bg_fabric_install_button"
-            android:enabled="false"
-            android:text="@string/fabric_dl_install"
-            android:textAllCaps="true"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.10"
-            android:paddingVertical="16dp"
-            android:elevation="8dp" />
+            android:layout_gravity="bottom"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
 
-        <!-- ═══════════════════════════════════════════ -->
-        <!-- PROGRESS BAR                                -->
-        <!-- ═══════════════════════════════════════════ -->
-        <ProgressBar
-            android:id="@+id/fabric_installer_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="4dp"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            android:indeterminateTint="#00E5CC"
-            android:progressTint="#00E5CC"
-            android:progressBackgroundTint="#1A2035" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_fabric_section_card"
+                android:padding="20dp">
 
-    </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="3. Ready to Install"
+                    android:textColor="#FDBA74"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="24dp"/>
 
-</androidx.core.widget.NestedScrollView>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
+
+                    <ProgressBar
+                        android:id="@+id/fabric_installer_progress_bar"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/fabric_installer_retry_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:visibility="gone">
+                            
+                        <Button
+                            android:id="@+id/fabric_installer_retry_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="44dp"
+                            android:text="@string/global_retry"
+                            android:background="@drawable/bg_fabric_retry_button"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <!-- Dynamic Bottom Action Panel -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/fabric_step3_back_btn"
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:text="&lt;-"
+                        android:background="@drawable/bg_fabric_retry_button"
+                        android:textColor="#A0B0C0"
+                        android:layout_marginEnd="12dp"/>
+
+                    <Button
+                        android:id="@+id/fabric_installer_start_button"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:text="INSTALL &amp; LAUNCH"
+                        android:background="@drawable/bg_fabric_install_button"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </ViewFlipper>
+</androidx.constraintlayout.widget.ConstraintLayout>
