@@ -16,8 +16,8 @@
         android:paddingVertical="12dp">
 
         <FrameLayout
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="@drawable/bg_icon_container"
             android:padding="10dp">
             <ImageView
@@ -34,7 +34,7 @@
             android:layout_weight="1"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:textColor="?attr/colorTextPrimary"
+            android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold"
             android:ellipsize="marquee"
