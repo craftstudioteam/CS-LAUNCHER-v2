@@ -97,6 +97,11 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         mGameVerList = view.findViewById(R.id.fabric_game_ver_list);
         mLoaderVerList = view.findViewById(R.id.fabric_loader_ver_list);
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            mGameVerList.setNestedScrollingEnabled(true);
+            mLoaderVerList.setNestedScrollingEnabled(true);
+        }
+
         mGameVerList.setOnItemClickListener((parent, v, position, id) -> {
             FabricVersion selected = (FabricVersion) parent.getItemAtPosition(position);
             ArrayAdapter<FabricVersion> spinnerAdapter = (ArrayAdapter<FabricVersion>) mGameVersionSpinner.getAdapter();
