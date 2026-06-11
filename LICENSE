@@ -630,27 +630,30 @@ BRAND: Craft Studio Development Group
 COPYRIGHT & OWNERSHIP
 ─────────────────────────────────────────────────────────────────
 
-CS Launcher © 2026 Craft Studio Development Group
-All Rights Reserved
+Copyright © 2026 Craft Studio Development Group
 
-Developer/Creator: (ROHIT_45)
+Developer/Creator: ROHIT_45
 Organization: Craft Studio Development Group
-License: GNU General Public License v3 (GPLv3)
+
+Licensed under the GNU General Public License v3.0 (GPLv3)
 
 ═══════════════════════════════════════════════════════════════════
 
 BASED ON OPEN SOURCE PROJECTS
 ─────────────────────────────────────────────────────────────────
 
-This project is a fork/derivative of:
+This project contains code derived from:
 
 1. PojavLauncher
-   - Original Authors: PojavLauncher Contributors
-   - License: GNU General Public License v3
-   - Repository: https://github.com/PojavLauncherTeam/PojavLauncher
+   Original Authors: PojavLauncher Contributors
+   License: GNU General Public License v3.0 (GPLv3)
 
-All modifications and improvements made by Craft Studio are also
-licensed under GPLv3 in accordance with the original licenses.
+   Original Repository:
+   https://github.com/PojavLauncherTeam/PojavLauncher
+
+All modifications, additions, and improvements made by
+Craft Studio Development Group are distributed under
+the GNU General Public License v3.0 (GPLv3).
 
 ═══════════════════════════════════════════════════════════════════
 
@@ -658,90 +661,114 @@ FEATURE CREDITS
 ─────────────────────────────────────────────────────────────────
 
 Android Minecraft Launcher Core
-  - Based on: PojavLauncher architecture
-  - Modifications: Custom UI, performance improvements
+  • Based on PojavLauncher architecture
+  • Custom UI and performance enhancements
 
-Minecraft Mod Support (Fabric, Forge, OptiFine)
-  - Fabric Loader Integration: Custom implementation
-  - Forge Support: Based on original implementations
-  - OptiFine Support: Based on original implementations
-  
+Minecraft Mod Support
+  • Fabric Loader Support
+  • Forge Support
+  • OptiFine Support
+
+Additional Features
+  • Custom launcher interface
+  • Performance optimizations
+  • Enhanced user experience improvements
+
 ═══════════════════════════════════════════════════════════════════
 
 LICENSE
 ─────────────────────────────────────────────────────────────────
 
-This software is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 3
-of the License, or (at your option) any later version.
+This program is free software: you can redistribute it
+and/or modify it under the terms of the GNU General
+Public License as published by the Free Software
+Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This software is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+This program is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the
+implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
 
-You should have received a copy of the GNU General Public License
-along with this software. If not, see <https://www.gnu.org/licenses/>.
+See the GNU General Public License for more details.
 
-Full License Text: See LICENSE file in project root
+A copy of the GNU General Public License should be
+included with this software. If not, see:
+
+https://www.gnu.org/licenses/
+
+Full License Text: See the LICENSE file included with
+this project.
 
 ═══════════════════════════════════════════════════════════════════
 
 DEPENDENCIES & ATTRIBUTIONS
 ─────────────────────────────────────────────────────────────────
 
-Core Libraries:
-  - AndroidX Libraries (Apache 2.0)
-  - Kotlin Standard Library (Apache 2.0)
-  - Material Components (Apache 2.0)
+Core Libraries
+  • AndroidX Libraries (Apache License 2.0)
+  • Kotlin Standard Library (Apache License 2.0)
+  • Material Components (Apache License 2.0)
 
-Minecraft Related:
-  - LWJGL 3 (BSD)
-  - Minecraft Launcher Libraries (Proprietary)
+Minecraft Related
+  • LWJGL 3 (BSD License)
+  • Minecraft Launcher Libraries (Property of Mojang)
 
-Networking & Storage:
-  - OkHttp (Apache 2.0)
-  - Firebase Realtime Database (Proprietary)
-  - NanoHTTPD (BSD)
-  - Apache Commons (Apache 2.0)
+Networking & Storage
+  • OkHttp (Apache License 2.0)
+  • Firebase Realtime Database
+  • NanoHTTPD (BSD License)
+  • Apache Commons (Apache License 2.0)
 
-UI Components:
-  - Material Design 3 (Apache 2.0)
-  - Glide Image Loading (Apache 2.0/BSD)
-  - Lottie Animations (Apache 2.0)
+User Interface
+  • Material Design 3
+  • Glide Image Loading Library
+  • Lottie Animations
 
 ═══════════════════════════════════════════════════════════════════
 
 USAGE & DISTRIBUTION
 ─────────────────────────────────────────────────────────────────
 
-You are free to:
-  ✓ Use this software for any purpose
-  ✓ Modify this software
-  ✓ Distribute modified versions
-  ✓ Use in commercial products
+Under GPLv3, you are free to:
 
-On the condition that:
-  • You must distribute under the same GPLv3 license
-  • You must provide source code
-  • You must include this copyright notice
-  • You must disclose modifications
-  • You must include license text
+  ✓ Use this software for any purpose
+  ✓ Study and modify the source code
+  ✓ Share copies of the software
+  ✓ Distribute modified versions
+
+Provided that you:
+
+  • Distribute under GPLv3
+  • Provide source code when required
+  • Include copyright notices
+  • Document significant modifications
+  • Include the GPL license text
 
 ═══════════════════════════════════════════════════════════════════
 
-TRADEMARK NOTICE
+TRADEMARK & LEGAL NOTICE
 ─────────────────────────────────────────────────────────────────
 
-"CS Launcher" and "Craft Studio" are trademarks of
-Craft Studio Development Group.
+"CS Launcher" and "Craft Studio" are product names
+used by Craft Studio Development Group.
 
-"Minecraft" is a trademark of Microsoft Corporation/Mojang.
+"Minecraft", "Mojang", and related assets are trademarks
+or registered trademarks of Mojang Studios and/or
+Microsoft Corporation.
+
+This project is not affiliated with, endorsed by,
+approved by, or sponsored by Mojang Studios or
+Microsoft Corporation.
 
 ═══════════════════════════════════════════════════════════════════
 
 LAST UPDATED: June 2026
-LEGAL JURISDICTION: Open Source (International GPLv3)
+
+PROJECT STATUS:
+Open Source Software (GPLv3)
+
+LEGAL JURISDICTION:
+International GNU General Public License v3.0
 
 ═══════════════════════════════════════════════════════════════════
