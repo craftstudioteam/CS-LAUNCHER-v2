@@ -38,20 +38,6 @@
                     android:textSize="20sp"
                     android:textStyle="bold"/>
 
-                <!-- Search Bar Placeholder -->
-                <EditText
-                    android:id="@+id/mod_dl_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/bg_version_item_normal"
-                    android:hint="Search versions..."
-                    android:textColorHint="?attr/colorTextSecondary"
-                    android:textColor="?attr/colorTextPrimary"
-                    android:paddingHorizontal="16dp"
-                    android:singleLine="true"
-                    android:drawableStart="@android:drawable/ic_menu_search"
-                    android:drawableTint="?attr/colorTextSecondary"
-                    android:drawablePadding="10dp" />
             </LinearLayout>
 
             <ProgressBar
@@ -146,7 +132,7 @@
                     android:id="@+id/mod_dl_label_version"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_loader_badge"
+                    android:background="@drawable/bg_selected_version_badge"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp"
                     android:textColor="#FFFFFF"
@@ -172,8 +158,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:text="INSTALL"
-                    android:background="@drawable/bg_install_button_fabric"
-                    android:textColor="?attr/colorBgApp"
+                    android:background="@drawable/bg_install_button_primary"
+                    android:textColor="#FFFFFF"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.05" />
