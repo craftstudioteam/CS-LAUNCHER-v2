@@ -133,7 +133,9 @@
                 <ListView
                     android:id="@+id/fabric_game_ver_list"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:nestedScrollingEnabled="true"
                     android:divider="#22FFFFFF"
                     android:dividerHeight="1dp" />
             </LinearLayout>
@@ -168,6 +170,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
+                    android:nestedScrollingEnabled="true"
                     android:divider="#22FFFFFF"
                     android:dividerHeight="1dp" />
                     
