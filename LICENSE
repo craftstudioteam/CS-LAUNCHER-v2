@@ -618,157 +618,57 @@ an absolute waiver of all civil liability in connection with the
 Program, unless a warranty or assumption of liability accompanies a
 copy of the Program in return for a fee.
 
-╔════════════════════════════════════════════════════════════════╗
-║                         COPYRIGHT NOTICE                      ║
-╚════════════════════════════════════════════════════════════════╝
+                     END OF TERMS AND CONDITIONS
 
-PROJECT: CS Launcher v2
-BRAND: Craft Studio Development Group
+            How to Apply These Terms to Your New Programs
 
-═══════════════════════════════════════════════════════════════════
+  If you develop a new program, and you want it to be of the greatest
+possible use to the public, the best way to achieve this is to make it
+free software which everyone can redistribute and change under these terms.
 
-COPYRIGHT & OWNERSHIP
-─────────────────────────────────────────────────────────────────
+  To do so, attach the following notices to the program.  It is safest
+to attach them to the start of each source file to most effectively
+state the exclusion of warranty; and each file should have at least
+the "copyright" line and a pointer to where the full notice is found.
 
-Copyright © 2026 Craft Studio Development Group
+    <one line to give the program's name and a brief idea of what it does.>
+    Copyright (C) <year>  <name of author>
 
-Developer/Creator: ROHIT_45
-Organization: Craft Studio Development Group
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-Licensed under the GNU General Public License v3.0 (GPLv3)
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-═══════════════════════════════════════════════════════════════════
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-BASED ON OPEN SOURCE PROJECTS
-─────────────────────────────────────────────────────────────────
+Also add information on how to contact you by electronic and paper mail.
 
-This project contains code derived from:
+  If the program does terminal interaction, make it output a short
+notice like this when it starts in an interactive mode:
 
-1. PojavLauncher
-   Original Authors: PojavLauncher Contributors
-   License: GNU General Public License v3.0 (GPLv3)
+    <program>  Copyright (C) <year>  <name of author>
+    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; type `show c' for details.
 
-   Original Repository:
-   https://github.com/PojavLauncherTeam/PojavLauncher
+The hypothetical commands `show w' and `show c' should show the appropriate
+parts of the General Public License.  Of course, your program's commands
+might be different; for a GUI interface, you would use an "about box".
 
-All modifications, additions, and improvements made by
-Craft Studio Development Group are distributed under
-the GNU General Public License v3.0 (GPLv3).
+  You should also get your employer (if you work as a programmer) or school,
+if any, to sign a "copyright disclaimer" for the program, if necessary.
+For more information on this, and how to apply and follow the GNU GPL, see
+<https://www.gnu.org/licenses/>.
 
-═══════════════════════════════════════════════════════════════════
-
-FEATURE CREDITS
-─────────────────────────────────────────────────────────────────
-
-Android Minecraft Launcher Core
-  • Based on PojavLauncher architecture
-  • Custom UI and performance enhancements
-
-Minecraft Mod Support
-  • Fabric Loader Support
-  • Forge Support
-  • OptiFine Support
-
-Additional Features
-  • Custom launcher interface
-  • Performance optimizations
-  • Enhanced user experience improvements
-
-═══════════════════════════════════════════════════════════════════
-
-LICENSE
-─────────────────────────────────────────────────────────────────
-
-This program is free software: you can redistribute it
-and/or modify it under the terms of the GNU General
-Public License as published by the Free Software
-Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will
-be useful, but WITHOUT ANY WARRANTY; without even the
-implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.
-
-See the GNU General Public License for more details.
-
-A copy of the GNU General Public License should be
-included with this software. If not, see:
-
-https://www.gnu.org/licenses/
-
-Full License Text: See the LICENSE file included with
-this project.
-
-═══════════════════════════════════════════════════════════════════
-
-DEPENDENCIES & ATTRIBUTIONS
-─────────────────────────────────────────────────────────────────
-
-Core Libraries
-  • AndroidX Libraries (Apache License 2.0)
-  • Kotlin Standard Library (Apache License 2.0)
-  • Material Components (Apache License 2.0)
-
-Minecraft Related
-  • LWJGL 3 (BSD License)
-  • Minecraft Launcher Libraries (Property of Mojang)
-
-Networking & Storage
-  • OkHttp (Apache License 2.0)
-  • Firebase Realtime Database
-  • NanoHTTPD (BSD License)
-  • Apache Commons (Apache License 2.0)
-
-User Interface
-  • Material Design 3
-  • Glide Image Loading Library
-  • Lottie Animations
-
-═══════════════════════════════════════════════════════════════════
-
-USAGE & DISTRIBUTION
-─────────────────────────────────────────────────────────────────
-
-Under GPLv3, you are free to:
-
-  ✓ Use this software for any purpose
-  ✓ Study and modify the source code
-  ✓ Share copies of the software
-  ✓ Distribute modified versions
-
-Provided that you:
-
-  • Distribute under GPLv3
-  • Provide source code when required
-  • Include copyright notices
-  • Document significant modifications
-  • Include the GPL license text
-
-═══════════════════════════════════════════════════════════════════
-
-TRADEMARK & LEGAL NOTICE
-─────────────────────────────────────────────────────────────────
-
-"CS Launcher" and "Craft Studio" are product names
-used by Craft Studio Development Group.
-
-"Minecraft", "Mojang", and related assets are trademarks
-or registered trademarks of Mojang Studios and/or
-Microsoft Corporation.
-
-This project is not affiliated with, endorsed by,
-approved by, or sponsored by Mojang Studios or
-Microsoft Corporation.
-
-═══════════════════════════════════════════════════════════════════
-
-LAST UPDATED: June 2026
-
-PROJECT STATUS:
-Open Source Software (GPLv3)
-
-LEGAL JURISDICTION:
-International GNU General Public License v3.0
-
-═══════════════════════════════════════════════════════════════════
+  The GNU General Public License does not permit incorporating your program
+into proprietary programs.  If your program is a subroutine library, you
+may consider it more useful to permit linking proprietary applications with
+the library.  If this is what you want to do, use the GNU Lesser General
+Public License instead of this License.  But first, please read
+<https://www.gnu.org/licenses/why-not-lgpl.html>.
