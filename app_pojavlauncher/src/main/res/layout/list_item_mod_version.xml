@@ -3,31 +3,47 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="16dp"
-    android:paddingVertical="8dp">
+    android:paddingVertical="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="@drawable/bg_version_item_selector"
+        android:layout_height="wrap_content"
+        android:minHeight="72dp"
+        android:background="@drawable/bg_version_list_item"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="20dp">
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="12dp">
 
-        <ImageView
-            android:id="@+id/mod_icon"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginEnd="12dp"
-            android:scaleType="centerCrop" />
+        <FrameLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_icon_container"
+            android:padding="10dp">
+            <ImageView
+                android:id="@+id/mod_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter" />
+        </FrameLayout>
 
         <TextView
             android:id="@android:id/text1"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:textColor="?attr/colorTextPrimary"
             android:textSize="16sp"
             android:textStyle="bold"
             android:ellipsize="marquee"
             android:singleLine="true" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_chevron_right" />
     </LinearLayout>
 </LinearLayout>

@@ -141,16 +141,6 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         });
         view.findViewById(R.id.fabric_step3_back_btn).setOnClickListener(v -> {});
 
-        android.widget.EditText searchGameVer = view.findViewById(R.id.fabric_search_game_ver);
-        searchGameVer.addTextChangedListener(new android.text.TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (mGameVerList.getAdapter() != null && mGameVerList.getAdapter() instanceof ArrayAdapter) {
-                    ((ArrayAdapter<?>) mGameVerList.getAdapter()).getFilter().filter(s);
-                }
-            }
-            @Override public void afterTextChanged(android.text.Editable s) {}
-        });
 
         ModloaderListenerProxy proxy = getListenerProxy();
         if(proxy != null) {
