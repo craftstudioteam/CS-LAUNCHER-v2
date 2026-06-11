@@ -51,9 +51,41 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
         mExpandableListView.setOnChildClickListener(this);
         mRetryView = view.findViewById(R.id.mod_dl_retry_layout);
         view.findViewById(R.id.forge_installer_retry_button).setOnClickListener(this);
+
+        android.widget.ViewFlipper stepFlipper = view.findViewById(R.id.mod_dl_step_flipper);
+        android.widget.Button startButton = view.findViewById(R.id.mod_dl_start_button);
+        if (startButton != null) {
+            startButton.setOnClickListener(v -> {
+                Object selectedVersion = net.kdt.pojavlaunch.extra.ExtraCore.getValue("SELECTED_MOD_VERSION_" + mExtraTag);
+                if(selectedVersion == null) return;
+                startButton.setEnabled(false);
+                startButton.clearAnimation();
+                ModloaderListenerProxy proxy = new ModloaderListenerProxy();
+                Runnable downloadTask = createDownloadTask(selectedVersion, proxy);
+                setTaskProxyValue(proxy);
+                proxy.attachListener(this);
+                mExpandableListView.setEnabled(false);
+                new Thread(downloadTask).start();
+            });
+        }
+        
+        View backBtn = view.findViewById(R.id.mod_dl_step2_back_btn);
+        if (backBtn != null) {
+            backBtn.setOnClickListener(v -> {
+                if(startButton != null) startButton.clearAnimation();
+                if(stepFlipper != null) {
+                    stepFlipper.setInAnimation(requireContext(), R.anim.slide_in_left);
+                    stepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_right);
+                    stepFlipper.setDisplayedChild(0);
+                }
+            });
+        }
+
         ModloaderListenerProxy taskProxy = getTaskProxy();
         if(taskProxy != null) {
             mExpandableListView.setEnabled(false);
+            if(startButton != null) startButton.setEnabled(false);
+            if(stepFlipper != null) stepFlipper.setDisplayedChild(1);
             taskProxy.attachListener(this);
         }
         new Thread(this).start();
@@ -103,12 +135,30 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
             return true;
         }
         Object forgeVersion = expandableListView.getExpandableListAdapter().getChild(i, i1);
-        ModloaderListenerProxy taskProxy = new ModloaderListenerProxy();
-        Runnable downloadTask = createDownloadTask(forgeVersion, taskProxy);
-        setTaskProxyValue(taskProxy);
-        taskProxy.attachListener(this);
-        mExpandableListView.setEnabled(false);
-        new Thread(downloadTask).start();
+        net.kdt.pojavlaunch.extra.ExtraCore.setValue("SELECTED_MOD_VERSION_" + mExtraTag, forgeVersion);
+
+        String versionStr = "";
+        if (forgeVersion instanceof net.kdt.pojavlaunch.modloaders.OptiFineUtils.OptiFineVersion) {
+            versionStr = ((net.kdt.pojavlaunch.modloaders.OptiFineUtils.OptiFineVersion)forgeVersion).versionName;
+        } else {
+            versionStr = forgeVersion.toString();
+        }
+
+        TextView badge = requireView().findViewById(R.id.mod_dl_label_version);
+        if (badge != null) badge.setText(versionStr);
+
+        android.widget.ViewFlipper stepFlipper = requireView().findViewById(R.id.mod_dl_step_flipper);
+        if (stepFlipper != null) {
+            stepFlipper.setInAnimation(requireContext(), R.anim.slide_in_right);
+            stepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_left);
+            stepFlipper.setDisplayedChild(1);
+        }
+
+        android.widget.Button startButton = requireView().findViewById(R.id.mod_dl_start_button);
+        if (startButton != null) {
+            startButton.setEnabled(true);
+            startButton.startAnimation(android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.pulse_animation));
+        }
         return true;
     }
 
@@ -145,6 +195,11 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
             getTaskProxy().detachListener();
             deleteTaskProxy();
             mExpandableListView.setEnabled(true);
+            android.widget.Button startBtn = requireView().findViewById(R.id.mod_dl_start_button);
+            if (startBtn != null) {
+                startBtn.setEnabled(true);
+                startBtn.startAnimation(android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.pulse_animation));
+            }
             Tools.showError(context, e);
         });
     }
