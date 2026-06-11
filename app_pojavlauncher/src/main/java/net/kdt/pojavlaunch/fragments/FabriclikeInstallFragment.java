@@ -111,9 +111,15 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
                     break;
                 }
             }
+            TextView badge = view.findViewById(R.id.fabric_installer_label_loader_ver);
+            if (badge != null) badge.setText(selected.version);
+
             mStepFlipper.setInAnimation(requireContext(), R.anim.slide_in_right);
             mStepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_left);
             mStepFlipper.setDisplayedChild(1);
+            
+            android.view.animation.Animation pulseAnim = android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.pulse_animation);
+            mStartButton.startAnimation(pulseAnim);
         });
 
         mLoaderVerList.setOnItemClickListener((parent, v, position, id) -> {
@@ -125,21 +131,15 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
                     break;
                 }
             }
-            mStepFlipper.setInAnimation(requireContext(), R.anim.slide_in_right);
-            mStepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_left);
-            mStepFlipper.setDisplayedChild(2);
         });
 
         view.findViewById(R.id.fabric_step2_back_btn).setOnClickListener(v -> {
+            mStartButton.clearAnimation();
             mStepFlipper.setInAnimation(requireContext(), R.anim.slide_in_left);
             mStepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_right);
             mStepFlipper.setDisplayedChild(0);
         });
-        view.findViewById(R.id.fabric_step3_back_btn).setOnClickListener(v -> {
-            mStepFlipper.setInAnimation(requireContext(), R.anim.slide_in_left);
-            mStepFlipper.setOutAnimation(requireContext(), R.anim.slide_out_right);
-            mStepFlipper.setDisplayedChild(1);
-        });
+        view.findViewById(R.id.fabric_step3_back_btn).setOnClickListener(v -> {});
 
         android.widget.EditText searchGameVer = view.findViewById(R.id.fabric_search_game_ver);
         searchGameVer.addTextChangedListener(new android.text.TextWatcher() {
@@ -336,6 +336,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         mLoaderVersionSpinner.setAdapter(adapter);
         mLoaderVersionSpinner.animate().alpha(1f).setDuration(300).start();
         if (mLoaderVerList != null) {
+            mLoaderVerList.setLayoutAnimation(android.view.animation.AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_animation_fall_down));
             mLoaderVerList.setAdapter(adapter);
             mLoaderVerList.post(() -> mLoaderVerList.requestLayout());
         }
@@ -390,6 +391,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         mGameVersionSpinner.setAdapter(adapter);
         mGameVersionSpinner.animate().alpha(1f).setDuration(300).start();
         if (mGameVerList != null) {
+            mGameVerList.setLayoutAnimation(android.view.animation.AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_animation_fall_down));
             mGameVerList.setAdapter(adapter);
             mGameVerList.post(() -> mGameVerList.requestLayout());
         }
