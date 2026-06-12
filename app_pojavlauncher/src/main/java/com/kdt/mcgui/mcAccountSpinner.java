@@ -335,6 +335,9 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
 
         mSelectecAccount = selectedAccount;
         setImageFromSelectedAccount();
+        if (getContext() instanceof LauncherActivity) {
+            ((LauncherActivity) getContext()).updateNavSkinIcon();
+        }
     }
 
     private void setImageFromSelectedAccount(){
