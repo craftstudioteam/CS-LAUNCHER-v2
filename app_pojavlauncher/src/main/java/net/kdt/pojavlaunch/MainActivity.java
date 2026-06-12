@@ -26,6 +26,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.InputDevice;
