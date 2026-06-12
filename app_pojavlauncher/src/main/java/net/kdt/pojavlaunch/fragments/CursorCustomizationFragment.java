@@ -38,6 +38,11 @@ public class CursorCustomizationFragment extends Fragment {
     private Uri mSelectedImageUri;
     private Bitmap mCurrentCursorBitmap;
 
+    private int mHotspotX = 0;
+    private int mHotspotY = 0;
+    private int mGlowRadius = 0;
+    private int mSizeScale = 100;
+
     // Activity result launcher for file picker
     private final ActivityResultLauncher<String> mFilePickerLauncher =
             registerForActivityResult(new ActivityResultContracts.GetContent(), this::onImageSelected);
@@ -60,8 +65,57 @@ public class CursorCustomizationFragment extends Fragment {
         // Setup seekbars
         SeekBar scaleSeek = view.findViewById(R.id.seek_cursor_size);
         SeekBar glowSeek = view.findViewById(R.id.seek_glow_strength);
+        SeekBar hotspotXSeek = view.findViewById(R.id.seek_hotspot_x);
+        SeekBar hotspotYSeek = view.findViewById(R.id.seek_hotspot_y);
+
         TextView scaleText = view.findViewById(R.id.scale_value_text);
         TextView glowText = view.findViewById(R.id.glow_value_text);
+        TextView hotspotXText = view.findViewById(R.id.hotspot_x_value_text);
+        TextView hotspotYText = view.findViewById(R.id.hotspot_y_value_text);
+
+        // Load existing preferences
+        mGlowRadius = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_glow_radius", 0);
+        mHotspotX = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_x", 0);
+        mHotspotY = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_y", 0);
+        mSizeScale = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_size_scale", 100);
+
+        scaleSeek.setProgress(mSizeScale);
+        scaleText.setText(mSizeScale + "%");
+
+        glowSeek.setProgress(mGlowRadius);
+        glowText.setText(mGlowRadius + "%");
+
+        hotspotXSeek.setProgress(mHotspotX);
+        hotspotXText.setText(mHotspotX + " px");
+
+        hotspotYSeek.setProgress(mHotspotY);
+        hotspotYText.setText(mHotspotY + " px");
+
+        // Load and preview current cursor if it exists
+        if (net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_PATH != null) {
+            File file = new File(net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_PATH);
+            if (file.exists()) {
+                try {
+                    Bitmap currentBmp = BitmapFactory.decodeFile(file.getAbsolutePath());
+                    if (currentBmp != null) {
+                        mCurrentCursorBitmap = currentBmp;
+                        mPreviewImage.setImageBitmap(mCurrentCursorBitmap);
+                        mPreviewImage.setPadding(0, 0, 0, 0);
+                        
+                        TextView label = view.findViewById(R.id.cursor_preview_label);
+                        if (label != null) {
+                            label.setText("CUSTOM");
+                        }
+
+                        // Configure seekbars max bounds based on active bitmap size
+                        hotspotXSeek.setMax(mCurrentCursorBitmap.getWidth());
+                        hotspotYSeek.setMax(mCurrentCursorBitmap.getHeight());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         // Entrance animation
         animateEntry(view);
@@ -73,6 +127,7 @@ public class CursorCustomizationFragment extends Fragment {
         // SeekBar listeners
         scaleSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mSizeScale = progress;
                 scaleText.setText(progress + "%");
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
@@ -81,7 +136,26 @@ public class CursorCustomizationFragment extends Fragment {
 
         glowSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mGlowRadius = progress;
                 glowText.setText(progress + "%");
+            }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        hotspotXSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mHotspotX = progress;
+                hotspotXText.setText(progress + " px");
+            }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        hotspotYSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mHotspotY = progress;
+                hotspotYText.setText(progress + " px");
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -148,6 +222,38 @@ public class CursorCustomizationFragment extends Fragment {
         mFilePickerLauncher.launch("image/*");
     }
 
+    private boolean isGif(Uri uri) {
+        if (uri == null) return false;
+        try {
+            String mimeType = requireContext().getContentResolver().getType(uri);
+            if (mimeType != null && mimeType.toLowerCase().contains("gif")) {
+                return true;
+            }
+            String path = uri.getPath();
+            if (path != null && path.toLowerCase().endsWith(".gif")) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private File copyUriToFile(Uri uri, String destName) throws Exception {
+        File dir = new File(net.kdt.pojavlaunch.Tools.DIR_CURSORS);
+        if (!dir.exists()) dir.mkdirs();
+        File destFile = new File(dir, destName);
+        try (InputStream in = requireContext().getContentResolver().openInputStream(uri);
+             FileOutputStream out = new FileOutputStream(destFile)) {
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+        }
+        return destFile;
+    }
+
     private void onImageSelected(Uri uri) {
         if (uri == null) return;
         mSelectedImageUri = uri;
@@ -182,6 +288,22 @@ public class CursorCustomizationFragment extends Fragment {
                 mPreviewImage.setImageBitmap(mCurrentCursorBitmap);
                 mPreviewImage.setPadding(0, 0, 0, 0);
 
+                // Update hotspot seekbars max limits based on loaded image dimensions
+                if (getView() != null) {
+                    SeekBar hotspotXSeek = getView().findViewById(R.id.seek_hotspot_x);
+                    SeekBar hotspotYSeek = getView().findViewById(R.id.seek_hotspot_y);
+                    if (hotspotXSeek != null) {
+                        hotspotXSeek.setMax(mCurrentCursorBitmap.getWidth());
+                        mHotspotX = Math.min(mHotspotX, mCurrentCursorBitmap.getWidth());
+                        hotspotXSeek.setProgress(mHotspotX);
+                    }
+                    if (hotspotYSeek != null) {
+                        hotspotYSeek.setMax(mCurrentCursorBitmap.getHeight());
+                        mHotspotY = Math.min(mHotspotY, mCurrentCursorBitmap.getHeight());
+                        hotspotYSeek.setProgress(mHotspotY);
+                    }
+                }
+
                 // Update label
                 TextView label = getView().findViewById(R.id.cursor_preview_label);
                 if (label != null) {
@@ -201,19 +323,40 @@ public class CursorCustomizationFragment extends Fragment {
     }
 
     private void saveCursor() {
-        if (mCurrentCursorBitmap == null) {
+        if (mCurrentCursorBitmap == null || mSelectedImageUri == null) {
             Toast.makeText(getContext(), "Please select an image first!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         try {
-            String name = "cursor_custom_" + System.currentTimeMillis();
-            boolean saved = CursorManager.saveCursor(mCurrentCursorBitmap, name);
-            if (saved) {
-                Toast.makeText(getContext(), "Cursor saved successfully!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getContext(), "Failed to save cursor", Toast.LENGTH_SHORT).show();
-            }
+            boolean isGif = isGif(mSelectedImageUri);
+            String extension = isGif ? ".gif" : ".png";
+            String name = "custom_cursor_" + System.currentTimeMillis() + extension;
+            File savedFile = copyUriToFile(mSelectedImageUri, name);
+
+            // Update preferences
+            net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.edit()
+                .putString("custom_cursor_path", savedFile.getAbsolutePath())
+                .putBoolean("custom_cursor_enabled", true)
+                .putInt("custom_cursor_hotspot_x", mHotspotX)
+                .putInt("custom_cursor_hotspot_y", mHotspotY)
+                .putInt("custom_cursor_size_scale", mSizeScale)
+                .putInt("custom_cursor_glow_radius", mGlowRadius)
+                .apply();
+
+            // Load variables
+            net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_PATH = savedFile.getAbsolutePath();
+            net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED = true;
+            net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS = mGlowRadius;
+
+            // Update/refresh cursor in touchpad if active
+            net.kdt.pojavlaunch.extra.ExtraCore.setValue(net.kdt.pojavlaunch.extra.ExtraConstants.REFRESH_CURSOR, null);
+            
+            // Reapply renderer changes
+            net.kdt.pojavlaunch.customcontrols.mouse.CustomCursorRenderer.reset();
+            net.kdt.pojavlaunch.customcontrols.mouse.CustomCursorRenderer.updateCursorFrame();
+
+            Toast.makeText(getContext(), "Cursor saved and applied successfully!", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();

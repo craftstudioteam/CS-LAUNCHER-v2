@@ -288,6 +288,86 @@
                     android:thumbTint="#00FF41"
                     android:progressBackgroundTint="#2A2A2A"/>
 
+                <!-- Hotspot X -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="HOTSPOT X"
+                        android:textColor="#00FF41"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:id="@+id/hotspot_x_value_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 px"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seek_hotspot_x"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="2dp"
+                    android:max="128"
+                    android:progress="0"
+                    android:progressTint="#00FF41"
+                    android:thumbTint="#00FF41"
+                    android:progressBackgroundTint="#2A2A2A"/>
+
+                <!-- Hotspot Y -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="HOTSPOT Y"
+                        android:textColor="#00FF41"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:id="@+id/hotspot_y_value_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 px"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seek_hotspot_y"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="2dp"
+                    android:max="128"
+                    android:progress="0"
+                    android:progressTint="#00FF41"
+                    android:thumbTint="#00FF41"
+                    android:progressBackgroundTint="#2A2A2A"/>
+
             </LinearLayout>
 
             <!-- ═══════════════════════════════════════ -->

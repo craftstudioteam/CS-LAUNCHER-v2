@@ -21,6 +21,22 @@ import java.util.ArrayList;
 import dalvik.annotation.optimization.CriticalNative;
 
 public class CallbackBridge {
+    private static java.lang.ref.WeakReference<net.kdt.pojavlaunch.MinecraftGLSurface> sMinecraftGLSurface;
+
+    public static void setMinecraftGLSurface(net.kdt.pojavlaunch.MinecraftGLSurface surface) {
+        sMinecraftGLSurface = new java.lang.ref.WeakReference<>(surface);
+    }
+
+    public static net.kdt.pojavlaunch.MinecraftGLSurface getMinecraftGLSurface() {
+        return sMinecraftGLSurface != null ? sMinecraftGLSurface.get() : null;
+    }
+
+    public static void glfwSetCursor(long window, long cursor) {
+        net.kdt.pojavlaunch.Tools.MAIN_HANDLER.post(() -> {
+            net.kdt.pojavlaunch.customcontrols.mouse.CustomCursorRenderer.updateCursorFrame();
+        });
+    }
+
     public static final Choreographer sChoreographer = Choreographer.getInstance();
     private static boolean isGrabbing = false;
     private static final ArrayList<GrabListener> grabListeners = new ArrayList<>();
