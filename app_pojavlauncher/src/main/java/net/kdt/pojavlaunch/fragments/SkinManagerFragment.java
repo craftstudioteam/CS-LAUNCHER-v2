@@ -27,6 +27,7 @@ import androidx.fragment.app.Fragment;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
+import net.kdt.pojavlaunch.LauncherActivity;
 import net.kdt.pojavlaunch.value.MinecraftAccount;
 import net.kdt.pojavlaunch.yggdrasil.SkinAnalyzer;
 import net.kdt.pojavlaunch.yggdrasil.SkinModelType;
