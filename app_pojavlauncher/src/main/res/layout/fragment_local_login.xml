@@ -28,7 +28,7 @@
                 android:id="@+id/live_head_preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_skin_face"
+                android:src="@drawable/ic_steve"
                 android:scaleType="fitCenter" />
         </FrameLayout>
 
