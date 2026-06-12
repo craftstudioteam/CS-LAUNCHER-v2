@@ -144,6 +144,47 @@
             </LinearLayout>
         </FrameLayout>
 
+        <!-- Client Features Toggle Button (Minimalist Pill) -->
+        <Button
+            android:id="@+id/btn_client_features"
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginHorizontal="@dimen/_4sdp"
+            android:text="✦"
+            android:textSize="18sp"
+            android:textColor="#B39DDB"
+            android:background="@drawable/bg_client_features_btn"
+            android:padding="0dp"
+            android:layout_gravity="center_vertical" />
+
+        <!-- Nav Skin -->
+        <FrameLayout
+            android:id="@+id/nav_skin"
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/nav_skin_icon"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:src="@drawable/ic_steve"
+                    android:contentDescription="Manage Skin" />
+                <View
+                    android:id="@+id/nav_skin_indicator"
+                    android:layout_width="14dp"
+                    android:layout_height="2dp"
+                    android:background="@color/neon_green"
+                    android:visibility="invisible" />
+            </LinearLayout>
+        </FrameLayout>
+
         <!-- Spacer -->
         <View
             android:layout_width="0dp"
@@ -177,18 +218,6 @@
                     android:visibility="visible" />
             </LinearLayout>
         </FrameLayout>
-
-        <!-- Client Features Toggle Button (Minimalist Pill) -->
-        <Button
-            android:id="@+id/btn_client_features"
-            android:layout_width="@dimen/_38sdp"
-            android:layout_height="@dimen/_38sdp"
-            android:layout_marginHorizontal="@dimen/_4sdp"
-            android:text="✦"
-            android:textSize="18sp"
-            android:textColor="#B39DDB"
-            android:background="@drawable/bg_client_features_btn"
-            android:padding="0dp" />
 
         <!-- Account Spinner -->
         <com.kdt.mcgui.mcAccountSpinner

@@ -6,12 +6,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.BufferedOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.Signature;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.json.JSONArray;
@@ -29,9 +32,10 @@ public class OfflineYggdrasilServer {
     private final Map<String, byte[]> textureStore = new ConcurrentHashMap<>();
 
     private KeyPair keyPair;
-    // private HttpServer server;
+    private ServerSocket serverSocket;
+    private Thread serverThread;
     private int port = 0;
-    private boolean running = false;
+    private volatile boolean running = false;
 
     public OfflineYggdrasilServer() {
         this("HyperLauncher", "drasl", "1.4");
@@ -66,23 +70,146 @@ public class OfflineYggdrasilServer {
 
     public synchronized int start() {
         if (running) return port;
-        // HTTP Server disabled due to Android incompatibility
-        Log.w(TAG, "OfflineYggdrasilServer is disabled on Android. Returning port 0.");
-        running = true;
-        return 0;
+        try {
+            serverSocket = new ServerSocket(0); // Binds to any free port
+            port = serverSocket.getLocalPort();
+            running = true;
+            serverThread = new Thread(this::runServerLoop, "OfflineYggdrasilServerThread");
+            serverThread.start();
+            Log.i(TAG, "OfflineYggdrasilServer started on port " + port);
+            return port;
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to start local Yggdrasil ServerSocket", e);
+            return 0;
+        }
     }
 
     public synchronized void stop() {
         if (running) {
-            // server.stop(0);
-            port = 0;
             running = false;
+            try {
+                if (serverSocket != null) {
+                    serverSocket.close();
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to close ServerSocket", e);
+            }
+            if (serverThread != null) {
+                serverThread.interrupt();
+            }
+            port = 0;
             Log.i(TAG, "OfflineYggdrasilServer stopped");
         }
     }
 
     public int getPort() {
         return port;
+    }
+
+    private void runServerLoop() {
+        while (running) {
+            try {
+                Socket socket = serverSocket.accept();
+                new Thread(() -> handleConnection(socket)).start();
+            } catch (IOException e) {
+                if (!running) {
+                    break;
+                }
+                Log.e(TAG, "Error accepting connection", e);
+            }
+        }
+    }
+
+    private void handleConnection(Socket socket) {
+        try (InputStream input = socket.getInputStream();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
+             OutputStream output = socket.getOutputStream();
+             BufferedOutputStream bos = new BufferedOutputStream(output)) {
+
+            String line = reader.readLine();
+            if (line == null || line.isEmpty()) return;
+
+            String[] parts = line.split(" ");
+            if (parts.length < 2) return;
+
+            String method = parts[0];
+            String pathAndQuery = parts[1];
+            String path = pathAndQuery;
+            int qIdx = pathAndQuery.indexOf('?');
+            if (qIdx != -1) {
+                path = pathAndQuery.substring(0, qIdx);
+            }
+
+            // Consume rest of headers
+            String headerLine;
+            while ((headerLine = reader.readLine()) != null && !headerLine.isEmpty()) {
+                // Ignore headers
+            }
+
+            byte[] body = null;
+            String contentType = "text/plain; charset=utf-8";
+            int statusCode = 404;
+            String statusText = "Not Found";
+
+            if (path.equals("/")) {
+                body = buildRoot().getBytes(StandardCharsets.UTF_8);
+                contentType = "application/json; charset=utf-8";
+                statusCode = 200;
+                statusText = "OK";
+            } else if (path.startsWith("/sessionserver/session/minecraft/profile/")) {
+                String uuid = path.substring("/sessionserver/session/minecraft/profile/".length());
+                uuid = uuid.replace("-", "").toLowerCase();
+                Character character = byUuid.get(uuid);
+                if (character != null) {
+                    body = character.toProfileResponse(localBase(), this::signRsa).getBytes(StandardCharsets.UTF_8);
+                    contentType = "application/json; charset=utf-8";
+                    statusCode = 200;
+                    statusText = "OK";
+                } else {
+                    statusCode = 204;
+                    statusText = "No Content";
+                }
+            } else if (path.startsWith("/textures/")) {
+                String hash = path.substring("/textures/".length());
+                byte[] texture = textureStore.get(hash);
+                if (texture != null) {
+                    body = texture;
+                    contentType = "image/png";
+                    statusCode = 200;
+                    statusText = "OK";
+                } else {
+                    statusCode = 404;
+                    statusText = "Not Found";
+                }
+            }
+
+            // Write HTTP headers
+            String statusLine = "HTTP/1.1 " + statusCode + " " + statusText + "\r\n";
+            bos.write(statusLine.getBytes(StandardCharsets.UTF_8));
+            bos.write(("Content-Type: " + contentType + "\r\n").getBytes(StandardCharsets.UTF_8));
+            bos.write("Connection: close\r\n".getBytes(StandardCharsets.UTF_8));
+            if (body != null) {
+                bos.write(("Content-Length: " + body.length + "\r\n").getBytes(StandardCharsets.UTF_8));
+            } else {
+                bos.write("Content-Length: 0\r\n".getBytes(StandardCharsets.UTF_8));
+            }
+            bos.write("\r\n".getBytes(StandardCharsets.UTF_8));
+
+            // Write body
+            if (body != null) {
+                bos.write(body);
+            }
+            bos.flush();
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error handling socket request", e);
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
     }
 
     private String signRsa(String data) {

@@ -282,6 +282,30 @@ public class MainMenuFragment extends Fragment {
             mCursorCustomButton.setOnClickListener(v ->
                 Tools.swapFragment(requireActivity(), CursorCustomizationFragment.class, CursorCustomizationFragment.TAG, null));
 
+        // Client Features Toggle Button
+        Button btnClientFeatures = view.findViewById(R.id.btn_client_features);
+        if (btnClientFeatures != null && getActivity() instanceof net.kdt.pojavlaunch.LauncherActivity) {
+            final net.kdt.pojavlaunch.ClientFeaturesManager cfm = ((net.kdt.pojavlaunch.LauncherActivity) requireActivity()).getClientFeaturesManager();
+            updateClientFeaturesMenuButton(btnClientFeatures, cfm.isEnabled());
+            btnClientFeatures.setOnClickListener(v -> {
+                boolean nextState = !cfm.isEnabled();
+                if (nextState) {
+                    cfm.showVersionSelector(() -> updateClientFeaturesMenuButton(btnClientFeatures, true));
+                } else {
+                    cfm.setEnabled(false);
+                    updateClientFeaturesMenuButton(btnClientFeatures, false);
+                }
+            });
+        }
+
+        // Manage Skin Button
+        Button btnManageSkin = view.findViewById(R.id.btn_manage_skin);
+        if (btnManageSkin != null) {
+            btnManageSkin.setOnClickListener(v -> {
+                openPane(SkinManagerFragment.class, SkinManagerFragment.TAG, null);
+            });
+        }
+
         // Mod Store
         if (mModStoreButton != null)
             mModStoreButton.setOnClickListener(v ->
@@ -450,6 +474,14 @@ public class MainMenuFragment extends Fragment {
                 }
                 return false; // Let the standard click listener handle the click event
             });
+        }
+    }
+
+    private void updateClientFeaturesMenuButton(Button btn, boolean enabled) {
+        if (enabled) {
+            btn.setText("✦ Client Features (Enabled)");
+        } else {
+            btn.setText("✦ Enable Client Features");
         }
     }
 }
