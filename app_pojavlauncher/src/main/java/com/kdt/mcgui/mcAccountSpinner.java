@@ -357,14 +357,16 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
                     view.setCompoundDrawables(mHeadDrawable, null, null, null);
                 }else{
                     Bitmap steve = BitmapFactory.decodeResource(getResources(), R.drawable.ic_steve);
-                    if (steve != null) {
-                        Bitmap roundedSteve = MinecraftAccount.roundBitmap(steve, 64, 10f);
+                    if(steve != null) {
+                        Bitmap extractedSteve = MinecraftAccount.extractSkinHead(steve);
+                        if (extractedSteve != null) {
+                            Bitmap roundedSteve = MinecraftAccount.roundBitmap(extractedSteve, 64, 10f);
+                            mHeadDrawable = new BitmapDrawable(getResources(), roundedSteve);
+                            extractedSteve.recycle();
+                        }
                         steve.recycle();
-                        mHeadDrawable = new BitmapDrawable(getResources(), roundedSteve);
-                        view.setCompoundDrawables(mHeadDrawable, null, null, null);
-                    } else {
-                        view.setCompoundDrawables(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_steve, null), null, null, null);
                     }
+                    view.setCompoundDrawables(mHeadDrawable, null, null, null);
                 }
                 view.postProcessDrawables();
             }
@@ -407,9 +409,13 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
                     } else {
                         Bitmap steve = BitmapFactory.decodeResource(parent.getResources(), R.drawable.ic_steve);
                         if (steve != null) {
-                            Bitmap roundedSteve = MinecraftAccount.roundBitmap(steve, 64, 10f);
+                            Bitmap extractedSteve = MinecraftAccount.extractSkinHead(steve);
+                            if (extractedSteve != null) {
+                                Bitmap roundedSteve = MinecraftAccount.roundBitmap(extractedSteve, 64, 10f);
+                                accountHead = new BitmapDrawable(parent.getResources(), roundedSteve);
+                                extractedSteve.recycle();
+                            }
                             steve.recycle();
-                            accountHead = new BitmapDrawable(parent.getResources(), roundedSteve);
                         } else {
                             accountHead = ResourcesCompat.getDrawable(parent.getResources(), R.drawable.ic_steve, null);
                         }

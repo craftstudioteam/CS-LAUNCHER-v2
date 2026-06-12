@@ -409,20 +409,19 @@ public class SkinManagerFragment extends Fragment {
         private final float[] mViewMatrix = new float[16];
         private final float[] mModelMatrix = new float[16];
 
-        private Cuboid mHead;
-        private Cuboid mTorso;
-        private Cuboid mSteveLeftArm;
-        private Cuboid mSteveRightArm;
-        private Cuboid mAlexLeftArm;
-        private Cuboid mAlexRightArm;
-        private Cuboid mLeftLeg;
-        private Cuboid mRightLeg;
+        private Cuboid mHead, mHeadLayer;
+        private Cuboid mTorso, mTorsoLayer;
+        private Cuboid mRightArm, mRightArmLayer;
+        private Cuboid mLeftArm, mLeftArmLayer;
+        private Cuboid mRightLeg, mRightLegLayer;
+        private Cuboid mLeftLeg, mLeftLegLayer;
         private Cuboid mCape;
 
         private int mLastTexW = 0;
         private int mLastTexH = 0;
         private int mLastCapeW = 0;
         private int mLastCapeH = 0;
+        private boolean mLastSlim = false;
 
         private boolean mSkinTextureNeedsUpdate = false;
         private boolean mCapeTextureNeedsUpdate = false;
@@ -465,28 +464,21 @@ public class SkinManagerFragment extends Fragment {
         public void onPause() {
             mSkinTextureId = 0;
             mCapeTextureId = 0;
-            mLastTexW = 0;
-            mLastTexH = 0;
-            mLastCapeW = 0;
-            mLastCapeH = 0;
-            mHead = null;
-            mTorso = null;
-            mSteveLeftArm = null;
-            mSteveRightArm = null;
-            mAlexLeftArm = null;
-            mAlexRightArm = null;
-            mRightLeg = null;
-            mLeftLeg = null;
-            mCape = null;
+            mLastTexW = 0; mLastTexH = 0;
+            mLastCapeW = 0; mLastCapeH = 0;
+            mHead = mHeadLayer = mTorso = mTorsoLayer = null;
+            mRightArm = mRightArmLayer = mLeftArm = mLeftArmLayer = null;
+            mRightLeg = mRightLegLayer = mLeftLeg = mLeftLegLayer = mCape = null;
         }
 
         @Override
         public void onSurfaceCreated(javax.microedition.khronos.opengles.GL10 gl, javax.microedition.khronos.egl.EGLConfig config) {
-            GLES20.glClearColor(0.05f, 0.06f, 0.08f, 1.0f); // Dark background matches premium theme
+            GLES20.glClearColor(0.05f, 0.06f, 0.08f, 1.0f);
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
             GLES20.glDepthFunc(GLES20.GL_LEQUAL);
+            GLES20.glEnable(GLES20.GL_CULL_FACE);
+            GLES20.glCullFace(GLES20.GL_BACK);
 
-            // Shader compiles
             int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
             int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
             mProgram = GLES20.glCreateProgram();
@@ -504,7 +496,6 @@ public class SkinManagerFragment extends Fragment {
         public void onSurfaceChanged(javax.microedition.khronos.opengles.GL10 gl, int width, int height) {
             GLES20.glViewport(0, 0, width, height);
             float ratio = (float) width / height;
-            // Use orthographic projection to match Minecraft's inventory preview
             Matrix.orthoM(mProjectionMatrix, 0, -ratio * 18f, ratio * 18f, -19f, 19f, 0.1f, 100.0f);
         }
 
@@ -512,98 +503,84 @@ public class SkinManagerFragment extends Fragment {
         public void onDrawFrame(javax.microedition.khronos.opengles.GL10 gl) {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-            // Upload textures on GL thread
             synchronized (this) {
                 if (mSkinTextureNeedsUpdate) {
-                    if (mSkinTextureId != 0) {
-                        GLES20.glDeleteTextures(1, new int[]{mSkinTextureId}, 0);
-                        mSkinTextureId = 0;
-                    }
-                    if (mPendingSkinBitmap != null) {
-                        mSkinTextureId = loadGLTexture(mPendingSkinBitmap);
-                    }
+                    if (mSkinTextureId != 0) GLES20.glDeleteTextures(1, new int[]{mSkinTextureId}, 0);
+                    if (mPendingSkinBitmap != null) mSkinTextureId = loadGLTexture(mPendingSkinBitmap);
                     mSkinTextureNeedsUpdate = false;
                 }
                 if (mCapeTextureNeedsUpdate) {
-                    if (mCapeTextureId != 0) {
-                        GLES20.glDeleteTextures(1, new int[]{mCapeTextureId}, 0);
-                        mCapeTextureId = 0;
-                    }
-                    if (mPendingCapeBitmap != null) {
-                        mCapeTextureId = loadGLTexture(mPendingCapeBitmap);
-                    }
+                    if (mCapeTextureId != 0) GLES20.glDeleteTextures(1, new int[]{mCapeTextureId}, 0);
+                    if (mPendingCapeBitmap != null) mCapeTextureId = loadGLTexture(mPendingCapeBitmap);
                     mCapeTextureNeedsUpdate = false;
                 }
             }
 
             if (mSkinTextureId == 0) return;
 
-            // Rebuild cuboids on texture size changes
             if (mPendingSkinBitmap != null) {
-                checkRebuildCuboids(mPendingSkinBitmap.getWidth(), mPendingSkinBitmap.getHeight());
+                checkRebuildCuboids(mPendingSkinBitmap.getWidth(), mPendingSkinBitmap.getHeight(), mIsSlim);
             }
             if (mCapeTextureId != 0 && mPendingCapeBitmap != null) {
                 if (mCape == null || mLastCapeW != mPendingCapeBitmap.getWidth() || mLastCapeH != mPendingCapeBitmap.getHeight()) {
                     mLastCapeW = mPendingCapeBitmap.getWidth();
                     mLastCapeH = mPendingCapeBitmap.getHeight();
-                    rebuildCape(mLastCapeW, mLastCapeH);
+                    mCape = new Cuboid(0, 8, 2, -5, 5, -16, 0, 0, 1, 0, 0, 10, 16, 1, mLastCapeW, mLastCapeH, false, 0f);
                 }
             } else {
                 mCape = null;
             }
 
-            // Set camera (looking at center of player: Y = -4, moved back to Z = 40 for full body view)
-            Matrix.setLookAtM(mViewMatrix, 0, 0f, -4f, 40f, 0f, -4f, 0f, 0f, 1.0f, 0f);
-
-            // Rotations (pivoted around character center: Y = -4)
+            Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, 40f, 0f, 0f, 0f, 0f, 1.0f, 0f);
             Matrix.setIdentityM(mModelMatrix, 0);
-            Matrix.translateM(mModelMatrix, 0, 0f, -4f, 0f);
             Matrix.rotateM(mModelMatrix, 0, mAngleY, 1f, 0f, 0f);
             Matrix.rotateM(mModelMatrix, 0, mAngleX, 0f, 1f, 0f);
-            Matrix.translateM(mModelMatrix, 0, 0f, 4f, 0f);
-
-            float[] mvMatrix = new float[16];
-            Matrix.multiplyMM(mvMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
-            Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mvMatrix, 0);
 
             GLES20.glUseProgram(mProgram);
-            GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
-
-            // Draw model
-            draw(mHead, mSkinTextureId);
-            draw(mTorso, mSkinTextureId);
-            draw(mRightLeg, mSkinTextureId);
-            draw(mLeftLeg, mSkinTextureId);
-
-            if (mIsSlim) {
-                draw(mAlexRightArm, mSkinTextureId);
-                draw(mAlexLeftArm, mSkinTextureId);
-            } else {
-                draw(mSteveRightArm, mSkinTextureId);
-                draw(mSteveLeftArm, mSkinTextureId);
-            }
+            
+            // Draw Passes
+            GLES20.glDisable(GLES20.GL_BLEND);
+            drawPart(mHead, mModelMatrix, mSkinTextureId);
+            drawPart(mTorso, mModelMatrix, mSkinTextureId);
+            drawPart(mRightArm, mModelMatrix, mSkinTextureId);
+            drawPart(mLeftArm, mModelMatrix, mSkinTextureId);
+            drawPart(mRightLeg, mModelMatrix, mSkinTextureId);
+            drawPart(mLeftLeg, mModelMatrix, mSkinTextureId);
 
             // Draw Cape
             if (mCape != null && mCapeTextureId != 0) {
-                float[] capeModelMatrix = new float[16];
-                System.arraycopy(mModelMatrix, 0, capeModelMatrix, 0, 16);
-                // Translate pivot (shoulder at Y=4, Z=2) to origin, rotate, translate back
-                Matrix.translateM(capeModelMatrix, 0, 0f, 4f, 2f);
-                Matrix.rotateM(capeModelMatrix, 0, 15.0f, 1f, 0f, 0f);
-                Matrix.translateM(capeModelMatrix, 0, 0f, -4f, -2f);
-
-                float[] capeMvMatrix = new float[16];
-                float[] capeMvpMatrix = new float[16];
-                Matrix.multiplyMM(capeMvMatrix, 0, mViewMatrix, 0, capeModelMatrix, 0);
-                Matrix.multiplyMM(capeMvpMatrix, 0, mProjectionMatrix, 0, capeMvMatrix, 0);
-
-                GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, capeMvpMatrix, 0);
-                draw(mCape, mCapeTextureId);
+                float[] capeMatrix = new float[16];
+                System.arraycopy(mModelMatrix, 0, capeMatrix, 0, 16);
+                Matrix.translateM(capeMatrix, 0, 0f, 8f, 2f);
+                Matrix.rotateM(capeMatrix, 0, 15f, 1f, 0f, 0f);
+                Matrix.translateM(capeMatrix, 0, 0f, -8f, -2f);
+                drawPart(mCape, capeMatrix, mCapeTextureId);
             }
+
+            // Draw Outer Layers (Alpha Blending)
+            GLES20.glEnable(GLES20.GL_BLEND);
+            GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+            drawPart(mHeadLayer, mModelMatrix, mSkinTextureId);
+            drawPart(mTorsoLayer, mModelMatrix, mSkinTextureId);
+            drawPart(mRightArmLayer, mModelMatrix, mSkinTextureId);
+            drawPart(mLeftArmLayer, mModelMatrix, mSkinTextureId);
+            drawPart(mRightLegLayer, mModelMatrix, mSkinTextureId);
+            drawPart(mLeftLegLayer, mModelMatrix, mSkinTextureId);
         }
 
-        private void draw(Cuboid cuboid, int textureId) {
+        private void drawPart(Cuboid cuboid, float[] baseMatrix, int textureId) {
             if (cuboid == null || textureId == 0) return;
+            
+            float[] finalMvp = new float[16];
+            float[] partModel = new float[16];
+            System.arraycopy(baseMatrix, 0, partModel, 0, 16);
+            
+            Matrix.translateM(partModel, 0, cuboid.pX, cuboid.pY, cuboid.pZ);
+            // Apply walking/swinging angles here if animated later
+            
+            float[] mv = new float[16];
+            Matrix.multiplyMM(mv, 0, mViewMatrix, 0, partModel, 0);
+            Matrix.multiplyMM(finalMvp, 0, mProjectionMatrix, 0, mv, 0);
 
             GLES20.glEnableVertexAttribArray(mPositionHandle);
             GLES20.glVertexAttribPointer(mPositionHandle, 3, GLES20.GL_FLOAT, false, 0, cuboid.vertexBuffer);
@@ -615,6 +592,7 @@ public class SkinManagerFragment extends Fragment {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
             GLES20.glUniform1i(mTextureUniformHandle, 0);
 
+            GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, finalMvp, 0);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, cuboid.vertexCount);
 
             GLES20.glDisableVertexAttribArray(mPositionHandle);
@@ -632,155 +610,100 @@ public class SkinManagerFragment extends Fragment {
             int[] textureIds = new int[1];
             GLES20.glGenTextures(1, textureIds, 0);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[0]);
-
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
             return textureIds[0];
         }
 
-        private void checkRebuildCuboids(int texW, int texH) {
-            if (texW == mLastTexW && texH == mLastTexH && mHead != null) return;
-            mLastTexW = texW;
-            mLastTexH = texH;
-
-            // Head: size 8x8x8. Bounds: X[-4, 4], Y[4, 12], Z[-4, 4]
-            mHead = new Cuboid(-4, 4, 4, 12, -4, 4, 0, 0, 8, 8, 8, texW, texH, false);
-
-            // Torso: size 8x12x4. Bounds: X[-4, 4], Y[-8, 4], Z[-2, 2]
-            mTorso = new Cuboid(-4, 4, -8, 4, -2, 2, 16, 16, 8, 12, 4, texW, texH, false);
-
-            // Steve Right Arm: size 4x12x4. Bounds: X[4, 8], Y[-8, 4], Z[-2, 2]
-            mSteveRightArm = new Cuboid(4, 8, -8, 4, -2, 2, 40, 16, 4, 12, 4, texW, texH, false);
-
-            // Steve Left Arm: mirrored from Right Arm if 64x32
-            if (texH >= 64) {
-                mSteveLeftArm = new Cuboid(-8, -4, -8, 4, -2, 2, 32, 48, 4, 12, 4, texW, texH, false);
+        private void checkRebuildCuboids(int texW, int texH, boolean slim) {
+            if (texW == mLastTexW && texH == mLastTexH && slim == mLastSlim && mHead != null) return;
+            mLastTexW = texW; mLastTexH = texH; mLastSlim = slim;
+            boolean is64 = (texH >= 64);
+            
+            mHead = new Cuboid(0, 8, 0, -4, 4, 0, 8, -4, 4, 0, 0, 8, 8, 8, texW, texH, false, 0f);
+            mHeadLayer = new Cuboid(0, 8, 0, -4, 4, 0, 8, -4, 4, 32, 0, 8, 8, 8, texW, texH, false, 0.5f);
+            
+            mTorso = new Cuboid(0, 8, 0, -4, 4, -12, 0, -2, 2, 16, 16, 8, 12, 4, texW, texH, false, 0f);
+            mTorsoLayer = is64 ? new Cuboid(0, 8, 0, -4, 4, -12, 0, -2, 2, 16, 32, 8, 12, 4, texW, texH, false, 0.25f) : null;
+            
+            float armW = slim ? 3 : 4;
+            float rArmPx = slim ? -5.5f : -6f;
+            float lArmPx = slim ? 5.5f : 6f;
+            
+            mRightArm = new Cuboid(rArmPx, 8, 0, -armW/2, armW/2, -12, 0, -2, 2, 40, 16, (int)armW, 12, 4, texW, texH, false, 0f);
+            mRightArmLayer = is64 ? new Cuboid(rArmPx, 8, 0, -armW/2, armW/2, -12, 0, -2, 2, 40, 32, (int)armW, 12, 4, texW, texH, false, 0.25f) : null;
+            
+            if (is64) {
+                mLeftArm = new Cuboid(lArmPx, 8, 0, -armW/2, armW/2, -12, 0, -2, 2, 32, 48, (int)armW, 12, 4, texW, texH, false, 0f);
+                mLeftArmLayer = new Cuboid(lArmPx, 8, 0, -armW/2, armW/2, -12, 0, -2, 2, 48, 48, (int)armW, 12, 4, texW, texH, false, 0.25f);
+                
+                mRightLeg = new Cuboid(-2, -4, 0, -2, 2, -12, 0, -2, 2, 0, 16, 4, 12, 4, texW, texH, false, 0f);
+                mRightLegLayer = new Cuboid(-2, -4, 0, -2, 2, -12, 0, -2, 2, 0, 32, 4, 12, 4, texW, texH, false, 0.25f);
+                
+                mLeftLeg = new Cuboid(2, -4, 0, -2, 2, -12, 0, -2, 2, 16, 48, 4, 12, 4, texW, texH, false, 0f);
+                mLeftLegLayer = new Cuboid(2, -4, 0, -2, 2, -12, 0, -2, 2, 0, 48, 4, 12, 4, texW, texH, false, 0.25f);
             } else {
-                mSteveLeftArm = new Cuboid(-8, -4, -8, 4, -2, 2, 40, 16, 4, 12, 4, texW, texH, true);
+                mLeftArm = new Cuboid(lArmPx, 8, 0, -armW/2, armW/2, -12, 0, -2, 2, 40, 16, (int)armW, 12, 4, texW, texH, true, 0f);
+                mRightLeg = new Cuboid(-2, -4, 0, -2, 2, -12, 0, -2, 2, 0, 16, 4, 12, 4, texW, texH, false, 0f);
+                mLeftLeg = new Cuboid(2, -4, 0, -2, 2, -12, 0, -2, 2, 0, 16, 4, 12, 4, texW, texH, true, 0f);
+                mLeftArmLayer = mRightLegLayer = mLeftLegLayer = null;
             }
-
-            // Alex Right Arm: size 3x12x4. Bounds: X[4, 7], Y[-8, 4], Z[-2, 2]
-            mAlexRightArm = new Cuboid(4, 7, -8, 4, -2, 2, 40, 16, 3, 12, 4, texW, texH, false);
-
-            // Alex Left Arm: mirrored from Right Arm if 64x32
-            if (texH >= 64) {
-                mAlexLeftArm = new Cuboid(-7, -4, -8, 4, -2, 2, 32, 48, 3, 12, 4, texW, texH, false);
-            } else {
-                mAlexLeftArm = new Cuboid(-7, -4, -8, 4, -2, 2, 40, 16, 3, 12, 4, texW, texH, true);
-            }
-
-            // Right Leg: size 4x12x4. Bounds: X[0, 4], Y[-20, -8], Z[-2, 2]
-            mRightLeg = new Cuboid(0, 4, -20, -8, -2, 2, 0, 16, 4, 12, 4, texW, texH, false);
-
-            // Left Leg: mirrored from Right Leg if 64x32
-            if (texH >= 64) {
-                mLeftLeg = new Cuboid(-4, 0, -20, -8, -2, 2, 16, 48, 4, 12, 4, texW, texH, false);
-            } else {
-                mLeftLeg = new Cuboid(-4, 0, -20, -8, -2, 2, 0, 16, 4, 12, 4, texW, texH, true);
-            }
-        }
-
-        private void rebuildCape(int capeW, int capeH) {
-            // Cape: size 10x16x1. Bounds: X[-5, 5], Y[-12, 4], Z[2f, 3f]
-            mCape = new Cuboid(-5, 5, -12, 4, 2f, 3f, 0, 0, 10, 16, 1, capeW, capeH, false);
         }
 
         private static class Cuboid {
             public FloatBuffer vertexBuffer;
             public FloatBuffer uvBuffer;
-            public int vertexCount;
+            public int vertexCount = 36;
+            public float pX, pY, pZ;
 
-            public Cuboid(float x1, float x2, float y1, float y2, float z1, float z2,
-                          int uStart, int vStart, int dx, int dy, int dz, int texW, int texH, boolean mirror) {
+            public Cuboid(float pX, float pY, float pZ, float x1, float x2, float y1, float y2, float z1, float z2,
+                          int uStart, int vStart, int dx, int dy, int dz, int texW, int texH, boolean mirror, float expand) {
+                this.pX = pX; this.pY = pY; this.pZ = pZ;
+                x1 -= expand; x2 += expand;
+                y1 -= expand; y2 += expand;
+                z1 -= expand; z2 += expand;
                 
-                float[] vertices = new float[36 * 3];
-                float[] uvs = new float[36 * 2];
+                float[] v = new float[36 * 3];
+                float[] u = new float[36 * 2];
 
                 // Front (Z = z2)
-                addFace(vertices, uvs, 0, 0,
-                        x1, y2, z2, x1, y1, z2, x2, y1, z2, x2, y2, z2,
-                        uStart + dz, vStart + dz, dx, dy, texW, texH, mirror);
-
-                // Back (Z = z1)
-                addFace(vertices, uvs, 18, 12,
-                        x2, y2, z1, x2, y1, z1, x1, y1, z1, x1, y2, z1,
-                        uStart + dz + dx + dz, vStart + dz, dx, dy, texW, texH, mirror);
-
-                // Left (X = x1) (Player's Right side)
-                addFace(vertices, uvs, 36, 24,
-                        x1, y2, z1, x1, y1, z1, x1, y1, z2, x1, y2, z2,
-                        uStart, vStart + dz, dz, dy, texW, texH, mirror);
-
-                // Right (X = x2) (Player's Left side)
-                addFace(vertices, uvs, 54, 36,
-                        x2, y2, z2, x2, y1, z2, x2, y1, z1, x2, y2, z1,
-                        uStart + dz + dx, vStart + dz, dz, dy, texW, texH, mirror);
-
+                addFace(v, u, 0, 0, x1, y2, z2, x1, y1, z2, x2, y1, z2, x2, y2, z2, uStart+dz, vStart+dz, dx, dy, texW, texH, mirror);
+                // Back (Z = z1) (Left and Right x-coords swapped to face outward correctly)
+                addFace(v, u, 18, 12, x2, y2, z1, x2, y1, z1, x1, y1, z1, x1, y2, z1, uStart+dz+dx+dz, vStart+dz, dx, dy, texW, texH, mirror);
+                // Left side (X = x1)
+                addFace(v, u, 36, 24, x1, y2, z1, x1, y1, z1, x1, y1, z2, x1, y2, z2, uStart, vStart+dz, dz, dy, texW, texH, mirror);
+                // Right side (X = x2)
+                addFace(v, u, 54, 36, x2, y2, z2, x2, y1, z2, x2, y1, z1, x2, y2, z1, uStart+dz+dx, vStart+dz, dz, dy, texW, texH, mirror);
                 // Top (Y = y2)
-                addFace(vertices, uvs, 72, 48,
-                        x1, y2, z1, x1, y2, z2, x2, y2, z2, x2, y2, z1,
-                        uStart + dz, vStart, dx, dz, texW, texH, mirror);
-
+                addFace(v, u, 72, 48, x1, y2, z1, x1, y2, z2, x2, y2, z2, x2, y2, z1, uStart+dz, vStart, dx, dz, texW, texH, mirror);
                 // Bottom (Y = y1)
-                addFace(vertices, uvs, 90, 60,
-                        x1, y1, z2, x1, y1, z1, x2, y1, z1, x2, y1, z2,
-                        uStart + dz + dx, vStart, dx, dz, texW, texH, mirror);
+                addFace(v, u, 90, 60, x1, y1, z2, x1, y1, z1, x2, y1, z1, x2, y1, z2, uStart+dz+dx, vStart, dx, dz, texW, texH, mirror);
 
-                vertexCount = 36;
+                ByteBuffer bb = ByteBuffer.allocateDirect(v.length * 4);
+                bb.order(ByteOrder.nativeOrder());
+                vertexBuffer = bb.asFloatBuffer();
+                vertexBuffer.put(v).position(0);
 
-                ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
-                byteBuf.order(ByteOrder.nativeOrder());
-                vertexBuffer = byteBuf.asFloatBuffer();
-                vertexBuffer.put(vertices);
-                vertexBuffer.position(0);
-
-                ByteBuffer uvBuf = ByteBuffer.allocateDirect(uvs.length * 4);
-                uvBuf.order(ByteOrder.nativeOrder());
-                uvBuffer = uvBuf.asFloatBuffer();
-                uvBuffer.put(uvs);
-                uvBuffer.position(0);
+                ByteBuffer ub = ByteBuffer.allocateDirect(u.length * 4);
+                ub.order(ByteOrder.nativeOrder());
+                uvBuffer = ub.asFloatBuffer();
+                uvBuffer.put(u).position(0);
             }
 
-            private void addFace(float[] vertices, float[] uvs, int vIdx, int uIdx,
-                                 float xA, float yA, float zA,
-                                 float xB, float yB, float zB,
-                                 float xC, float yC, float zC,
-                                 float xD, float yD, float zD,
-                                 int uStart, int vStart, int dx, int dy, int texW, int texH, boolean mirror) {
-                
-                // Triangle 1
-                vertices[vIdx] = xA; vertices[vIdx+1] = yA; vertices[vIdx+2] = zA;
-                vertices[vIdx+3] = xB; vertices[vIdx+4] = yB; vertices[vIdx+5] = zB;
-                vertices[vIdx+6] = xC; vertices[vIdx+7] = yC; vertices[vIdx+8] = zC;
-                
-                // Triangle 2
-                vertices[vIdx+9] = xA; vertices[vIdx+10] = yA; vertices[vIdx+11] = zA;
-                vertices[vIdx+12] = xC; vertices[vIdx+13] = yC; vertices[vIdx+14] = zC;
-                vertices[vIdx+15] = xD; vertices[vIdx+16] = yD; vertices[vIdx+17] = zD;
+            private void addFace(float[] v, float[] u, int vi, int ui,
+                                 float xA, float yA, float zA, float xB, float yB, float zB,
+                                 float xC, float yC, float zC, float xD, float yD, float zD,
+                                 int us, int vs, int dx, int dy, int tw, int th, boolean mirror) {
+                v[vi]=xA; v[vi+1]=yA; v[vi+2]=zA; v[vi+3]=xB; v[vi+4]=yB; v[vi+5]=zB; v[vi+6]=xC; v[vi+7]=yC; v[vi+8]=zC;
+                v[vi+9]=xA; v[vi+10]=yA; v[vi+11]=zA; v[vi+12]=xC; v[vi+13]=yC; v[vi+14]=zC; v[vi+15]=xD; v[vi+16]=yD; v[vi+17]=zD;
 
-                float u1 = (float) uStart / texW;
-                float v1 = (float) vStart / texH;
-                float u2 = (float) (uStart + dx) / texW;
-                float v2 = (float) (vStart + dy) / texH;
-
-                if (mirror) {
-                    float temp = u1;
-                    u1 = u2;
-                    u2 = temp;
-                }
-
-                // UV assignments
-                uvs[uIdx] = u1; uvs[uIdx+1] = v1;
-                uvs[uIdx+2] = u1; uvs[uIdx+3] = v2;
-                uvs[uIdx+4] = u2; uvs[uIdx+5] = v2;
-
-                uvs[uIdx+6] = u1; uvs[uIdx+7] = v1;
-                uvs[uIdx+8] = u2; uvs[uIdx+9] = v2;
-                uvs[uIdx+10] = u2; uvs[uIdx+11] = v1;
+                float u1 = (float)us/tw, v1 = (float)vs/th, u2 = (float)(us+dx)/tw, v2 = (float)(vs+dy)/th;
+                if (mirror) { float t=u1; u1=u2; u2=t; }
+                u[ui]=u1; u[ui+1]=v1; u[ui+2]=u1; u[ui+3]=v2; u[ui+4]=u2; u[ui+5]=v2;
+                u[ui+6]=u1; u[ui+7]=v1; u[ui+8]=u2; u[ui+9]=v2; u[ui+10]=u2; u[ui+11]=v1;
             }
         }
     }

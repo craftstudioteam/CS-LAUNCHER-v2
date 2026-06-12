@@ -330,8 +330,24 @@ public class ModInstallFragment extends Fragment {
             String profileVid = (p.lastVersionId != null) ? p.lastVersionId.toLowerCase() : "";
             
             if ("mod".equals(mContentType)) {
-                boolean hasLoader = profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge") || profileVid.contains("liteloader");
-                if (!hasLoader) continue;
+                boolean isCompatible = false;
+                if (mModDetail != null && mModDetail.versionLoaders != null && mModDetail.versionLoaders.length > mVersionIndex) {
+                    String[] modLoaders = mModDetail.versionLoaders[mVersionIndex];
+                    if (modLoaders != null && modLoaders.length > 0) {
+                        for (String loader : modLoaders) {
+                            if (profileVid.contains(loader.toLowerCase())) {
+                                isCompatible = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        isCompatible = profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge") || profileVid.contains("liteloader");
+                    }
+                } else {
+                    isCompatible = profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge") || profileVid.contains("liteloader");
+                }
+                
+                if (!isCompatible) continue;
                 
                 if (mModDetail != null && mModDetail.mcVersionNames != null && mModDetail.mcVersionNames.length > mVersionIndex) {
                     String modMcVer = mModDetail.mcVersionNames[mVersionIndex];
