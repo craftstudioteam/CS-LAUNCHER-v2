@@ -52,11 +52,7 @@ public class SkinManagerFragment extends Fragment {
     private SwitchCompat mSwitchModelType;
     private TextView mTvSkinPath;
     private TextView mTvCapePath;
-    
-    private TextView mTvInfoUsername;
-    private TextView mTvInfoUuid;
-    private TextView mTvInfoSkinStatus;
-    private TextView mTvInfoCapeStatus;
+
 
     private String mPendingSkinUri;
     private String mPendingCapeUri;
@@ -85,11 +81,7 @@ public class SkinManagerFragment extends Fragment {
         mSwitchModelType = view.findViewById(R.id.switch_model_type);
         mTvSkinPath = view.findViewById(R.id.tv_skin_path);
         mTvCapePath = view.findViewById(R.id.tv_cape_path);
-        
-        mTvInfoUsername = view.findViewById(R.id.tv_info_username);
-        mTvInfoUuid = view.findViewById(R.id.tv_info_uuid);
-        mTvInfoSkinStatus = view.findViewById(R.id.tv_info_skin_status);
-        mTvInfoCapeStatus = view.findViewById(R.id.tv_info_cape_status);
+
 
         // Setup OpenGL Surface
         mSkinPreviewSurface.setEGLContextClientVersion(2);
@@ -124,14 +116,7 @@ public class SkinManagerFragment extends Fragment {
 
         mSwitchModelType.setChecked(isSlim);
 
-        // Populate details
-        if (mTvInfoUsername != null) mTvInfoUsername.setText(activeAccount.username);
-        
-        String modelOverrideStr = isSlim ? "Alex (Slim)" : "Steve (Default)";
-        if (mTvInfoUuid != null) {
-            String profileId = LocalUuidUtils.generateProfileId(activeAccount.username, isSlim ? SkinModelType.ALEX : SkinModelType.STEVE);
-            mTvInfoUuid.setText(LocalUuidUtils.toFormattedUuid(profileId));
-        }
+
 
         updatePathText(mTvSkinPath, mPendingSkinUri, "No custom skin selected");
         updatePathText(mTvCapePath, mPendingCapeUri, "No custom cape selected");
@@ -262,19 +247,7 @@ public class SkinManagerFragment extends Fragment {
     }
 
     private void updateAccountInfo() {
-        MinecraftAccount activeAccount = net.kdt.pojavlaunch.PojavProfile.getCurrentProfileContent(requireContext(), null);
-        if (activeAccount == null) return;
-
-        if (mTvInfoUsername != null) mTvInfoUsername.setText(activeAccount.username);
-        
-        boolean isSlim = mSwitchModelType.isChecked();
-        if (mTvInfoUuid != null) {
-            String profileId = LocalUuidUtils.generateProfileId(activeAccount.username, isSlim ? SkinModelType.ALEX : SkinModelType.STEVE);
-            mTvInfoUuid.setText(LocalUuidUtils.toFormattedUuid(profileId));
-        }
-
-        if (mTvInfoSkinStatus != null) mTvInfoSkinStatus.setText(mPendingSkinUri != null ? "Custom Skin Active (" + (isSlim ? "Alex/Slim" : "Steve/Default") + ")" : "Default Steve");
-        if (mTvInfoCapeStatus != null) mTvInfoCapeStatus.setText(mPendingCapeUri != null ? "Custom Cape Active" : "None");
+        // Obsolete detail TextViews removed from layout
     }
 
     private void copyUriToFile(Uri uri, File destFile) throws Exception {
