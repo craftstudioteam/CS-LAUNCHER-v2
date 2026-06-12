@@ -1,10 +1,12 @@
 package net.kdt.pojavlaunch.yggdrasil;
 
+import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ByteArrayOutputStream;
 
 public class SkinManager {
+    private static final String TAG = "SkinManager";
 
     public interface SkinAnalyzerFacade {
         PlayerSkin prepareSkin(byte[] bytes);
@@ -32,6 +34,52 @@ public class SkinManager {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * Prepares an account using the account's actual UUID.
+     * This ensures the UUID registered in the Yggdrasil server matches
+     * the UUID that Minecraft uses in its session requests.
+     */
+    public void prepareAccountWithUuid(
+            String username,
+            String profileId,
+            File skinFile,
+            File capeFile,
+            SkinModelType modelOverride
+    ) throws InvalidSkinException {
+        byte[] skinBytes = readFileBytes(skinFile);
+        byte[] capeBytes = readFileBytes(capeFile);
+
+        Log.i(TAG, "Preparing account with explicit UUID: " + profileId);
+        Log.i(TAG, "Skin bytes: " + (skinBytes != null ? skinBytes.length + " bytes" : "null"));
+        Log.i(TAG, "Cape bytes: " + (capeBytes != null ? capeBytes.length + " bytes" : "null"));
+
+        PlayerSkin skin = null;
+        if (skinBytes != null) {
+            PlayerSkin base = analyzer.prepareSkin(skinBytes);
+            if (base == null) {
+                throw new InvalidSkinException((skinFile != null ? skinFile.getName() : "Skin file") + " must be 64x64 or 64x32 pixels");
+            }
+            if (modelOverride != null && modelOverride != base.getModel()) {
+                skin = new PlayerSkin(base.getBytes(), base.getHash(), modelOverride);
+            } else {
+                skin = base;
+            }
+            Log.i(TAG, "Skin prepared: hash=" + skin.getHash() + " model=" + skin.getModel());
+        }
+
+        PlayerCape cape = null;
+        if (capeBytes != null) {
+            cape = analyzer.prepareCape(capeBytes);
+            if (cape != null) {
+                Log.i(TAG, "Cape prepared: hash=" + cape.getHash());
+            }
+        }
+
+        // Use the provided profileId directly — do NOT regenerate it
+        server.addCharacter(username, profileId, skin, cape);
+        Log.i(TAG, "Character registered in server: " + username + " / " + profileId);
     }
 
     public PreparedAccount prepareAccount(
