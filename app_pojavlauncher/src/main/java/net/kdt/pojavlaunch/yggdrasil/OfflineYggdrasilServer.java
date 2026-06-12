@@ -38,7 +38,7 @@ public class OfflineYggdrasilServer {
     private volatile boolean running = false;
 
     public OfflineYggdrasilServer() {
-        this("HyperLauncher", "drasl", "1.4");
+        this("CS Launcher", "drasl", "1.4");
     }
 
     public OfflineYggdrasilServer(String serverName, String implName, String implVersion) {
