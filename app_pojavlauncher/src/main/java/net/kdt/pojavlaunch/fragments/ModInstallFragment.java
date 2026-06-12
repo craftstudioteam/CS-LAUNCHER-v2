@@ -341,10 +341,10 @@ public class ModInstallFragment extends Fragment {
                             }
                         }
                     } else {
-                        isCompatible = profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge") || profileVid.contains("liteloader");
+                        isCompatible = profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge") || profileVid.contains("liteloader") || profileVid.contains("optifine");
                     }
                 } else {
-                    isCompatible = profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge") || profileVid.contains("liteloader");
+                    isCompatible = profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge") || profileVid.contains("liteloader") || profileVid.contains("optifine");
                 }
                 
                 if (!isCompatible) continue;
@@ -368,8 +368,23 @@ public class ModInstallFragment extends Fragment {
             }
         }
         
+        Log.i("ModProfileFilter", "Detected Profiles: " + profiles.size());
+        for (String key : profiles.keySet()) {
+            net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile p = profiles.get(key);
+            if (p != null) {
+                Log.i("ModProfileFilter", "Profile Name: " + p.name + " | Loader Type/Vid: " + p.lastVersionId);
+            }
+        }
+        Log.i("ModProfileFilter", "Compatible Profiles: " + validKeys.size());
+        
         if (validKeys.isEmpty()) {
             Toast.makeText(getContext(), "No compatible mod-loader profiles found for this version.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (validKeys.size() == 1) {
+            mProfileKey = validKeys.get(0);
+            startDownload(url, fileName);
             return;
         }
 
