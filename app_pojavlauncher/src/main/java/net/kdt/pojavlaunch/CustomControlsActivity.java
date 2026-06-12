@@ -39,7 +39,28 @@ public class CustomControlsActivity extends BaseActivity implements EditorExitab
 		mPullDrawerButton.setOnClickListener(v -> mDrawerLayout.openDrawer(mDrawerNavigationView));
 		mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
-		mDrawerNavigationView.setAdapter(new ArrayAdapter<>(this, R.layout.item_custom_control_menu, getResources().getStringArray(R.array.menu_customcontrol_customactivity)));
+		String[] menuItems = getResources().getStringArray(R.array.menu_customcontrol_customactivity);
+		int[] menuIcons = new int[]{
+				android.R.drawable.ic_menu_add, // Add Button
+				android.R.drawable.ic_menu_gallery, // Add Drawer
+				android.R.drawable.ic_menu_compass, // Add Joystick
+				android.R.drawable.ic_menu_upload, // Load
+				android.R.drawable.ic_menu_save, // Save
+				android.R.drawable.ic_menu_myplaces, // Default
+				android.R.drawable.ic_menu_share // Export
+		};
+		mDrawerNavigationView.setAdapter(new ArrayAdapter<String>(this, R.layout.item_custom_control_menu, R.id.menu_item_text, menuItems) {
+			@androidx.annotation.NonNull
+			@Override
+			public View getView(int position, @androidx.annotation.Nullable View convertView, @androidx.annotation.NonNull ViewGroup parent) {
+				View view = super.getView(position, convertView, parent);
+				ImageView icon = view.findViewById(R.id.menu_item_icon);
+				if (icon != null && position < menuIcons.length) {
+					icon.setImageResource(menuIcons[position]);
+				}
+				return view;
+			}
+		});
 		mDrawerNavigationView.setOnItemClickListener((parent, view, position, id) -> {
 			switch(position) {
 				case 0: mControlLayout.addControlButton(new ControlData("New")); break;
