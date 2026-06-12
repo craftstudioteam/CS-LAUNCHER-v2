@@ -236,6 +236,9 @@ public class SkinManagerFragment extends Fragment {
                     if (spinner != null) {
                         spinner.reloadAccounts(true, spinner.getSelectedItemPosition());
                     }
+                    if (getActivity() instanceof LauncherActivity) {
+                        ((LauncherActivity) getActivity()).updateNavSkinIcon();
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -500,7 +503,7 @@ public class SkinManagerFragment extends Fragment {
         public void onSurfaceChanged(javax.microedition.khronos.opengles.GL10 gl, int width, int height) {
             GLES20.glViewport(0, 0, width, height);
             float ratio = (float) width / height;
-            Matrix.frustumM(mProjectionMatrix, 0, -ratio * 2.3f, ratio * 2.3f, -2.3f, 2.3f, 3.0f, 60.0f);
+            Matrix.orthoM(mProjectionMatrix, 0, -ratio * 22f, ratio * 22f, -22f, 22f, 1.0f, 100.0f);
         }
 
         @Override
@@ -550,10 +553,12 @@ public class SkinManagerFragment extends Fragment {
             // Set camera (looking at center of player: Y = -4)
             Matrix.setLookAtM(mViewMatrix, 0, 0f, -4f, 26f, 0f, -4f, 0f, 0f, 1.0f, 0f);
 
-            // Rotations
+            // Rotations (pivoted around character center: Y = -4)
             Matrix.setIdentityM(mModelMatrix, 0);
+            Matrix.translateM(mModelMatrix, 0, 0f, -4f, 0f);
             Matrix.rotateM(mModelMatrix, 0, mAngleY, 1f, 0f, 0f);
             Matrix.rotateM(mModelMatrix, 0, mAngleX, 0f, 1f, 0f);
+            Matrix.translateM(mModelMatrix, 0, 0f, 4f, 0f);
 
             float[] mvMatrix = new float[16];
             Matrix.multiplyMM(mvMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
@@ -578,6 +583,18 @@ public class SkinManagerFragment extends Fragment {
 
             // Draw Cape
             if (mCape != null && mCapeTextureId != 0) {
+                float[] capeModelMatrix = new float[16];
+                System.arraycopy(mModelMatrix, 0, capeModelMatrix, 0, 16);
+                Matrix.translateM(capeModelMatrix, 0, 0f, 4f, -2f);
+                Matrix.rotateM(capeModelMatrix, 0, 10.0f, 1f, 0f, 0f);
+                Matrix.translateM(capeModelMatrix, 0, 0f, 0f, -0.15f);
+
+                float[] capeMvMatrix = new float[16];
+                float[] capeMvpMatrix = new float[16];
+                Matrix.multiplyMM(capeMvMatrix, 0, mViewMatrix, 0, capeModelMatrix, 0);
+                Matrix.multiplyMM(capeMvpMatrix, 0, mProjectionMatrix, 0, capeMvMatrix, 0);
+
+                GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, capeMvpMatrix, 0);
                 draw(mCape, mCapeTextureId);
             }
         }
@@ -665,8 +682,8 @@ public class SkinManagerFragment extends Fragment {
         }
 
         private void rebuildCape(int capeW, int capeH) {
-            // Cape: size 8x16x1. Bounds: X[-4, 4], Y[-12, 4], Z[-3, -2.1]
-            mCape = new Cuboid(-4, 4, -12, 4, -3f, -2.1f, 0, 0, 10, 16, 2, capeW, capeH, false);
+            // Cape: size 8x16x1. Bounds: X[-4, 4], Y[-16, 0], Z[-1f, 0f]
+            mCape = new Cuboid(-4, 4, -16, 0, -1.0f, 0f, 0, 0, 10, 16, 2, capeW, capeH, false);
         }
 
         private static class Cuboid {

@@ -7,6 +7,10 @@ import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.widget.ImageView;
+import net.kdt.pojavlaunch.value.MinecraftAccount;
 import net.kdt.pojavlaunch.fragments.ModsSearchFragment;
 import net.kdt.pojavlaunch.fragments.CursorCustomizationFragment;
 import net.kdt.pojavlaunch.fragments.SkinManagerFragment;
@@ -318,6 +322,7 @@ public class LauncherActivity extends BaseActivity {
         super.onResume();
         ContextExecutor.setActivity(this);
         mInstallTracker.attach();
+        updateNavSkinIcon();
     }
 
     @Override
@@ -537,6 +542,33 @@ public class LauncherActivity extends BaseActivity {
                     Tools.swapFragment(this, SkinManagerFragment.class, SkinManagerFragment.TAG, null);
                 }
             });
+        }
+        updateNavSkinIcon();
+    }
+
+    public void updateNavSkinIcon() {
+        final ImageView navSkinIcon = findViewById(R.id.nav_skin_icon);
+        if (navSkinIcon != null) {
+            MinecraftAccount activeAccount = PojavProfile.getCurrentProfileContent(this, null);
+            if (activeAccount != null) {
+                Bitmap bitmap = activeAccount.getSkinFace();
+                if (bitmap == null) {
+                    bitmap = MinecraftAccount.getSkinFace(activeAccount.username);
+                }
+                if (bitmap != null) {
+                    navSkinIcon.setImageBitmap(bitmap);
+                    return;
+                }
+            }
+            // Fallback to rounded default Steve
+            Bitmap steve = BitmapFactory.decodeResource(getResources(), R.drawable.ic_steve);
+            if (steve != null) {
+                Bitmap roundedSteve = MinecraftAccount.roundBitmap(steve, 64, 10f);
+                steve.recycle();
+                navSkinIcon.setImageBitmap(roundedSteve);
+            } else {
+                navSkinIcon.setImageResource(R.drawable.ic_manage_skin);
+            }
         }
     }
 
