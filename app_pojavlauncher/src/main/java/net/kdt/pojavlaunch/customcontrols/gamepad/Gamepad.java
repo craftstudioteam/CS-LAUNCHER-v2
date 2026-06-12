@@ -138,6 +138,10 @@ public class Gamepad implements GrabListener, GamepadHandler {
         mPointerImageView.getDrawable().setFilterBitmap(false);
 
         int size = (int) ((22 * getMcScale()) / PREF_SCALE_FACTOR);
+        float cursorScale = LauncherPreferences.PREF_CUSTOM_CURSOR_SCALE / 100f;
+        if (cursorScale > 0.1f) {
+            size = (int) (size * cursorScale);
+        }
         mPointerImageView.setLayoutParams(new FrameLayout.LayoutParams(size, size));
 
         mMapProvider = mapProvider;

@@ -25,7 +25,7 @@
             android:background="@drawable/bg_icon_button_round"
             android:src="@drawable/ic_arrow_back_white"
             android:padding="8dp"
-            app:tint="#00FF41"
+            app:tint="#39FF14"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|start"
                     android:text="DEFAULT"
-                    android:textColor="#00FF41"
+                    android:textColor="#39FF14"
                     android:textSize="8sp"
                     android:textStyle="bold"
                     android:background="@drawable/bg_size_chip"
@@ -116,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="INPUT YOUR CURSOR"
-                android:textColor="#00FF41"
+                android:textColor="#39FF14"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.1"
@@ -149,7 +149,7 @@
                     android:layout_height="32dp"
                     android:src="@drawable/ic_upload"
                     android:alpha="0.5"
-                    app:tint="#00FF41"
+                    app:tint="#39FF14"
                     android:layout_marginBottom="6dp"/>
 
                 <TextView
@@ -222,7 +222,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="CURSOR SCALE"
-                        android:textColor="#00FF41"
+                        android:textColor="#39FF14"
                         android:textSize="10sp"
                         android:textStyle="bold"
                         android:letterSpacing="0.1"/>
@@ -244,8 +244,8 @@
                     android:layout_marginVertical="2dp"
                     android:max="300"
                     android:progress="100"
-                    android:progressTint="#00FF41"
-                    android:thumbTint="#00FF41"
+                    android:progressTint="#39FF14"
+                    android:thumbTint="#39FF14"
                     android:progressBackgroundTint="#2A2A2A"/>
 
                 <!-- Glow Intensity -->

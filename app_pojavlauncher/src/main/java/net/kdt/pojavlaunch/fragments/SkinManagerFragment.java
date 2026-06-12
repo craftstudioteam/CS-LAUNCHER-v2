@@ -504,7 +504,8 @@ public class SkinManagerFragment extends Fragment {
         public void onSurfaceChanged(javax.microedition.khronos.opengles.GL10 gl, int width, int height) {
             GLES20.glViewport(0, 0, width, height);
             float ratio = (float) width / height;
-            Matrix.orthoM(mProjectionMatrix, 0, -ratio * 22f, ratio * 22f, -22f, 22f, 1.0f, 100.0f);
+            // Use perspective projection to match Minecraft's 3D look
+            Matrix.perspectiveM(mProjectionMatrix, 0, 45f, ratio, 1.0f, 100.0f);
         }
 
         @Override
@@ -551,8 +552,8 @@ public class SkinManagerFragment extends Fragment {
                 mCape = null;
             }
 
-            // Set camera (looking at center of player: Y = -4)
-            Matrix.setLookAtM(mViewMatrix, 0, 0f, -4f, 26f, 0f, -4f, 0f, 0f, 1.0f, 0f);
+            // Set camera (looking at center of player: Y = -4, moved back to Z = 40 for full body view)
+            Matrix.setLookAtM(mViewMatrix, 0, 0f, -4f, 40f, 0f, -4f, 0f, 0f, 1.0f, 0f);
 
             // Rotations (pivoted around character center: Y = -4)
             Matrix.setIdentityM(mModelMatrix, 0);
@@ -683,8 +684,8 @@ public class SkinManagerFragment extends Fragment {
         }
 
         private void rebuildCape(int capeW, int capeH) {
-            // Cape: size 8x16x1. Bounds: X[-4, 4], Y[-16, 0], Z[-1f, 0f]
-            mCape = new Cuboid(-4, 4, -16, 0, -1.0f, 0f, 0, 0, 10, 16, 2, capeW, capeH, false);
+            // Cape: size 10x16x1. Bounds: X[-5, 5], Y[-16, 0], Z[-1f, 0f]
+            mCape = new Cuboid(-5, 5, -16, 0, -1.0f, 0f, 0, 0, 10, 16, 1, capeW, capeH, false);
         }
 
         private static class Cuboid {

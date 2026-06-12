@@ -77,7 +77,7 @@ public class CursorCustomizationFragment extends Fragment {
         mGlowRadius = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_glow_radius", 0);
         mHotspotX = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_x", 0);
         mHotspotY = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_y", 0);
-        mSizeScale = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_size_scale", 100);
+        mSizeScale = (int) net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getFloat("custom_cursor_scale", 100f);
 
         scaleSeek.setProgress(mSizeScale);
         scaleText.setText(mSizeScale + "%");
@@ -127,6 +127,10 @@ public class CursorCustomizationFragment extends Fragment {
         // SeekBar listeners
         scaleSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (progress < 25) {
+                    progress = 25;
+                    if (fromUser) seekBar.setProgress(25);
+                }
                 mSizeScale = progress;
                 scaleText.setText(progress + "%");
             }
@@ -340,7 +344,7 @@ public class CursorCustomizationFragment extends Fragment {
                 .putBoolean("custom_cursor_enabled", true)
                 .putInt("custom_cursor_hotspot_x", mHotspotX)
                 .putInt("custom_cursor_hotspot_y", mHotspotY)
-                .putInt("custom_cursor_size_scale", mSizeScale)
+                .putFloat("custom_cursor_scale", (float) mSizeScale)
                 .putInt("custom_cursor_glow_radius", mGlowRadius)
                 .apply();
 
@@ -348,6 +352,7 @@ public class CursorCustomizationFragment extends Fragment {
             net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_PATH = savedFile.getAbsolutePath();
             net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED = true;
             net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS = mGlowRadius;
+            net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_SCALE = (float) mSizeScale;
 
             // Update/refresh cursor in touchpad if active
             net.kdt.pojavlaunch.extra.ExtraCore.setValue(net.kdt.pojavlaunch.extra.ExtraConstants.REFRESH_CURSOR, null);
