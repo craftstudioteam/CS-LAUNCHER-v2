@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import net.kdt.pojavlaunch.fragments.ModsSearchFragment;
 import net.kdt.pojavlaunch.fragments.CursorCustomizationFragment;
+import net.kdt.pojavlaunch.fragments.SkinManagerFragment;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
