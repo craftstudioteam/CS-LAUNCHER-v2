@@ -2,9 +2,6 @@ package net.kdt.pojavlaunch.yggdrasil;
 
 import android.util.Base64;
 import android.util.Log;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +29,7 @@ public class OfflineYggdrasilServer {
     private final Map<String, byte[]> textureStore = new ConcurrentHashMap<>();
 
     private KeyPair keyPair;
-    private HttpServer server;
+    // private HttpServer server;
     private int port = 0;
     private boolean running = false;
 
@@ -69,33 +66,15 @@ public class OfflineYggdrasilServer {
 
     public synchronized int start() {
         if (running) return port;
-        try {
-            server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-            port = server.getAddress().getPort();
-            
-            server.createContext("/", new RootHandler());
-            server.createContext("/api", new RootHandler());
-            server.createContext("/api/profiles/minecraft", new ProfilesHandler());
-            server.createContext("/sessionserver/session/minecraft/hasJoined", new HasJoinedHandler());
-            server.createContext("/sessionserver/session/minecraft/join", new JoinHandler());
-            server.createContext("/sessionserver/session/minecraft/profile/", new ProfileHandler());
-            server.createContext("/textures/", new TexturesHandler());
-            
-            server.setExecutor(null);
-            server.start();
-            running = true;
-            Log.i(TAG, "Server started on 127.0.0.1:" + port);
-            return port;
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to start OfflineYggdrasilServer", e);
-            return 0;
-        }
+        // HTTP Server disabled due to Android incompatibility
+        Log.w(TAG, "OfflineYggdrasilServer is disabled on Android. Returning port 0.");
+        running = true;
+        return 0;
     }
 
     public synchronized void stop() {
-        if (server != null) {
-            server.stop(0);
-            server = null;
+        if (running) {
+            // server.stop(0);
             port = 0;
             running = false;
             Log.i(TAG, "OfflineYggdrasilServer stopped");
@@ -144,145 +123,6 @@ public class OfflineYggdrasilServer {
             return root.toString();
         } catch (Exception e) {
             return "{}";
-        }
-    }
-
-    private static void sendJsonResponse(HttpExchange exchange, String response, int statusCode) throws IOException {
-        byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-        exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-        exchange.sendResponseHeaders(statusCode, bytes.length);
-        try (OutputStream os = exchange.getResponseBody()) {
-            os.write(bytes);
-        }
-        exchange.close();
-    }
-
-    private class RootHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            sendJsonResponse(exchange, buildRoot(), 200);
-        }
-    }
-
-    private class ProfilesHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
-                sendJsonResponse(exchange, "{}", 405);
-                return;
-            }
-
-            try {
-                InputStream is = exchange.getRequestBody();
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = is.read(buf)) != -1) {
-                    bos.write(buf, 0, len);
-                }
-                String body = bos.toString("UTF-8");
-                JSONArray namesJson = new JSONArray(body);
-                
-                JSONArray result = new JSONArray();
-                for (int i = 0; i < namesJson.length(); i++) {
-                    String name = namesJson.getString(i);
-                    Character c = byName.get(name.toLowerCase());
-                    if (c != null) {
-                        JSONObject profile = new JSONObject();
-                        profile.put("id", c.uuid);
-                        profile.put("name", c.name);
-                        result.put(profile);
-                    }
-                }
-                sendJsonResponse(exchange, result.toString(), 200);
-            } catch (Exception e) {
-                Log.e(TAG, "Profiles lookup failed", e);
-                sendJsonResponse(exchange, "[]", 200);
-            }
-        }
-    }
-
-    private class HasJoinedHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            String query = exchange.getRequestURI().getQuery();
-            String username = null;
-            if (query != null) {
-                for (String param : query.split("&")) {
-                    String[] pair = param.split("=");
-                    if (pair.length > 0 && pair[0].equals("username")) {
-                        username = pair.length > 1 ? pair[1] : "";
-                        break;
-                    }
-                }
-            }
-
-            if (username == null) {
-                exchange.sendResponseHeaders(400, -1);
-                exchange.close();
-                return;
-            }
-
-            Character character = byName.get(username.toLowerCase());
-            if (character == null) {
-                exchange.sendResponseHeaders(204, -1);
-                exchange.close();
-                return;
-            }
-
-            String response = character.toProfileResponse(localBase(), OfflineYggdrasilServer.this::signRsa);
-            sendJsonResponse(exchange, response, 200);
-        }
-    }
-
-    private class JoinHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            exchange.sendResponseHeaders(204, -1);
-            exchange.close();
-        }
-    }
-
-    private class ProfileHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            String path = exchange.getRequestURI().getPath();
-            String uuid = path.substring(path.lastIndexOf('/') + 1).toLowerCase().replace("-", "");
-            
-            Character character = byUuid.get(uuid);
-            if (character == null) {
-                exchange.sendResponseHeaders(204, -1);
-                exchange.close();
-                return;
-            }
-
-            String response = character.toProfileResponse(localBase(), OfflineYggdrasilServer.this::signRsa);
-            sendJsonResponse(exchange, response, 200);
-        }
-    }
-
-    private class TexturesHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            String path = exchange.getRequestURI().getPath();
-            String hash = path.substring(path.lastIndexOf('/') + 1);
-
-            byte[] bytes = textureStore.get(hash);
-            if (bytes == null) {
-                exchange.sendResponseHeaders(404, -1);
-                exchange.close();
-                return;
-            }
-
-            exchange.getResponseHeaders().set("Content-Type", "image/png");
-            exchange.getResponseHeaders().set("Cache-Control", "max-age=2592000, public");
-            exchange.getResponseHeaders().set("ETag", "\"" + hash + "\"");
-            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
-            exchange.sendResponseHeaders(200, bytes.length);
-            try (OutputStream os = exchange.getResponseBody()) {
-                os.write(bytes);
-            }
-            exchange.close();
         }
     }
 
