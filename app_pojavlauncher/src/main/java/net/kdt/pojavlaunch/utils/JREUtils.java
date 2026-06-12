@@ -327,9 +327,34 @@ public class JREUtils {
                     e.printStackTrace();
                 }
             }
-            
+
+            // === STEP 1: Pre-launch diagnostics ===
+            Logger.appendToLog("=== OFFLINE SKIN SYSTEM: PRE-LAUNCH ===");
+            Logger.appendToLog("Username: " + username);
+            Logger.appendToLog("UUID (from account): " + uuid);
+            Logger.appendToLog("UUID (no dashes): " + uuid.replace("-", ""));
+            Logger.appendToLog("Skin path: " + skinPath);
+            Logger.appendToLog("Skin file exists: " + skinFile.exists());
+            if (skinFile.exists()) Logger.appendToLog("Skin file size: " + skinFile.length() + " bytes");
+            Logger.appendToLog("Cape path: " + capePath);
+            Logger.appendToLog("Cape file exists: " + capeFile.exists());
+            if (capeFile.exists()) Logger.appendToLog("Cape file size: " + capeFile.length() + " bytes");
+            Logger.appendToLog("Skin model: " + (isSlim ? "ALEX (slim)" : "STEVE (default)"));
+            Logger.appendToLog("Metadata file exists: " + skinMeta.exists());
+
+            // === STEP 2 & 3: Start server and register profile ===
             net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.start();
+            int serverPort = net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort();
+            Logger.appendToLog("Yggdrasil server port: " + serverPort);
+            
             net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.registerProfile(username, uuid, finalSkinPath, finalCapePath, isSlim);
+            Logger.appendToLog("Profile registered for: " + username);
+
+            // Check authlib-injector.jar existence
+            File authlibJar = new File(Tools.DIR_DATA, "authlib-injector/authlib-injector.jar");
+            Logger.appendToLog("authlib-injector.jar exists: " + authlibJar.exists());
+            if (authlibJar.exists()) Logger.appendToLog("authlib-injector.jar size: " + authlibJar.length() + " bytes");
+            Logger.appendToLog("=== OFFLINE SKIN SYSTEM: PRE-LAUNCH COMPLETE ===");
         }
 
         String runtimeHome = MultiRTUtils.getRuntimeHome(runtime.name).getAbsolutePath();
@@ -375,6 +400,23 @@ public class JREUtils {
         // Adds/changes methods for compatibility
         userArgs.add("-javaagent:"+new File(Tools.DIR_DATA,"methods_injector_agent/methods_injector_agent.jar").getAbsolutePath());
 
+        // === STEP 4: Add authlib-injector BEFORE JVMArgs (which contains main class + game args) ===
+        if (net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort() > 0) {
+            int skinPort = net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort();
+            String authlibPath = new File(Tools.DIR_DATA, "authlib-injector/authlib-injector.jar").getAbsolutePath();
+            
+            userArgs.add("-javaagent:" + authlibPath + "=http://127.0.0.1:" + skinPort);
+            userArgs.add("-Dminecraft.api.auth.host=http://127.0.0.1:" + skinPort);
+            userArgs.add("-Dminecraft.api.account.host=http://127.0.0.1:" + skinPort);
+            userArgs.add("-Dminecraft.api.session.host=http://127.0.0.1:" + skinPort);
+            userArgs.add("-Dminecraft.api.services.host=http://127.0.0.1:" + skinPort);
+            
+            Logger.appendToLog("=== AUTHLIB INJECTION ===");
+            Logger.appendToLog("-javaagent:" + authlibPath + "=http://127.0.0.1:" + skinPort);
+            Logger.appendToLog("Session host: http://127.0.0.1:" + skinPort);
+            Logger.appendToLog("=== AUTHLIB INJECTION COMPLETE ===");
+        }
+
         userArgs.addAll(JVMArgs);
         activity.runOnUiThread(() -> Toast.makeText(activity, activity.getString(R.string.autoram_info_msg,LauncherPreferences.PREF_RAM_ALLOCATION), Toast.LENGTH_SHORT).show());
         System.out.println(JVMArgs);
@@ -386,13 +428,12 @@ public class JREUtils {
         userArgs.add(0,"java"); //argv[0] is the program name according to C standard.
 
         try {
-            if (net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort() > 0) {
-                userArgs.add("-javaagent:" + new File(Tools.DIR_DATA, "authlib-injector/authlib-injector.jar").getAbsolutePath() + "=http://127.0.0.1:" + net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort());
-                userArgs.add("-Dminecraft.api.auth.host=http://127.0.0.1:" + net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort());
-                userArgs.add("-Dminecraft.api.account.host=http://127.0.0.1:" + net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort());
-                userArgs.add("-Dminecraft.api.session.host=http://127.0.0.1:" + net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort());
-                userArgs.add("-Dminecraft.api.services.host=http://127.0.0.1:" + net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort());
+            // Log final argument list for debugging
+            Logger.appendToLog("=== FINAL JVM ARGS ===");
+            for (int i = 0; i < userArgs.size(); i++) {
+                Logger.appendToLog("arg[" + i + "]: " + userArgs.get(i));
             }
+            Logger.appendToLog("=== END JVM ARGS ===");
 
             final int exitCode = VMLauncher.launchJVM(userArgs.toArray(new String[0]));
             Logger.appendToLog("Java Exit code: " + exitCode);

@@ -61,11 +61,18 @@ public class OfflineYggdrasilServer {
         byName.put(username.toLowerCase(), character);
         if (skin != null) {
             textureStore.put(skin.getHash(), skin.getBytes());
+            Log.i(TAG, "Stored skin texture: hash=" + skin.getHash() + " size=" + skin.getBytes().length + " model=" + skin.getModel());
         }
         if (cape != null) {
             textureStore.put(cape.getHash(), cape.getBytes());
+            Log.i(TAG, "Stored cape texture: hash=" + cape.getHash() + " size=" + cape.getBytes().length);
         }
-        Log.d(TAG, "Added character: " + username + " (" + uuid + ")");
+        Log.i(TAG, "=== CHARACTER ADDED ===");
+        Log.i(TAG, "Character Registered");
+        Log.i(TAG, "Username: " + username);
+        Log.i(TAG, "UUID: " + uuid);
+        Log.i(TAG, "Skin Hash: " + (skin != null ? skin.getHash() : "null"));
+        Log.i(TAG, "Cape Hash: " + (cape != null ? cape.getHash() : "null"));
     }
 
     public synchronized int start() {
@@ -76,7 +83,8 @@ public class OfflineYggdrasilServer {
             running = true;
             serverThread = new Thread(this::runServerLoop, "OfflineYggdrasilServerThread");
             serverThread.start();
-            Log.i(TAG, "OfflineYggdrasilServer started on port " + port);
+            Log.i(TAG, "Server Started");
+            Log.i(TAG, "Port: " + port);
             return port;
         } catch (IOException e) {
             Log.e(TAG, "Failed to start local Yggdrasil ServerSocket", e);
@@ -140,10 +148,30 @@ public class OfflineYggdrasilServer {
                 path = pathAndQuery.substring(0, qIdx);
             }
 
-            // Consume rest of headers
+            Log.i(TAG, ">>> " + method + " " + path);
+
+            // Consume rest of headers and read content-length
             String headerLine;
+            int contentLength = 0;
             while ((headerLine = reader.readLine()) != null && !headerLine.isEmpty()) {
-                // Ignore headers
+                if (headerLine.toLowerCase().startsWith("content-length:")) {
+                    try {
+                        contentLength = Integer.parseInt(headerLine.substring(15).trim());
+                    } catch (NumberFormatException ignored) {}
+                }
+            }
+
+            // Read request body if present (for POST endpoints)
+            String requestBody = null;
+            if (contentLength > 0) {
+                char[] buf = new char[contentLength];
+                int totalRead = 0;
+                while (totalRead < contentLength) {
+                    int read = reader.read(buf, totalRead, contentLength - totalRead);
+                    if (read == -1) break;
+                    totalRead += read;
+                }
+                requestBody = new String(buf, 0, totalRead);
             }
 
             byte[] body = null;
@@ -156,31 +184,111 @@ public class OfflineYggdrasilServer {
                 contentType = "application/json; charset=utf-8";
                 statusCode = 200;
                 statusText = "OK";
+                Log.i(TAG, "<<< 200 / (root metadata)");
             } else if (path.startsWith("/sessionserver/session/minecraft/profile/")) {
                 String uuid = path.substring("/sessionserver/session/minecraft/profile/".length());
                 uuid = uuid.replace("-", "").toLowerCase();
+                Log.i(TAG, "Profile lookup for UUID: " + uuid);
+                Log.i(TAG, "Known UUIDs: " + byUuid.keySet());
                 Character character = byUuid.get(uuid);
                 if (character != null) {
-                    body = character.toProfileResponse(localBase(), this::signRsa).getBytes(StandardCharsets.UTF_8);
+                    String responseJson = character.toProfileResponse(localBase(), this::signRsa);
+                    body = responseJson.getBytes(StandardCharsets.UTF_8);
                     contentType = "application/json; charset=utf-8";
                     statusCode = 200;
                     statusText = "OK";
+                    Log.i(TAG, "<<< 200 profile found: " + character.name + " / " + character.uuid);
+                    Log.i(TAG, "<<< Response: " + responseJson);
                 } else {
                     statusCode = 204;
                     statusText = "No Content";
+                    Log.w(TAG, "<<< 204 No profile for UUID: " + uuid);
+                }
+            } else if (path.equals("/api/profiles/minecraft")) {
+                // POST endpoint: username → profile lookup (authlib-injector uses this)
+                if (requestBody != null) {
+                    Log.i(TAG, "Profiles lookup request body: " + requestBody);
+                    try {
+                        JSONArray names = new JSONArray(requestBody);
+                        JSONArray result = new JSONArray();
+                        for (int i = 0; i < names.length(); i++) {
+                            String name = names.getString(i);
+                            Character ch = byName.get(name.toLowerCase());
+                            if (ch != null) {
+                                JSONObject profile = new JSONObject();
+                                profile.put("id", ch.uuid);
+                                profile.put("name", ch.name);
+                                result.put(profile);
+                            }
+                        }
+                        body = result.toString().getBytes(StandardCharsets.UTF_8);
+                        contentType = "application/json; charset=utf-8";
+                        statusCode = 200;
+                        statusText = "OK";
+                        Log.i(TAG, "<<< 200 profiles found: " + result.length());
+                    } catch (Exception e) {
+                        Log.e(TAG, "Failed to parse profiles request", e);
+                        body = "[]".getBytes(StandardCharsets.UTF_8);
+                        contentType = "application/json; charset=utf-8";
+                        statusCode = 200;
+                        statusText = "OK";
+                    }
+                } else {
+                    body = "[]".getBytes(StandardCharsets.UTF_8);
+                    contentType = "application/json; charset=utf-8";
+                    statusCode = 200;
+                    statusText = "OK";
                 }
             } else if (path.startsWith("/textures/")) {
                 String hash = path.substring("/textures/".length());
+                Log.i(TAG, "textureStore.containsKey(" + hash + "): " + textureStore.containsKey(hash));
                 byte[] texture = textureStore.get(hash);
                 if (texture != null) {
                     body = texture;
                     contentType = "image/png";
                     statusCode = 200;
                     statusText = "OK";
+                    Log.i(TAG, "<<< 200 texture: " + hash + " (" + texture.length + " bytes)");
                 } else {
                     statusCode = 404;
                     statusText = "Not Found";
+                    Log.w(TAG, "<<< 404 texture not found: " + hash);
+                    Log.w(TAG, "Known texture hashes: " + textureStore.keySet());
                 }
+            } else if (path.equals("/sessionserver/session/minecraft/join")) {
+                // Join server endpoint — always accept for offline mode
+                statusCode = 204;
+                statusText = "No Content";
+                body = null;
+                Log.i(TAG, "<<< 204 join (accepted)");
+            } else if (path.equals("/sessionserver/session/minecraft/hasJoined")) {
+                // Has-joined endpoint — look up by username from query
+                String queryUsername = null;
+                if (qIdx != -1) {
+                    String query = pathAndQuery.substring(qIdx + 1);
+                    for (String param : query.split("&")) {
+                        if (param.startsWith("username=")) {
+                            queryUsername = param.substring(9);
+                        }
+                    }
+                }
+                if (queryUsername != null) {
+                    Character ch = byName.get(queryUsername.toLowerCase());
+                    if (ch != null) {
+                        body = ch.toProfileResponse(localBase(), this::signRsa).getBytes(StandardCharsets.UTF_8);
+                        contentType = "application/json; charset=utf-8";
+                        statusCode = 200;
+                        statusText = "OK";
+                        Log.i(TAG, "<<< 200 hasJoined: " + queryUsername);
+                    }
+                }
+                if (body == null) {
+                    statusCode = 204;
+                    statusText = "No Content";
+                    Log.w(TAG, "<<< 204 hasJoined not found: " + queryUsername);
+                }
+            } else {
+                Log.w(TAG, "<<< 404 unknown path: " + path);
             }
 
             // Write HTTP headers
@@ -272,6 +380,7 @@ public class OfflineYggdrasilServer {
                 texturesObj.put("timestamp", System.currentTimeMillis());
                 texturesObj.put("profileId", uuid);
                 texturesObj.put("profileName", name);
+                texturesObj.put("signatureRequired", true);
                 
                 JSONObject textures = new JSONObject();
                 if (skin != null) {
@@ -292,6 +401,7 @@ public class OfflineYggdrasilServer {
                 texturesObj.put("textures", textures);
 
                 String texturesJson = texturesObj.toString();
+                Log.i(TAG, "Decoded textures property: " + texturesJson);
                 String encoded = Base64.encodeToString(texturesJson.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
                 String signature = signer.sign(encoded);
 

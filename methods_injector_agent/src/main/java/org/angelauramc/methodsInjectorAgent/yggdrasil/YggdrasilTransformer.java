@@ -23,6 +23,8 @@ public class YggdrasilTransformer {
                     };
                 }
                 
+                final boolean isFillProfile = name.equals("fillProfileProperties") && desc.equals("(Lcom/mojang/authlib/GameProfile;Z)Lcom/mojang/authlib/GameProfile;");
+                
                 // Redirect mojang domains in all method LDC instructions
                 return new MethodVisitor(Opcodes.ASM5, mv) {
                     @Override
@@ -53,6 +55,15 @@ public class YggdrasilTransformer {
                             value = s;
                         }
                         super.visitLdcInsn(value);
+                    }
+
+                    @Override
+                    public void visitInsn(int opcode) {
+                        if (isFillProfile && opcode == Opcodes.ARETURN) {
+                            super.visitInsn(Opcodes.DUP);
+                            super.visitMethodInsn(Opcodes.INVOKESTATIC, "org/angelauramc/methodsInjectorAgent/yggdrasil/YggdrasilLogger", "logGameProfile", "(Ljava/lang/Object;)V", false);
+                        }
+                        super.visitInsn(opcode);
                     }
                 };
             }

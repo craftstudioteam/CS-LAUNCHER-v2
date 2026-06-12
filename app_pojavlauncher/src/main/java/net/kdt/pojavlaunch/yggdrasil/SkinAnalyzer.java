@@ -54,16 +54,24 @@ public class SkinAnalyzer {
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
-        return (opts.outWidth == 64 && opts.outHeight == 64) ||
+        boolean valid = (opts.outWidth == 64 && opts.outHeight == 64) ||
                (opts.outWidth == 64 && opts.outHeight == 32);
+        android.util.Log.i("SkinAnalyzer", "Skin PNG validation: " + valid + " (" + opts.outWidth + "x" + opts.outHeight + ")");
+        return valid;
     }
 
     public static SkinModelType detectModel(byte[] bytes) {
         BitmapFactory.Options opts = new BitmapFactory.Options();
         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
-        if (bmp == null) return SkinModelType.STEVE;
+        android.util.Log.i("SkinAnalyzer", "BitmapFactory.decodeByteArray returned non-null: " + (bmp != null));
+        if (bmp == null) {
+            android.util.Log.e("SkinAnalyzer", "Failed to decode skin PNG (corrupted PNG)");
+            return SkinModelType.STEVE;
+        }
         try {
-            return detectSkinModel(opts.outHeight, (x, y) -> Color.alpha(bmp.getPixel(x, y)));
+            SkinModelType model = detectSkinModel(opts.outHeight, (x, y) -> Color.alpha(bmp.getPixel(x, y)));
+            android.util.Log.i("SkinAnalyzer", "Model detected: " + model.name());
+            return model;
         } finally {
             if (!bmp.isRecycled()) {
                 bmp.recycle();
