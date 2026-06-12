@@ -80,11 +80,43 @@ public class MinecraftAccount {
             if (acc.clientToken == null) {
                 acc.clientToken = "0";
             }
-            if (acc.profileId == null) {
-                acc.profileId = "00000000-0000-0000-0000-000000000000";
-            }
             if (acc.username == null) {
                 acc.username = "0";
+            }
+            if (!acc.isMicrosoft) {
+                net.kdt.pojavlaunch.yggdrasil.SkinModelType model = net.kdt.pojavlaunch.yggdrasil.SkinModelType.NONE;
+                File skinFile = new File(Tools.DIR_DATA + "/skins/" + acc.username + "_skin.png");
+                if (skinFile.exists()) {
+                    File skinMeta = new File(Tools.DIR_DATA + "/skins/" + acc.username + "_metadata.json");
+                    if (skinMeta.exists()) {
+                        try {
+                            String metaContent = Tools.read(skinMeta.getAbsolutePath());
+                            if (metaContent.contains("slim")) {
+                                model = net.kdt.pojavlaunch.yggdrasil.SkinModelType.ALEX;
+                            } else {
+                                model = net.kdt.pojavlaunch.yggdrasil.SkinModelType.STEVE;
+                            }
+                        } catch (Exception e) {
+                            model = net.kdt.pojavlaunch.yggdrasil.SkinModelType.STEVE;
+                        }
+                    } else {
+                        try (FileInputStream fis = new java.io.FileInputStream(skinFile);
+                             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                            byte[] buf = new byte[8192];
+                            int r;
+                            while ((r = fis.read(buf)) != -1) {
+                                bos.write(buf, 0, r);
+                            }
+                            model = net.kdt.pojavlaunch.yggdrasil.SkinAnalyzer.detectModel(bos.toByteArray());
+                        } catch (Exception e) {
+                            model = net.kdt.pojavlaunch.yggdrasil.SkinModelType.STEVE;
+                        }
+                    }
+                }
+                String rawUuid = net.kdt.pojavlaunch.yggdrasil.LocalUuidUtils.generateProfileId(acc.username, model);
+                acc.profileId = net.kdt.pojavlaunch.yggdrasil.LocalUuidUtils.toFormattedUuid(rawUuid);
+            } else if (acc.profileId == null) {
+                acc.profileId = "00000000-0000-0000-0000-000000000000";
             }
             if (acc.selectedVersion == null) {
                 acc.selectedVersion = "1.7.10";

@@ -158,7 +158,7 @@
                 android:background="@drawable/bg_profile_button"
                 android:clickable="true"
                 android:focusable="true"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -179,6 +179,22 @@
                     android:maxLines="1"
                     android:ellipsize="middle" />
             </LinearLayout>
+
+            <!-- Remove Cape Button -->
+            <TextView
+                android:id="@+id/btn_remove_cape"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="REMOVE CAPE"
+                android:textColor="#FF3333"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="@drawable/bg_profile_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="24dp"
+                android:visibility="gone" />
 
             <View
                 android:layout_width="match_parent"

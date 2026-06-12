@@ -24,6 +24,23 @@ public class startInjectors {
             // This is the version we override old asm vers with. So we add the patches
             // so the older version bugs are ported.
             if (implVersion.equals("5.0.4")) ASM5OverrideInjector.premain(args, inst);
+            
+            // Register Yggdrasil Authlib endpoint redirector
+            inst.addTransformer(new java.lang.instrument.ClassFileTransformer() {
+                @Override
+                public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
+                                        java.security.ProtectionDomain protectionDomain, byte[] classfileBuffer) {
+                    if (className != null && className.startsWith("com/mojang/authlib/")) {
+                        try {
+                            return org.angelauramc.methodsInjectorAgent.yggdrasil.YggdrasilTransformer.transform(classfileBuffer);
+                        } catch (Exception e) {
+                            System.out.println("Failed to transform Authlib class: " + className);
+                            e.printStackTrace();
+                        }
+                    }
+                    return null;
+                }
+            });
         } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
         }
     }
