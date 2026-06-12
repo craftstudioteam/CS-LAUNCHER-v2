@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="v1.6.2"
-            android:textColor="#FF8C00"
+            android:textColor="#39FF14"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
             android:layout_marginBottom="@dimen/_28sdp" />
@@ -61,7 +61,7 @@
                 android:layout_height="match_parent"
                 android:max="100"
                 android:progress="0"
-                android:progressTint="#FF8C00"
+                android:progressTint="#39FF14"
                 android:progressBackgroundTint="#1A1A1A" />
 
         </FrameLayout>
@@ -86,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0%"
-                android:textColor="#FF8C00"
+                android:textColor="#39FF14"
                 android:textSize="@dimen/_11ssp"
                 android:textStyle="bold" />
 

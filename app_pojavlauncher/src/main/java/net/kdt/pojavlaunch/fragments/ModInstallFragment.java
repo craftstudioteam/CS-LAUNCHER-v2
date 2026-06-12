@@ -315,25 +315,55 @@ public class ModInstallFragment extends Fragment {
             return;
         }
 
-        String[] profileKeys = profiles.keySet().toArray(new String[0]);
-        String[] profileNames = new String[profileKeys.length];
-        int currentSelection = -1;
         String currentKey = mProfileKey != null ? mProfileKey 
                 : net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getString(
                         net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
                         
-        for (int i = 0; i < profileKeys.length; i++) {
-            net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile p = profiles.get(profileKeys[i]);
-            profileNames[i] = (p != null && p.name != null && !p.name.isEmpty()) ? p.name : "Unnamed Profile";
-            if (profileKeys[i].equals(currentKey)) {
-                currentSelection = i;
+        java.util.List<String> validKeys = new java.util.ArrayList<>();
+        java.util.List<String> validNames = new java.util.ArrayList<>();
+        int currentSelection = -1;
+
+        for (String key : profiles.keySet()) {
+            net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile p = profiles.get(key);
+            if (p == null) continue;
+            
+            String profileVid = (p.lastVersionId != null) ? p.lastVersionId.toLowerCase() : "";
+            
+            if ("mod".equals(mContentType)) {
+                boolean hasLoader = profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge") || profileVid.contains("liteloader");
+                if (!hasLoader) continue;
+                
+                if (mModDetail != null && mModDetail.mcVersionNames != null && mModDetail.mcVersionNames.length > mVersionIndex) {
+                    String modMcVer = mModDetail.mcVersionNames[mVersionIndex];
+                    if (modMcVer != null && !modMcVer.isEmpty() && !profileVid.contains(modMcVer.toLowerCase())) {
+                        continue;
+                    }
+                }
+            } else if ("shader".equals(mContentType)) {
+                boolean hasOptiOrLoader = profileVid.contains("optifine") || profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge");
+                if (!hasOptiOrLoader) continue;
+            }
+            
+            validKeys.add(key);
+            String safeName = (p.name != null && !p.name.isEmpty()) ? p.name : "Unnamed Profile";
+            validNames.add(safeName);
+            if (key.equals(currentKey)) {
+                currentSelection = validKeys.size() - 1;
             }
         }
+        
+        if (validKeys.isEmpty()) {
+            Toast.makeText(getContext(), "No compatible mod-loader profiles found for this version.", Toast.LENGTH_LONG).show();
+            return;
+        }
 
+        String[] profileNames = validNames.toArray(new String[0]);
+        String[] finalKeys = validKeys.toArray(new String[0]);
+                        
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Select Profile to Install To")
                 .setSingleChoiceItems(profileNames, currentSelection, (dialog, which) -> {
-                    mProfileKey = profileKeys[which];
+                    mProfileKey = finalKeys[which];
                     dialog.dismiss();
                     startDownload(url, fileName);
                 })

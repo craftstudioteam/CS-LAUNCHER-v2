@@ -163,8 +163,29 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             getWindow().setSustainedPerformanceMode(PREF_SUSTAINED_PERFORMANCE);
 
-        ingameControlsEditorArrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menu_customcontrol));
+        String[] inGameMenuItems = getResources().getStringArray(R.array.menu_customcontrol);
+        int[] inGameIcons = new int[]{
+                android.R.drawable.ic_menu_add, // Add Button
+                android.R.drawable.ic_menu_gallery, // Add Drawer
+                android.R.drawable.ic_menu_compass, // Add Joystick
+                android.R.drawable.ic_menu_upload, // Load
+                android.R.drawable.ic_menu_save, // Save
+                android.R.drawable.ic_menu_myplaces, // Default
+                android.R.drawable.ic_menu_close_clear_cancel // Exit
+        };
+        ingameControlsEditorArrayAdapter = new ArrayAdapter<String>(this,
+                R.layout.item_custom_control_menu, R.id.menu_item_text, inGameMenuItems) {
+            @androidx.annotation.NonNull
+            @Override
+            public View getView(int position, @androidx.annotation.Nullable View convertView, @androidx.annotation.NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                ImageView icon = view.findViewById(R.id.menu_item_icon);
+                if (icon != null && position < inGameIcons.length) {
+                    icon.setImageResource(inGameIcons[position]);
+                }
+                return view;
+            }
+        };
         ingameControlsEditorListener = (parent, view, position, id) -> {
             switch(position) {
                 case 0: mControlLayout.addControlButton(new ControlData("New")); break;

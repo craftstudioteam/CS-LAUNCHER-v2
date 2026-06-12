@@ -504,8 +504,8 @@ public class SkinManagerFragment extends Fragment {
         public void onSurfaceChanged(javax.microedition.khronos.opengles.GL10 gl, int width, int height) {
             GLES20.glViewport(0, 0, width, height);
             float ratio = (float) width / height;
-            // Use perspective projection to match Minecraft's 3D look
-            Matrix.perspectiveM(mProjectionMatrix, 0, 45f, ratio, 1.0f, 100.0f);
+            // Use orthographic projection to match Minecraft's inventory preview
+            Matrix.orthoM(mProjectionMatrix, 0, -ratio * 18f, ratio * 18f, -19f, 19f, 0.1f, 100.0f);
         }
 
         @Override
@@ -587,9 +587,10 @@ public class SkinManagerFragment extends Fragment {
             if (mCape != null && mCapeTextureId != 0) {
                 float[] capeModelMatrix = new float[16];
                 System.arraycopy(mModelMatrix, 0, capeModelMatrix, 0, 16);
-                Matrix.translateM(capeModelMatrix, 0, 0f, 4f, -2f);
-                Matrix.rotateM(capeModelMatrix, 0, 10.0f, 1f, 0f, 0f);
-                Matrix.translateM(capeModelMatrix, 0, 0f, 0f, -0.15f);
+                // Translate pivot (shoulder at Y=4, Z=2) to origin, rotate, translate back
+                Matrix.translateM(capeModelMatrix, 0, 0f, 4f, 2f);
+                Matrix.rotateM(capeModelMatrix, 0, 15.0f, 1f, 0f, 0f);
+                Matrix.translateM(capeModelMatrix, 0, 0f, -4f, -2f);
 
                 float[] capeMvMatrix = new float[16];
                 float[] capeMvpMatrix = new float[16];
@@ -684,8 +685,8 @@ public class SkinManagerFragment extends Fragment {
         }
 
         private void rebuildCape(int capeW, int capeH) {
-            // Cape: size 10x16x1. Bounds: X[-5, 5], Y[-16, 0], Z[-1f, 0f]
-            mCape = new Cuboid(-5, 5, -16, 0, -1.0f, 0f, 0, 0, 10, 16, 1, capeW, capeH, false);
+            // Cape: size 10x16x1. Bounds: X[-5, 5], Y[-12, 4], Z[2f, 3f]
+            mCape = new Cuboid(-5, 5, -12, 4, 2f, 3f, 0, 0, 10, 16, 1, capeW, capeH, false);
         }
 
         private static class Cuboid {
@@ -709,15 +710,15 @@ public class SkinManagerFragment extends Fragment {
                         x2, y2, z1, x2, y1, z1, x1, y1, z1, x1, y2, z1,
                         uStart + dz + dx + dz, vStart + dz, dx, dy, texW, texH, mirror);
 
-                // Left (X = x1)
+                // Left (X = x1) (Player's Right side)
                 addFace(vertices, uvs, 36, 24,
                         x1, y2, z1, x1, y1, z1, x1, y1, z2, x1, y2, z2,
-                        uStart + dz + dx, vStart + dz, dz, dy, texW, texH, mirror);
+                        uStart, vStart + dz, dz, dy, texW, texH, mirror);
 
-                // Right (X = x2)
+                // Right (X = x2) (Player's Left side)
                 addFace(vertices, uvs, 54, 36,
                         x2, y2, z2, x2, y1, z2, x2, y1, z1, x2, y2, z1,
-                        uStart, vStart + dz, dz, dy, texW, texH, mirror);
+                        uStart + dz + dx, vStart + dz, dz, dy, texW, texH, mirror);
 
                 // Top (Y = y2)
                 addFace(vertices, uvs, 72, 48,
