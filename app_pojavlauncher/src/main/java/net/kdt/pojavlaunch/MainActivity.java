@@ -86,7 +86,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
 
     public static TouchCharInput touchCharInput;
     private MinecraftGLSurface minecraftGLView;
-    private static Touchpad touchpad;
+    public static Touchpad touchpad;
     private LoggerView loggerView;
     private DrawerLayout drawerLayout;
     private ListView navDrawer;

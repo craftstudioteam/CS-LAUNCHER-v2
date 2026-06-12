@@ -103,6 +103,11 @@ public class MinecraftGLSurface extends View implements GrabListener, DirectGame
         setFocusable(true);
         CallbackBridge.setDirectGamepadEnableHandler(this);
         SDLControllerManager.setDirectGamepadEnableHandler(this);
+        CallbackBridge.setMinecraftGLSurface(this);
+    }
+
+    public View getSurfaceView() {
+        return mSurface;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -487,6 +492,12 @@ public class MinecraftGLSurface extends View implements GrabListener, DirectGame
             mCurrentTouchProcessor.cancelPendingActions();
             mCurrentTouchProcessor = desiredProcessor;
             mLastGrabState = isGrabbing;
+        }
+        if (!isGrabbing) {
+            net.kdt.pojavlaunch.customcontrols.mouse.CustomCursorRenderer.startAnimation();
+            net.kdt.pojavlaunch.customcontrols.mouse.CustomCursorRenderer.updateCursorFrame();
+        } else {
+            net.kdt.pojavlaunch.customcontrols.mouse.CustomCursorRenderer.stopAnimation();
         }
     }
 
