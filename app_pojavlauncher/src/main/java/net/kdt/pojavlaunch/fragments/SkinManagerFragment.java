@@ -125,11 +125,13 @@ public class SkinManagerFragment extends Fragment {
         mSwitchModelType.setChecked(isSlim);
 
         // Populate details
-        mTvInfoUsername.setText(activeAccount.username);
+        if (mTvInfoUsername != null) mTvInfoUsername.setText(activeAccount.username);
         
         String modelOverrideStr = isSlim ? "Alex (Slim)" : "Steve (Default)";
-        String profileId = LocalUuidUtils.generateProfileId(activeAccount.username, isSlim ? SkinModelType.ALEX : SkinModelType.STEVE);
-        mTvInfoUuid.setText(LocalUuidUtils.toFormattedUuid(profileId));
+        if (mTvInfoUuid != null) {
+            String profileId = LocalUuidUtils.generateProfileId(activeAccount.username, isSlim ? SkinModelType.ALEX : SkinModelType.STEVE);
+            mTvInfoUuid.setText(LocalUuidUtils.toFormattedUuid(profileId));
+        }
 
         updatePathText(mTvSkinPath, mPendingSkinUri, "No custom skin selected");
         updatePathText(mTvCapePath, mPendingCapeUri, "No custom cape selected");
@@ -238,8 +240,18 @@ public class SkinManagerFragment extends Fragment {
                 
                 LocalYggdrasilServer.registerProfile(acc.username, accUuid, finalSkin, finalCape, isSlimModel);
 
+                acc.clearFaceCache();
+
                 Toast.makeText(requireContext(), "Textures Saved Successfully!", Toast.LENGTH_SHORT).show();
                 updateAccountInfo();
+
+                // Refresh account spinner to update the skin head beside username
+                if (getActivity() != null) {
+                    com.kdt.mcgui.mcAccountSpinner spinner = getActivity().findViewById(R.id.account_spinner);
+                    if (spinner != null) {
+                        spinner.reloadAccounts(true, spinner.getSelectedItemPosition());
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(requireContext(), "Failed to save textures: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -253,14 +265,16 @@ public class SkinManagerFragment extends Fragment {
         MinecraftAccount activeAccount = net.kdt.pojavlaunch.PojavProfile.getCurrentProfileContent(requireContext(), null);
         if (activeAccount == null) return;
 
-        mTvInfoUsername.setText(activeAccount.username);
+        if (mTvInfoUsername != null) mTvInfoUsername.setText(activeAccount.username);
         
         boolean isSlim = mSwitchModelType.isChecked();
-        String profileId = LocalUuidUtils.generateProfileId(activeAccount.username, isSlim ? SkinModelType.ALEX : SkinModelType.STEVE);
-        mTvInfoUuid.setText(LocalUuidUtils.toFormattedUuid(profileId));
+        if (mTvInfoUuid != null) {
+            String profileId = LocalUuidUtils.generateProfileId(activeAccount.username, isSlim ? SkinModelType.ALEX : SkinModelType.STEVE);
+            mTvInfoUuid.setText(LocalUuidUtils.toFormattedUuid(profileId));
+        }
 
-        mTvInfoSkinStatus.setText(mPendingSkinUri != null ? "Custom Skin Active (" + (isSlim ? "Alex/Slim" : "Steve/Default") + ")" : "Default Steve");
-        mTvInfoCapeStatus.setText(mPendingCapeUri != null ? "Custom Cape Active" : "None");
+        if (mTvInfoSkinStatus != null) mTvInfoSkinStatus.setText(mPendingSkinUri != null ? "Custom Skin Active (" + (isSlim ? "Alex/Slim" : "Steve/Default") + ")" : "Default Steve");
+        if (mTvInfoCapeStatus != null) mTvInfoCapeStatus.setText(mPendingCapeUri != null ? "Custom Cape Active" : "None");
     }
 
     private void copyUriToFile(Uri uri, File destFile) throws Exception {
@@ -513,7 +527,7 @@ public class SkinManagerFragment extends Fragment {
         public void onSurfaceChanged(javax.microedition.khronos.opengles.GL10 gl, int width, int height) {
             GLES20.glViewport(0, 0, width, height);
             float ratio = (float) width / height;
-            Matrix.frustumM(mProjectionMatrix, 0, -ratio * 0.4f, ratio * 0.4f, -0.4f, 0.4f, 3.0f, 60.0f);
+            Matrix.frustumM(mProjectionMatrix, 0, -ratio * 2.3f, ratio * 2.3f, -2.3f, 2.3f, 3.0f, 60.0f);
         }
 
         @Override
@@ -560,8 +574,8 @@ public class SkinManagerFragment extends Fragment {
                 mCape = null;
             }
 
-            // Set camera
-            Matrix.setLookAtM(mViewMatrix, 0, 0f, -6f, 26f, 0f, -6f, 0f, 0f, 1.0f, 0f);
+            // Set camera (looking at center of player: Y = -4)
+            Matrix.setLookAtM(mViewMatrix, 0, 0f, -4f, 26f, 0f, -4f, 0f, 0f, 1.0f, 0f);
 
             // Rotations
             Matrix.setIdentityM(mModelMatrix, 0);

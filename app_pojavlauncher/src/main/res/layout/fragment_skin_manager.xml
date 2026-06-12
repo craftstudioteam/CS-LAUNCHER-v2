@@ -67,7 +67,7 @@
             <!-- 1. 3D Player Preview Card -->
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="320dp"
+                android:layout_height="240dp"
                 android:background="@drawable/bg_fastclient_card"
                 android:padding="8dp"
                 android:layout_marginBottom="16dp">
@@ -91,111 +91,6 @@
                     android:layout_gravity="top|start"
                     android:layout_margin="12dp"/>
             </FrameLayout>
-
-            <!-- 2. Account Information Card -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_fastclient_card"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ACCOUNT DETAILS"
-                    android:textColor="#00FF41"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.08"
-                    android:layout_marginBottom="12dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingVertical="4dp">
-                    <TextView
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:text="Username:"
-                        android:textColor="#888888"
-                        android:textSize="14sp" />
-                    <TextView
-                        android:id="@+id/tv_info_username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Steve"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingVertical="4dp">
-                    <TextView
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:text="UUID (Offline):"
-                        android:textColor="#888888"
-                        android:textSize="14sp" />
-                    <TextView
-                        android:id="@+id/tv_info_uuid"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="deterministic-offline-uuid"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:fontFamily="monospace"
-                        android:maxLines="1"
-                        android:ellipsize="end" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingVertical="4dp">
-                    <TextView
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:text="Skin Status:"
-                        android:textColor="#888888"
-                        android:textSize="14sp" />
-                    <TextView
-                        android:id="@+id/tv_info_skin_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Default (Steve)"
-                        android:textColor="#AAAAAA"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingVertical="4dp">
-                    <TextView
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:text="Cape Status:"
-                        android:textColor="#888888"
-                        android:textSize="14sp" />
-                    <TextView
-                        android:id="@+id/tv_info_cape_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="None"
-                        android:textColor="#AAAAAA"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </LinearLayout>
 
             <!-- 3. Skin Settings Card -->
             <LinearLayout
