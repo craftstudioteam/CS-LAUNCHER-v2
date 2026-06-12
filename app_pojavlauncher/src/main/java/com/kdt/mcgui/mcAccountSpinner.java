@@ -251,7 +251,7 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
      * @param fromFiles Whether we use files as the source of truth
      * @param overridePosition Force the spinner to be at this position, if not 0
      */
-    private void reloadAccounts(boolean fromFiles, int overridePosition){
+    public void reloadAccounts(boolean fromFiles, int overridePosition){
         if(fromFiles){
             mAccountList.clear();
 
@@ -336,8 +336,6 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
         setImageFromSelectedAccount();
     }
 
-    @Deprecated()
-    /* Legacy behavior, update the head image manually for the selected account */
     private void setImageFromSelectedAccount(){
         BitmapDrawable oldBitmapDrawable = mHeadDrawable;
 
@@ -346,11 +344,22 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
             if(layout != null){
                 ExtendedTextView view = layout.findViewById(R.id.account_item);
                 Bitmap bitmap = mSelectecAccount.getSkinFace();
+                if (bitmap == null) {
+                    bitmap = MinecraftAccount.getSkinFace(mSelectecAccount.username);
+                }
                 if(bitmap != null) {
                     mHeadDrawable = new BitmapDrawable(getResources(), bitmap);
                     view.setCompoundDrawables(mHeadDrawable, null, null, null);
                 }else{
-                    view.setCompoundDrawables(null, null, null, null);
+                    Bitmap steve = BitmapFactory.decodeResource(getResources(), R.drawable.ic_steve);
+                    if (steve != null) {
+                        Bitmap roundedSteve = MinecraftAccount.roundBitmap(steve, 64, 10f);
+                        steve.recycle();
+                        mHeadDrawable = new BitmapDrawable(getResources(), roundedSteve);
+                        view.setCompoundDrawables(mHeadDrawable, null, null, null);
+                    } else {
+                        view.setCompoundDrawables(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_steve, null), null, null, null);
+                    }
                 }
                 view.postProcessDrawables();
             }
@@ -387,8 +396,22 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
                 String username = super.getItem(position);
                 Drawable accountHead = mImageCache.get(username);
                 if (accountHead == null){
-                    accountHead = new BitmapDrawable(parent.getResources(), MinecraftAccount.getSkinFace(username));
-                    mImageCache.put(username, accountHead);
+                    Bitmap bitmap = MinecraftAccount.getSkinFace(username);
+                    if (bitmap != null) {
+                        accountHead = new BitmapDrawable(parent.getResources(), bitmap);
+                    } else {
+                        Bitmap steve = BitmapFactory.decodeResource(parent.getResources(), R.drawable.ic_steve);
+                        if (steve != null) {
+                            Bitmap roundedSteve = MinecraftAccount.roundBitmap(steve, 64, 10f);
+                            steve.recycle();
+                            accountHead = new BitmapDrawable(parent.getResources(), roundedSteve);
+                        } else {
+                            accountHead = ResourcesCompat.getDrawable(parent.getResources(), R.drawable.ic_steve, null);
+                        }
+                    }
+                    if (accountHead != null) {
+                        mImageCache.put(username, accountHead);
+                    }
                 }
                 textview.setCompoundDrawables(accountHead, null, null, null);
 

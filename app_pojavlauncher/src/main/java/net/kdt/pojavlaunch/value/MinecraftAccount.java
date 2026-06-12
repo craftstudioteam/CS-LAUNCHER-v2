@@ -131,18 +131,94 @@ public class MinecraftAccount {
         }
     }
 
+    public void clearFaceCache() {
+        mFaceCache = null;
+    }
+
+    public static Bitmap roundBitmap(Bitmap src, int size, float cornerRadius) {
+        if (src == null) return null;
+        try {
+            Bitmap scaled = Bitmap.createScaledBitmap(src, size, size, false);
+            Bitmap rounded = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            android.graphics.Canvas canvas = new android.graphics.Canvas(rounded);
+            android.graphics.Paint paint = new android.graphics.Paint();
+            paint.setAntiAlias(true);
+            android.graphics.Rect rect = new android.graphics.Rect(0, 0, size, size);
+            android.graphics.RectF rectF = new android.graphics.RectF(rect);
+            paint.setColor(0xffffffff);
+            canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint);
+            paint.setXfermode(new android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(scaled, null, rect, paint);
+            if (scaled != src) {
+                scaled.recycle();
+            }
+            return rounded;
+        } catch (Exception e) {
+            Log.w("MinecraftAccount", "Error rounding bitmap", e);
+            return src;
+        }
+    }
+
+    public static Bitmap extractSkinHead(Bitmap fullSkin) {
+        if (fullSkin == null) return null;
+        try {
+            Bitmap baseHead = Bitmap.createBitmap(fullSkin, 8, 8, 8, 8);
+            Bitmap combined = Bitmap.createBitmap(8, 8, Bitmap.Config.ARGB_8888);
+            android.graphics.Canvas canvas = new android.graphics.Canvas(combined);
+            canvas.drawBitmap(baseHead, 0, 0, null);
+            baseHead.recycle();
+            
+            if (fullSkin.getWidth() >= 48 && fullSkin.getHeight() >= 16) {
+                Bitmap hat = Bitmap.createBitmap(fullSkin, 40, 8, 8, 8);
+                canvas.drawBitmap(hat, 0, 0, null);
+                hat.recycle();
+            }
+            
+            Bitmap rounded = roundBitmap(combined, 64, 10f);
+            combined.recycle();
+            return rounded;
+        } catch (Exception e) {
+            Log.w("MinecraftAccount", "Error extracting skin head", e);
+            return null;
+        }
+    }
+
     public Bitmap getSkinFace(){
         if(isLocal()) return null;
 
         File skinFaceFile = getSkinFaceFile(username);
         if (!skinFaceFile.exists()) {
+            File customSkinFile = new File(Tools.DIR_DATA + "/skins/" + username + "_skin.png");
+            if (customSkinFile.exists()) {
+                try {
+                    Bitmap fullSkin = BitmapFactory.decodeFile(customSkinFile.getAbsolutePath());
+                    if (fullSkin != null) {
+                        Bitmap head = extractSkinHead(fullSkin);
+                        fullSkin.recycle();
+                        if (head != null) return head;
+                    }
+                } catch (Exception e) {
+                    Log.w("MinecraftAccount", "Failed to extract local skin face", e);
+                }
+            }
+
             // Legacy version, storing the head inside the json as base 64
             if(skinFaceBase64 == null) return null;
             byte[] faceIconBytes = Base64.decode(skinFaceBase64, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(faceIconBytes, 0, faceIconBytes.length);
+            Bitmap base64Bitmap = BitmapFactory.decodeByteArray(faceIconBytes, 0, faceIconBytes.length);
+            if (base64Bitmap != null) {
+                Bitmap rounded = roundBitmap(base64Bitmap, 64, 10f);
+                base64Bitmap.recycle();
+                return rounded;
+            }
+            return null;
         } else {
             if(mFaceCache == null) {
-                mFaceCache = BitmapFactory.decodeFile(skinFaceFile.getAbsolutePath());
+                Bitmap cached = BitmapFactory.decodeFile(skinFaceFile.getAbsolutePath());
+                if (cached != null) {
+                    mFaceCache = roundBitmap(cached, 64, 10f);
+                    cached.recycle();
+                }
             }
         }
 
@@ -150,7 +226,35 @@ public class MinecraftAccount {
     }
 
     public static Bitmap getSkinFace(String username) {
-        return BitmapFactory.decodeFile(getSkinFaceFile(username).getAbsolutePath());
+        File customSkinFile = new File(Tools.DIR_DATA + "/skins/" + username + "_skin.png");
+        if (customSkinFile.exists()) {
+            try {
+                Bitmap fullSkin = BitmapFactory.decodeFile(customSkinFile.getAbsolutePath());
+                if (fullSkin != null) {
+                    Bitmap head = extractSkinHead(fullSkin);
+                    fullSkin.recycle();
+                    if (head != null) {
+                        return head;
+                    }
+                }
+            } catch (Exception e) {
+                Log.w("MinecraftAccount", "Failed to extract local skin face for " + username, e);
+            }
+        }
+        File cachedHead = getSkinFaceFile(username);
+        if (cachedHead.exists()) {
+            try {
+                Bitmap cached = BitmapFactory.decodeFile(cachedHead.getAbsolutePath());
+                if (cached != null) {
+                    Bitmap rounded = roundBitmap(cached, 64, 10f);
+                    cached.recycle();
+                    return rounded;
+                }
+            } catch (Exception e) {
+                Log.w("MinecraftAccount", "Failed to decode cached skin face for " + username, e);
+            }
+        }
+        return null;
     }
 
     private static File getSkinFaceFile(String username) {
