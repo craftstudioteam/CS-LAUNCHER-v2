@@ -25,7 +25,8 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.R;
 
 import java.io.InputStream;
-
+import java.io.File;
+import net.kdt.pojavlaunch.value.MinecraftAccount;
 public class SkinManagerFragment extends Fragment {
 
     public static final String TAG = "SKIN_MANAGER_FRAGMENT";
