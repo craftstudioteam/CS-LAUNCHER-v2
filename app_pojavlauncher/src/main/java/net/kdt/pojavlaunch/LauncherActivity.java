@@ -549,26 +549,8 @@ public class LauncherActivity extends BaseActivity {
     public void updateNavSkinIcon() {
         final ImageView navSkinIcon = findViewById(R.id.nav_skin_icon);
         if (navSkinIcon != null) {
-            MinecraftAccount activeAccount = PojavProfile.getCurrentProfileContent(this, null);
-            if (activeAccount != null) {
-                Bitmap bitmap = activeAccount.getSkinFace();
-                if (bitmap == null) {
-                    bitmap = MinecraftAccount.getSkinFace(activeAccount.username);
-                }
-                if (bitmap != null) {
-                    navSkinIcon.setImageBitmap(bitmap);
-                    return;
-                }
-            }
-            // Fallback to rounded default Steve
-            Bitmap steve = BitmapFactory.decodeResource(getResources(), R.drawable.ic_steve);
-            if (steve != null) {
-                Bitmap roundedSteve = MinecraftAccount.roundBitmap(steve, 64, 10f);
-                steve.recycle();
-                navSkinIcon.setImageBitmap(roundedSteve);
-            } else {
-                navSkinIcon.setImageResource(R.drawable.ic_manage_skin);
-            }
+            // Replaced live player model face with standard clean icon per user request
+            navSkinIcon.setImageResource(R.drawable.ic_manage_skin);
         }
     }
 

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Control Buttons (copper glow style - softened, not neon orange anymore) -->
-    <color name="control_button_color">#66C97A2B</color>
-    <color name="control_button_pressed_color">#99A85C1A</color>
+    <!-- Control Buttons -->
+    <color name="control_button_color">#3339FF14</color>
+    <color name="control_button_pressed_color">#6639FF14</color>
 
-    <!-- Main Button (hot copper highlight - toned down for consistency) -->
-    <color name="minebutton_color">#ff5900</color>
-    <color name="cu_bg_app">#1A0E00</color>
-    <color name="cu_bg_status_bar">#2A1800</color>
-    <color name="cu_bg_bottom_bar">#231200</color>
-    <color name="cu_divider">#3D2200</color>
+    <!-- Main Button -->
+    <color name="minebutton_color">#39FF14</color>
+    <color name="cu_bg_app">#0D1410</color>
+    <color name="cu_bg_status_bar">#0A110D</color>
+    <color name="cu_bg_bottom_bar">#0A110D</color>
+    <color name="cu_divider">#1A39FF14</color>
 
     <!-- BACKGROUND SYSTEM (COPPER METAL THEME) -->
     <!-- Dark copper layered surfaces -->

@@ -173,7 +173,7 @@ public class ModInstallFragment extends Fragment {
                             R.string.modpack_install_download_failed, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                startDownload(finalUrl, fileName);
+                showProfileSelectorAndDownload(finalUrl, fileName);
             });
         }
 
@@ -303,6 +303,42 @@ public class ModInstallFragment extends Fragment {
             downloadMod(ctx, url, fileName,
                     new String[0], new String[0]);
         }
+    }
+
+    private void showProfileSelectorAndDownload(String url, String fileName) {
+        net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles.load();
+        java.util.Map<String, net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile> profiles = 
+                net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles.mainProfileJson.profiles;
+                
+        if (profiles == null || profiles.isEmpty()) {
+            startDownload(url, fileName);
+            return;
+        }
+
+        String[] profileKeys = profiles.keySet().toArray(new String[0]);
+        String[] profileNames = new String[profileKeys.length];
+        int currentSelection = -1;
+        String currentKey = mProfileKey != null ? mProfileKey 
+                : net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getString(
+                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
+                        
+        for (int i = 0; i < profileKeys.length; i++) {
+            net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile p = profiles.get(profileKeys[i]);
+            profileNames[i] = (p != null && p.name != null && !p.name.isEmpty()) ? p.name : "Unnamed Profile";
+            if (profileKeys[i].equals(currentKey)) {
+                currentSelection = i;
+            }
+        }
+
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext(), net.kdt.pojavlaunch.R.style.AlertDialogTheme)
+                .setTitle("Select Profile to Install To")
+                .setSingleChoiceItems(profileNames, currentSelection, (dialog, which) -> {
+                    mProfileKey = profileKeys[which];
+                    dialog.dismiss();
+                    startDownload(url, fileName);
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     private void showDependencyDialog(Context ctx, String url, String fileName) {

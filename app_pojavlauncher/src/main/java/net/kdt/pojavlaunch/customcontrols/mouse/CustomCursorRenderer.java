@@ -30,6 +30,7 @@ public class CustomCursorRenderer {
     private static int mLastGlowColor = 0;
     private static int mLastHotspotX = -1;
     private static int mLastHotspotY = -1;
+    private static float mLastScale = -1f;
     
     private static long mAnimationStartTime = 0;
     private static boolean mIsRunning = false;
@@ -99,6 +100,7 @@ public class CustomCursorRenderer {
         mLastGlowColor = 0;
         mLastHotspotX = -1;
         mLastHotspotY = -1;
+        mLastScale = -1f;
     }
     
     public static synchronized PointerIcon getActivePointerIcon() {
@@ -119,12 +121,14 @@ public class CustomCursorRenderer {
         int glowColor = LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_COLOR;
         int hotspotX = LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_x", 0);
         int hotspotY = LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_y", 0);
+        float scale = LauncherPreferences.PREF_CUSTOM_CURSOR_SCALE / 100f;
         
         boolean pathChanged = !path.equals(mLastLoadedPath);
         boolean glowChanged = glowRadius != mLastGlowRadius || glowColor != mLastGlowColor;
         boolean hotspotChanged = hotspotX != mLastHotspotX || hotspotY != mLastHotspotY;
+        boolean scaleChanged = scale != mLastScale;
         
-        if (pathChanged || glowChanged || hotspotChanged) {
+        if (pathChanged || glowChanged || hotspotChanged || scaleChanged) {
             // Reset and reload custom cursor
             reset();
             mLastLoadedPath = path;
@@ -132,6 +136,7 @@ public class CustomCursorRenderer {
             mLastGlowColor = glowColor;
             mLastHotspotX = hotspotX;
             mLastHotspotY = hotspotY;
+            mLastScale = scale;
             
             File file = new File(path);
             if (!file.exists()) {
@@ -155,20 +160,33 @@ public class CustomCursorRenderer {
                     } else {
                         Log.e(TAG, "Failed to decode GIF movie from: " + path);
                     }
-                } else {
                     // Static image
                     Bitmap src = BitmapFactory.decodeFile(path);
                     if (src != null) {
+                        if (scale != 1.0f && scale > 0.1f) {
+                            int newW = (int) (src.getWidth() * scale);
+                            int newH = (int) (src.getHeight() * scale);
+                            if (newW > 0 && newH > 0) {
+                                Bitmap scaled = Bitmap.createScaledBitmap(src, newW, newH, true);
+                                if (scaled != src) {
+                                    src.recycle();
+                                    src = scaled;
+                                }
+                            }
+                        }
+                        
                         Bitmap bitmapToUse;
                         if (glowRadius > 0) {
-                            bitmapToUse = CursorManager.applyGlow(src, glowRadius, glowColor);
+                            bitmapToUse = CursorManager.applyGlow(src, (int)(glowRadius * scale), glowColor);
                         } else {
                             bitmapToUse = src;
                         }
                         mStaticBitmap = bitmapToUse;
                         
-                        int hX = Math.max(0, Math.min(mStaticBitmap.getWidth() - 1, hotspotX));
-                        int hY = Math.max(0, Math.min(mStaticBitmap.getHeight() - 1, hotspotY));
+                        int scaledHotspotX = (int)(hotspotX * scale);
+                        int scaledHotspotY = (int)(hotspotY * scale);
+                        int hX = Math.max(0, Math.min(mStaticBitmap.getWidth() - 1, scaledHotspotX));
+                        int hY = Math.max(0, Math.min(mStaticBitmap.getHeight() - 1, scaledHotspotY));
                         
                         mCachedPointerIcon = PointerIcon.create(mStaticBitmap, hX, hY);
                     } else {
@@ -191,12 +209,24 @@ public class CustomCursorRenderer {
             mMovie.draw(mGifCanvas, 0, 0);
             
             Bitmap frame = mGifBitmap;
-            if (glowRadius > 0) {
-                frame = CursorManager.applyGlow(mGifBitmap, glowRadius, glowColor);
+            if (mLastScale != 1.0f && mLastScale > 0.1f) {
+                int newW = (int) (frame.getWidth() * mLastScale);
+                int newH = (int) (frame.getHeight() * mLastScale);
+                if (newW > 0 && newH > 0) {
+                    frame = Bitmap.createScaledBitmap(frame, newW, newH, true);
+                }
             }
             
-            int hX = Math.max(0, Math.min(frame.getWidth() - 1, hotspotX));
-            int hY = Math.max(0, Math.min(frame.getHeight() - 1, hotspotY));
+            if (glowRadius > 0) {
+                Bitmap glowingFrame = CursorManager.applyGlow(frame, (int)(glowRadius * mLastScale), glowColor);
+                if (frame != mGifBitmap) frame.recycle(); // Recycle scaled frame if we applied glow
+                frame = glowingFrame;
+            }
+            
+            int scaledHotspotX = (int)(hotspotX * mLastScale);
+            int scaledHotspotY = (int)(hotspotY * mLastScale);
+            int hX = Math.max(0, Math.min(frame.getWidth() - 1, scaledHotspotX));
+            int hY = Math.max(0, Math.min(frame.getHeight() - 1, scaledHotspotY));
             
             return PointerIcon.create(frame, hX, hY);
         } else {
@@ -220,10 +250,23 @@ public class CustomCursorRenderer {
         if (mMovie != null && mGifBitmap != null) {
             int glowRadius = LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS;
             int glowColor = LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_COLOR;
-            if (glowRadius > 0) {
-                return CursorManager.applyGlow(mGifBitmap, glowRadius, glowColor);
+            float scale = LauncherPreferences.PREF_CUSTOM_CURSOR_SCALE / 100f;
+            
+            Bitmap frame = mGifBitmap;
+            if (scale != 1.0f && scale > 0.1f) {
+                int newW = (int) (frame.getWidth() * scale);
+                int newH = (int) (frame.getHeight() * scale);
+                if (newW > 0 && newH > 0) {
+                    frame = Bitmap.createScaledBitmap(frame, newW, newH, true);
+                }
             }
-            return mGifBitmap;
+            
+            if (glowRadius > 0) {
+                Bitmap glowingFrame = CursorManager.applyGlow(frame, (int)(glowRadius * scale), glowColor);
+                if (frame != mGifBitmap) frame.recycle();
+                return glowingFrame;
+            }
+            return frame;
         }
         
         return mStaticBitmap;

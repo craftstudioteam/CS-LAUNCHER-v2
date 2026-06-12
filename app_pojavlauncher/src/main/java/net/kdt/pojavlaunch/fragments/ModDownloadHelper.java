@@ -37,8 +37,17 @@ public class ModDownloadHelper {
         }
     }
 
-    public static File getDestinationDir(Context context, String contentType) {
-        File mcDir = new File(Tools.DIR_GAME_NEW);
+    public static File getDestinationDir(Context context, String contentType, String profileKey) {
+        File mcDir = null;
+        if (profileKey != null && !profileKey.isEmpty()) {
+            try {
+                net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles.load();
+                net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile profile = 
+                        net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles.mainProfileJson.profiles.get(profileKey);
+                if (profile != null) mcDir = net.kdt.pojavlaunch.Tools.getGameDirPath(profile);
+            } catch (Exception ignored) {}
+        }
+        if (mcDir == null) mcDir = new File(Tools.DIR_GAME_NEW);
 
         switch (contentType) {
             case "mod":
@@ -67,10 +76,10 @@ public class ModDownloadHelper {
         }
     }
 
-    public static void downloadAndExtract(Context context, String name, String url, String contentType) {
+    public static void downloadAndExtract(Context context, String name, String url, String contentType, String profileKey) {
         if (context == null || url == null || url.isEmpty()) return;
 
-        File destDir = getDestinationDir(context, contentType);
+        File destDir = getDestinationDir(context, contentType, profileKey);
         if (!destDir.exists()) destDir.mkdirs();
 
         String filename = sanitizeName(name) + getFileExtension(contentType);

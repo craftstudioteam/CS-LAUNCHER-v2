@@ -81,6 +81,7 @@ public class LauncherPreferences {
     public static boolean PREF_CUSTOM_CURSOR_ENABLED = false;
     public static int PREF_CUSTOM_CURSOR_GLOW_RADIUS = 0;
     public static int PREF_CUSTOM_CURSOR_GLOW_COLOR = Color.parseColor("#A6FF3D");
+    public static float PREF_CUSTOM_CURSOR_SCALE = 100f; // stored as percentage (25 to 300)
 
     public static void loadPreferences(Context ctx) {
         //Required for CTRLDEF_FILE and MultiRT
@@ -150,6 +151,7 @@ public class LauncherPreferences {
         PREF_CUSTOM_CURSOR_ENABLED = DEFAULT_PREF.getBoolean("custom_cursor_enabled", false);
         PREF_CUSTOM_CURSOR_GLOW_RADIUS = DEFAULT_PREF.getInt("custom_cursor_glow_radius", 0);
         PREF_CUSTOM_CURSOR_GLOW_COLOR = DEFAULT_PREF.getInt("custom_cursor_glow_color", Color.parseColor("#A6FF3D"));
+        PREF_CUSTOM_CURSOR_SCALE = DEFAULT_PREF.getFloat("custom_cursor_scale", 100f);
     }
 
     /**
