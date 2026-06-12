@@ -524,6 +524,19 @@ public class LauncherActivity extends BaseActivity {
                     Tools.swapFragment(this, CursorCustomizationFragment.class,
                             CursorCustomizationFragment.TAG, null));
         }
+
+        View navSkin = findViewById(R.id.nav_skin);
+        if (navSkin != null) {
+            navSkin.setOnClickListener(v -> {
+                Fragment frag = getVisibleFragment("ROOT");
+                if (frag instanceof MainMenuFragment) {
+                    ((MainMenuFragment) frag).openChildPane(
+                            SkinManagerFragment.class, SkinManagerFragment.TAG, null);
+                } else {
+                    Tools.swapFragment(this, SkinManagerFragment.class, SkinManagerFragment.TAG, null);
+                }
+            });
+        }
     }
 
     private void updateClientFeaturesButton(android.widget.Button btn, boolean enabled) {
@@ -536,6 +549,10 @@ public class LauncherActivity extends BaseActivity {
             btn.setBackgroundResource(R.drawable.bg_client_features_btn);
             btn.setTextColor(android.graphics.Color.parseColor("#B39DDB"));
         }
+    }
+
+    public ClientFeaturesManager getClientFeaturesManager() {
+        return mClientFeaturesManager;
     }
 
     private void bindViews(){

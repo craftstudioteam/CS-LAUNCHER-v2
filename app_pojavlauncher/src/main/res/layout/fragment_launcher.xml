@@ -99,6 +99,22 @@
                 android:drawableStart="@drawable/ic_mouse_pointer"
                 android:text="@string/cursor_customization_title" />
 
+            <!-- ENABLE CLIENT FEATURES -->
+            <com.kdt.mcgui.LauncherMenuButton
+                android:id="@+id/btn_client_features"
+                style="@style/LauncherMenuButton.Universal"
+                android:layout_width="match_parent"
+                android:drawableStart="@drawable/ic_star"
+                android:text="✦ Enable Client Features" />
+
+            <!-- MANAGE SKIN -->
+            <com.kdt.mcgui.LauncherMenuButton
+                android:id="@+id/btn_manage_skin"
+                style="@style/LauncherMenuButton.Universal"
+                android:layout_width="match_parent"
+                android:drawableStart="@drawable/ic_steve"
+                android:text="Manage Skin" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"

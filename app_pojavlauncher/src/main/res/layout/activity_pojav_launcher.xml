@@ -13,20 +13,6 @@
         android:dropDownWidth="@dimen/_250sdp"
         android:dropDownVerticalOffset="@dimen/_52sdp"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_client_features"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/padding_small"
-        android:text="✦ Enable Client Features"
-        android:textColor="#B39DDB"
-        android:background="@drawable/bg_client_features_btn"
-        android:padding="12dp"
-        app:layout_constraintTop_toBottomOf="@id/account_spinner"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <ImageButton
         android:id="@+id/setting_button"
         android:layout_width="@dimen/_52sdp"
@@ -44,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/progress_layout"
-        app:layout_constraintTop_toBottomOf="@+id/btn_client_features" />
+        app:layout_constraintTop_toBottomOf="@+id/account_spinner" />
 
     <com.kdt.mcgui.ProgressLayout
         android:id="@+id/progress_layout"
