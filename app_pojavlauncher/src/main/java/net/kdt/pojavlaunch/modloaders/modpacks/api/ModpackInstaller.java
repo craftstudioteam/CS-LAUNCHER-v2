@@ -80,6 +80,10 @@ public class ModpackInstaller {
 
         LauncherProfiles.mainProfileJson.profiles.put(modpackName, profile);
         LauncherProfiles.write();
+        
+        net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.edit()
+                .putString(net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_KEY_CURRENT_PROFILE, modpackName).apply();
+        LauncherProfiles.load();
 
         return modLoaderInfo;
     }
@@ -165,6 +169,10 @@ public class ModpackInstaller {
             profile.lastVersionId = modLoaderInfo.getVersionId();
             LauncherProfiles.mainProfileJson.profiles.put(modpackName, profile);
             LauncherProfiles.write();
+
+            net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.edit()
+                    .putString(net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_KEY_CURRENT_PROFILE, modpackName).apply();
+            LauncherProfiles.load();
 
             return modLoaderInfo;
         }
