@@ -330,7 +330,7 @@ public class ModInstallFragment extends Fragment {
             }
         }
 
-        new androidx.appcompat.app.AlertDialog.Builder(requireContext(), net.kdt.pojavlaunch.R.style.AlertDialogTheme)
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Select Profile to Install To")
                 .setSingleChoiceItems(profileNames, currentSelection, (dialog, which) -> {
                     mProfileKey = profileKeys[which];
