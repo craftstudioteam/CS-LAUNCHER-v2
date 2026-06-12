@@ -7,3 +7,7 @@
 [submodule "sdl2-compat"]
 	path = app_pojavlauncher/src/main/jni/sdl2-compat
 	url = https://github.com/libsdl-org/sdl2-compat.git
+
+[submodule "fs-manager-udroid"]
+	path = fs-manager-udroid
+	url = https://github.com/craftstudioteam/fs-manager-udroid.git
