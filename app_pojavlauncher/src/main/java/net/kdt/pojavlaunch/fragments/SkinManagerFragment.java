@@ -47,6 +47,8 @@ public class SkinManagerFragment extends Fragment {
 
     private SkinRenderer mSkinRenderer;
 
+    private View mRemoveCapeButton;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,7 +60,8 @@ public class SkinManagerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // 1. Authentication Guard
-        if (net.kdt.pojavlaunch.PojavProfile.getCurrentProfileContent(requireContext(), null) == null) {
+        MinecraftAccount activeAccount = net.kdt.pojavlaunch.PojavProfile.getCurrentProfileContent(requireContext(), null);
+        if (activeAccount == null) {
             Tools.dialog(requireContext(), "Authentication Required", "Please log in or create an account first before managing textures.");
             getParentFragmentManager().popBackStack();
             return;
@@ -68,6 +71,7 @@ public class SkinManagerFragment extends Fragment {
         mSwitchModelType = view.findViewById(R.id.switch_model_type);
         mTvSkinPath = view.findViewById(R.id.tv_skin_path);
         mTvCapePath = view.findViewById(R.id.tv_cape_path);
+        mRemoveCapeButton = view.findViewById(R.id.btn_remove_cape);
 
         // Setup OpenGL Surface
         mSkinPreviewSurface.setEGLContextClientVersion(2);
@@ -76,15 +80,35 @@ public class SkinManagerFragment extends Fragment {
         mSkinPreviewSurface.setRenderer(mSkinRenderer);
         mSkinPreviewSurface.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
-        // Load Preferences initially
-        SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        mPendingSkinUri = prefs.getString(KEY_SKIN_URI, null);
-        mPendingCapeUri = prefs.getString(KEY_CAPE_URI, null);
-        String modelType = prefs.getString(KEY_TEXTURE_MODEL, "default");
+        // Load skin/cape and model type locally associated with the current profile
+        File skinsDir = new File(Tools.DIR_DATA + "/skins");
+        File capesDir = new File(Tools.DIR_DATA + "/capes");
+        if (!skinsDir.exists()) skinsDir.mkdirs();
+        if (!capesDir.exists()) capesDir.mkdirs();
+
+        File localSkinFile = new File(skinsDir, activeAccount.username + "_skin.png");
+        File localSkinMetadata = new File(skinsDir, activeAccount.username + "_metadata.json");
+        File localCapeFile = new File(capesDir, activeAccount.username + "_cape.png");
+
+        mPendingSkinUri = localSkinFile.exists() ? Uri.fromFile(localSkinFile).toString() : null;
+        mPendingCapeUri = localCapeFile.exists() ? Uri.fromFile(localCapeFile).toString() : null;
+
+        String modelType = "default";
+        if (localSkinMetadata.exists()) {
+            try {
+                String metaContent = Tools.read(localSkinMetadata.getAbsolutePath());
+                if (metaContent.contains("slim")) {
+                    modelType = "slim";
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         mSwitchModelType.setChecked("slim".equals(modelType));
         updatePathText(mTvSkinPath, mPendingSkinUri, "Select PNG from storage");
         updatePathText(mTvCapePath, mPendingCapeUri, "Select PNG from storage");
+        updateCapeButtonVisibility();
 
         // Model Type Toggle
         mSwitchModelType.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -97,17 +121,77 @@ public class SkinManagerFragment extends Fragment {
         // Change Cape Button
         view.findViewById(R.id.btn_change_cape).setOnClickListener(v -> openFilePicker(REQUEST_CODE_CAPE));
 
+        // Remove Cape Button
+        if (mRemoveCapeButton != null) {
+            mRemoveCapeButton.setOnClickListener(v -> {
+                mPendingCapeUri = null;
+                updatePathText(mTvCapePath, null, "Select PNG from storage");
+                updateCapeButtonVisibility();
+                updatePreview();
+            });
+        }
+
         // Save Changes Button
         view.findViewById(R.id.btn_save_skin_changes).setOnClickListener(v -> {
-            prefs.edit()
-                .putString(KEY_SKIN_URI, mPendingSkinUri)
-                .putString(KEY_CAPE_URI, mPendingCapeUri)
-                .putString(KEY_TEXTURE_MODEL, mSwitchModelType.isChecked() ? "slim" : "default")
-                .apply();
-            Toast.makeText(requireContext(), "Texture Saved Successfully!", Toast.LENGTH_SHORT).show();
+            MinecraftAccount acc = net.kdt.pojavlaunch.PojavProfile.getCurrentProfileContent(requireContext(), null);
+            if (acc == null) return;
+
+            try {
+                // Save Skin
+                if (mPendingSkinUri != null) {
+                    File destSkin = new File(Tools.DIR_DATA + "/skins/" + acc.username + "_skin.png");
+                    if (!mPendingSkinUri.equals(Uri.fromFile(destSkin).toString())) {
+                        copyUriToFile(Uri.parse(mPendingSkinUri), destSkin);
+                    }
+
+                    File destSkinMeta = new File(Tools.DIR_DATA + "/skins/" + acc.username + "_metadata.json");
+                    String model = mSwitchModelType.isChecked() ? "slim" : "default";
+                    String metaContent = "{\n  \"model\": \"" + model + "\"\n}";
+                    Tools.write(destSkinMeta.getAbsolutePath(), metaContent);
+                } else {
+                    new File(Tools.DIR_DATA + "/skins/" + acc.username + "_skin.png").delete();
+                    new File(Tools.DIR_DATA + "/skins/" + acc.username + "_metadata.json").delete();
+                }
+
+                // Save Cape
+                if (mPendingCapeUri != null) {
+                    File destCape = new File(Tools.DIR_DATA + "/capes/" + acc.username + "_cape.png");
+                    if (!mPendingCapeUri.equals(Uri.fromFile(destCape).toString())) {
+                        copyUriToFile(Uri.parse(mPendingCapeUri), destCape);
+                    }
+
+                    File destCapeMeta = new File(Tools.DIR_DATA + "/capes/" + acc.username + "_metadata.json");
+                    Tools.write(destCapeMeta.getAbsolutePath(), "{\n  \"enabled\": true\n}");
+                } else {
+                    new File(Tools.DIR_DATA + "/capes/" + acc.username + "_cape.png").delete();
+                    new File(Tools.DIR_DATA + "/capes/" + acc.username + "_metadata.json").delete();
+                }
+
+                Toast.makeText(requireContext(), "Texture Saved Successfully!", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(requireContext(), "Failed to save textures: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         });
 
         updatePreview();
+    }
+
+    private void updateCapeButtonVisibility() {
+        if (mRemoveCapeButton != null) {
+            mRemoveCapeButton.setVisibility(mPendingCapeUri != null ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void copyUriToFile(Uri uri, File destFile) throws Exception {
+        try (InputStream in = requireContext().getContentResolver().openInputStream(uri);
+             java.io.FileOutputStream out = new java.io.FileOutputStream(destFile)) {
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+        }
     }
 
     private void openFilePicker(int requestCode) {
@@ -131,6 +215,7 @@ public class SkinManagerFragment extends Fragment {
                 mPendingCapeUri = uri.toString();
                 updatePathText(mTvCapePath, mPendingCapeUri, "Select PNG from storage");
             }
+            updateCapeButtonVisibility();
             updatePreview();
         }
     }

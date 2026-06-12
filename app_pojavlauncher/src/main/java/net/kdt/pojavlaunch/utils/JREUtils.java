@@ -299,6 +299,38 @@ public class JREUtils {
         }
     }
     public static void launchJavaVM(final AppCompatActivity activity, final Runtime runtime, File gameDirectory, final List<String> JVMArgs, final String userArgsString) throws Throwable {
+        // Local Yggdrasil Server integration for offline accounts
+        MinecraftAccount activeAccount = PojavProfile.getCurrentProfileContent(activity, null);
+        if (activeAccount != null && !activeAccount.isMicrosoft) {
+            String username = activeAccount.username;
+            String uuid = activeAccount.profileId;
+            
+            String skinPath = Tools.DIR_DATA + "/skins/" + username + "_skin.png";
+            String capePath = Tools.DIR_DATA + "/capes/" + username + "_cape.png";
+            
+            File skinFile = new File(skinPath);
+            File capeFile = new File(capePath);
+            
+            String finalSkinPath = skinFile.exists() ? skinFile.getAbsolutePath() : null;
+            String finalCapePath = capeFile.exists() ? capeFile.getAbsolutePath() : null;
+            
+            boolean isSlim = false;
+            File skinMeta = new File(Tools.DIR_DATA + "/skins/" + username + "_metadata.json");
+            if (skinMeta.exists()) {
+                try {
+                    String metaContent = Tools.read(skinMeta.getAbsolutePath());
+                    if (metaContent.contains("slim")) {
+                        isSlim = true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.start();
+            net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.registerProfile(username, uuid, finalSkinPath, finalCapePath, isSlim);
+        }
+
         String runtimeHome = MultiRTUtils.getRuntimeHome(runtime.name).getAbsolutePath();
 
         JREUtils.relocateLibPath(runtime, runtimeHome);
@@ -352,14 +384,26 @@ public class JREUtils {
         chdir(gameDirectory == null ? Tools.DIR_GAME_NEW : gameDirectory.getAbsolutePath());
         userArgs.add(0,"java"); //argv[0] is the program name according to C standard.
 
-        final int exitCode = VMLauncher.launchJVM(userArgs.toArray(new String[0]));
-        Logger.appendToLog("Java Exit code: " + exitCode);
-        if (exitCode != 0) {
-            LifecycleAwareAlertDialog.DialogCreator dialogCreator = (dialog, builder)->
-                    builder.setMessage(activity.getString(R.string.mcn_exit_title, exitCode))
-                    .setPositiveButton(R.string.main_share_logs, (dialogInterface, which)-> shareLog(activity));
+        try {
+            if (net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort() > 0) {
+                userArgs.add("-javaagent:" + new File(Tools.DIR_DATA, "authlib-injector/authlib-injector.jar").getAbsolutePath() + "=http://127.0.0.1:" + net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort());
+                userArgs.add("-Dminecraft.api.auth.host=http://127.0.0.1:" + net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort());
+                userArgs.add("-Dminecraft.api.account.host=http://127.0.0.1:" + net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort());
+                userArgs.add("-Dminecraft.api.session.host=http://127.0.0.1:" + net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort());
+                userArgs.add("-Dminecraft.api.services.host=http://127.0.0.1:" + net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.getPort());
+            }
 
-            LifecycleAwareAlertDialog.haltOnDialog(activity.getLifecycle(), activity, dialogCreator);
+            final int exitCode = VMLauncher.launchJVM(userArgs.toArray(new String[0]));
+            Logger.appendToLog("Java Exit code: " + exitCode);
+            if (exitCode != 0) {
+                LifecycleAwareAlertDialog.DialogCreator dialogCreator = (dialog, builder)->
+                        builder.setMessage(activity.getString(R.string.mcn_exit_title, exitCode))
+                        .setPositiveButton(R.string.main_share_logs, (dialogInterface, which)-> shareLog(activity));
+
+                LifecycleAwareAlertDialog.haltOnDialog(activity.getLifecycle(), activity, dialogCreator);
+            }
+        } finally {
+            net.kdt.pojavlaunch.yggdrasil.LocalYggdrasilServer.stop();
         }
         Tools.fullyExit();
     }
