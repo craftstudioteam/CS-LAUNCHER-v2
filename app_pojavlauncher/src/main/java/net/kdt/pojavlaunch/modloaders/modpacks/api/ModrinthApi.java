@@ -145,6 +145,7 @@ public class ModrinthApi implements ModpackApi{
         String[] hashes     = new String[size];
         String[][] depIds   = new String[size][];
         String[][] depTypes = new String[size][];
+        String[][] loadersArr = new String[size][];
 
         for (int i = 0; i < size; i++) {
             JsonObject version = versions.get(i);
@@ -175,9 +176,20 @@ public class ModrinthApi implements ModpackApi{
                 depIds[i]   = new String[0];
                 depTypes[i] = new String[0];
             }
+
+            if (version.has("loaders") && !version.get("loaders").isJsonNull()) {
+                JsonArray lds = version.getAsJsonArray("loaders");
+                java.util.List<String> lList = new java.util.ArrayList<>();
+                for (int j = 0; j < lds.size(); j++) {
+                    lList.add(lds.get(j).getAsString());
+                }
+                loadersArr[i] = lList.toArray(new String[0]);
+            } else {
+                loadersArr[i] = new String[0];
+            }
         }
 
-        return new ModDetail(item, names, mcNames, urls, hashes, depIds, depTypes);
+        return new ModDetail(item, names, mcNames, urls, hashes, depIds, depTypes, loadersArr);
     }
 
     @Override

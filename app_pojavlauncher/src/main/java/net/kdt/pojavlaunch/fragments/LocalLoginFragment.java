@@ -6,6 +6,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +41,17 @@ public class LocalLoginFragment extends Fragment {
             Tools.swapFragment(requireActivity(), MainMenuFragment.class, MainMenuFragment.TAG, null);
         }
         mUsernameEditText = view.findViewById(R.id.login_edit_email);
+        
+        ImageView headPreview = view.findViewById(R.id.live_head_preview);
+        Bitmap steveSkin = BitmapFactory.decodeResource(getResources(), R.drawable.ic_steve);
+        if (steveSkin != null) {
+            Bitmap head = net.kdt.pojavlaunch.value.MinecraftAccount.extractSkinHead(steveSkin);
+            steveSkin.recycle();
+            if (head != null) {
+                headPreview.setImageBitmap(head);
+            }
+        }
+
         view.findViewById(R.id.login_button).setOnClickListener(v -> {
             if(!checkEditText()) {
                 Context context = v.getContext();

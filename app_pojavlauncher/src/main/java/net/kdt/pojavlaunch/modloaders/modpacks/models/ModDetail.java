@@ -17,15 +17,22 @@ public class ModDetail extends ModItem implements Parcelable {
     public String[][] versionDependencyIds;
     /* Per-version dependency types — "required" or "optional" */
     public String[][] versionDependencyTypes;
+    /* Supported mod loaders for each version */
+    public String[][] versionLoaders;
     /* Screenshot gallery URLs */
     public String[] screenshotUrls;
 
     public ModDetail(ModItem item, String[] versionNames, String[] mcVersionNames, String[] versionUrls, String[] hashes) {
-        this(item, versionNames, mcVersionNames, versionUrls, hashes, null, null);
+        this(item, versionNames, mcVersionNames, versionUrls, hashes, null, null, null);
     }
 
     public ModDetail(ModItem item, String[] versionNames, String[] mcVersionNames, String[] versionUrls, String[] hashes,
                      String[][] depIds, String[][] depTypes) {
+        this(item, versionNames, mcVersionNames, versionUrls, hashes, depIds, depTypes, null);
+    }
+
+    public ModDetail(ModItem item, String[] versionNames, String[] mcVersionNames, String[] versionUrls, String[] hashes,
+                     String[][] depIds, String[][] depTypes, String[][] loaders) {
         super(item.apiSource, item.isModpack, item.id, item.title, item.description, item.imageUrl);
         this.isRestricted = item.isRestricted;
         this.websiteUrl = item.websiteUrl;
@@ -35,6 +42,7 @@ public class ModDetail extends ModItem implements Parcelable {
         this.versionHashes = hashes;
         this.versionDependencyIds = depIds;
         this.versionDependencyTypes = depTypes;
+        this.versionLoaders = loaders;
 
         // Add the mc version to the version model
         for (int i=0; i<versionNames.length; i++){
@@ -78,6 +86,16 @@ public class ModDetail extends ModItem implements Parcelable {
             }
         } else {
             versionDependencyTypes = null;
+        }
+
+        int loadersCount = in.readInt();
+        if (loadersCount >= 0) {
+            versionLoaders = new String[loadersCount][];
+            for (int i = 0; i < loadersCount; i++) {
+                versionLoaders[i] = in.createStringArray();
+            }
+        } else {
+            versionLoaders = null;
         }
 
         // Re-apply mc version suffix (same logic as main constructor)
@@ -130,6 +148,10 @@ public class ModDetail extends ModItem implements Parcelable {
         dest.writeInt(versionDependencyTypes != null ? versionDependencyTypes.length : -1);
         if (versionDependencyTypes != null) {
             for (String[] arr : versionDependencyTypes) dest.writeStringArray(arr);
+        }
+        dest.writeInt(versionLoaders != null ? versionLoaders.length : -1);
+        if (versionLoaders != null) {
+            for (String[] arr : versionLoaders) dest.writeStringArray(arr);
         }
     }
 
