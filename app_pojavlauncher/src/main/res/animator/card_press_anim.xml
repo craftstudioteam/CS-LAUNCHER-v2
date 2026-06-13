@@ -12,6 +12,11 @@
                 android:duration="100"
                 android:valueTo="0.98"
                 android:valueType="floatType" />
+            <objectAnimator
+                android:propertyName="translationZ"
+                android:duration="100"
+                android:valueTo="2dp"
+                android:valueType="floatType" />
         </set>
     </item>
     <item>
@@ -25,6 +30,11 @@
                 android:propertyName="scaleY"
                 android:duration="100"
                 android:valueTo="1.0"
+                android:valueType="floatType" />
+            <objectAnimator
+                android:propertyName="translationZ"
+                android:duration="150"
+                android:valueTo="8dp"
                 android:valueType="floatType" />
         </set>
     </item>

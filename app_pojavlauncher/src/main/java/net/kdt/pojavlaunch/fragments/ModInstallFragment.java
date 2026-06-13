@@ -335,28 +335,45 @@ public class ModInstallFragment extends Fragment {
                     String[] modLoaders = mModDetail.versionLoaders[mVersionIndex];
                     if (modLoaders != null && modLoaders.length > 0) {
                         for (String loader : modLoaders) {
-                            if (profileVid.contains(loader.toLowerCase())) {
+                            if (net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, loader)) {
                                 isCompatible = true;
                                 break;
                             }
                         }
                     } else {
-                        isCompatible = profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge") || profileVid.contains("liteloader") || profileVid.contains("optifine");
+                        isCompatible = net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "fabric") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "forge") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "quilt") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "neoforge") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "liteloader") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "optifine");
                     }
                 } else {
-                    isCompatible = profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge") || profileVid.contains("liteloader") || profileVid.contains("optifine");
+                    isCompatible = net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "fabric") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "forge") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "quilt") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "neoforge") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "liteloader") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "optifine");
                 }
                 
                 if (!isCompatible) continue;
                 
                 if (mModDetail != null && mModDetail.mcVersionNames != null && mModDetail.mcVersionNames.length > mVersionIndex) {
                     String modMcVer = mModDetail.mcVersionNames[mVersionIndex];
-                    if (modMcVer != null && !modMcVer.isEmpty() && !profileVid.contains(modMcVer.toLowerCase())) {
-                        continue;
+                    if (modMcVer != null && !modMcVer.isEmpty()) {
+                        String pmcVer = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(p);
+                        if (!pmcVer.contains(modMcVer.toLowerCase())) {
+                            continue;
+                        }
                     }
                 }
             } else if ("shader".equals(mContentType)) {
-                boolean hasOptiOrLoader = profileVid.contains("optifine") || profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge");
+                boolean hasOptiOrLoader = net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "optifine") || 
+                                          net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "fabric") || 
+                                          net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "forge") || 
+                                          net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "quilt") || 
+                                          net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "neoforge");
                 if (!hasOptiOrLoader) continue;
             }
             

@@ -15,11 +15,11 @@
     <alpha
         android:fromAlpha="0.0"
         android:toAlpha="1.0"
-        android:duration="400" />
+        android:duration="180" />
 
     <translate
         android:fromYDelta="14dp"
         android:toYDelta="0dp"
-        android:duration="400" />
+        android:duration="180" />
 
 </set>

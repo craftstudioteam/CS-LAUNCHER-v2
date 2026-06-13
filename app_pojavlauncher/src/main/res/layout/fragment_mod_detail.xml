@@ -212,6 +212,15 @@
 
             </LinearLayout>
 
+            <!-- Compatibility Badges Container -->
+            <LinearLayout
+                android:id="@+id/detail_compatibility_badges"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/detail_spinner_container" />
+
             <!-- Error text for version loading -->
             <TextView
                 android:id="@+id/detail_version_error"
