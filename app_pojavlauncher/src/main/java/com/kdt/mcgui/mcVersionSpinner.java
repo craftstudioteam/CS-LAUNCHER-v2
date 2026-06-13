@@ -66,6 +66,20 @@ public class mcVersionSpinner extends ExtendedTextView {
 
 
     /** Set the selection AND saves it as a shared preference */
+    private final Runnable mProfileUpdateListener = this::reloadProfiles;
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles.addUpdateListener(mProfileUpdateListener);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles.removeUpdateListener(mProfileUpdateListener);
+    }
+
     public void setProfileSelection(int position){
         setSelection(position);
         LauncherPreferences.DEFAULT_PREF.edit()

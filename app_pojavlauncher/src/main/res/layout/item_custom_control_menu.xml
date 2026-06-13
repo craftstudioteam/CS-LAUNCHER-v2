@@ -9,9 +9,8 @@
     android:layout_marginHorizontal="12dp"
     android:layout_marginVertical="5dp"
     android:background="@drawable/bg_fastclient_card"
-    android:foreground="@drawable/bg_fastclient_card_ripple"
-    android:clickable="true"
-    android:focusable="true"
+    android:clickable="false"
+    android:focusable="false"
     android:minHeight="56dp">
 
     <ImageView

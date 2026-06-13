@@ -64,14 +64,16 @@ public class CustomControlsActivity extends BaseActivity implements EditorExitab
 			}
 		});
 		mDrawerNavigationView.setOnItemClickListener((parent, view, position, id) -> {
+			android.util.Log.i("CustomControlsActivity", "Menu item clicked: position=" + position);
 			switch(position) {
-				case 0: mControlLayout.addControlButton(new ControlData("New")); break;
-				case 1: mControlLayout.addDrawer(new ControlDrawerData()); break;
-				case 2: mControlLayout.addJoystickButton(new ControlJoystickData()); break;
-				case 3: mControlLayout.openLoadDialog(); break;
-				case 4: mControlLayout.openSaveDialog(this); break;
-				case 5: mControlLayout.openSetDefaultDialog(); break;
+				case 0: android.util.Log.i("CustomControlsActivity", "Action: Add Button"); mControlLayout.addControlButton(new ControlData("New")); break;
+				case 1: android.util.Log.i("CustomControlsActivity", "Action: Add Button Drawer"); mControlLayout.addDrawer(new ControlDrawerData()); break;
+				case 2: android.util.Log.i("CustomControlsActivity", "Action: Add Joystick"); mControlLayout.addJoystickButton(new ControlJoystickData()); break;
+				case 3: android.util.Log.i("CustomControlsActivity", "Action: Load"); mControlLayout.openLoadDialog(); break;
+				case 4: android.util.Log.i("CustomControlsActivity", "Action: Save"); mControlLayout.openSaveDialog(this); break;
+				case 5: android.util.Log.i("CustomControlsActivity", "Action: Select Default"); mControlLayout.openSetDefaultDialog(); break;
 				case 6: // Saving the currently shown control
+					android.util.Log.i("CustomControlsActivity", "Action: Share layout");
 					try {
 						Uri contentUri = DocumentsContract.buildDocumentUri(getString(R.string.storageProviderAuthorities), mControlLayout.saveToDirectory(mControlLayout.mLayoutFileName));
 
