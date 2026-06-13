@@ -848,7 +848,7 @@ public final class Tools {
         String internalLwjglVersion = iLwjglVersion >= 341 ? "3.4.1" : "3.3.3";
         File lwjgl3Folder = new File(Tools.DIR_GAME_HOME, "lwjgl3/"+internalLwjglVersion);
         String lwjglCore = lwjgl3Folder.getAbsolutePath() + "/lwjgl.jar";
-        String lwjglMerged = lwjgl3Folder.getAbsolutePath() + "/lwjgl-"+internalLwjglVersion+"-merged-modules";
+        String lwjglMerged = lwjgl3Folder.getAbsolutePath() + "/lwjgl-"+internalLwjglVersion+"-merged-modules.jar";
         String lwjglxFile = lwjgl3Folder + "/lwjgl-lwjglx.jar";
 
 
@@ -858,9 +858,10 @@ public final class Tools {
 
         File[] lwjglModules = lwjgl3Folder.listFiles(pathname ->
                 pathname.getName().endsWith(".jar") &&
-            // Exclude our two special jars which goes first and last
+            // Exclude jars that are added explicitly before/after the module list
                 !pathname.getName().equals("lwjgl.jar") &&
-                !pathname.getName().endsWith("lwjglx.jar"));
+                !pathname.getName().endsWith("lwjglx.jar") &&
+                !pathname.getName().endsWith("merged-modules.jar"));
 
         if (lwjglModules != null) {
             for (File lwjglModule : lwjglModules)

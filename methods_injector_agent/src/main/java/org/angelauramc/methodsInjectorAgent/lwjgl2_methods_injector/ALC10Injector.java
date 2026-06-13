@@ -45,7 +45,7 @@ public class ALC10Injector extends ClassVisitor implements ClassFileTransformer 
 
     public static class AddMethodAdapter extends ClassVisitor {
         public AddMethodAdapter(ClassVisitor cv) {
-            super(ASM4, cv);
+            super(ASM9, cv);
         }
         public void visitEnd() {
             // Create the method: public static ALCcontext alcGetCurrentContext()
