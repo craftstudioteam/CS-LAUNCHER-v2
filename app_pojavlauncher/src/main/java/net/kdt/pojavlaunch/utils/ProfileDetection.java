@@ -8,7 +8,7 @@ public class ProfileDetection {
     public static String getMcVersion(MinecraftProfile profile) {
         if (profile == null || profile.lastVersionId == null) return "";
         try {
-            JMinecraftVersionList.Version v = Tools.getVersion(profile.lastVersionId);
+            JMinecraftVersionList.Version v = Tools.getVersionInfo(profile.lastVersionId);
             if (v != null) {
                 if (v.inheritsFrom != null && !v.inheritsFrom.isEmpty()) {
                     return v.inheritsFrom;
@@ -27,7 +27,7 @@ public class ProfileDetection {
         if (vId.contains(targetLoader)) return true;
         
         try {
-            JMinecraftVersionList.Version v = Tools.getVersion(profile.lastVersionId);
+            JMinecraftVersionList.Version v = Tools.getVersionInfo(profile.lastVersionId);
             if (v != null) {
                 if (v.id != null && v.id.toLowerCase().contains(targetLoader)) return true;
                 if (v.inheritsFrom != null && v.inheritsFrom.toLowerCase().contains(targetLoader)) return true;
