@@ -525,9 +525,8 @@ public class SkinManagerFragment extends Fragment {
                 if (mCape == null || mLastCapeW != mPendingCapeBitmap.getWidth() || mLastCapeH != mPendingCapeBitmap.getHeight()) {
                     mLastCapeW = mPendingCapeBitmap.getWidth();
                     mLastCapeH = mPendingCapeBitmap.getHeight();
-                    // Cape is authored relative to the upper-back/body pivot, not the screen/camera.
-                    // Keep it centered on the spine and let the model matrix carry all body movement.
-                    mCape = new Cuboid(0, 8, 2.25f, -5, 5, -16, 0, 0, 1, 0, 0, 10, 16, 1, mLastCapeW, mLastCapeH, false, 0f);
+                    // Cape is authored relative to its own local origin so we can position it precisely
+                    mCape = new Cuboid(0, 0, 0, -5, 5, -16, 0, 0, 1, 0, 0, 10, 16, 1, mLastCapeW, mLastCapeH, true, 0f);
                 }
             } else {
                 mCape = null;
@@ -555,10 +554,14 @@ public class SkinManagerFragment extends Fragment {
                 System.arraycopy(mModelMatrix, 0, capeMatrix, 0, 16);
                 final float capePivotX = 0f;
                 final float capePivotY = 8f;
-                final float capePivotZ = 2.25f;
+                final float capePivotZ = -2.0f; // Attached to the back of the torso
+                
                 Matrix.translateM(capeMatrix, 0, capePivotX, capePivotY, capePivotZ);
-                Matrix.rotateM(capeMatrix, 0, 10f, 1f, 0f, 0f);
-                Matrix.translateM(capeMatrix, 0, -capePivotX, -capePivotY, -capePivotZ);
+                // Rotate 180 degrees so the visible face points outward
+                Matrix.rotateM(capeMatrix, 0, 180f, 0f, 1f, 0f);
+                // Swing the bottom of the cape outward
+                Matrix.rotateM(capeMatrix, 0, -10f, 1f, 0f, 0f);
+                
                 drawPart(mCape, capeMatrix, mCapeTextureId);
             }
 

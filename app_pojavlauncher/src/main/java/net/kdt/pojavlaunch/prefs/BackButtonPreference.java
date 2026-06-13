@@ -32,6 +32,15 @@ public class BackButtonPreference extends Preference {
 
 
     @Override
+    public void onBindViewHolder(androidx.preference.PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+        android.view.View backBtn = holder.findViewById(R.id.back_button);
+        if (backBtn != null) {
+            backBtn.setOnClickListener(v -> onClick());
+        }
+    }
+
+    @Override
     protected void onClick() {
         FragmentActivity activity = findFragmentActivity(getContext());
         if (activity != null) {
