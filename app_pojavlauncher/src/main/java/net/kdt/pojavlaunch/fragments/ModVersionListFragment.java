@@ -40,9 +40,10 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
     }
 
     private void applyListAnimations(ExpandableListView listView) {
-        if (listView == null) return;
+        Context context = getContext();
+        if (listView == null || context == null || !isAdded()) return;
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
-            requireContext(), R.anim.list_item_enter);
+            context, R.anim.list_item_enter);
         listView.setLayoutAnimation(controller);
         listView.scheduleLayoutAnimation();
     }
@@ -191,7 +192,8 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
     @Override
     public void onDownloadFinished(File downloadedFile) {
         Tools.runOnUiThread(()->{
-            Context context = requireContext();
+            Context context = getContext();
+            if (context == null || !isAdded()) return;
             getTaskProxy().detachListener();
             deleteTaskProxy();
             mExpandableListView.setEnabled(true);
@@ -204,7 +206,8 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
     @Override
     public void onDataNotAvailable() {
         Tools.runOnUiThread(()->{
-            Context context = requireContext();
+            Context context = getContext();
+            if (context == null || !isAdded()) return;
             getTaskProxy().detachListener();
             deleteTaskProxy();
             mExpandableListView.setEnabled(true);
@@ -217,14 +220,15 @@ public abstract class ModVersionListFragment<T> extends Fragment implements Runn
     @Override
     public void onDownloadError(Exception e) {
         Tools.runOnUiThread(()->{
-            Context context = requireContext();
+            Context context = getContext();
+            if (context == null || !isAdded()) return;
             getTaskProxy().detachListener();
             deleteTaskProxy();
             mExpandableListView.setEnabled(true);
             android.widget.Button startBtn = requireView().findViewById(R.id.mod_dl_start_button);
             if (startBtn != null) {
                 startBtn.setEnabled(true);
-                startBtn.startAnimation(android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.pulse_animation));
+                startBtn.startAnimation(android.view.animation.AnimationUtils.loadAnimation(context, R.anim.pulse_animation));
             }
             Tools.showError(context, e);
         });
