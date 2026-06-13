@@ -1,8 +1,10 @@
 package net.kdt.pojavlaunch.prefs;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.util.AttributeSet;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.preference.Preference;
 
 import net.kdt.pojavlaunch.R;
@@ -31,7 +33,19 @@ public class BackButtonPreference extends Preference {
 
     @Override
     protected void onClick() {
-        // It is caught by an ExtraListener in the LauncherActivity
+        FragmentActivity activity = findFragmentActivity(getContext());
+        if (activity != null) {
+            activity.getOnBackPressedDispatcher().onBackPressed();
+            return;
+        }
         ExtraCore.setValue(ExtraConstants.BACK_PREFERENCE, "true");
+    }
+
+    private FragmentActivity findFragmentActivity(Context context) {
+        while (context instanceof ContextWrapper) {
+            if (context instanceof FragmentActivity) return (FragmentActivity) context;
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return null;
     }
 }

@@ -63,10 +63,15 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     private android.widget.ListView mGameVerList;
     private android.widget.ListView mLoaderVerList;
 
+    private boolean isFragmentUiAvailable() {
+        return isAdded() && getContext() != null && getActivity() != null && !isRemoving() && !isDetached();
+    }
+
     private void applyListAnimations(android.widget.ListView listView) {
-        if (listView == null || listView.getAdapter() == null) return;
+        Context context = getContext();
+        if (!isFragmentUiAvailable() || context == null || listView == null || listView.getAdapter() == null) return;
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
-            requireContext(), R.anim.list_item_enter);
+            context, R.anim.list_item_enter);
         listView.setLayoutAnimation(controller);
         listView.scheduleLayoutAnimation();
     }
@@ -116,8 +121,10 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         }
 
         mGameVerList.setOnItemClickListener((parent, v, position, id) -> {
+            if (!isFragmentUiAvailable()) return;
             FabricVersion selected = (FabricVersion) parent.getItemAtPosition(position);
             ArrayAdapter<FabricVersion> spinnerAdapter = (ArrayAdapter<FabricVersion>) mGameVersionSpinner.getAdapter();
+            if (spinnerAdapter == null) return;
             for (int i = 0; i < spinnerAdapter.getCount(); i++) {
                 if (spinnerAdapter.getItem(i) == selected) {
                     mGameVersionSpinner.setSelection(i);
@@ -127,17 +134,21 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
             TextView badge = view.findViewById(R.id.fabric_installer_label_loader_ver);
             if (badge != null) badge.setText(selected.version);
 
-            mStepFlipper.setInAnimation(requireContext(), R.anim.screen_slide_in);
-            mStepFlipper.setOutAnimation(requireContext(), R.anim.screen_slide_out);
+            Context context = getContext();
+            if (!isFragmentUiAvailable() || context == null) return;
+            mStepFlipper.setInAnimation(context, R.anim.screen_slide_in);
+            mStepFlipper.setOutAnimation(context, R.anim.screen_slide_out);
             mStepFlipper.setDisplayedChild(1);
             
-            android.view.animation.Animation pulseAnim = android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.pulse_animation);
+            android.view.animation.Animation pulseAnim = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.pulse_animation);
             mStartButton.startAnimation(pulseAnim);
         });
 
         mLoaderVerList.setOnItemClickListener((parent, v, position, id) -> {
+            if (!isFragmentUiAvailable()) return;
             FabricVersion selected = (FabricVersion) parent.getItemAtPosition(position);
             ArrayAdapter<FabricVersion> spinnerAdapter = (ArrayAdapter<FabricVersion>) mLoaderVersionSpinner.getAdapter();
+            if (spinnerAdapter == null) return;
             for (int i = 0; i < spinnerAdapter.getCount(); i++) {
                 if (spinnerAdapter.getItem(i) == selected) {
                     mLoaderVersionSpinner.setSelection(i);
@@ -147,12 +158,15 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         });
 
         view.findViewById(R.id.fabric_step2_back_btn).setOnClickListener(v -> {
+            Context context = getContext();
+            if (!isFragmentUiAvailable() || context == null) return;
             mStartButton.clearAnimation();
-            mStepFlipper.setInAnimation(requireContext(), R.anim.screen_slide_in);
-            mStepFlipper.setOutAnimation(requireContext(), R.anim.screen_slide_out);
+            mStepFlipper.setInAnimation(context, R.anim.screen_slide_in);
+            mStepFlipper.setOutAnimation(context, R.anim.screen_slide_out);
             mStepFlipper.setDisplayedChild(0);
         });
-        view.findViewById(R.id.fabric_step3_back_btn).setOnClickListener(v -> {});
+        view.findViewById(R.id.fabric_step3_back_btn).setOnClickListener(v ->
+                getParentFragmentManager().popBackStack());
 
 
         ModloaderListenerProxy proxy = getListenerProxy();
@@ -175,6 +189,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     }
 
     private void onClickStart(View v) {
+        if (!isFragmentUiAvailable() || mSelectedGameVersion == null || mSelectedLoaderVersion == null) return;
         if(ProgressKeeper.hasOngoingTasks()) {
             Toast.makeText(v.getContext(), R.string.tasks_ongoing, Toast.LENGTH_LONG).show();
             return;
@@ -194,6 +209,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     }
 
     private void onClickRetry(View v) {
+        if (!isFragmentUiAvailable()) return;
         mStartButton.setEnabled(false);
         mRetryView.setVisibility(View.GONE);
         mLoaderVersionSpinner.setAdapter(null);
@@ -215,8 +231,9 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     @Override
     public void onDownloadFinished(File downloadedFile) {
         Tools.runOnUiThread(()->{
-
-            getListenerProxy().detachListener();
+            if (!isFragmentUiAvailable()) return;
+            ModloaderListenerProxy proxy = getListenerProxy();
+            if (proxy != null) proxy.detachListener();
             setListenerProxy(null);
             restoreUiState();
             // This works because the due to the fact that we have transitioned here
@@ -232,8 +249,10 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     @Override
     public void onDataNotAvailable() {
         Tools.runOnUiThread(()->{
-            Context context = requireContext();
-            getListenerProxy().detachListener();
+            Context context = getContext();
+            if (!isFragmentUiAvailable() || context == null) return;
+            ModloaderListenerProxy proxy = getListenerProxy();
+            if (proxy != null) proxy.detachListener();
             setListenerProxy(null);
             restoreUiState();
             Tools.dialog(context,
@@ -245,8 +264,10 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     @Override
     public void onDownloadError(Exception e) {
         Tools.runOnUiThread(()-> {
-            Context context = requireContext();
-            getListenerProxy().detachListener();
+            Context context = getContext();
+            if (!isFragmentUiAvailable() || context == null) return;
+            ModloaderListenerProxy proxy = getListenerProxy();
+            if (proxy != null) proxy.detachListener();
             setListenerProxy(null);
             restoreUiState();
             Tools.showError(context, e);
@@ -267,26 +288,31 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         // The "visibility on" is managed by the spinners
     }
 
+    @Nullable
     private ArrayAdapter<FabricVersion> createAdapter(FabricVersion[] fabricVersions, boolean onlyStable) {
+        Context context = getContext();
+        if (!isFragmentUiAvailable() || context == null || fabricVersions == null) return null;
         ArrayList<FabricVersion> filteredVersions = new ArrayList<>(fabricVersions.length);
         for(FabricVersion fabricVersion : fabricVersions) {
             if(!onlyStable || fabricVersion.stable) filteredVersions.add(fabricVersion);
         }
         filteredVersions.trimToSize();
-        return new ArrayAdapter<>(requireContext(), R.layout.item_fabric_version, filteredVersions);
+        return new ArrayAdapter<>(context, R.layout.item_fabric_version, filteredVersions);
     }
 
     private void onException(Future<?> myFuture, Exception e) {
         Tools.runOnUiThread(()->{
-            if(myFuture.isCancelled()) return;
+            Context context = getContext();
+            if(myFuture.isCancelled() || !isFragmentUiAvailable() || context == null) return;
             stopLoading();
-            if(e != null) Tools.showError(requireContext(), e);
+            if(e != null) Tools.showError(context, e);
             mRetryView.setVisibility(View.VISIBLE);
         });
     }
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        if (!isFragmentUiAvailable()) return;
         updateGameSpinner();
         updateLoaderSpinner();
     }
@@ -295,12 +321,14 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
 
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            if (!isFragmentUiAvailable() || adapterView.getAdapter() == null) return;
             mSelectedLoaderVersion = ((FabricVersion) adapterView.getAdapter().getItem(i)).version;
             mStartButton.setEnabled(mSelectedGameVersion != null);
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
+            if (!isFragmentUiAvailable()) return;
             mSelectedLoaderVersion = null;
             mStartButton.setEnabled(false);
         }
@@ -320,7 +348,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         }
         private void onFinished(Future<?> myFuture) {
             Tools.runOnUiThread(()->{
-                if(myFuture.isCancelled()) return;
+                if(myFuture.isCancelled() || !isFragmentUiAvailable()) return;
                 stopLoading();
                 updateLoaderSpinner();
             });
@@ -328,15 +356,24 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     }
 
     private void updateLoaderVersions() {
+        if (!isFragmentUiAvailable()) return;
         startLoading();
         mLoaderVersionFuture = new SelfReferencingFuture(new LoadLoaderVersionsTask()).startOnExecutor(PojavApplication.sExecutorService);
     }
 
     private void updateLoaderSpinner() {
-        if(mLoaderVersionArray == null) return;
+        if(!isFragmentUiAvailable() || mLoaderVersionArray == null) return;
         mLoaderVersionSpinner.setAlpha(0f);
         ArrayAdapter<FabricVersion> adapter = createAdapter(mLoaderVersionArray, false);
+        if (adapter == null) return;
         mLoaderVersionSpinner.setAdapter(adapter);
+        if (adapter.getCount() > 0 && mSelectedGameVersion != null) {
+            mSelectedLoaderVersion = adapter.getItem(0).version;
+            mStartButton.setEnabled(true);
+        } else {
+            mSelectedLoaderVersion = null;
+            mStartButton.setEnabled(false);
+        }
         mLoaderVersionSpinner.animate().alpha(1f).setDuration(300).start();
         if (mLoaderVerList != null) {
             mLoaderVerList.setAdapter(adapter);
@@ -347,6 +384,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     class GameVersionSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            if (!isFragmentUiAvailable() || adapterView.getAdapter() == null) return;
             mSelectedGameVersion = ((FabricVersion) adapterView.getAdapter().getItem(i)).version;
             cancelFutureChecked(mLoaderVersionFuture);
             updateLoaderVersions();
@@ -354,6 +392,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
+            if (!isFragmentUiAvailable()) return;
             mSelectedGameVersion = null;
             if(mLoaderVersionFuture != null) mLoaderVersionFuture.cancel(true);
             adapterView.setAdapter(null);
@@ -374,7 +413,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         }
         private void onFinished(Future<?> myFuture) {
             Tools.runOnUiThread(()->{
-                if(myFuture.isCancelled()) return;
+                if(myFuture.isCancelled() || !isFragmentUiAvailable()) return;
                 stopLoading();
                 updateGameSpinner();
             });
@@ -382,15 +421,21 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     }
 
     private void updateGameVersions() {
+        if (!isFragmentUiAvailable()) return;
         startLoading();
         mGameVersionFuture = new SelfReferencingFuture(new LoadGameVersionsTask()).startOnExecutor(PojavApplication.sExecutorService);
     }
 
     private void updateGameSpinner() {
-        if(mGameVersionArray == null) return;
+        if(!isFragmentUiAvailable() || mGameVersionArray == null) return;
         mGameVersionSpinner.setAlpha(0f);
         ArrayAdapter<FabricVersion> adapter = createAdapter(mGameVersionArray, mOnlyStableCheckbox.isChecked());
+        if (adapter == null) return;
         mGameVersionSpinner.setAdapter(adapter);
+        if (adapter.getCount() == 0) {
+            mSelectedGameVersion = null;
+            mStartButton.setEnabled(false);
+        }
         mGameVersionSpinner.animate().alpha(1f).setDuration(300).start();
         if (mGameVerList != null) {
             mGameVerList.setAdapter(adapter);

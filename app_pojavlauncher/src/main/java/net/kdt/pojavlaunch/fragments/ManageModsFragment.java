@@ -40,7 +40,7 @@ public class ManageModsFragment extends Fragment {
 
         // Back — delegate to the activity which handles both portrait (pop activity stack)
         // and landscape two-pane (pop right pane) in one reliable place.
-        backButton.setOnClickListener(v -> requireActivity().onBackPressed());
+        backButton.setOnClickListener(v -> requireActivity().getOnBackPressedDispatcher().onBackPressed());
 
         // Resolve the active profile so we can apply version instance rules.
         MinecraftProfile profile = resolveActiveProfile();
