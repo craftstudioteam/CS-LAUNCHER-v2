@@ -1,49 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="4dp">
+    android:paddingHorizontal="4dp"
+    android:paddingVertical="4dp"
+    android:background="@drawable/bg_fabric_version_item">
+
+    <FrameLayout
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="12dp"
+        android:background="@drawable/bg_fabric_logo_circle">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_fabric"
+            android:scaleType="fitCenter" />
+    </FrameLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:minHeight="72dp"
-        android:background="@drawable/bg_version_list_item"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="12dp">
-
-        <FrameLayout
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/bg_icon_container"
-            android:padding="10dp">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_fabric"
-                android:scaleType="fitCenter" />
-        </FrameLayout>
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
 
         <TextView
             android:id="@android:id/text1"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             android:ellipsize="marquee"
             android:singleLine="true" />
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_chevron_right" />
+        <TextView
+            android:id="@+id/fabric_version_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Compatible"
+            android:textColor="#8BFF8B"
+            android:textSize="12sp" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/fabric_stable_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/bg_fabric_stable_badge"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:text="STABLE"
+        android:textColor="#0D0D0D"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/fabric_version_arrow"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="12dp"
+        android:src="@drawable/ic_chevron_right"
+        app:tint="#9CA3AF" />
 </LinearLayout>
