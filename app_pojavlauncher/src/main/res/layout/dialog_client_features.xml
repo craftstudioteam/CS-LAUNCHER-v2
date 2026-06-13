@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="20dp"
-    app:cardBackgroundColor="@color/bg_launcher_dark"
+    app:cardCornerRadius="24dp"
+    app:cardBackgroundColor="#121212"
     app:cardElevation="0dp"
-    android:layout_margin="8dp">
+    android:layout_margin="12dp">
 
+    <!-- Outermost container for background border/glow -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="20dp"
+        android:background="@drawable/bg_glass_card">
 
         <View
             android:layout_width="40dp"
@@ -21,40 +23,200 @@
             android:background="#33FFFFFF"
             android:layout_marginBottom="16dp" />
 
-        <TextView
+        <!-- Title Header -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="✦ Client Features"
-            android:textColor="@color/neon_green"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.02" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
 
-        <TextView
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="✦ Client Features"
+                android:textColor="#39FF14"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.02" />
+        </LinearLayout>
+
+        <!-- Main Page Container with Flipper to transition to progress -->
+        <ViewFlipper
+            android:id="@+id/flipper_client_features"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Select mod version to install"
-            android:textColor="@color/secondary_text"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp"
-            android:alpha="0.7" />
+            android:layout_height="wrap_content">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_mod_versions"
-            android:layout_width="match_parent"
-            android:layout_height="320dp"
-            android:layout_marginTop="20dp"
-            android:overScrollMode="never" />
+            <!-- PAGE 1: Versions List and Active Status -->
+            <LinearLayout
+                android:id="@+id/layout_main_page"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
+                <!-- Active Status Card Container -->
+                <FrameLayout
+                    android:id="@+id/container_active_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone">
+
+                    <!-- Glow Pulse View -->
+                    <View
+                        android:id="@+id/v_active_glow"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_active_glass_card" />
+
+                    <!-- Active Content Card -->
+                    <LinearLayout
+                        android:id="@+id/card_optix_active"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_active_glass_card"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="OPTIX CLIENT ACTIVE"
+                            android:textColor="#39FF14"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="✓ FPS Optimizations Enabled"
+                                android:textColor="#B0FFFFFF"
+                                android:textSize="12sp"
+                                android:layout_marginBottom="2dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="✓ Visual Enhancements Active"
+                                android:textColor="#B0FFFFFF"
+                                android:textSize="12sp"
+                                android:layout_marginBottom="2dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="✓ Client Features Loaded"
+                                android:textColor="#B0FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select a version below to install or update the feature:"
+                    android:textColor="#9CA3AF"
+                    android:textSize="13sp"
+                    android:layout_marginBottom="8dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_mod_versions"
+                    android:layout_width="match_parent"
+                    android:layout_height="280dp"
+                    android:overScrollMode="never" />
+
+            </LinearLayout>
+
+            <!-- PAGE 2: Progress & Enable Animations -->
+            <LinearLayout
+                android:id="@+id/layout_install_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingVertical="32dp">
+
+                <!-- Logo Container with glow pulse -->
+                <FrameLayout
+                    android:id="@+id/logo_glow_container"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginBottom="24dp">
+
+                    <View
+                        android:id="@+id/logo_pulse_ring"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:background="@drawable/bg_fabric_logo_circle"
+                        android:alpha="0" />
+
+                    <ImageView
+                        android:id="@+id/iv_optix_logo"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_optix_logo"
+                        android:scaleType="fitCenter" />
+
+                    <ImageView
+                        android:id="@+id/iv_success_check"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_check"
+                        android:scaleType="fitCenter"
+                        app:tint="#39FF14"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+                <!-- Status Messages -->
+                <TextView
+                    android:id="@+id/tv_progress_stage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Installing Client Features..."
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:id="@+id/tv_progress_sub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Preparing Profile..."
+                    android:textColor="#9CA3AF"
+                    android:textSize="13sp"
+                    android:layout_marginBottom="20dp" />
+
+                <!-- Glowing Progress Bar -->
+                <ProgressBar
+                    android:id="@+id/pb_install_progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/bg_fabric_progress_horizontal" />
+
+            </LinearLayout>
+
+        </ViewFlipper>
+
+        <!-- Hidden button to keep backward compatibility -->
         <Button
             android:id="@+id/btn_install_version"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginTop="16dp"
-            android:text="INSTALL SELECTED VERSION"
-            android:background="@drawable/bg_client_features_btn_filled"
-            android:textColor="@color/text_primary_white"
-            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:visibility="gone" />
 
     </LinearLayout>

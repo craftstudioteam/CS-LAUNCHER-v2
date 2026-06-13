@@ -3,24 +3,121 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp"
-    android:background="?android:attr/selectableItemBackground"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="6dp"
+    android:background="@drawable/bg_glass_card"
+    android:padding="16dp"
     android:clickable="true"
     android:focusable="true">
 
-    <TextView
-        android:id="@+id/tv_version_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/text_primary_white"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/tv_version_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/text_secondary_light"
-        android:textSize="12sp" />
+        <!-- Client Logo -->
+        <FrameLayout
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_fabric_logo_circle"
+            android:layout_marginEnd="12dp">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_optix_logo"
+                android:scaleType="fitCenter" />
+        </FrameLayout>
+
+        <!-- Version Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_version_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- Badges Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tv_badge_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_badge_pill"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="2dp"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:id="@+id/tv_badge_mc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_badge_pill"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="2dp"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:id="@+id/tv_badge_loader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_badge_pill"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="2dp"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:id="@+id/tv_badge_stable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#39FF14"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_stable_pill"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="2dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Install Button -->
+        <Button
+            android:id="@+id/btn_card_install"
+            android:layout_width="82dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_install_button_primary"
+            android:textColor="#0D0D0D"
+            android:text="INSTALL"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:layout_marginStart="6dp"
+            android:stateListAnimator="@null" />
+
+    </LinearLayout>
 
 </LinearLayout>
