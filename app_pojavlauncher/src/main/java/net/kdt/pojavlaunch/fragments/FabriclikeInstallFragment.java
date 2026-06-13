@@ -244,6 +244,9 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     }
 
     private void onClickStart(View v) {
+        Log.d("CSLauncher", "Install Button Clicked");
+        Log.d("CSLauncher", "Selected MC Version = " + mSelectedGameVersion);
+        Log.d("CSLauncher", "Selected Loader Version = " + mSelectedLoaderVersion);
         if (!isFragmentUiAvailable() || mSelectedGameVersion == null || mSelectedLoaderVersion == null) return;
         if(ProgressKeeper.hasOngoingTasks()) {
             Toast.makeText(v.getContext(), R.string.tasks_ongoing, Toast.LENGTH_LONG).show();
@@ -259,6 +262,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         proxy.attachListener(this);
         setListenerProxy(proxy);
         mStartButton.setEnabled(false);
+        Log.d("CSLauncher", "Installation Started");
         new Thread(fabricDownloadTask).start();
     }
 
@@ -324,6 +328,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
     public void onDownloadFinished(File downloadedFile) {
         Tools.runOnUiThread(()->{
             if (!isFragmentUiAvailable()) return;
+            Log.d("CSLauncher", "Installation Finished");
             ModloaderListenerProxy proxy = getListenerProxy();
             if (proxy != null) proxy.detachListener();
             setListenerProxy(null);
@@ -408,6 +413,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             if (!isFragmentUiAvailable() || adapterView.getAdapter() == null) return;
             mSelectedLoaderVersion = ((FabricVersion) adapterView.getAdapter().getItem(i)).version;
+            Log.d("CSLauncher", "Selected Loader Version = " + mSelectedLoaderVersion);
             mStartButton.setEnabled(mSelectedGameVersion != null && mSelectedLoaderVersion != null);
         }
 
@@ -451,6 +457,8 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         mLoaderVersionSpinner.setAlpha(0f);
         ArrayAdapter<FabricVersion> adapter = createAdapter(mLoaderVersionArray, false, true);
         if (adapter == null) return;
+        Log.d("CSLauncher", "Game Version = " + mSelectedGameVersion);
+        Log.d("CSLauncher", "Loader Count = " + adapter.getCount());
         mLoaderVersionSpinner.setAdapter(adapter);
         mLoaderVersionSpinner.animate().alpha(1f).setDuration(250).start();
         if (mLoaderVerList != null) {
@@ -482,6 +490,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             if (!isFragmentUiAvailable() || adapterView.getAdapter() == null) return;
             mSelectedGameVersion = ((FabricVersion) adapterView.getAdapter().getItem(i)).version;
+            Log.d("CSLauncher", "Selected MC Version = " + mSelectedGameVersion);
             cancelFutureChecked(mLoaderVersionFuture);
             updateLoaderVersions();
         }
