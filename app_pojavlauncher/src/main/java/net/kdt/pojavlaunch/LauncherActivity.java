@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 import net.kdt.pojavlaunch.value.MinecraftAccount;
+import net.kdt.pojavlaunch.fragments.ClientFeaturesFragment;
 import net.kdt.pojavlaunch.fragments.ModsSearchFragment;
 import net.kdt.pojavlaunch.fragments.CursorCustomizationFragment;
 import net.kdt.pojavlaunch.fragments.SkinManagerFragment;
@@ -323,6 +324,10 @@ public class LauncherActivity extends BaseActivity {
         ContextExecutor.setActivity(this);
         mInstallTracker.attach();
         updateNavSkinIcon();
+        android.widget.Button btnClientFeatures = findViewById(R.id.btn_client_features);
+        if (btnClientFeatures != null) {
+            updateClientFeaturesButton(btnClientFeatures, mClientFeaturesManager.isEnabled());
+        }
     }
 
     @Override
@@ -498,13 +503,9 @@ public class LauncherActivity extends BaseActivity {
         if (btnClientFeatures != null) {
             updateClientFeaturesButton(btnClientFeatures, mClientFeaturesManager.isEnabled());
             btnClientFeatures.setOnClickListener(v -> {
-                boolean nextState = !mClientFeaturesManager.isEnabled();
-                if (nextState) {
-                    mClientFeaturesManager.showVersionSelector(() -> updateClientFeaturesButton(btnClientFeatures, true));
-                } else {
-                    mClientFeaturesManager.setEnabled(false);
-                    updateClientFeaturesButton(btnClientFeatures, false);
-                }
+                Tools.swapFragment(this, ClientFeaturesFragment.class, ClientFeaturesFragment.TAG, null,
+                        R.anim.fade_scale_in, R.anim.fade_scale_out,
+                        R.anim.fade_scale_in, R.anim.fade_scale_out);
             });
         }
 

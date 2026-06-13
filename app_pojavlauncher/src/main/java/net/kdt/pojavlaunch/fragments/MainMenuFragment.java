@@ -166,14 +166,23 @@ public class MainMenuFragment extends Fragment {
     private void openPane(Class<? extends Fragment> fragmentClass, String tag,
                           @Nullable Bundle args) {
         if (isTwoPane()) {
-            getChildFragmentManager()
-                    .beginTransaction()
-                    .setReorderingAllowed(true)
+            androidx.fragment.app.FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            if (fragmentClass == ClientFeaturesFragment.class) {
+                transaction.setCustomAnimations(R.anim.fade_scale_in, R.anim.fade_scale_out,
+                        R.anim.fade_scale_in, R.anim.fade_scale_out);
+            }
+            transaction.setReorderingAllowed(true)
                     .replace(R.id.right_pane_container, fragmentClass, args, tag)
                     .addToBackStack(tag)
                     .commit();
         } else {
-            Tools.swapFragment(requireActivity(), fragmentClass, tag, args);
+            if (fragmentClass == ClientFeaturesFragment.class) {
+                Tools.swapFragment(requireActivity(), fragmentClass, tag, args,
+                        R.anim.fade_scale_in, R.anim.fade_scale_out,
+                        R.anim.fade_scale_in, R.anim.fade_scale_out);
+            } else {
+                Tools.swapFragment(requireActivity(), fragmentClass, tag, args);
+            }
         }
     }
 
@@ -288,13 +297,7 @@ public class MainMenuFragment extends Fragment {
             final net.kdt.pojavlaunch.ClientFeaturesManager cfm = ((net.kdt.pojavlaunch.LauncherActivity) requireActivity()).getClientFeaturesManager();
             updateClientFeaturesMenuButton(btnClientFeatures, cfm.isEnabled());
             btnClientFeatures.setOnClickListener(v -> {
-                boolean nextState = !cfm.isEnabled();
-                if (nextState) {
-                    cfm.showVersionSelector(() -> updateClientFeaturesMenuButton(btnClientFeatures, true));
-                } else {
-                    cfm.setEnabled(false);
-                    updateClientFeaturesMenuButton(btnClientFeatures, false);
-                }
+                openPane(ClientFeaturesFragment.class, ClientFeaturesFragment.TAG, null);
             });
         }
 
@@ -413,6 +416,15 @@ public class MainMenuFragment extends Fragment {
                 boolean showBar = getChildFragmentManager().getBackStackEntryCount() == 0;
                 setBottomBarVisible(showBar);
             });
+        }
+
+        View view = getView();
+        if (view != null) {
+            Button btnClientFeatures = view.findViewById(R.id.btn_client_features);
+            if (btnClientFeatures != null && getActivity() instanceof net.kdt.pojavlaunch.LauncherActivity) {
+                final net.kdt.pojavlaunch.ClientFeaturesManager cfm = ((net.kdt.pojavlaunch.LauncherActivity) requireActivity()).getClientFeaturesManager();
+                updateClientFeaturesMenuButton(btnClientFeatures, cfm.isEnabled());
+            }
         }
     }
 
