@@ -1454,6 +1454,17 @@ public final class Tools {
                 .replace(R.id.container_fragment, fragmentClass, bundle, fragmentTag).commit();
     }
 
+    /** Swap the main fragment with another with custom animations */
+    public static void swapFragment(FragmentActivity fragmentActivity , Class<? extends Fragment> fragmentClass,
+                                    @Nullable String fragmentTag, @Nullable Bundle bundle,
+                                    int enterAnim, int exitAnim, int popEnterAnim, int popExitAnim) {
+        fragmentActivity.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
+                .setReorderingAllowed(true)
+                .addToBackStack(fragmentClass.getName())
+                .replace(R.id.container_fragment, fragmentClass, bundle, fragmentTag).commit();
+    }
+
     public static void backToMainMenu(FragmentActivity fragmentActivity) {
         fragmentActivity.getSupportFragmentManager()
                 .popBackStack("ROOT", 0);
