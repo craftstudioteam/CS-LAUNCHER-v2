@@ -38,7 +38,7 @@ public class VeilImguiOverrideDisable extends ClassVisitor implements ClassFileT
     public static class DisableMethodAdapter extends ClassVisitor {
 
         public DisableMethodAdapter(ClassVisitor cv) {
-            super(Opcodes.ASM4, cv);
+            super(Opcodes.ASM9, cv);
         }
 
         @Override

@@ -6,14 +6,14 @@ public class YggdrasilTransformer {
     public static byte[] transform(byte[] classfileBuffer) {
         ClassReader reader = new ClassReader(classfileBuffer);
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
-        ClassVisitor visitor = new ClassVisitor(Opcodes.ASM5, writer) {
+        ClassVisitor visitor = new ClassVisitor(Opcodes.ASM9, writer) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
                 MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
                 
                 // Patch isAllowedTextureDomain to always return true
                 if (name.equals("isAllowedTextureDomain")) {
-                    return new MethodVisitor(Opcodes.ASM5, mv) {
+                    return new MethodVisitor(Opcodes.ASM9, mv) {
                         @Override
                         public void visitCode() {
                             super.visitCode();
@@ -26,7 +26,7 @@ public class YggdrasilTransformer {
                 final boolean isFillProfile = name.equals("fillProfileProperties") && desc.equals("(Lcom/mojang/authlib/GameProfile;Z)Lcom/mojang/authlib/GameProfile;");
                 
                 // Redirect mojang domains in all method LDC instructions
-                return new MethodVisitor(Opcodes.ASM5, mv) {
+                return new MethodVisitor(Opcodes.ASM9, mv) {
                     @Override
                     public void visitLdcInsn(Object value) {
                         if (value instanceof String) {

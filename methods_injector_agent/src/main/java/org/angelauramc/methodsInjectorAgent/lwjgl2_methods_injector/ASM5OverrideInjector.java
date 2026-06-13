@@ -28,7 +28,7 @@ public class ASM5OverrideInjector extends ClassVisitor {
                     name.endsWith("AnnotationVisitor") ||
                     name.endsWith("SignatureVisitor")) {
                     try { // Minecraft makes it ugly if we use println
-                        System.out.print("Copper-Android: Modifying ASM classes for ASM4 comaptibility...\n");
+                        System.out.print("Copper-Android: Modifying ASM classes for ASM compatibility...\n");
                     } catch (Exception ignored) {}
                     ClassReader cr = new ClassReader(b);
                     ClassWriter cw = new ClassWriter(cr, 0);
@@ -46,7 +46,7 @@ public class ASM5OverrideInjector extends ClassVisitor {
      */
     public static class disableApiVersionDetection extends ClassVisitor {
         public disableApiVersionDetection(ClassVisitor cv) {
-            super(Opcodes.ASM4, cv);
+            super(Opcodes.ASM9, cv);
         }
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
