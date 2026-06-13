@@ -14,11 +14,21 @@ import java.util.List;
 public class FabricVersionAdapter extends ArrayAdapter<FabricVersion> {
     private final int mResource;
     private final boolean mShowBadges;
+    private int mSelectedPosition = -1;
 
     public FabricVersionAdapter(Context context, int resource, List<FabricVersion> objects, boolean showBadges) {
         super(context, resource, objects);
         this.mResource = resource;
         this.mShowBadges = showBadges;
+    }
+
+    public void setSelectedPosition(int position) {
+        mSelectedPosition = position;
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedPosition() {
+        return mSelectedPosition;
     }
 
     @Override
@@ -47,6 +57,8 @@ public class FabricVersionAdapter extends ArrayAdapter<FabricVersion> {
                 subtitle.setTextColor(item.stable ? 0xFF8BFF8B : 0xFF9CA3AF);
             }
         }
+
+        view.setSelected(position == mSelectedPosition);
 
         return view;
     }
