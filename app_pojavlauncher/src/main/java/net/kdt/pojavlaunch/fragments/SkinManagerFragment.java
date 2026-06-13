@@ -525,7 +525,9 @@ public class SkinManagerFragment extends Fragment {
                 if (mCape == null || mLastCapeW != mPendingCapeBitmap.getWidth() || mLastCapeH != mPendingCapeBitmap.getHeight()) {
                     mLastCapeW = mPendingCapeBitmap.getWidth();
                     mLastCapeH = mPendingCapeBitmap.getHeight();
-                    mCape = new Cuboid(0, 8, 2, -5, 5, -16, 0, 0, 1, 0, 0, 10, 16, 1, mLastCapeW, mLastCapeH, false, 0f);
+                    // Cape is authored relative to the upper-back/body pivot, not the screen/camera.
+                    // Keep it centered on the spine and let the model matrix carry all body movement.
+                    mCape = new Cuboid(0, 8, 2.25f, -5, 5, -16, 0, 0, 1, 0, 0, 10, 16, 1, mLastCapeW, mLastCapeH, false, 0f);
                 }
             } else {
                 mCape = null;
@@ -547,13 +549,16 @@ public class SkinManagerFragment extends Fragment {
             drawPart(mRightLeg, mModelMatrix, mSkinTextureId);
             drawPart(mLeftLeg, mModelMatrix, mSkinTextureId);
 
-            // Draw Cape
+            // Draw Cape: attach to the torso/upper-back pivot and inherit the same body/model root.
             if (mCape != null && mCapeTextureId != 0) {
                 float[] capeMatrix = new float[16];
                 System.arraycopy(mModelMatrix, 0, capeMatrix, 0, 16);
-                Matrix.translateM(capeMatrix, 0, 0f, 8f, 2f);
-                Matrix.rotateM(capeMatrix, 0, 15f, 1f, 0f, 0f);
-                Matrix.translateM(capeMatrix, 0, 0f, -8f, -2f);
+                final float capePivotX = 0f;
+                final float capePivotY = 8f;
+                final float capePivotZ = 2.25f;
+                Matrix.translateM(capeMatrix, 0, capePivotX, capePivotY, capePivotZ);
+                Matrix.rotateM(capeMatrix, 0, 10f, 1f, 0f, 0f);
+                Matrix.translateM(capeMatrix, 0, -capePivotX, -capePivotY, -capePivotZ);
                 drawPart(mCape, capeMatrix, mCapeTextureId);
             }
 
