@@ -18,6 +18,18 @@ public class LauncherProfiles {
     public static MinecraftLauncherProfiles mainProfileJson;
     private static final File launcherProfilesFile = new File(Tools.DIR_GAME_NEW, "launcher_profiles.json");
 
+    public static final java.util.List<Runnable> sProfileUpdateListeners = new java.util.ArrayList<>();
+
+    public static void addUpdateListener(Runnable listener) {
+        if (!sProfileUpdateListeners.contains(listener)) {
+            sProfileUpdateListeners.add(listener);
+        }
+    }
+
+    public static void removeUpdateListener(Runnable listener) {
+        sProfileUpdateListeners.remove(listener);
+    }
+
     /** Reload the profile from the file, creating a default one if necessary */
     public static void load(){
         if (launcherProfilesFile.exists()) {
@@ -46,6 +58,9 @@ public class LauncherProfiles {
     public static void write() {
         try {
             Tools.write(launcherProfilesFile.getAbsolutePath(), mainProfileJson.toJson());
+            for (Runnable listener : new java.util.ArrayList<>(sProfileUpdateListeners)) {
+                if (listener != null) Tools.runOnUiThread(listener);
+            }
         } catch (IOException e) {
             Log.e(LauncherProfiles.class.toString(), "Failed to write profile file", e);
             throw new RuntimeException(e);
