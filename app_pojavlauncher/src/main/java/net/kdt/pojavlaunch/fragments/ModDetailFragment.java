@@ -68,6 +68,7 @@ public class ModDetailFragment extends Fragment {
     private View mBottomBar;
     private View mScrollContent;
     private LinearLayout mSpinnerContainer;
+    private LinearLayout mCompatibilityBadges;
 
     // Screenshot views
     private TextView mScreenshotLabel;
@@ -122,6 +123,7 @@ public class ModDetailFragment extends Fragment {
         mBottomBar = view.findViewById(R.id.detail_bottom_bar);
         mScrollContent = view.findViewById(R.id.detail_scroll_content);
         mSpinnerContainer = view.findViewById(R.id.detail_spinner_container);
+        mCompatibilityBadges = view.findViewById(R.id.detail_compatibility_badges);
 
         // Screenshot views
         mScreenshotLabel = view.findViewById(R.id.detail_screenshot_label);
@@ -210,6 +212,7 @@ public class ModDetailFragment extends Fragment {
                 if (mModDetail != null && position < mModDetail.versionNames.length) {
                     mSelectedVersionIndex = position;
                     enableDownloadButton(true);
+                    updateCompatibilityBadges(position);
                 }
             }
 
@@ -217,6 +220,7 @@ public class ModDetailFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {
                 mSelectedVersionIndex = -1;
                 enableDownloadButton(false);
+                updateCompatibilityBadges(-1);
             }
         });
     }
@@ -461,17 +465,16 @@ public class ModDetailFragment extends Fragment {
         mScrollContent.animate()
                 .alpha(1f)
                 .translationY(0f)
-                .setDuration(250)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setDuration(180)
+                .setInterpolator(new android.view.animation.DecelerateInterpolator())
                 .start();
 
-        // Bottom bar slides up from bottom with a slight delay
+        // Bottom bar slides up from bottom with no delay
         mBottomBar.setTranslationY(120f);
         mBottomBar.animate()
                 .translationY(0f)
-                .setDuration(300)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setStartDelay(100)
+                .setDuration(180)
+                .setInterpolator(new android.view.animation.DecelerateInterpolator())
                 .start();
     }
 
@@ -510,5 +513,91 @@ public class ModDetailFragment extends Fragment {
             default:
                 return R.mipmap.ic_launcher_foreground;
         }
+    }
+
+    private void updateCompatibilityBadges(int versionIndex) {
+        if (mCompatibilityBadges == null) return;
+        mCompatibilityBadges.removeAllViews();
+        if (versionIndex < 0 || mModDetail == null) return;
+        
+        String[] modLoaders = null;
+        if (mModDetail.versionLoaders != null && mModDetail.versionLoaders.length > versionIndex) {
+            modLoaders = mModDetail.versionLoaders[versionIndex];
+        }
+        
+        String modMcVer = "";
+        if (mModDetail.mcVersionNames != null && mModDetail.mcVersionNames.length > versionIndex) {
+            modMcVer = mModDetail.mcVersionNames[versionIndex];
+        }
+
+        boolean foundProfile = false;
+        boolean isIncompatible = true;
+
+        LauncherProfiles.load();
+        java.util.Map<String, MinecraftProfile> profiles = LauncherProfiles.mainProfileJson.profiles;
+        java.util.List<String> validProfiles = new java.util.ArrayList<>();
+
+        if (profiles != null) {
+            for (java.util.Map.Entry<String, MinecraftProfile> entry : profiles.entrySet()) {
+                MinecraftProfile p = entry.getValue();
+                if (p == null || p.lastVersionId == null) continue;
+
+                boolean isCompatible = false;
+                if (modLoaders != null && modLoaders.length > 0) {
+                    for (String loader : modLoaders) {
+                        if (net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, loader)) {
+                            isCompatible = true;
+                            break;
+                        }
+                    }
+                } else {
+                    isCompatible = net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "fabric") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "forge") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "quilt") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "neoforge") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "liteloader") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "optifine");
+                }
+                
+                if (!isCompatible) continue;
+
+                if (modMcVer != null && !modMcVer.isEmpty()) {
+                    String pmcVer = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(p);
+                    if (!pmcVer.contains(modMcVer.toLowerCase())) continue;
+                }
+
+                isIncompatible = false;
+                foundProfile = true;
+                validProfiles.add((p.name != null && !p.name.isEmpty()) ? p.name : entry.getKey());
+            }
+        }
+
+        // Add badges
+        if (modLoaders != null && modLoaders.length > 0) {
+            for (String loader : modLoaders) {
+                String verStr = (modMcVer != null && !modMcVer.isEmpty()) ? (" " + modMcVer) : "";
+                String capitalizedLoader = loader.substring(0, 1).toUpperCase() + loader.substring(1);
+                addBadge("⚠ Requires " + capitalizedLoader + verStr, "#FFA500");
+            }
+        } else if (modMcVer != null && !modMcVer.isEmpty()) {
+            addBadge("⚠ Requires " + modMcVer, "#FFA500");
+        }
+
+        if (foundProfile) {
+            for (String pName : validProfiles) {
+                addBadge("✓ Installed Profile Found: " + pName, "#39FF14");
+            }
+        } else if (isIncompatible) {
+            addBadge("✗ Incompatible Version (No matching profile)", "#FF4444");
+        }
+    }
+
+    private void addBadge(String text, String colorHex) {
+        TextView badge = new TextView(requireContext());
+        badge.setText(text);
+        badge.setTextColor(android.graphics.Color.parseColor(colorHex));
+        badge.setTextSize(12);
+        badge.setPadding(0, 4, 0, 4);
+        mCompatibilityBadges.addView(badge);
     }
 }

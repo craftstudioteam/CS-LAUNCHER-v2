@@ -112,8 +112,13 @@ public class DownloadListFragment extends Fragment implements ModItemAdapter.Sea
             // Modrinth : "world" project type nahi hai — "datapack" type + adventure category use karo
             filters.projectType = "datapack";
             filters.categories = "adventure";
+            filters.isModpack = false;
+        } else if (mContentType.equals("modpack")) {
+            filters.projectType = "modpack";
+            filters.isModpack = true;
         } else {
             filters.projectType = mContentType;
+            filters.isModpack = false;
         }
         return filters;
     }
