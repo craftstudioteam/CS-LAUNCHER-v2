@@ -4,27 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212"
+    android:background="#121214"
     android:animateLayoutChanges="true">
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- ✦ TOP BAR                              -->
+    <!-- ✦ TOP BAR / HEADER                     -->
     <!-- ═══════════════════════════════════════ -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cursor_top_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_48sdp"
-        android:background="@drawable/bg_top_bar_gradient"
-        android:paddingHorizontal="12dp"
+        android:layout_height="56dp"
+        android:background="#1C1C1E"
+        android:paddingHorizontal="16dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/cursor_back_button"
-            android:layout_width="@dimen/_36sdp"
-            android:layout_height="@dimen/_36sdp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/bg_icon_button_round"
             android:src="@drawable/ic_arrow_back_white"
-            android:padding="8dp"
+            android:padding="10dp"
             app:tint="#39FF14"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:text="CURSOR CUSTOMIZATION"
             android:textColor="#FFFFFF"
-            android:textSize="13sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:letterSpacing="0.08"
             android:gravity="center"
@@ -47,7 +47,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- ✦ SCROLLABLE CONTENT                   -->
+    <!-- ✦ SCROLLABLE MAIN LAYOUT               -->
     <!-- ═══════════════════════════════════════ -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -57,401 +57,665 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cursor_top_bar">
 
+        <!-- Centered Container to limit width on Landscape / Tablets -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:gravity="center_horizontal"
             android:padding="16dp">
 
-            <!-- ═══════════════════════════════════════ -->
-            <!-- ✦ CURRENT CURSOR PREVIEW              -->
-            <!-- ═══════════════════════════════════════ -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CURRENT PREVIEW"
-                android:textColor="#888888"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.12"
-                android:layout_marginBottom="8dp"/>
-
-            <FrameLayout
-                android:id="@+id/cursor_preview_container"
-                android:layout_width="match_parent"
-                android:layout_height="140dp"
-                android:background="@drawable/bg_cursor_preview"
-                android:gravity="center"
-                android:layout_marginBottom="20dp">
-
-                <ImageView
-                    android:id="@+id/cursor_preview_image"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_mouse_pointer"
-                    android:padding="6dp"
-                    android:background="@drawable/bg_preview_box"
-                    android:contentDescription="Current cursor preview"/>
-
-                <TextView
-                    android:id="@+id/cursor_preview_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|start"
-                    android:text="DEFAULT"
-                    android:textColor="#39FF14"
-                    android:textSize="8sp"
-                    android:textStyle="bold"
-                    android:background="@drawable/bg_size_chip"
-                    android:paddingHorizontal="6dp"
-                    android:paddingVertical="2dp"
-                    android:layout_margin="6dp"/>
-
-                <TextView
-                    android:id="@+id/cursor_preview_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:text="Scale: 100% | Opacity: 100%"
-                    android:textColor="#888888"
-                    android:textSize="9sp"
-                    android:textStyle="bold"
-                    android:layout_margin="6dp"/>
-            </FrameLayout>
-
-            <!-- ═══════════════════════════════════════ -->
-            <!-- ✦ UPLOAD SECTION                       -->
-            <!-- ═══════════════════════════════════════ -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="INPUT YOUR CURSOR"
-                android:textColor="#39FF14"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="4dp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="IMPORT AN IMAGE (PNG) OR GIF (ANIMATED) FILE FROM YOUR GALLERY TO SET YOUR CUSTOM CURSOR."
-                android:textColor="#666666"
-                android:textSize="9sp"
-                android:lineSpacingExtra="2dp"
-                android:layout_marginBottom="14dp"/>
-
             <LinearLayout
-                android:id="@+id/upload_zone"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:gravity="center"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/bg_dashed_border"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                android:padding="12dp"
-                android:layout_marginBottom="16dp">
+                android:maxWidth="600dp"
+                app:layout_constraintWidth_max="600dp">
 
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_upload"
-                    android:alpha="0.5"
-                    app:tint="#39FF14"
-                    android:layout_marginBottom="6dp"/>
-
+                <!-- ═══════════════════════════════════════ -->
+                <!-- ✦ SECTION: CURSOR LIVE PREVIEW        -->
+                <!-- ═══════════════════════════════════════ -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tap to upload your cursor"
-                    android:textColor="#888888"
-                    android:textSize="11sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PNG / GIF supported"
-                    android:textColor="#555555"
-                    android:textSize="9sp"/>
-
-            </LinearLayout>
-
-            <!-- ═══════════════════════════════════════ -->
-            <!-- ✦ CURSOR SETTINGS                      -->
-            <!-- ═══════════════════════════════════════ -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginBottom="20dp"
-                android:weightSum="2">
-
-                <!-- UPLOAD IMAGE/GIF Button -->
-                <com.kdt.mcgui.MineButton
-                    android:id="@+id/btn_import_png"
-                    android:layout_width="0dp"
-                    android:layout_height="46dp"
-                    android:layout_weight="0.5"
-                    android:layout_marginEnd="6dp"
-                    android:background="@drawable/bg_green_gradient_button"
-                    android:text="UPLOAD IMAGE/GIF"
-                    android:textColor="#000000"
+                    android:text="LIVE PREVIEW"
+                    android:textColor="#8E8E93"
                     android:textSize="11sp"
                     android:textStyle="bold"
-                    android:letterSpacing="0.04"
-                    android:drawableStart="@drawable/ic_gif"
-                    android:drawablePadding="6dp"
-                    android:stateListAnimator="@null"/>
+                    android:letterSpacing="0.1"
+                    android:layout_marginBottom="8dp"/>
 
-            </LinearLayout>
-
-            <!-- ═══════════════════════════════════════ -->
-            <!-- ✦ CURSOR SCALE + GLOW                  -->
-            <!-- ═══════════════════════════════════════ -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#1A1A1A"
-                android:orientation="vertical"
-                android:padding="14dp"
-                android:layout_marginBottom="16dp">
-
-                <!-- Cursor Scale -->
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cursor_preview_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="4dp">
+                    android:layout_height="140dp"
+                    android:background="@drawable/bg_cursor_preview"
+                    android:layout_marginBottom="18dp">
+
+                    <ImageView
+                        android:id="@+id/cursor_preview_image"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_mouse_pointer"
+                        android:padding="6dp"
+                        android:background="@drawable/bg_preview_box"
+                        android:contentDescription="Current cursor preview"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:id="@+id/cursor_preview_label"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="CURSOR SCALE"
+                        android:text="DEFAULT"
                         android:textColor="#39FF14"
-                        android:textSize="10sp"
+                        android:textSize="9sp"
                         android:textStyle="bold"
-                        android:letterSpacing="0.1"/>
+                        android:background="@drawable/bg_size_chip"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="3dp"
+                        android:layout_margin="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
 
                     <TextView
-                        android:id="@+id/scale_value_text"
+                        android:id="@+id/cursor_preview_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="100%"
-                        android:textColor="#FFFFFF"
+                        android:text="Scale: 100% | Opacity: 100%"
+                        android:textColor="#8E8E93"
                         android:textSize="10sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
+                        android:textStyle="bold"
+                        android:layout_margin="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
 
-                <SeekBar
-                    android:id="@+id/seek_cursor_size"
-                    android:layout_width="match_parent"
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- ═══════════════════════════════════════ -->
+                <!-- ✦ SECTION: CURSOR STYLE SELECTOR       -->
+                <!-- ═══════════════════════════════════════ -->
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="2dp"
-                    android:max="300"
-                    android:progress="100"
-                    android:progressTint="#39FF14"
-                    android:thumbTint="#39FF14"
-                    android:progressBackgroundTint="#2A2A2A"/>
+                    android:text="CURSOR STYLE"
+                    android:textColor="#8E8E93"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"
+                    android:layout_marginBottom="8dp"/>
 
-                <!-- Glow Intensity -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="4dp">
+                    android:layout_marginBottom="18dp"
+                    android:weightSum="3">
 
-                    <TextView
+                    <!-- Classic Style Card -->
+                    <LinearLayout
+                        android:id="@+id/style_classic"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="GLOW INTENSITY"
-                        android:textColor="#00FF41"
-                        android:textSize="10sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.1"/>
+                        android:layout_marginEnd="6dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp"
+                        android:background="@drawable/background_card_neon"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground">
 
-                    <TextView
-                        android:id="@+id/glow_value_text"
-                        android:layout_width="wrap_content"
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_mouse_pointer"
+                            android:layout_marginBottom="6dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Classic"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <!-- Gamepad Style Card -->
+                    <LinearLayout
+                        android:id="@+id/style_gamepad"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="0%"
-                        android:textColor="#FFFFFF"
-                        android:textSize="10sp"
-                        android:textStyle="bold"/>
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="3dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp"
+                        android:background="@drawable/background_card"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_gamepad_pointer"
+                            android:layout_marginBottom="6dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Gamepad"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <!-- Custom Style Card -->
+                    <LinearLayout
+                        android:id="@+id/style_custom"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp"
+                        android:background="@drawable/background_card"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_upload"
+                            app:tint="#39FF14"
+                            android:layout_marginBottom="6dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Custom File"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
                 </LinearLayout>
 
-                <SeekBar
-                    android:id="@+id/seek_glow_strength"
-                    android:layout_width="match_parent"
+                <!-- ═══════════════════════════════════════ -->
+                <!-- ✦ SECTION: CURSOR SIZE & POSITION      -->
+                <!-- ═══════════════════════════════════════ -->
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="2dp"
-                    android:max="100"
-                    android:progress="0"
-                    android:progressTint="#00FF41"
-                    android:thumbTint="#00FF41"
-                    android:progressBackgroundTint="#2A2A2A"/>
+                    android:text="CURSOR SIZE &amp; POSITION"
+                    android:textColor="#8E8E93"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"
+                    android:layout_marginBottom="8dp"/>
 
-                <!-- Cursor Opacity -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="4dp">
+                    android:background="@drawable/background_card"
+                    android:orientation="vertical"
+                    android:padding="14dp"
+                    android:layout_marginBottom="18dp">
 
-                    <TextView
-                        android:layout_width="0dp"
+                    <!-- Scale -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="CURSOR OPACITY"
-                        android:textColor="#00FF41"
-                        android:textSize="10sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.1"/>
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="4dp">
 
-                    <TextView
-                        android:id="@+id/opacity_value_text"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="CURSOR SCALE"
+                            android:textColor="#39FF14"
+                            android:textSize="10.5sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05"/>
+
+                        <TextView
+                            android:id="@+id/scale_value_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="100%"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <SeekBar
+                        android:id="@+id/seek_cursor_size"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="100%"
-                        android:textColor="#FFFFFF"
-                        android:textSize="10sp"
-                        android:textStyle="bold"/>
+                        android:layout_marginVertical="6dp"
+                        android:max="300"
+                        android:progress="100"
+                        android:progressTint="#39FF14"
+                        android:thumbTint="#39FF14"
+                        android:progressBackgroundTint="#2C2C2E"/>
+
+                    <!-- Hotspot X -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="HOTSPOT X"
+                            android:textColor="#39FF14"
+                            android:textSize="10.5sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05"/>
+
+                        <TextView
+                            android:id="@+id/hotspot_x_value_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 px"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <SeekBar
+                        android:id="@+id/seek_hotspot_x"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="6dp"
+                        android:max="128"
+                        android:progress="0"
+                        android:progressTint="#39FF14"
+                        android:thumbTint="#39FF14"
+                        android:progressBackgroundTint="#2C2C2E"/>
+
+                    <!-- Hotspot Y -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="HOTSPOT Y"
+                            android:textColor="#39FF14"
+                            android:textSize="10.5sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05"/>
+
+                        <TextView
+                            android:id="@+id/hotspot_y_value_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 px"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <SeekBar
+                        android:id="@+id/seek_hotspot_y"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="6dp"
+                        android:max="128"
+                        android:progress="0"
+                        android:progressTint="#39FF14"
+                        android:thumbTint="#39FF14"
+                        android:progressBackgroundTint="#2C2C2E"/>
+
                 </LinearLayout>
 
-                <SeekBar
-                    android:id="@+id/seek_cursor_opacity"
-                    android:layout_width="match_parent"
+                <!-- ═══════════════════════════════════════ -->
+                <!-- ✦ SECTION: CURSOR GLOW & COLOR         -->
+                <!-- ═══════════════════════════════════════ -->
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="2dp"
-                    android:max="100"
-                    android:progress="100"
-                    android:progressTint="#00FF41"
-                    android:thumbTint="#00FF41"
-                    android:progressBackgroundTint="#2A2A2A"/>
+                    android:text="CURSOR GLOW &amp; COLOR"
+                    android:textColor="#8E8E93"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"
+                    android:layout_marginBottom="8dp"/>
 
-                <!-- Hotspot X -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="4dp">
+                    android:background="@drawable/background_card"
+                    android:orientation="vertical"
+                    android:padding="14dp"
+                    android:layout_marginBottom="18dp">
 
-                    <TextView
-                        android:layout_width="0dp"
+                    <!-- Glow Intensity -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="HOTSPOT X"
-                        android:textColor="#00FF41"
-                        android:textSize="10sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.1"/>
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="4dp">
 
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="GLOW INTENSITY"
+                            android:textColor="#39FF14"
+                            android:textSize="10.5sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05"/>
+
+                        <TextView
+                            android:id="@+id/glow_value_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0%"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <SeekBar
+                        android:id="@+id/seek_glow_strength"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="6dp"
+                        android:max="60"
+                        android:progress="0"
+                        android:progressTint="#39FF14"
+                        android:thumbTint="#39FF14"
+                        android:progressBackgroundTint="#2C2C2E"/>
+
+                    <!-- Glow Opacity / Cursor Opacity -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="CURSOR OPACITY"
+                            android:textColor="#39FF14"
+                            android:textSize="10.5sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05"/>
+
+                        <TextView
+                            android:id="@+id/opacity_value_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="100%"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <SeekBar
+                        android:id="@+id/seek_cursor_opacity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="6dp"
+                        android:max="100"
+                        android:progress="100"
+                        android:progressTint="#39FF14"
+                        android:thumbTint="#39FF14"
+                        android:progressBackgroundTint="#2C2C2E"/>
+
+                    <!-- GLOW COLOR SELECTION -->
                     <TextView
-                        android:id="@+id/hotspot_x_value_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0 px"
-                        android:textColor="#FFFFFF"
-                        android:textSize="10sp"
-                        android:textStyle="bold"/>
+                        android:text="GLOW COLOR PRESETS"
+                        android:textColor="#8E8E93"
+                        android:textSize="9.5sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:overScrollMode="never"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingVertical="4dp"
+                            android:gravity="center_vertical">
+
+                            <!-- Green -->
+                            <ImageView
+                                android:id="@+id/color_green"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginEnd="12dp"
+                                android:background="@drawable/bg_color_circle"
+                                android:backgroundTint="#A6FF3D"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:padding="2dp"
+                                android:src="@drawable/ic_check_circle"
+                                app:tint="#000000"/>
+
+                            <!-- Cyan -->
+                            <ImageView
+                                android:id="@+id/color_cyan"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginEnd="12dp"
+                                android:background="@drawable/bg_color_circle"
+                                android:backgroundTint="#00E5FF"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:padding="6dp"/>
+
+                            <!-- Purple -->
+                            <ImageView
+                                android:id="@+id/color_purple"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginEnd="12dp"
+                                android:background="@drawable/bg_color_circle"
+                                android:backgroundTint="#D500F9"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:padding="6dp"/>
+
+                            <!-- Red -->
+                            <ImageView
+                                android:id="@+id/color_red"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginEnd="12dp"
+                                android:background="@drawable/bg_color_circle"
+                                android:backgroundTint="#FF3D00"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:padding="6dp"/>
+
+                            <!-- Yellow -->
+                            <ImageView
+                                android:id="@+id/color_yellow"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginEnd="12dp"
+                                android:background="@drawable/bg_color_circle"
+                                android:backgroundTint="#FFEA00"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:padding="6dp"/>
+
+                            <!-- White -->
+                            <ImageView
+                                android:id="@+id/color_white"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_color_circle"
+                                android:backgroundTint="#FFFFFF"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:padding="6dp"/>
+
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
                 </LinearLayout>
 
-                <SeekBar
-                    android:id="@+id/seek_hotspot_x"
-                    android:layout_width="match_parent"
+                <!-- ═══════════════════════════════════════ -->
+                <!-- ✦ SECTION: IMPORT & EXPORT             -->
+                <!-- ═══════════════════════════════════════ -->
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="2dp"
-                    android:max="128"
-                    android:progress="0"
-                    android:progressTint="#00FF41"
-                    android:thumbTint="#00FF41"
-                    android:progressBackgroundTint="#2A2A2A"/>
+                    android:text="IMPORT &amp; EXPORT"
+                    android:textColor="#8E8E93"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"
+                    android:layout_marginBottom="8dp"/>
 
-                <!-- Hotspot Y -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="4dp">
+                    android:background="@drawable/background_card"
+                    android:orientation="vertical"
+                    android:padding="14dp"
+                    android:layout_marginBottom="24dp">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="HOTSPOT Y"
-                        android:textColor="#00FF41"
-                        android:textSize="10sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.1"/>
+                    <!-- Upload Zone -->
+                    <LinearLayout
+                        android:id="@+id/upload_zone"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_dashed_border"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:padding="8dp"
+                        android:layout_marginBottom="12dp">
 
-                    <TextView
-                        android:id="@+id/hotspot_y_value_text"
-                        android:layout_width="wrap_content"
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_upload"
+                            app:tint="#39FF14"
+                            android:layout_marginBottom="4dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tap to browse and upload image/GIF"
+                            android:textColor="#8E8E93"
+                            android:textSize="11sp"/>
+                    </LinearLayout>
+
+                    <!-- Import & Export Buttons Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="0 px"
-                        android:textColor="#FFFFFF"
-                        android:textSize="10sp"
-                        android:textStyle="bold"/>
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <com.kdt.mcgui.MineButton
+                            android:id="@+id/btn_import_png"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_green_gradient_button"
+                            android:text="IMPORT FILE"
+                            android:textColor="#000000"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:stateListAnimator="@null"/>
+
+                        <com.kdt.mcgui.MineButton
+                            android:id="@+id/btn_export_cursor"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:background="@drawable/background_card_neon"
+                            android:text="EXPORT FILE"
+                            android:textColor="#39FF14"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:stateListAnimator="@null"/>
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
-                <SeekBar
-                    android:id="@+id/seek_hotspot_y"
+                <!-- ═══════════════════════════════════════ -->
+                <!-- ✦ ACTION BUTTONS (SAVE & RESET)        -->
+                <!-- ═══════════════════════════════════════ -->
+                <com.kdt.mcgui.MineButton
+                    android:id="@+id/btn_save_cursor"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="2dp"
-                    android:max="128"
-                    android:progress="0"
-                    android:progressTint="#00FF41"
-                    android:thumbTint="#00FF41"
-                    android:progressBackgroundTint="#2A2A2A"/>
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_save_button_neon"
+                    android:text="SAVE CHANGES"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05"
+                    android:stateListAnimator="@null"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.kdt.mcgui.MineButton
+                    android:id="@+id/btn_reset_cursor"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_delete_button"
+                    android:text="RESET TO DEFAULT"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05"
+                    android:stateListAnimator="@null"
+                    android:layout_marginBottom="20dp"/>
 
             </LinearLayout>
-
-            <!-- ═══════════════════════════════════════ -->
-            <!-- ✦ SAVE BUTTON                          -->
-            <!-- ═══════════════════════════════════════ -->
-            <com.kdt.mcgui.MineButton
-                android:id="@+id/btn_save_cursor"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/bg_save_button_neon"
-                android:text="SAVE CURSOR"
-                android:textColor="#000000"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.08"
-                android:stateListAnimator="@null"
-                android:layout_marginBottom="10dp"/>
-
-            <!-- ═══════════════════════════════════════ -->
-            <!-- ✦ RESET BUTTON                          -->
-            <!-- ═══════════════════════════════════════ -->
-            <com.kdt.mcgui.MineButton
-                android:id="@+id/btn_reset_cursor"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/bg_delete_button"
-                android:text="RESET CURSOR"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.08"
-                android:stateListAnimator="@null"
-                android:layout_marginBottom="10dp"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

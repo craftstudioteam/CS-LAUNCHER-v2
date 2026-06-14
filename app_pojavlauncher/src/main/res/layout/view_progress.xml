@@ -5,106 +5,147 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background_bottom_bar"
-    android:padding="12dp">
+    android:background="@android:color/transparent"
+    android:padding="8dp">
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- ✦ KINETIC PROGRESS CIRCLE              -->
+    <!-- ✦ COMPACT PREMIUM DOWNLOAD CARD        -->
     <!-- ═══════════════════════════════════════ -->
-    <com.kdt.mcgui.KineticProgressView
-        android:id="@+id/kinetic_progress"
-        android:layout_width="@dimen/_80sdp"
-        android:layout_height="@dimen/_80sdp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <!-- ═══════════════════════════════════════ -->
-    <!-- ✦ DOWNLOAD DETAILS                     -->
-    <!-- ═══════════════════════════════════════ -->
-    <LinearLayout
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/download_card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="12dp"
-        android:gravity="center_vertical"
-        app:layout_constraintStart_toEndOf="@id/kinetic_progress"
+        android:background="@drawable/bg_download_card"
+        android:padding="12dp"
+        app:layout_constraintWidth_max="500dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <!-- Status / Title -->
         <TextView
             android:id="@+id/progress_status_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Downloading Minecraft"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/progress_percentage_text"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Downloading Minecraft"/>
+
+        <!-- Percentage -->
+        <TextView
+            android:id="@+id/progress_percentage_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DOWNLOADING LATEST MODS..."
-            android:textColor="#FFFFFF"
-            android:textSize="11sp"
+            android:text="0%"
+            android:textColor="#39FF14"
+            android:textSize="14sp"
             android:textStyle="bold"
-            android:letterSpacing="0.03"
-            tools:text="DOWNLOADING LATEST MODS..."/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="26%"/>
 
+        <!-- Rounded Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progress_horizontal_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="7dp"
+            android:layout_marginTop="8dp"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/bg_download_progress_bar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/progress_status_text"/>
+
+        <!-- Details Row (Metrics, Speed, ETA) -->
         <TextView
             android:id="@+id/progress_detail_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="MODS &amp; MAPS INCLUDED"
-            android:textColor="#666666"
-            android:textSize="9sp"
-            android:layout_marginTop="2dp"
-            tools:text="MODS &amp; MAPS INCLUDED: Fabric, OptiFine"/>
+            android:text=""
+            android:textColor="#AAAAAA"
+            android:textSize="10.5sp"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/progress_speed_text"
+            app:layout_constraintTop_toBottomOf="@id/progress_horizontal_bar"
+            tools:text="141 MB / 513 MB"/>
 
         <TextView
             android:id="@+id/progress_speed_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:textColor="#888888"
-            android:textSize="9sp"
-            android:layout_marginTop="2dp"
-            tools:text="SPEED: 12MB/S | ETA: 1MIN REMAINING"/>
+            android:textColor="#AAAAAA"
+            android:textSize="10.5sp"
+            android:layout_marginTop="6dp"
+            android:layout_marginHorizontal="4dp"
+            app:layout_constraintStart_toEndOf="@id/progress_detail_text"
+            app:layout_constraintEnd_toStartOf="@+id/progress_eta_text"
+            app:layout_constraintTop_toBottomOf="@id/progress_horizontal_bar"
+            tools:text="2.5 MB/s"/>
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/progress_eta_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#AAAAAA"
+            android:textSize="10.5sp"
+            android:layout_marginTop="6dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/progress_horizontal_bar"
+            tools:text="ETA: 1m 20s"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- ✦ TASK COUNT & EXPAND (keep existing)  -->
+    <!-- ✦ LEGACY COMPATIBILITY VIEWS (HIDDEN)  -->
     <!-- ═══════════════════════════════════════ -->
+    <com.kdt.mcgui.KineticProgressView
+        android:id="@+id/kinetic_progress"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <TextView
         android:id="@+id/progress_textview"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:textSize="@dimen/_10ssp"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/progress_flip_arrow"
+        android:layout_height="0dp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="5 tasks in progress"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
         android:id="@+id/progress_flip_arrow"
-        android:layout_width="@dimen/padding_extra_large"
-        android:layout_height="@dimen/padding_extra_large"
-        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/spinner_arrow" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <LinearLayout
         android:id="@+id/progress_linear_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:visibility="gone"
-        android:paddingHorizontal="@dimen/padding_heavy"
-        android:paddingTop="@dimen/padding_heavy"
-        app:layout_constraintBottom_toTopOf="@+id/kinetic_progress"
-        tools:layout_height="@dimen/_100sdp"
-        tools:visibility="visible">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical">
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

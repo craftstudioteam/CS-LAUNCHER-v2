@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.customcontrols.mouse.CursorManager;
+import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,6 +44,11 @@ public class CursorCustomizationFragment extends Fragment {
     private int mGlowRadius = 0;
     private int mSizeScale = 100;
     private int mOpacity = 100;
+    
+    // New variables for style and color
+    private int mSelectedCursorStyleRes = R.drawable.ic_mouse_pointer;
+    private boolean mUseCustomBitmap = false;
+    private int mGlowColor = android.graphics.Color.parseColor("#A6FF3D"); // Default neon green
 
     // Activity result launcher for file picker
     private final ActivityResultLauncher<String> mFilePickerLauncher =
@@ -60,6 +66,7 @@ public class CursorCustomizationFragment extends Fragment {
         mPreviewImage = view.findViewById(R.id.cursor_preview_image);
         mUploadZone = view.findViewById(R.id.upload_zone);
         View importButton = view.findViewById(R.id.btn_import_png);
+        View exportButton = view.findViewById(R.id.btn_export_cursor);
         View saveButton = view.findViewById(R.id.btn_save_cursor);
         View resetButton = view.findViewById(R.id.btn_reset_cursor);
         View backButton = view.findViewById(R.id.cursor_back_button);
@@ -77,13 +84,28 @@ public class CursorCustomizationFragment extends Fragment {
         TextView hotspotYText = view.findViewById(R.id.hotspot_y_value_text);
         TextView opacityText = view.findViewById(R.id.opacity_value_text);
 
-        // Load existing preferences
-        mGlowRadius = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_glow_radius", 0);
-        mHotspotX = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_x", 0);
-        mHotspotY = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_y", 0);
-        mSizeScale = (int) net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getFloat("custom_cursor_scale", 100f);
-        mOpacity = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_opacity", 100);
+        // Style selector cards
+        View cardClassic = view.findViewById(R.id.style_classic);
+        View cardGamepad = view.findViewById(R.id.style_gamepad);
+        View cardCustom = view.findViewById(R.id.style_custom);
 
+        // Color preset ImageViews
+        ImageView imgGreen = view.findViewById(R.id.color_green);
+        ImageView imgCyan = view.findViewById(R.id.color_cyan);
+        ImageView imgPurple = view.findViewById(R.id.color_purple);
+        ImageView imgRed = view.findViewById(R.id.color_red);
+        ImageView imgYellow = view.findViewById(R.id.color_yellow);
+        ImageView imgWhite = view.findViewById(R.id.color_white);
+
+        // Load existing preferences
+        mGlowRadius = LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_glow_radius", 0);
+        mHotspotX = LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_x", 0);
+        mHotspotY = LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_y", 0);
+        mSizeScale = (int) LauncherPreferences.DEFAULT_PREF.getFloat("custom_cursor_scale", 100f);
+        mOpacity = LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_opacity", 100);
+        mGlowColor = LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_glow_color", android.graphics.Color.parseColor("#A6FF3D"));
+
+        // Set seekbars initial progress
         scaleSeek.setProgress(mSizeScale);
         scaleText.setText(mSizeScale + "%");
 
@@ -99,46 +121,99 @@ public class CursorCustomizationFragment extends Fragment {
         opacitySeek.setProgress(mOpacity);
         opacityText.setText(mOpacity + "%");
 
-        // Setup initial preview scaling and alpha
-        if (mPreviewImage != null) {
-            mPreviewImage.setScaleX(mSizeScale / 100f);
-            mPreviewImage.setScaleY(mSizeScale / 100f);
-            mPreviewImage.setAlpha(mOpacity / 100f);
-        }
-        updatePreviewStatusText(view);
-
         // Load and preview current cursor if it exists
-        if (net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_PATH != null) {
-            File file = new File(net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_PATH);
-            if (file.exists()) {
-                try {
-                    Bitmap currentBmp = BitmapFactory.decodeFile(file.getAbsolutePath());
-                    if (currentBmp != null) {
-                        mCurrentCursorBitmap = currentBmp;
-                        mPreviewImage.setImageBitmap(mCurrentCursorBitmap);
-                        mPreviewImage.setPadding(0, 0, 0, 0);
-                        
-                        TextView label = view.findViewById(R.id.cursor_preview_label);
-                        if (label != null) {
-                            label.setText("CUSTOM");
-                        }
+        boolean enabled = LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED;
+        String path = LauncherPreferences.PREF_CUSTOM_CURSOR_PATH;
 
-                        // Configure seekbars max bounds based on active bitmap size
-                        hotspotXSeek.setMax(mCurrentCursorBitmap.getWidth());
-                        hotspotYSeek.setMax(mCurrentCursorBitmap.getHeight());
+        if (enabled && path != null) {
+            File file = new File(path);
+            if (file.exists()) {
+                if (file.getName().contains("gamepad")) {
+                    mSelectedCursorStyleRes = R.drawable.ic_gamepad_pointer;
+                    mUseCustomBitmap = false;
+                    
+                    cardClassic.setBackgroundResource(R.drawable.background_card);
+                    cardGamepad.setBackgroundResource(R.drawable.background_card_neon);
+                    cardCustom.setBackgroundResource(R.drawable.background_card);
+                } else {
+                    try {
+                        mCurrentCursorBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        if (mCurrentCursorBitmap != null) {
+                            mUseCustomBitmap = true;
+                            
+                            cardClassic.setBackgroundResource(R.drawable.background_card);
+                            cardGamepad.setBackgroundResource(R.drawable.background_card);
+                            cardCustom.setBackgroundResource(R.drawable.background_card_neon);
+                            
+                            hotspotXSeek.setMax(mCurrentCursorBitmap.getWidth());
+                            hotspotYSeek.setMax(mCurrentCursorBitmap.getHeight());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
+        } else {
+            mSelectedCursorStyleRes = R.drawable.ic_mouse_pointer;
+            mUseCustomBitmap = false;
+            
+            cardClassic.setBackgroundResource(R.drawable.background_card_neon);
+            cardGamepad.setBackgroundResource(R.drawable.background_card);
+            cardCustom.setBackgroundResource(R.drawable.background_card);
         }
+
+        // Initialize glow color circles selection state
+        initColorSelection(mGlowColor, imgGreen, imgCyan, imgPurple, imgRed, imgYellow, imgWhite);
+
+        // Update live preview initial state
+        updateLivePreview();
 
         // Entrance animation
         animateEntry(view);
 
-        // Upload zone click
+        // Upload zone & button clicks
         mUploadZone.setOnClickListener(v -> openFilePicker());
         importButton.setOnClickListener(v -> openFilePicker());
+        exportButton.setOnClickListener(v -> exportCursor());
+
+        // Style Selection Listeners
+        cardClassic.setOnClickListener(v -> {
+            mUseCustomBitmap = false;
+            mSelectedCursorStyleRes = R.drawable.ic_mouse_pointer;
+            cardClassic.setBackgroundResource(R.drawable.background_card_neon);
+            cardGamepad.setBackgroundResource(R.drawable.background_card);
+            cardCustom.setBackgroundResource(R.drawable.background_card);
+            updateLivePreview();
+        });
+
+        cardGamepad.setOnClickListener(v -> {
+            mUseCustomBitmap = false;
+            mSelectedCursorStyleRes = R.drawable.ic_gamepad_pointer;
+            cardClassic.setBackgroundResource(R.drawable.background_card);
+            cardGamepad.setBackgroundResource(R.drawable.background_card_neon);
+            cardCustom.setBackgroundResource(R.drawable.background_card);
+            updateLivePreview();
+        });
+
+        cardCustom.setOnClickListener(v -> {
+            if (mCurrentCursorBitmap == null) {
+                openFilePicker();
+            } else {
+                mUseCustomBitmap = true;
+                cardClassic.setBackgroundResource(R.drawable.background_card);
+                cardGamepad.setBackgroundResource(R.drawable.background_card);
+                cardCustom.setBackgroundResource(R.drawable.background_card_neon);
+                updateLivePreview();
+            }
+        });
+
+        // Color circle preset click listeners
+        imgGreen.setOnClickListener(v -> selectGlowColor(0xFFA6FF3D, imgGreen));
+        imgCyan.setOnClickListener(v -> selectGlowColor(0xFF00E5FF, imgCyan));
+        imgPurple.setOnClickListener(v -> selectGlowColor(0xFFD500F9, imgPurple));
+        imgRed.setOnClickListener(v -> selectGlowColor(0xFFFF3D00, imgRed));
+        imgYellow.setOnClickListener(v -> selectGlowColor(0xFFFFEA00, imgYellow));
+        imgWhite.setOnClickListener(v -> selectGlowColor(0xFFFFFFFF, imgWhite));
 
         // SeekBar listeners
         scaleSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -149,11 +224,7 @@ public class CursorCustomizationFragment extends Fragment {
                 }
                 mSizeScale = progress;
                 scaleText.setText(progress + "%");
-                if (mPreviewImage != null) {
-                    mPreviewImage.setScaleX(progress / 100f);
-                    mPreviewImage.setScaleY(progress / 100f);
-                }
-                updatePreviewStatusText(view);
+                updateLivePreview();
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -163,6 +234,7 @@ public class CursorCustomizationFragment extends Fragment {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mGlowRadius = progress;
                 glowText.setText(progress + "%");
+                updateLivePreview();
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -172,6 +244,7 @@ public class CursorCustomizationFragment extends Fragment {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mHotspotX = progress;
                 hotspotXText.setText(progress + " px");
+                updateLivePreview();
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -181,6 +254,7 @@ public class CursorCustomizationFragment extends Fragment {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mHotspotY = progress;
                 hotspotYText.setText(progress + " px");
+                updateLivePreview();
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -190,20 +264,15 @@ public class CursorCustomizationFragment extends Fragment {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mOpacity = progress;
                 opacityText.setText(progress + "%");
-                if (mPreviewImage != null) {
-                    mPreviewImage.setAlpha(progress / 100f);
-                }
-                updatePreviewStatusText(view);
+                updateLivePreview();
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        // Save button
+        // Save & Reset actions
         saveButton.setOnClickListener(v -> saveCursor());
-
-        // Reset button
-        resetButton.setOnClickListener(v -> showResetMenu());
+        resetButton.setOnClickListener(v -> resetToDefaultInstant());
 
         // Back button
         backButton.setOnClickListener(v -> {
@@ -215,8 +284,70 @@ public class CursorCustomizationFragment extends Fragment {
         // Apply press animations to buttons
         applyPressAnimation(backButton);
         applyPressAnimation(importButton);
+        applyPressAnimation(exportButton);
         applyPressAnimation(saveButton);
         applyPressAnimation(resetButton);
+    }
+
+    private void updateLivePreview() {
+        if (mPreviewImage == null) return;
+
+        // 1. Get the base bitmap based on the selected style
+        Bitmap baseBmp = null;
+        try {
+            if (mUseCustomBitmap && mCurrentCursorBitmap != null) {
+                baseBmp = mCurrentCursorBitmap;
+            } else {
+                baseBmp = BitmapFactory.decodeResource(getResources(), mSelectedCursorStyleRes);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (baseBmp == null) return;
+
+        // 2. Apply the glow effect based on seekbar progress
+        Bitmap processedBmp = baseBmp;
+        if (mGlowRadius > 0) {
+            try {
+                processedBmp = CursorManager.applyGlow(baseBmp, mGlowRadius, mGlowColor);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 3. Set bitmap to the preview image view
+        mPreviewImage.setImageBitmap(processedBmp);
+
+        // For default pointer, if padding is needed, set 0 if glow is applied or 6dp if classic
+        if (!mUseCustomBitmap && mGlowRadius == 0) {
+            int padding = (int) (6 * getResources().getDisplayMetrics().density);
+            mPreviewImage.setPadding(padding, padding, padding, padding);
+        } else {
+            mPreviewImage.setPadding(0, 0, 0, 0);
+        }
+
+        // 4. Update scales and alphas
+        mPreviewImage.setScaleX(mSizeScale / 100f);
+        mPreviewImage.setScaleY(mSizeScale / 100f);
+        mPreviewImage.setAlpha(mOpacity / 100f);
+
+        // 5. Update status labels
+        View view = getView();
+        if (view != null) {
+            updatePreviewStatusText(view);
+
+            TextView label = view.findViewById(R.id.cursor_preview_label);
+            if (label != null) {
+                if (mUseCustomBitmap) {
+                    label.setText("CUSTOM");
+                } else if (mSelectedCursorStyleRes == R.drawable.ic_gamepad_pointer) {
+                    label.setText("GAMEPAD");
+                } else {
+                    label.setText("DEFAULT");
+                }
+            }
+        }
     }
 
     private void updatePreviewStatusText(View root) {
@@ -226,122 +357,97 @@ public class CursorCustomizationFragment extends Fragment {
         }
     }
 
-    private void showResetMenu() {
-        String[] options = {
-            "Reset Size",
-            "Reset Position",
-            "Reset Transparency",
-            "Reset Cursor Style",
-            "Full Reset"
-        };
+    private void initColorSelection(int color, ImageView... views) {
+        ImageView selectView = views[0]; // Default green
+        if (color == 0xFF00E5FF) selectView = views[1];
+        else if (color == 0xFFD500F9) selectView = views[2];
+        else if (color == 0xFFFF3D00) selectView = views[3];
+        else if (color == 0xFFFFEA00) selectView = views[4];
+        else if (color == 0xFFFFFFFF) selectView = views[5];
+
+        selectGlowColor(color, selectView);
+    }
+
+    private void selectGlowColor(int color, ImageView selectedView) {
+        mGlowColor = color;
         
-        new android.app.AlertDialog.Builder(requireContext())
-            .setTitle("Reset Cursor Options")
-            .setItems(options, (dialog, which) -> {
-                SeekBar scaleSeek = getView().findViewById(R.id.seek_cursor_size);
-                SeekBar glowSeek = getView().findViewById(R.id.seek_glow_strength);
-                SeekBar hotspotXSeek = getView().findViewById(R.id.seek_hotspot_x);
-                SeekBar hotspotYSeek = getView().findViewById(R.id.seek_hotspot_y);
-                SeekBar opacitySeek = getView().findViewById(R.id.seek_cursor_opacity);
-                
-                TextView scaleText = getView().findViewById(R.id.scale_value_text);
-                TextView glowText = getView().findViewById(R.id.glow_value_text);
-                TextView hotspotXText = getView().findViewById(R.id.hotspot_x_value_text);
-                TextView hotspotYText = getView().findViewById(R.id.hotspot_y_value_text);
-                TextView opacityText = getView().findViewById(R.id.opacity_value_text);
-                
-                switch (which) {
-                    case 0: // Reset Size
-                        mSizeScale = 100;
-                        if (scaleSeek != null) scaleSeek.setProgress(100);
-                        if (scaleText != null) scaleText.setText("100%");
-                        if (mPreviewImage != null) {
-                            mPreviewImage.setScaleX(1.0f);
-                            mPreviewImage.setScaleY(1.0f);
-                        }
-                        break;
-                    case 1: // Reset Position
-                        mHotspotX = 0;
-                        mHotspotY = 0;
-                        if (hotspotXSeek != null) hotspotXSeek.setProgress(0);
-                        if (hotspotYSeek != null) hotspotYSeek.setProgress(0);
-                        if (hotspotXText != null) hotspotXText.setText("0 px");
-                        if (hotspotYText != null) hotspotYText.setText("0 px");
-                        break;
-                    case 2: // Reset Transparency
-                        mOpacity = 100;
-                        mGlowRadius = 0;
-                        if (opacitySeek != null) opacitySeek.setProgress(100);
-                        if (glowSeek != null) glowSeek.setProgress(0);
-                        if (opacityText != null) opacityText.setText("100%");
-                        if (glowText != null) glowText.setText("0%");
-                        if (mPreviewImage != null) {
-                            mPreviewImage.setAlpha(1.0f);
-                        }
-                        break;
-                    case 3: // Reset Cursor Style
-                        net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.edit()
-                            .putBoolean("custom_cursor_enabled", false)
-                            .apply();
-                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED = false;
-                        if (mPreviewImage != null) {
-                            mPreviewImage.setImageResource(R.drawable.ic_mouse_pointer);
-                            mPreviewImage.setPadding(6, 6, 6, 6);
-                        }
-                        TextView label = getView().findViewById(R.id.cursor_preview_label);
-                        if (label != null) label.setText("DEFAULT");
-                        break;
-                    case 4: // Full Reset
-                        mSizeScale = 100;
-                        mHotspotX = 0;
-                        mHotspotY = 0;
-                        mOpacity = 100;
-                        mGlowRadius = 0;
-                        
-                        if (scaleSeek != null) scaleSeek.setProgress(100);
-                        if (hotspotXSeek != null) hotspotXSeek.setProgress(0);
-                        if (hotspotYSeek != null) hotspotYSeek.setProgress(0);
-                        if (opacitySeek != null) opacitySeek.setProgress(100);
-                        if (glowSeek != null) glowSeek.setProgress(0);
-                        
-                        if (scaleText != null) scaleText.setText("100%");
-                        if (hotspotXText != null) hotspotXText.setText("0 px");
-                        if (hotspotYText != null) hotspotYText.setText("0 px");
-                        if (opacityText != null) opacityText.setText("100%");
-                        if (glowText != null) glowText.setText("0%");
-                        
-                        net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.edit()
-                            .putBoolean("custom_cursor_enabled", false)
-                            .putString("custom_cursor_path", null)
-                            .putInt("custom_cursor_hotspot_x", 0)
-                            .putInt("custom_cursor_hotspot_y", 0)
-                            .putFloat("custom_cursor_scale", 100f)
-                            .putInt("custom_cursor_glow_radius", 0)
-                            .putInt("custom_cursor_opacity", 100)
-                            .apply();
-                        
-                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED = false;
-                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_PATH = null;
-                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS = 0;
-                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_SCALE = 100f;
-                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_OPACITY = 1f;
-                        
-                        if (mPreviewImage != null) {
-                            mPreviewImage.setImageResource(R.drawable.ic_mouse_pointer);
-                            mPreviewImage.setPadding(6, 6, 6, 6);
-                            mPreviewImage.setScaleX(1.0f);
-                            mPreviewImage.setScaleY(1.0f);
-                            mPreviewImage.setAlpha(1.0f);
-                        }
-                        TextView lbl = getView().findViewById(R.id.cursor_preview_label);
-                        if (lbl != null) lbl.setText("DEFAULT");
-                        break;
-                }
-                updatePreviewStatusText(getView());
-                Toast.makeText(getContext(), "Reset applied successfully!", Toast.LENGTH_SHORT).show();
-            })
-            .setNegativeButton(android.R.string.cancel, null)
-            .show();
+        View root = getView();
+        if (root == null) return;
+
+        ImageView imgGreen = root.findViewById(R.id.color_green);
+        ImageView imgCyan = root.findViewById(R.id.color_cyan);
+        ImageView imgPurple = root.findViewById(R.id.color_purple);
+        ImageView imgRed = root.findViewById(R.id.color_red);
+        ImageView imgYellow = root.findViewById(R.id.color_yellow);
+        ImageView imgWhite = root.findViewById(R.id.color_white);
+
+        ImageView[] colorViews = {imgGreen, imgCyan, imgPurple, imgRed, imgYellow, imgWhite};
+        for (ImageView v : colorViews) {
+            if (v != null) {
+                v.setImageDrawable(null);
+            }
+        }
+
+        if (selectedView != null) {
+            selectedView.setImageResource(R.drawable.ic_check_circle);
+            selectedView.setPadding(2, 2, 2, 2);
+            selectedView.setColorFilter(0xFF000000);
+        }
+
+        updateLivePreview();
+    }
+
+    private void resetToDefaultInstant() {
+        mSizeScale = 100;
+        mHotspotX = 0;
+        mHotspotY = 0;
+        mOpacity = 100;
+        mGlowRadius = 0;
+        mGlowColor = android.graphics.Color.parseColor("#A6FF3D");
+        mUseCustomBitmap = false;
+        mSelectedCursorStyleRes = R.drawable.ic_mouse_pointer;
+
+        View root = getView();
+        if (root == null) return;
+
+        SeekBar scaleSeek = root.findViewById(R.id.seek_cursor_size);
+        SeekBar glowSeek = root.findViewById(R.id.seek_glow_strength);
+        SeekBar hotspotXSeek = root.findViewById(R.id.seek_hotspot_x);
+        SeekBar hotspotYSeek = root.findViewById(R.id.seek_hotspot_y);
+        SeekBar opacitySeek = root.findViewById(R.id.seek_cursor_opacity);
+
+        TextView scaleText = root.findViewById(R.id.scale_value_text);
+        TextView glowText = root.findViewById(R.id.glow_value_text);
+        TextView hotspotXText = root.findViewById(R.id.hotspot_x_value_text);
+        TextView hotspotYText = root.findViewById(R.id.hotspot_y_value_text);
+        TextView opacityText = root.findViewById(R.id.opacity_value_text);
+
+        if (scaleSeek != null) scaleSeek.setProgress(100);
+        if (glowSeek != null) glowSeek.setProgress(0);
+        if (hotspotXSeek != null) hotspotXSeek.setProgress(0);
+        if (hotspotYSeek != null) hotspotYSeek.setProgress(0);
+        if (opacitySeek != null) opacitySeek.setProgress(100);
+
+        if (scaleText != null) scaleText.setText("100%");
+        if (glowText != null) glowText.setText("0%");
+        if (hotspotXText != null) hotspotXText.setText("0 px");
+        if (hotspotYText != null) hotspotYText.setText("0 px");
+        if (opacityText != null) opacityText.setText("100%");
+
+        View cardClassic = root.findViewById(R.id.style_classic);
+        View cardGamepad = root.findViewById(R.id.style_gamepad);
+        View cardCustom = root.findViewById(R.id.style_custom);
+
+        if (cardClassic != null) cardClassic.setBackgroundResource(R.drawable.background_card_neon);
+        if (cardGamepad != null) cardGamepad.setBackgroundResource(R.drawable.background_card);
+        if (cardCustom != null) cardCustom.setBackgroundResource(R.drawable.background_card);
+
+        ImageView imgGreen = root.findViewById(R.id.color_green);
+        selectGlowColor(mGlowColor, imgGreen);
+
+        updateLivePreview();
+
+        Toast.makeText(getContext(), "Cursor reset to default instantly!", Toast.LENGTH_SHORT).show();
     }
 
     private void animateEntry(View root) {
@@ -354,33 +460,33 @@ public class CursorCustomizationFragment extends Fragment {
         topBar.animate()
             .translationY(0f)
             .alpha(1f)
-            .setDuration(350)
-            .setInterpolator(new DecelerateInterpolator(1.5f))
+            .setDuration(300)
+            .setInterpolator(new DecelerateInterpolator(1.2f))
             .start();
 
         // Animate preview container
         if (previewContainer != null) {
             previewContainer.setAlpha(0f);
-            previewContainer.setTranslationY(30f);
+            previewContainer.setTranslationY(20f);
             previewContainer.animate()
                 .alpha(1f)
                 .translationY(0f)
-                .setDuration(500)
-                .setStartDelay(180)
-                .setInterpolator(new DecelerateInterpolator(1.5f))
+                .setDuration(450)
+                .setStartDelay(100)
+                .setInterpolator(new DecelerateInterpolator(1.2f))
                 .start();
         }
 
         // Animate upload zone
         if (mUploadZone != null) {
             mUploadZone.setAlpha(0f);
-            mUploadZone.setTranslationY(20f);
+            mUploadZone.setTranslationY(15f);
             mUploadZone.animate()
                 .alpha(1f)
                 .translationY(0f)
-                .setDuration(400)
-                .setStartDelay(300)
-                .setInterpolator(new DecelerateInterpolator(1.5f))
+                .setDuration(350)
+                .setStartDelay(200)
+                .setInterpolator(new DecelerateInterpolator(1.2f))
                 .start();
         }
     }
@@ -421,6 +527,17 @@ public class CursorCustomizationFragment extends Fragment {
         return destFile;
     }
 
+    private File saveResourceToFile(int resId, String destName) throws Exception {
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), resId);
+        File dir = new File(net.kdt.pojavlaunch.Tools.DIR_CURSORS);
+        if (!dir.exists()) dir.mkdirs();
+        File destFile = new File(dir, destName);
+        try (FileOutputStream out = new FileOutputStream(destFile)) {
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+        }
+        return destFile;
+    }
+
     private void onImageSelected(Uri uri) {
         if (uri == null) return;
         mSelectedImageUri = uri;
@@ -451,14 +568,21 @@ public class CursorCustomizationFragment extends Fragment {
             inputStream2.close();
 
             if (mCurrentCursorBitmap != null) {
-                // Update preview
-                mPreviewImage.setImageBitmap(mCurrentCursorBitmap);
-                mPreviewImage.setPadding(0, 0, 0, 0);
+                mUseCustomBitmap = true;
 
-                // Update hotspot seekbars max limits based on loaded image dimensions
-                if (getView() != null) {
-                    SeekBar hotspotXSeek = getView().findViewById(R.id.seek_hotspot_x);
-                    SeekBar hotspotYSeek = getView().findViewById(R.id.seek_hotspot_y);
+                View root = getView();
+                if (root != null) {
+                    View cardClassic = root.findViewById(R.id.style_classic);
+                    View cardGamepad = root.findViewById(R.id.style_gamepad);
+                    View cardCustom = root.findViewById(R.id.style_custom);
+
+                    if (cardClassic != null) cardClassic.setBackgroundResource(R.drawable.background_card);
+                    if (cardGamepad != null) cardGamepad.setBackgroundResource(R.drawable.background_card);
+                    if (cardCustom != null) cardCustom.setBackgroundResource(R.drawable.background_card_neon);
+
+                    // Update hotspot seekbars max limits based on loaded image dimensions
+                    SeekBar hotspotXSeek = root.findViewById(R.id.seek_hotspot_x);
+                    SeekBar hotspotYSeek = root.findViewById(R.id.seek_hotspot_y);
                     if (hotspotXSeek != null) {
                         hotspotXSeek.setMax(mCurrentCursorBitmap.getWidth());
                         mHotspotX = Math.min(mHotspotX, mCurrentCursorBitmap.getWidth());
@@ -471,17 +595,10 @@ public class CursorCustomizationFragment extends Fragment {
                     }
                 }
 
-                // Update label
-                TextView label = getView().findViewById(R.id.cursor_preview_label);
-                if (label != null) {
-                    String fileName = uri.getLastPathSegment();
-                    if (fileName != null && fileName.length() > 16) {
-                        fileName = fileName.substring(0, 14) + "..";
-                    }
-                    label.setText(fileName != null ? fileName.toUpperCase() : "CUSTOM");
-                }
+                // Update live preview
+                updateLivePreview();
 
-                Toast.makeText(getContext(), "Cursor loaded successfully!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Custom cursor loaded successfully!", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -490,46 +607,88 @@ public class CursorCustomizationFragment extends Fragment {
     }
 
     private void saveCursor() {
-        if (mCurrentCursorBitmap == null || mSelectedImageUri == null) {
-            Toast.makeText(getContext(), "Please select an image first!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         try {
-            boolean isGif = isGif(mSelectedImageUri);
-            String extension = isGif ? ".gif" : ".png";
-            String name = "custom_cursor_" + System.currentTimeMillis() + extension;
-            File savedFile = copyUriToFile(mSelectedImageUri, name);
+            boolean enabled = true;
+            String path = null;
 
-            // Update preferences
-            net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.edit()
-                .putString("custom_cursor_path", savedFile.getAbsolutePath())
-                .putBoolean("custom_cursor_enabled", true)
+            if (mUseCustomBitmap) {
+                if (mCurrentCursorBitmap == null || mSelectedImageUri == null) {
+                    path = LauncherPreferences.PREF_CUSTOM_CURSOR_PATH;
+                    if (path == null) {
+                        Toast.makeText(getContext(), "Please select an image first!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } else {
+                    boolean isGif = isGif(mSelectedImageUri);
+                    String extension = isGif ? ".gif" : ".png";
+                    String name = "custom_cursor_" + System.currentTimeMillis() + extension;
+                    File savedFile = copyUriToFile(mSelectedImageUri, name);
+                    path = savedFile.getAbsolutePath();
+                }
+            } else if (mSelectedCursorStyleRes == R.drawable.ic_gamepad_pointer) {
+                File savedFile = saveResourceToFile(R.drawable.ic_gamepad_pointer, "gamepad_cursor.png");
+                path = savedFile.getAbsolutePath();
+            } else {
+                // Classic pointer
+                enabled = false;
+            }
+
+            // Save preferences
+            LauncherPreferences.DEFAULT_PREF.edit()
+                .putString("custom_cursor_path", path)
+                .putBoolean("custom_cursor_enabled", enabled)
                 .putInt("custom_cursor_hotspot_x", mHotspotX)
                 .putInt("custom_cursor_hotspot_y", mHotspotY)
                 .putFloat("custom_cursor_scale", (float) mSizeScale)
                 .putInt("custom_cursor_glow_radius", mGlowRadius)
+                .putInt("custom_cursor_glow_color", mGlowColor)
                 .putInt("custom_cursor_opacity", mOpacity)
                 .apply();
 
-            // Load variables
-            net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_PATH = savedFile.getAbsolutePath();
-            net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED = true;
-            net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS = mGlowRadius;
-            net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_SCALE = (float) mSizeScale;
-            net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_OPACITY = mOpacity / 100f;
+            // Load variables in memory
+            LauncherPreferences.PREF_CUSTOM_CURSOR_PATH = path;
+            LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED = enabled;
+            LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS = mGlowRadius;
+            LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_COLOR = mGlowColor;
+            LauncherPreferences.PREF_CUSTOM_CURSOR_SCALE = (float) mSizeScale;
+            LauncherPreferences.PREF_CUSTOM_CURSOR_OPACITY = mOpacity / 100f;
 
-            // Update/refresh cursor in touchpad if active
-            net.kdt.pojavlaunch.extra.ExtraCore.setValue(net.kdt.pojavlaunch.extra.ExtraConstants.REFRESH_CURSOR, null);
-            
             // Reapply renderer changes
+            net.kdt.pojavlaunch.extra.ExtraCore.setValue(net.kdt.pojavlaunch.extra.ExtraConstants.REFRESH_CURSOR, null);
             net.kdt.pojavlaunch.customcontrols.mouse.CustomCursorRenderer.reset();
             net.kdt.pojavlaunch.customcontrols.mouse.CustomCursorRenderer.updateCursorFrame();
 
-            Toast.makeText(getContext(), "Cursor saved and applied successfully!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Cursor changes saved successfully!", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void exportCursor() {
+        String currentPath = LauncherPreferences.PREF_CUSTOM_CURSOR_PATH;
+        if (currentPath == null || !(new File(currentPath).exists())) {
+            Toast.makeText(getContext(), "No customized cursor file found to export!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            File srcFile = new File(currentPath);
+            File exportDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS);
+            if (!exportDir.exists()) exportDir.mkdirs();
+            File destFile = new File(exportDir, srcFile.getName());
+
+            try (java.io.FileInputStream in = new java.io.FileInputStream(srcFile);
+                 FileOutputStream out = new FileOutputStream(destFile)) {
+                byte[] buffer = new byte[8192];
+                int read;
+                while ((read = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, read);
+                }
+            }
+            Toast.makeText(getContext(), "Cursor exported to Downloads: " + destFile.getName(), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Export failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -539,8 +698,8 @@ public class CursorCustomizationFragment extends Fragment {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     v.animate()
-                        .scaleX(0.92f)
-                        .scaleY(0.92f)
+                        .scaleX(0.95f)
+                        .scaleY(0.95f)
                         .setDuration(80)
                         .setInterpolator(new AccelerateDecelerateInterpolator())
                         .start();
@@ -550,8 +709,8 @@ public class CursorCustomizationFragment extends Fragment {
                     v.animate()
                         .scaleX(1f)
                         .scaleY(1f)
-                        .setDuration(180)
-                        .setInterpolator(new OvershootInterpolator(2.5f))
+                        .setDuration(150)
+                        .setInterpolator(new OvershootInterpolator(1.8f))
                         .start();
                     break;
             }
