@@ -7,7 +7,8 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:paddingBottom="80dp">
 
         <LinearLayout
             android:id="@+id/settings_container"
@@ -19,42 +20,56 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Modern floating save bar with smooth animation -->
     <LinearLayout
         android:id="@+id/unsaved_changes_bar"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/bg_unsaved_changes"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingTop="10dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="10dp"
+        android:layout_gravity="bottom"
+        android:gravity="center"
         android:visibility="gone"
-        android:gravity="center_vertical"
-        android:elevation="6dp">
+        android:animateLayoutChanges="true"
+        android:elevation="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="12dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Unsaved Changes"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_save_bar"
+            android:paddingLeft="20dp"
+            android:paddingRight="12dp"
+            android:elevation="6dp">
 
-        <Button
-            android:id="@+id/btn_save_settings"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_marginLeft="16dp"
-            android:background="@color/accent_primary"
-            android:textColor="#0D0D0D"
-            android:text="SAVE"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp" />
+            <TextView
+                android:id="@+id/save_status_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="● Unsaved Changes"
+                android:textColor="#FFA500"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_save_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:minWidth="120dp"
+                android:background="@drawable/bg_save_button"
+                android:text="SAVE CHANGES"
+                android:textColor="#0D0D0D"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:stateListAnimator="@null" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </FrameLayout>

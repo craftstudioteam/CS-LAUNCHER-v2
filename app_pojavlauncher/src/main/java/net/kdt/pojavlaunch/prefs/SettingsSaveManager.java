@@ -25,10 +25,6 @@ public class SettingsSaveManager {
             Object value = entry.getValue();
             putInEditor(editor, key, value);
         }
-        // Ensure auto-save is on by default so switch toggles persist immediately
-        if (!draftPrefs.contains("auto_save_fallback")) {
-            editor.putBoolean("auto_save_fallback", true);
-        }
         editor.commit();
         sInitialized = true;
     }

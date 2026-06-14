@@ -62,6 +62,7 @@ public class LauncherPreferenceRendererSettingsFragment extends LauncherPreferen
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences p, String s) {
+        super.onSharedPreferenceChanged(p, s);
         GLSLCachePreference = findPreference("mg_renderer_setting_glsl_cache_size");
         updateGLSLCacheSummary();
         updateMultiDrawSummary();
