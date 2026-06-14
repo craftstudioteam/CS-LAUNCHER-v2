@@ -37,6 +37,13 @@ public class KineticProgressView extends View {
 
     private float mAngleOffset = -90f;
     private ValueAnimator mAnimator;
+    private long mCompleteTime = -1;
+    private boolean mHideText = false;
+
+    public void setHideText(boolean hide) {
+        mHideText = hide;
+        invalidate();
+    }
 
     // Particle positions (simulated)
     private float mParticlePhase = 0f;
@@ -66,6 +73,7 @@ public class KineticProgressView extends View {
         mArcPaint.setStrokeWidth(6f);
         mArcPaint.setColor(NEON_GREEN);
         mArcPaint.setStrokeCap(Paint.Cap.ROUND);
+        mArcPaint.setStrokeJoin(Paint.Join.ROUND);
 
         mGlowPaint.setStyle(Paint.Style.STROKE);
         mGlowPaint.setStrokeWidth(14f);
@@ -118,44 +126,97 @@ public class KineticProgressView extends View {
         mArcBounds.set(cx - radius, cy - radius, cx + radius, cy + radius);
         canvas.drawArc(mArcBounds, 0, 360, false, mTrackPaint);
 
-        // Draw glow layer (thicker, semi-transparent)
-        if (mAnimProgress > 0) {
-            canvas.drawArc(mArcBounds, mAngleOffset, sweepAngle, false, mGlowPaint);
-        }
+        int percent = Math.round(mAnimProgress * 100);
+        if (percent == 100) {
+            if (mCompleteTime == -1) {
+                mCompleteTime = android.os.SystemClock.elapsedRealtime();
+            }
+            float elapsed = (android.os.SystemClock.elapsedRealtime() - mCompleteTime) / 1000f;
 
-        // Draw progress arc
-        if (mAnimProgress > 0) {
-            canvas.drawArc(mArcBounds, mAngleOffset, sweepAngle, false, mArcPaint);
-        }
+            // Animate glow width dynamically using elapsed time
+            float glowWidth = 14f + 6f * (0.5f + 0.5f * (float) Math.sin(elapsed * 6f));
+            mGlowPaint.setStrokeWidth(glowWidth);
 
-        // Draw particles along the leading edge of the arc
-        if (mAnimProgress > 0 && mAnimProgress < 1f) {
-            float leadAngle = mAngleOffset + sweepAngle;
-            float radians = (float) Math.toRadians(leadAngle);
-            float px = cx + radius * (float) Math.cos(radians);
-            float py = cy + radius * (float) Math.sin(radians);
+            // Draw full circular glow and progress circle
+            canvas.drawArc(mArcBounds, 0, 360, false, mGlowPaint);
+            canvas.drawArc(mArcBounds, 0, 360, false, mArcPaint);
 
-            // Pulsing particle at the tip
-            float pulseSize = 4f + 3f * (float) Math.sin(mParticlePhase);
-            mParticlePaint.setAlpha(200);
-            canvas.drawCircle(px, py, pulseSize, mParticlePaint);
+            // Checkmark animation progress
+            float t = Math.min(1.0f, elapsed / 0.4f); // 400ms duration
+            float x1 = cx - radius * 0.3f;
+            float y1 = cy - radius * 0.05f;
+            float x2 = cx - radius * 0.05f;
+            float y2 = cy + radius * 0.2f;
+            float x3 = cx + radius * 0.35f;
+            float y3 = cy - radius * 0.25f;
 
-            // Secondary trailing particles
-            for (int i = 1; i <= 3; i++) {
-                float spreadAngle = sweepAngle - i * 6f;
-                if (spreadAngle < 0) break;
-                float r = (float) Math.toRadians(mAngleOffset + spreadAngle);
-                float sx = cx + radius * (float) Math.cos(r);
-                float sy = cy + radius * (float) Math.sin(r);
-                mParticlePaint.setAlpha(100 - i * 25);
-                canvas.drawCircle(sx, sy, 2.5f - i * 0.5f, mParticlePaint);
+            mArcPath.reset();
+            if (t < 0.4f) {
+                float t1 = t / 0.4f;
+                float currentX = x1 + (x2 - x1) * t1;
+                float currentY = y1 + (y2 - y1) * t1;
+                mArcPath.moveTo(x1, y1);
+                mArcPath.lineTo(currentX, currentY);
+            } else {
+                float t2 = (t - 0.4f) / 0.6f;
+                float currentX = x2 + (x3 - x2) * t2;
+                float currentY = y2 + (y3 - y2) * t2;
+                mArcPath.moveTo(x1, y1);
+                mArcPath.lineTo(x2, y2);
+                mArcPath.lineTo(currentX, currentY);
+            }
+
+            float prevStrokeWidth = mArcPaint.getStrokeWidth();
+            mArcPaint.setStrokeWidth(8f);
+            canvas.drawPath(mArcPath, mArcPaint);
+            mArcPaint.setStrokeWidth(prevStrokeWidth);
+
+            postInvalidateOnAnimation();
+        } else {
+            mCompleteTime = -1;
+            // Restore normal glow width
+            mGlowPaint.setStrokeWidth(14f);
+
+            // Draw glow layer (thicker, semi-transparent)
+            if (mAnimProgress > 0) {
+                canvas.drawArc(mArcBounds, mAngleOffset, sweepAngle, false, mGlowPaint);
+            }
+
+            // Draw progress arc
+            if (mAnimProgress > 0) {
+                canvas.drawArc(mArcBounds, mAngleOffset, sweepAngle, false, mArcPaint);
+            }
+
+            // Draw particles along the leading edge of the arc
+            if (mAnimProgress > 0 && mAnimProgress < 1f) {
+                float leadAngle = mAngleOffset + sweepAngle;
+                float radians = (float) Math.toRadians(leadAngle);
+                float px = cx + radius * (float) Math.cos(radians);
+                float py = cy + radius * (float) Math.sin(radians);
+
+                // Pulsing particle at the tip
+                float pulseSize = 4f + 3f * (float) Math.sin(mParticlePhase);
+                mParticlePaint.setAlpha(200);
+                canvas.drawCircle(px, py, pulseSize, mParticlePaint);
+
+                // Secondary trailing particles
+                for (int i = 1; i <= 3; i++) {
+                    float spreadAngle = sweepAngle - i * 6f;
+                    if (spreadAngle < 0) break;
+                    float r = (float) Math.toRadians(mAngleOffset + spreadAngle);
+                    float sx = cx + radius * (float) Math.cos(r);
+                    float sy = cy + radius * (float) Math.sin(r);
+                    mParticlePaint.setAlpha(100 - i * 25);
+                    canvas.drawCircle(sx, sy, 2.5f - i * 0.5f, mParticlePaint);
+                }
+            }
+
+            // Draw percentage text
+            if (!mHideText) {
+                float textSize = radius * 0.6f;
+                mTextPaint.setTextSize(textSize);
+                canvas.drawText(percent + "%", cx, cy + textSize * 0.35f, mTextPaint);
             }
         }
-
-        // Draw percentage text
-        int percent = Math.round(mAnimProgress * 100);
-        float textSize = radius * 0.6f;
-        mTextPaint.setTextSize(textSize);
-        canvas.drawText(percent + "%", cx, cy + textSize * 0.35f, mTextPaint);
     }
 }
