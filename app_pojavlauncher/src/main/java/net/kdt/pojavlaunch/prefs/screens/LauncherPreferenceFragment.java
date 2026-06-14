@@ -68,6 +68,7 @@ public class LauncherPreferenceFragment extends Fragment {
     private SettingsAdapter mAdapter;
     private SharedPreferences mDraftPrefs;
     private boolean mIsDirty = false;
+    private String mCategoryName = null;
 
     // JRE result launcher
     private final ActivityResultLauncher<Object> mVmInstallLauncher =
@@ -84,8 +85,13 @@ public class LauncherPreferenceFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Copy main preferences into draft preference storage
-        if (savedInstanceState == null) {
+        Bundle args = getArguments();
+        if (args != null) {
+            mCategoryName = args.getString("category", null);
+        }
+
+        // Copy main preferences into draft preference storage on root page load
+        if (savedInstanceState == null && mCategoryName == null) {
             initializeDraft(requireContext());
         }
         mDraftPrefs = SettingsSaveManager.getDraftPrefs(requireContext());
@@ -105,6 +111,16 @@ public class LauncherPreferenceFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.settings_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+
+        // Dynamic Header titles
+        TextView tvTitle = view.findViewById(R.id.settings_title);
+        TextView tvSubtitle = view.findViewById(R.id.settings_subtitle);
+        if (tvTitle != null) {
+            tvTitle.setText(mCategoryName != null ? mCategoryName : "Settings");
+        }
+        if (tvSubtitle != null) {
+            tvSubtitle.setText(mCategoryName != null ? getCategorySubtitle(mCategoryName) : "Customize your launcher experience");
+        }
 
         // Header Back Navigation
         View backButton = view.findViewById(R.id.settings_back_button);
@@ -135,10 +151,10 @@ public class LauncherPreferenceFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Sync runtime permissions toggles dynamically if active
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
         }
+        updateSaveBar();
     }
 
     @Override
@@ -146,7 +162,7 @@ public class LauncherPreferenceFragment extends Fragment {
         if (mAdapter != null) {
             mAdapter.cleanup();
         }
-        // Auto-save changes if exiting fragment with dirty modifications
+        // Save pending changes on exit
         if (mIsDirty) {
             SettingsSaveManager.commitChanges(getContext());
             LauncherPreferences.loadPreferences(getContext());
@@ -178,283 +194,185 @@ public class LauncherPreferenceFragment extends Fragment {
         editor.commit();
     }
 
+    private String getCategorySubtitle(String category) {
+        switch (category) {
+            case "Launcher Settings": return "Configure language, updates, and downloads";
+            case "Video & Graphics": return "Configure renderers, resolution, and VSync options";
+            case "Controls": return "Customize touch overlays, cursors, and gyroscope controls";
+            case "Java Runtime": return "Manage memory allocations, JREs, and Java options";
+            case "Audio": return "Adjust volume levels and sound output parameters";
+            case "Account": return "Check active profile accounts and skin logs";
+            case "Experimental": return "Test launcher orientations, wall-papers, and colors";
+            case "Advanced": return "Perform debug clears and database resets";
+            case "Miscellaneous": return "Library verifications, system drivers, and in-game capes";
+            default: return "Settings options";
+        }
+    }
+
     private void setupSettingsList() {
         List<SettingCategory> categories = new ArrayList<>();
 
-        // Category 0: FastClient Special Card
-        List<SettingItem> fastClientItems = new ArrayList<>();
-        fastClientItems.add(new SettingItem("fastclient_preference", SettingItem.TYPE_CUSTOM_FASTCLIENT, "", "", null));
-        categories.add(new SettingCategory("FastClient", fastClientItems));
-
-        // Category 1: Launcher
-        List<SettingItem> launcherItems = new ArrayList<>();
-        launcherItems.add(new SettingItem("force_english", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_force_english_title),
-                getString(R.string.preference_force_english_description), false));
-        launcherItems.add(new SettingItem("notification_permission_request", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_ask_for_notification_title),
-                getString(R.string.preference_ask_for_notification_description), false));
-        launcherItems.add(new SettingItem("microphone_permission_request", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_ask_for_microphone_title),
-                getString(R.string.preference_ask_for_microphone_description), false));
-        launcherItems.add(new SettingItem("downloadSource", SettingItem.TYPE_DROPDOWN,
-                getString(R.string.preference_download_source_title),
-                getString(R.string.preference_download_source_description), "default")
-                .setDropdownOptions(
-                        new String[]{"Default", "Mirror (China)"},
-                        new String[]{"default", "china"}
-                ));
-        launcherItems.add(new SettingItem("verifyManifest", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_verify_manifest_title),
-                getString(R.string.preference_verify_manifest_description), true));
-        categories.add(new SettingCategory("Launcher", launcherItems));
-
-        // Category 2: Java Runtime
-        List<SettingItem> javaItems = new ArrayList<>();
-        javaItems.add(new SettingItem("install_jre", SettingItem.TYPE_ACTION,
-                getString(R.string.multirt_title),
-                getString(R.string.multirt_subtitle), null)
-                .setAction(this::openMultiRTDialog));
-        javaItems.add(new SettingItem("javaArgs", SettingItem.TYPE_INPUT,
-                getString(R.string.mcl_setting_title_javaargs),
-                getString(R.string.mcl_setting_subtitle_javaargs), ""));
-
-        // Memory allocation calculations
-        int deviceRam = getTotalDeviceMemory(requireContext());
-        int maxRAM;
-        if (Architecture.is32BitsDevice() || deviceRam < 2048) {
-            maxRAM = Math.min(1024, deviceRam);
+        if (mCategoryName == null) {
+            // Root Menu Categories List
+            List<SettingItem> rootItems = new ArrayList<>();
+            rootItems.add(new SettingItem("cat_launcher", SettingItem.TYPE_CATEGORY_LINK, "Launcher Settings", "Configure language, updates, and downloads", "Launcher Settings"));
+            rootItems.add(new SettingItem("cat_video", SettingItem.TYPE_CATEGORY_LINK, "Video & Graphics", "Configure renderers, resolution, and VSync options", "Video & Graphics"));
+            rootItems.add(new SettingItem("cat_controls", SettingItem.TYPE_CATEGORY_LINK, "Controls", "Customize touch overlays, cursors, and gyroscope controls", "Controls"));
+            rootItems.add(new SettingItem("cat_java", SettingItem.TYPE_CATEGORY_LINK, "Java Runtime", "Manage memory allocations, JREs, and Java options", "Java Runtime"));
+            rootItems.add(new SettingItem("cat_audio", SettingItem.TYPE_CATEGORY_LINK, "Audio", "Adjust volume levels and sound output parameters", "Audio"));
+            rootItems.add(new SettingItem("cat_account", SettingItem.TYPE_CATEGORY_LINK, "Account", "Check active profile accounts and skin logs", "Account"));
+            rootItems.add(new SettingItem("cat_experimental", SettingItem.TYPE_CATEGORY_LINK, "Experimental", "Test launcher orientations, wall-papers, and colors", "Experimental"));
+            rootItems.add(new SettingItem("cat_advanced", SettingItem.TYPE_CATEGORY_LINK, "Advanced", "Perform debug clears and database resets", "Advanced"));
+            rootItems.add(new SettingItem("cat_misc", SettingItem.TYPE_CATEGORY_LINK, "Miscellaneous", "Library verifications, system drivers, and in-game capes", "Miscellaneous"));
+            categories.add(new SettingCategory("Settings Categories", rootItems));
         } else {
-            maxRAM = deviceRam - (deviceRam < 3064 ? 800 : 1024);
+            // Subcategory Pages Detail
+            switch (mCategoryName) {
+                case "Launcher Settings":
+                    List<SettingItem> launcherItems = new ArrayList<>();
+                    launcherItems.add(new SettingItem("fastclient_preference", SettingItem.TYPE_CUSTOM_FASTCLIENT, "", "", null));
+                    launcherItems.add(new SettingItem("force_english", SettingItem.TYPE_SWITCH, getString(R.string.preference_force_english_title), getString(R.string.preference_force_english_description), false));
+                    launcherItems.add(new SettingItem("notification_permission_request", SettingItem.TYPE_SWITCH, getString(R.string.preference_ask_for_notification_title), getString(R.string.preference_ask_for_notification_description), false));
+                    launcherItems.add(new SettingItem("microphone_permission_request", SettingItem.TYPE_SWITCH, getString(R.string.preference_ask_for_microphone_title), getString(R.string.preference_ask_for_microphone_description), false));
+                    launcherItems.add(new SettingItem("downloadSource", SettingItem.TYPE_DROPDOWN, getString(R.string.preference_download_source_title), getString(R.string.preference_download_source_description), "default").setDropdownOptions(new String[]{"Default", "Mirror (China)"}, new String[]{"default", "china"}));
+                    launcherItems.add(new SettingItem("verifyManifest", SettingItem.TYPE_SWITCH, getString(R.string.preference_verify_manifest_title), getString(R.string.preference_verify_manifest_description), true));
+                    categories.add(new SettingCategory("Launcher Configurations", launcherItems));
+                    break;
+
+                case "Video & Graphics":
+                    List<SettingItem> graphicsItems = new ArrayList<>();
+                    graphicsItems.add(new SettingItem("mg_renderer_setting_angle", SettingItem.TYPE_DROPDOWN, getString(R.string.mg_renderer_angle), "Select backend ANGLE configuration", "1").setDropdownOptions(new String[]{"Vulkan", "OpenGL (System)", "OpenGLES"}, new String[]{"1", "2", "3"}));
+                    graphicsItems.add(new SettingItem("mg_renderer_setting_multidraw", SettingItem.TYPE_DROPDOWN, getString(R.string.mg_renderer_multidraw), "Select multidraw emulation style", "0").setDropdownOptions(new String[]{"None", "Emulate glMultiDraw", "glMultiDraw Indirect"}, new String[]{"0", "1", "2"}));
+                    graphicsItems.add(new SettingItem("mg_renderer_setting_fsr", SettingItem.TYPE_DROPDOWN, getString(R.string.mg_renderer_title_fsr), "Enable AMD FSR scaler", "0").setDropdownOptions(new String[]{"Disabled", "25%", "50%", "75%", "100%"}, new String[]{"0", "1", "2", "3", "4"}));
+                    graphicsItems.add(new SettingItem("mg_renderer_setting_errorSetting", SettingItem.TYPE_DROPDOWN, getString(R.string.mg_renderer_title_errorSetting), "Configure error handling in GL", "0").setDropdownOptions(new String[]{"Report", "Ignore"}, new String[]{"0", "1"}));
+                    graphicsItems.add(new SettingItem("mg_renderer_setting_timerQueryExt", SettingItem.TYPE_SWITCH, getString(R.string.mg_renderer_title_timerQueryExt), getString(R.string.mg_renderer_summary_timerQueryExt), false));
+                    graphicsItems.add(new SettingItem("mg_renderer_setting_angleDepthClearFixMode", SettingItem.TYPE_SWITCH, getString(R.string.mg_renderer_title_angleDepthClearFixMode), getString(R.string.mg_renderer_summary_angleDepthClearFixMode), false));
+                    graphicsItems.add(new SettingItem("mg_renderer_setting_gl43exts", SettingItem.TYPE_SWITCH, getString(R.string.mg_renderer_title_gl43exts), getString(R.string.mg_renderer_summary_gl43exts), false));
+                    graphicsItems.add(new SettingItem("mg_renderer_computeShaderext", SettingItem.TYPE_SWITCH, getString(R.string.mg_renderer_title_computeShaderext), getString(R.string.mg_renderer_summary_computeShaderext), false));
+                    graphicsItems.add(new SettingItem("mg_renderer_dsaExt", SettingItem.TYPE_SWITCH, getString(R.string.mg_renderer_title_dsaExt), getString(R.string.mg_renderer_summary_dsaExt), false));
+                    graphicsItems.add(new SettingItem("mg_renderer_multidrawCompute", SettingItem.TYPE_SWITCH, getString(R.string.mg_renderer_title_multidrawCompute), getString(R.string.mg_renderer_summary_multidrawCompute), false));
+                    graphicsItems.add(new SettingItem("mg_renderer_setting_glsl_cache_size", SettingItem.TYPE_INPUT, getString(R.string.mg_renderer_glsl_cache), "Input cache size limit", "128"));
+                    graphicsItems.add(new SettingItem("ignoreNotch", SettingItem.TYPE_SWITCH, getString(R.string.mcl_setting_title_ignore_notch), getString(R.string.mcl_setting_subtitle_ignore_notch), false));
+                    graphicsItems.add(new SettingItem("resolutionRatio", SettingItem.TYPE_SLIDER, getString(R.string.mcl_setting_title_resolution_scaler), getString(R.string.mcl_setting_subtitle_resolution_scaler), 100).setSliderConfig(25, 100, 5, " %"));
+                    graphicsItems.add(new SettingItem("sustainedPerformance", SettingItem.TYPE_SWITCH, getString(R.string.preference_sustained_performance_title), getString(R.string.preference_sustained_performance_description), false));
+                    graphicsItems.add(new SettingItem("alternate_surface", SettingItem.TYPE_SWITCH, getString(R.string.mcl_setting_title_use_surface_view), getString(R.string.mcl_setting_subtitle_use_surface_view), true));
+                    graphicsItems.add(new SettingItem("force_vsync", SettingItem.TYPE_SWITCH, getString(R.string.preference_force_vsync_title), getString(R.string.preference_force_vsync_description), false));
+                    graphicsItems.add(new SettingItem("vsync_in_zink", SettingItem.TYPE_SWITCH, getString(R.string.preference_vsync_in_zink_title), getString(R.string.preference_vsync_in_zink_description), true));
+                    categories.add(new SettingCategory("Graphics Settings", graphicsItems));
+                    break;
+
+                case "Controls":
+                    List<SettingItem> controlsItems = new ArrayList<>();
+                    controlsItems.add(new SettingItem("buttonscale", SettingItem.TYPE_SLIDER, "Button Scale", "Adjust sized layout overlays", 100).setSliderConfig(20, 200, 10, " %"));
+                    controlsItems.add(new SettingItem("mousescale", SettingItem.TYPE_SLIDER, "Mouse Cursor Scale", "Adjust virtual mouse cursor size", 100).setSliderConfig(25, 300, 25, " %"));
+                    controlsItems.add(new SettingItem("mousespeed", SettingItem.TYPE_SLIDER, "Mouse Speed", "Adjust virtual cursor movement sensitivity", 100).setSliderConfig(25, 300, 25, " %"));
+                    controlsItems.add(new SettingItem("disableGestures", SettingItem.TYPE_SWITCH, "Disable Gestures", "Disable gesture-based navigation overrides", false));
+                    controlsItems.add(new SettingItem("timeLongPressTrigger", SettingItem.TYPE_SLIDER, "Long Press Trigger Delay", "Hold duration for virtual clicks", 300).setSliderConfig(100, 1000, 50, " ms"));
+                    controlsItems.add(new SettingItem("disableDoubleTap", SettingItem.TYPE_SWITCH, "Swipe to Swap Hand", "Quick swipe swaps secondary item", false));
+                    controlsItems.add(new SettingItem("mouse_start", SettingItem.TYPE_SWITCH, "Virtual Mouse Auto-Start", "Turn pointer cursor on automatically on game start", false));
+                    controlsItems.add(new SettingItem("always_grab_mouse", SettingItem.TYPE_SWITCH, "Always Grab Mouse", "Keep mouse focus locked inside the window", false));
+                    controlsItems.add(new SettingItem("enableGyro", SettingItem.TYPE_SWITCH, "Enable Gyroscope Sensor", "Use device motion sensors for controls", false));
+                    controlsItems.add(new SettingItem("gyroSensitivity", SettingItem.TYPE_SLIDER, "Gyro Sensitivity", "Adjust motion sensitivity scaling", 100).setSliderConfig(10, 500, 10, " %"));
+                    controlsItems.add(new SettingItem("gyroSampleRate", SettingItem.TYPE_SLIDER, "Gyro Sample Rate", "Adjust sensor update delay", 16).setSliderConfig(10, 100, 2, " ms"));
+                    controlsItems.add(new SettingItem("gyroSmoothing", SettingItem.TYPE_SWITCH, "Gyro Smoothing", "Filter out tiny micro-shakes", true));
+                    controlsItems.add(new SettingItem("gyroInvertX", SettingItem.TYPE_SWITCH, "Gyro Invert X Axis", "Invert horizontal rotation controls", false));
+                    controlsItems.add(new SettingItem("gyroInvertY", SettingItem.TYPE_SWITCH, "Gyro Invert Y Axis", "Invert vertical rotation controls", false));
+                    controlsItems.add(new SettingItem("gamepad_deadzone_scale", SettingItem.TYPE_SLIDER, "Gamepad Deadzone", "Analog joystick drift ignore range", 100).setSliderConfig(0, 100, 5, " %"));
+                    controlsItems.add(new SettingItem("gamepadPassthru", SettingItem.TYPE_SWITCH, "Gamepad SDL Passthrough", "Route controller input directly through SDL", true));
+                    controlsItems.add(new SettingItem("gamepadPassthruForced", SettingItem.TYPE_SWITCH, "Force Gamepad SDL Passthrough", "Detect unsupported controllers", false));
+                    controlsItems.add(new SettingItem("forceEnableTouchController", SettingItem.TYPE_SWITCH, "Force Touch Controls", "Force visual control pads", false));
+                    controlsItems.add(new SettingItem("touchControllerVibrateLength", SettingItem.TYPE_SLIDER, "Vibration length", "Haptic duration on touch presses", 100).setSliderConfig(0, 500, 10, " ms"));
+                    controlsItems.add(new SettingItem("gamepad_remap_action", SettingItem.TYPE_ACTION, "Remap Gamepad Controller", "Map gamepad key layouts", null).setAction(() -> Tools.swapFragment(requireActivity(), GamepadMapperFragment.class, "GAMEPAD_MAPPER", null)));
+                    controlsItems.add(new SettingItem("gamepad_wipe_action", SettingItem.TYPE_ACTION, "Wipe Controller Map", "Clear custom gamepad configurations", null).setAction(() -> {
+                        Remapper.wipePreferences(getContext());
+                        Toast.makeText(getContext(), R.string.preference_controller_map_wiped, Toast.LENGTH_SHORT).show();
+                    }));
+                    categories.add(new SettingCategory("Control Settings", controlsItems));
+                    break;
+
+                case "Java Runtime":
+                    List<SettingItem> javaItems = new ArrayList<>();
+                    javaItems.add(new SettingItem("install_jre", SettingItem.TYPE_ACTION, getString(R.string.multirt_title), getString(R.string.multirt_subtitle), null).setAction(this::openMultiRTDialog));
+                    javaItems.add(new SettingItem("javaArgs", SettingItem.TYPE_INPUT, getString(R.string.mcl_setting_title_javaargs), getString(R.string.mcl_setting_subtitle_javaargs), ""));
+
+                    int deviceRam = getTotalDeviceMemory(requireContext());
+                    int maxRAM = (Architecture.is32BitsDevice() || deviceRam < 2048) ? Math.min(1024, deviceRam) : deviceRam - (deviceRam < 3064 ? 800 : 1024);
+                    javaItems.add(new SettingItem("allocation", SettingItem.TYPE_SLIDER, getString(R.string.mcl_memory_allocation), getString(R.string.mcl_memory_allocation_subtitle), 1024).setSliderConfig(256, maxRAM, 128, " MB"));
+
+                    javaItems.add(new SettingItem("disable_autojre_select", SettingItem.TYPE_SWITCH, "Disable automatic JRE selection", "Stops automatic selection of which runtime to use", false));
+                    javaItems.add(new SettingItem("java_sandbox", SettingItem.TYPE_SWITCH, getString(R.string.mcl_setting_java_sandbox), getString(R.string.mcl_setting_java_sandbox_subtitle), true));
+                    categories.add(new SettingCategory("Java Configurations", javaItems));
+                    break;
+
+                case "Audio":
+                    List<SettingItem> audioItems = new ArrayList<>();
+                    audioItems.add(new SettingItem("enable_audio", SettingItem.TYPE_SWITCH, "Enable Game Sound", "Allow game instances to play audio", true));
+                    audioItems.add(new SettingItem("launcher_volume", SettingItem.TYPE_SLIDER, "Launcher Master Volume", "Default volume control for launched games", 80).setSliderConfig(0, 100, 5, " %"));
+                    audioItems.add(new SettingItem("use_opensles", SettingItem.TYPE_SWITCH, "Use OpenSL ES Backend", "Enable low-latency high performance sound library", false));
+                    categories.add(new SettingCategory("Audio Settings", audioItems));
+                    break;
+
+                case "Account":
+                    List<SettingItem> accountItems = new ArrayList<>();
+                    MinecraftAccount activeAccount = PojavProfile.getCurrentProfileContent(requireContext(), null);
+                    String accountName = activeAccount != null ? activeAccount.username : "None";
+                    accountItems.add(new SettingItem("active_profile_info", SettingItem.TYPE_INFO, "Active Account Profile", accountName, null));
+                    categories.add(new SettingCategory("Account Configurations", accountItems));
+                    break;
+
+                case "Experimental":
+                    List<SettingItem> expItems = new ArrayList<>();
+                    expItems.add(new SettingItem("dump_shaders", SettingItem.TYPE_SWITCH, getString(R.string.preference_shader_dump_title), getString(R.string.preference_shader_dump_description), false));
+                    expItems.add(new SettingItem("bigCoreAffinity", SettingItem.TYPE_SWITCH, getString(R.string.preference_force_big_core_title), getString(R.string.preference_force_big_core_desc), false));
+                    expItems.add(new SettingItem("force_landscape", SettingItem.TYPE_SWITCH, getString(R.string.preference_force_landscape_title), getString(R.string.preference_force_landscape_summary), false));
+                    expItems.add(new SettingItem("enable_bg_gradient", SettingItem.TYPE_SWITCH, getString(R.string.preference_bg_gradient_title), getString(R.string.preference_bg_gradient_summary), false));
+                    expItems.add(new SettingItem("set_custom_launcher_bg", SettingItem.TYPE_ACTION, getString(R.string.preference_set_custom_bg_title), getString(R.string.preference_set_custom_bg_summary), null).setAction(() -> mImagePickerLauncher.launch("image/*")));
+                    expItems.add(new SettingItem("remove_custom_launcher_bg", SettingItem.TYPE_ACTION, getString(R.string.preference_remove_custom_bg_title), getString(R.string.preference_remove_custom_bg_summary), null).setAction(() -> {
+                        File bgFile = new File(RightPaneHomeFragment.CUSTOM_BG_PATH);
+                        if (bgFile.exists()) bgFile.delete();
+                        notifyHomeFragmentBgChanged();
+                        Toast.makeText(requireContext(), R.string.preference_custom_bg_removed, Toast.LENGTH_SHORT).show();
+                    }));
+                    expItems.add(new SettingItem("colour_theme_presets", SettingItem.TYPE_ACTION, getString(R.string.preference_colour_presets_title), getString(R.string.preference_colour_presets_summary), null).setAction(this::showPresetDialog));
+                    categories.add(new SettingCategory("Experimental Settings", expItems));
+                    break;
+
+                case "Advanced":
+                    List<SettingItem> advItems = new ArrayList<>();
+                    advItems.add(new SettingItem("clear_cache_files", SettingItem.TYPE_ACTION, "Clear Shader & Temporary Caches", "Free up storage by deleting temporary rendering files", null).setAction(() -> {
+                        try {
+                            clearCacheLocal(requireContext());
+                            Toast.makeText(getContext(), "Caches cleared successfully", Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "Failed to clear cache", Toast.LENGTH_SHORT).show();
+                        }
+                    }));
+                    advItems.add(new SettingItem("reset_all_settings", SettingItem.TYPE_ACTION, "Reset Launcher Settings", "Restore factory defaults for all configuration profiles", null).setAction(() -> {
+                        new AlertDialog.Builder(requireContext())
+                                .setTitle("Reset Settings")
+                                .setMessage("Are you sure you want to reset all settings to defaults?")
+                                .setPositiveButton("Reset", (dialog, which) -> {
+                                    mDraftPrefs.edit().clear().commit();
+                                    androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().clear().commit();
+                                    LauncherPreferences.loadPreferences(requireContext());
+                                    Toast.makeText(requireContext(), "Settings reset successfully", Toast.LENGTH_SHORT).show();
+                                    requireActivity().recreate();
+                                })
+                                .setNegativeButton(android.R.string.cancel, null)
+                                .show();
+                    }));
+                    categories.add(new SettingCategory("Advanced Actions", advItems));
+                    break;
+
+                case "Miscellaneous":
+                    List<SettingItem> miscItems = new ArrayList<>();
+                    miscItems.add(new SettingItem("checkLibraries", SettingItem.TYPE_SWITCH, getString(R.string.mcl_setting_check_libraries), getString(R.string.mcl_setting_check_libraries_subtitle), true));
+                    miscItems.add(new SettingItem("arc_capes", SettingItem.TYPE_SWITCH, getString(R.string.arc_capes_title), getString(R.string.arc_capes_desc), false));
+                    miscItems.add(new SettingItem("zinkPreferSystemDriver", SettingItem.TYPE_SWITCH, getString(R.string.preference_vulkan_driver_system_title), getString(R.string.preference_vulkan_driver_system_description), false));
+                    categories.add(new SettingCategory("Miscellaneous Settings", miscItems));
+                    break;
+            }
         }
-        javaItems.add(new SettingItem("allocation", SettingItem.TYPE_SLIDER,
-                getString(R.string.mcl_memory_allocation),
-                getString(R.string.mcl_memory_allocation_subtitle), 1024)
-                .setSliderConfig(256, maxRAM, 128, " MB"));
-
-        javaItems.add(new SettingItem("disable_autojre_select", SettingItem.TYPE_SWITCH,
-                "Disable automatic JRE selection",
-                "Stops automatic selection of which runtime to use", false));
-        javaItems.add(new SettingItem("java_sandbox", SettingItem.TYPE_SWITCH,
-                getString(R.string.mcl_setting_java_sandbox),
-                getString(R.string.mcl_setting_java_sandbox_subtitle), true));
-        categories.add(new SettingCategory("Java Runtime", javaItems));
-
-        // Category 3: Graphics
-        List<SettingItem> graphicsItems = new ArrayList<>();
-        graphicsItems.add(new SettingItem("mg_renderer_setting_angle", SettingItem.TYPE_DROPDOWN,
-                getString(R.string.mg_renderer_angle),
-                "Select backend ANGLE configuration", "1")
-                .setDropdownOptions(
-                        new String[]{"Vulkan", "OpenGL (System)", "OpenGLES"},
-                        new String[]{"1", "2", "3"}
-                ));
-        graphicsItems.add(new SettingItem("mg_renderer_setting_multidraw", SettingItem.TYPE_DROPDOWN,
-                getString(R.string.mg_renderer_multidraw),
-                "Select multidraw emulation style", "0")
-                .setDropdownOptions(
-                        new String[]{"None", "Emulate glMultiDraw", "glMultiDraw Indirect"},
-                        new String[]{"0", "1", "2"}
-                ));
-        graphicsItems.add(new SettingItem("mg_renderer_setting_fsr", SettingItem.TYPE_DROPDOWN,
-                getString(R.string.mg_renderer_title_fsr),
-                "Enable AMD FSR scaler", "0")
-                .setDropdownOptions(
-                        new String[]{"Disabled", "25%", "50%", "75%", "100%"},
-                        new String[]{"0", "1", "2", "3", "4"}
-                ));
-        graphicsItems.add(new SettingItem("mg_renderer_setting_errorSetting", SettingItem.TYPE_DROPDOWN,
-                getString(R.string.mg_renderer_title_errorSetting),
-                "Configure error handling in GL", "0")
-                .setDropdownOptions(
-                        new String[]{"Report", "Ignore"},
-                        new String[]{"0", "1"}
-                ));
-        graphicsItems.add(new SettingItem("mg_renderer_setting_timerQueryExt", SettingItem.TYPE_SWITCH,
-                getString(R.string.mg_renderer_title_timerQueryExt),
-                getString(R.string.mg_renderer_summary_timerQueryExt), false));
-        graphicsItems.add(new SettingItem("mg_renderer_setting_angleDepthClearFixMode", SettingItem.TYPE_SWITCH,
-                getString(R.string.mg_renderer_title_angleDepthClearFixMode),
-                getString(R.string.mg_renderer_summary_angleDepthClearFixMode), false));
-        graphicsItems.add(new SettingItem("mg_renderer_setting_gl43exts", SettingItem.TYPE_SWITCH,
-                getString(R.string.mg_renderer_title_gl43exts),
-                getString(R.string.mg_renderer_summary_gl43exts), false));
-        graphicsItems.add(new SettingItem("mg_renderer_computeShaderext", SettingItem.TYPE_SWITCH,
-                getString(R.string.mg_renderer_title_computeShaderext),
-                getString(R.string.mg_renderer_summary_computeShaderext), false));
-        graphicsItems.add(new SettingItem("mg_renderer_dsaExt", SettingItem.TYPE_SWITCH,
-                getString(R.string.mg_renderer_title_dsaExt),
-                getString(R.string.mg_renderer_summary_dsaExt), false));
-        graphicsItems.add(new SettingItem("mg_renderer_multidrawCompute", SettingItem.TYPE_SWITCH,
-                getString(R.string.mg_renderer_title_multidrawCompute),
-                getString(R.string.mg_renderer_summary_multidrawCompute), false));
-        graphicsItems.add(new SettingItem("mg_renderer_setting_glsl_cache_size", SettingItem.TYPE_INPUT,
-                getString(R.string.mg_renderer_glsl_cache),
-                "Input cache size limit", "128"));
-        graphicsItems.add(new SettingItem("ignoreNotch", SettingItem.TYPE_SWITCH,
-                getString(R.string.mcl_setting_title_ignore_notch),
-                getString(R.string.mcl_setting_subtitle_ignore_notch), false));
-        graphicsItems.add(new SettingItem("resolutionRatio", SettingItem.TYPE_SLIDER,
-                getString(R.string.mcl_setting_title_resolution_scaler),
-                getString(R.string.mcl_setting_subtitle_resolution_scaler), 100)
-                .setSliderConfig(25, 100, 5, " %"));
-        graphicsItems.add(new SettingItem("sustainedPerformance", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_sustained_performance_title),
-                getString(R.string.preference_sustained_performance_description), false));
-        graphicsItems.add(new SettingItem("alternate_surface", SettingItem.TYPE_SWITCH,
-                getString(R.string.mcl_setting_title_use_surface_view),
-                getString(R.string.mcl_setting_subtitle_use_surface_view), true));
-        graphicsItems.add(new SettingItem("force_vsync", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_force_vsync_title),
-                getString(R.string.preference_force_vsync_description), false));
-        graphicsItems.add(new SettingItem("vsync_in_zink", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_vsync_in_zink_title),
-                getString(R.string.preference_vsync_in_zink_description), true));
-        categories.add(new SettingCategory("Graphics", graphicsItems));
-
-        // Category 4: Controls
-        List<SettingItem> controlsItems = new ArrayList<>();
-        controlsItems.add(new SettingItem("buttonscale", SettingItem.TYPE_SLIDER,
-                "Button Scale", "Adjust sized layout overlays", 100)
-                .setSliderConfig(20, 200, 10, " %"));
-        controlsItems.add(new SettingItem("mousescale", SettingItem.TYPE_SLIDER,
-                "Mouse Cursor Scale", "Adjust virtual mouse cursor size", 100)
-                .setSliderConfig(25, 300, 25, " %"));
-        controlsItems.add(new SettingItem("mousespeed", SettingItem.TYPE_SLIDER,
-                "Mouse Speed", "Adjust virtual cursor movement sensitivity", 100)
-                .setSliderConfig(25, 300, 25, " %"));
-        controlsItems.add(new SettingItem("disableGestures", SettingItem.TYPE_SWITCH,
-                "Disable Gestures", "Disable gesture-based navigation overrides", false));
-        controlsItems.add(new SettingItem("timeLongPressTrigger", SettingItem.TYPE_SLIDER,
-                "Long Press Trigger Delay", "Hold duration for virtual clicks", 300)
-                .setSliderConfig(100, 1000, 50, " ms"));
-        controlsItems.add(new SettingItem("disableDoubleTap", SettingItem.TYPE_SWITCH,
-                "Swipe to Swap Hand", "Quick swipe swaps secondary item", false));
-        controlsItems.add(new SettingItem("mouse_start", SettingItem.TYPE_SWITCH,
-                "Virtual Mouse Auto-Start", "Turn pointer cursor on automatically on game start", false));
-        controlsItems.add(new SettingItem("always_grab_mouse", SettingItem.TYPE_SWITCH,
-                "Always Grab Mouse", "Keep mouse focus locked inside the window", false));
-        controlsItems.add(new SettingItem("enableGyro", SettingItem.TYPE_SWITCH,
-                "Enable Gyroscope Sensor", "Use device motion sensors for controls", false));
-        controlsItems.add(new SettingItem("gyroSensitivity", SettingItem.TYPE_SLIDER,
-                "Gyro Sensitivity", "Adjust motion sensitivity scaling", 100)
-                .setSliderConfig(10, 500, 10, " %"));
-        controlsItems.add(new SettingItem("gyroSampleRate", SettingItem.TYPE_SLIDER,
-                "Gyro Sample Rate", "Adjust sensor update delay", 16)
-                .setSliderConfig(10, 100, 2, " ms"));
-        controlsItems.add(new SettingItem("gyroSmoothing", SettingItem.TYPE_SWITCH,
-                "Gyro Smoothing", "Filter out tiny micro-shakes", true));
-        controlsItems.add(new SettingItem("gyroInvertX", SettingItem.TYPE_SWITCH,
-                "Gyro Invert X Axis", "Invert horizontal rotation controls", false));
-        controlsItems.add(new SettingItem("gyroInvertY", SettingItem.TYPE_SWITCH,
-                "Gyro Invert Y Axis", "Invert vertical rotation controls", false));
-        controlsItems.add(new SettingItem("gamepad_deadzone_scale", SettingItem.TYPE_SLIDER,
-                "Gamepad Deadzone", "Analog joystick drift ignore range", 100)
-                .setSliderConfig(0, 100, 5, " %"));
-        controlsItems.add(new SettingItem("gamepadPassthru", SettingItem.TYPE_SWITCH,
-                "Gamepad SDL Passthrough", "Route controller input directly through SDL", true));
-        controlsItems.add(new SettingItem("gamepadPassthruForced", SettingItem.TYPE_SWITCH,
-                "Force Gamepad SDL Passthrough", "Detect unsupported controllers", false));
-        controlsItems.add(new SettingItem("forceEnableTouchController", SettingItem.TYPE_SWITCH,
-                "Force On-Screen Touch Controls", "Force visual control pads", false));
-        controlsItems.add(new SettingItem("touchControllerVibrateLength", SettingItem.TYPE_SLIDER,
-                "Vibration length", "Haptic duration on touch presses", 100)
-                .setSliderConfig(0, 500, 10, " ms"));
-        controlsItems.add(new SettingItem("gamepad_remap_action", SettingItem.TYPE_ACTION,
-                "Remap Gamepad Controller", "Map gamepad key layouts", null)
-                .setAction(() -> Tools.swapFragment(requireActivity(), GamepadMapperFragment.class, "GAMEPAD_MAPPER", null)));
-        controlsItems.add(new SettingItem("gamepad_wipe_action", SettingItem.TYPE_ACTION,
-                "Wipe Controller Map", "Clear custom gamepad configurations", null)
-                .setAction(() -> {
-                    Remapper.wipePreferences(getContext());
-                    Toast.makeText(getContext(), R.string.preference_controller_map_wiped, Toast.LENGTH_SHORT).show();
-                }));
-        categories.add(new SettingCategory("Controls", controlsItems));
-
-        // Category 5: Audio
-        List<SettingItem> audioItems = new ArrayList<>();
-        audioItems.add(new SettingItem("enable_audio", SettingItem.TYPE_SWITCH,
-                "Enable Game Sound", "Allow game instances to play audio", true));
-        audioItems.add(new SettingItem("launcher_volume", SettingItem.TYPE_SLIDER,
-                "Launcher Master Volume", "Default volume control for launched games", 80)
-                .setSliderConfig(0, 100, 5, " %"));
-        audioItems.add(new SettingItem("use_opensles", SettingItem.TYPE_SWITCH,
-                "Use OpenSL ES Backend", "Enable low-latency high performance sound library", false));
-        categories.add(new SettingCategory("Audio", audioItems));
-
-        // Category 6: Experimental
-        List<SettingItem> expItems = new ArrayList<>();
-        expItems.add(new SettingItem("dump_shaders", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_shader_dump_title),
-                getString(R.string.preference_shader_dump_description), false));
-        expItems.add(new SettingItem("bigCoreAffinity", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_force_big_core_title),
-                getString(R.string.preference_force_big_core_desc), false));
-        expItems.add(new SettingItem("force_landscape", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_force_landscape_title),
-                getString(R.string.preference_force_landscape_summary), false));
-        expItems.add(new SettingItem("enable_bg_gradient", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_bg_gradient_title),
-                getString(R.string.preference_bg_gradient_summary), false));
-        expItems.add(new SettingItem("set_custom_launcher_bg", SettingItem.TYPE_ACTION,
-                getString(R.string.preference_set_custom_bg_title),
-                getString(R.string.preference_set_custom_bg_summary), null)
-                .setAction(() -> mImagePickerLauncher.launch("image/*")));
-        expItems.add(new SettingItem("remove_custom_launcher_bg", SettingItem.TYPE_ACTION,
-                getString(R.string.preference_remove_custom_bg_title),
-                getString(R.string.preference_remove_custom_bg_summary), null)
-                .setAction(() -> {
-                    File bgFile = new File(RightPaneHomeFragment.CUSTOM_BG_PATH);
-                    if (bgFile.exists()) bgFile.delete();
-                    notifyHomeFragmentBgChanged();
-                    Toast.makeText(requireContext(), R.string.preference_custom_bg_removed, Toast.LENGTH_SHORT).show();
-                }));
-        expItems.add(new SettingItem("colour_theme_presets", SettingItem.TYPE_ACTION,
-                getString(R.string.preference_colour_presets_title),
-                getString(R.string.preference_colour_presets_summary), null)
-                .setAction(this::showPresetDialog));
-        categories.add(new SettingCategory("Experimental", expItems));
-
-        // Category 7: Account
-        List<SettingItem> accountItems = new ArrayList<>();
-        MinecraftAccount activeAccount = PojavProfile.getCurrentProfileContent(requireContext(), null);
-        String accountName = activeAccount != null ? activeAccount.username : "None";
-        accountItems.add(new SettingItem("active_profile_info", SettingItem.TYPE_INFO,
-                "Active Account Profile", accountName, null));
-        categories.add(new SettingCategory("Account", accountItems));
-
-        // Category 8: Advanced
-        List<SettingItem> advItems = new ArrayList<>();
-        advItems.add(new SettingItem("zinkPreferSystemDriver", SettingItem.TYPE_SWITCH,
-                getString(R.string.preference_vulkan_driver_system_title),
-                getString(R.string.preference_vulkan_driver_system_description), false));
-        advItems.add(new SettingItem("clear_cache_files", SettingItem.TYPE_ACTION,
-                "Clear Shader & Temporary Caches", "Free up storage by deleting temporary rendering files", null)
-                .setAction(() -> {
-                    try {
-                        clearCacheLocal(requireContext());
-                        Toast.makeText(getContext(), "Caches cleared successfully", Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
-                        Toast.makeText(getContext(), "Failed to clear cache", Toast.LENGTH_SHORT).show();
-                    }
-                }));
-        advItems.add(new SettingItem("reset_all_settings", SettingItem.TYPE_ACTION,
-                "Reset Launcher Settings", "Restore factory defaults for all configuration profiles", null)
-                .setAction(() -> {
-                    new AlertDialog.Builder(requireContext())
-                            .setTitle("Reset Settings")
-                            .setMessage("Are you sure you want to reset all settings to defaults?")
-                            .setPositiveButton("Reset", (dialog, which) -> {
-                                mDraftPrefs.edit().clear().commit();
-                                androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().clear().commit();
-                                LauncherPreferences.loadPreferences(requireContext());
-                                Toast.makeText(requireContext(), "Settings reset successfully", Toast.LENGTH_SHORT).show();
-                                requireActivity().recreate();
-                            })
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .show();
-                }));
-        categories.add(new SettingCategory("Advanced", advItems));
 
         mAdapter = new SettingsAdapter(categories, mDraftPrefs);
         mRecyclerView.setAdapter(mAdapter);
@@ -594,6 +512,10 @@ public class LauncherPreferenceFragment extends Fragment {
         for (Map.Entry<String, ?> entry : draftMap.entrySet()) {
             String key = entry.getKey();
             Object draftVal = entry.getValue();
+            // Skip verification for link keys which aren't settings keys
+            if (key.startsWith("cat_") || "gamepad_remap_action".equals(key) || "gamepad_wipe_action".equals(key) || "clear_cache_files".equals(key) || "reset_all_settings".equals(key) || "active_profile_info".equals(key) || "install_jre".equals(key) || "fastclient_preference".equals(key)) {
+                continue;
+            }
             if (!mainMap.containsKey(key)) {
                 Log.e("SettingsVerification", "Failed to save settings: key " + key + " is missing from disk storage!");
                 allMatch = false;
@@ -739,7 +661,30 @@ public class LauncherPreferenceFragment extends Fragment {
                     continue;
                 }
 
-                if (item.type == SettingItem.TYPE_SWITCH) {
+                if (item.type == SettingItem.TYPE_CATEGORY_LINK) {
+                    itemView = inflater.inflate(R.layout.item_setting_button, holder.container, false);
+                    TextView tvTitle = itemView.findViewById(R.id.setting_title);
+                    TextView tvSummary = itemView.findViewById(R.id.setting_summary);
+
+                    tvTitle.setText(item.title);
+                    tvSummary.setText(item.summary);
+
+                    itemView.setOnClickListener(v -> {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("category", item.categoryLinkTarget);
+                        Tools.swapFragment(
+                                requireActivity(),
+                                LauncherPreferenceFragment.class,
+                                "SETTINGS_" + item.categoryLinkTarget,
+                                bundle,
+                                R.anim.slide_in_right,
+                                R.anim.slide_out_left,
+                                R.anim.slide_in_left,
+                                R.anim.slide_out_right
+                        );
+                    });
+
+                } else if (item.type == SettingItem.TYPE_SWITCH) {
                     itemView = inflater.inflate(R.layout.item_setting_toggle, holder.container, false);
                     TextView tvTitle = itemView.findViewById(R.id.setting_title);
                     TextView tvSummary = itemView.findViewById(R.id.setting_summary);
@@ -748,15 +693,12 @@ public class LauncherPreferenceFragment extends Fragment {
                     tvTitle.setText(item.title);
                     tvSummary.setText(item.summary);
 
-                    // Restore state
                     boolean isChecked = mPrefs.getBoolean(item.key, (Boolean) item.defaultValue);
                     toggle.setChecked(isChecked, false);
 
-                    // Add click to toggle row
                     itemView.setOnClickListener(v -> toggle.toggle());
 
                     toggle.setOnCheckedChangeListener((view, checkedVal) -> {
-                        // Request runtime permissions directly if matching key
                         if ("notification_permission_request".equals(item.key)) {
                             Activity act = getActivity();
                             if (act instanceof LauncherActivity) {
@@ -782,7 +724,6 @@ public class LauncherPreferenceFragment extends Fragment {
                             markDirty();
                         }
 
-                        // Refresh layout if triggering conditions change
                         if (item.key.equals("enableGyro") || item.key.equals("disableGestures")
                                 || item.key.equals("alternate_surface") || item.key.equals("mg_renderer_multidrawCompute")) {
                             mRecyclerView.post(() -> notifyDataSetChanged());
@@ -919,7 +860,6 @@ public class LauncherPreferenceFragment extends Fragment {
                 holder.container.addView(itemView);
             }
 
-            // If a category has no visible items, hide the entire card
             if (!hasVisibleItems) {
                 holder.itemView.setVisibility(View.GONE);
                 RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
@@ -974,6 +914,7 @@ public class LauncherPreferenceFragment extends Fragment {
         public static final int TYPE_INFO = 5;
         public static final int TYPE_INPUT = 6;
         public static final int TYPE_CUSTOM_FASTCLIENT = 7;
+        public static final int TYPE_CATEGORY_LINK = 8;
 
         String key;
         int type;
@@ -994,12 +935,18 @@ public class LauncherPreferenceFragment extends Fragment {
         // Action config
         Runnable action;
 
+        // Category link config
+        String categoryLinkTarget;
+
         public SettingItem(String key, int type, String title, String summary, Object defaultValue) {
             this.key = key;
             this.type = type;
             this.title = title;
             this.summary = summary;
             this.defaultValue = defaultValue;
+            if (type == TYPE_CATEGORY_LINK && defaultValue instanceof String) {
+                this.categoryLinkTarget = (String) defaultValue;
+            }
         }
 
         public SettingItem setSliderConfig(int min, int max, int step, String suffix) {
