@@ -5,13 +5,12 @@ plugins {
 static def getDate() { return new Date().format('yyyyMMdd') }
 
 def getVersionName = {
-    // Get the last version tag, as well as the short head of the last commit
-    ByteArrayOutputStream TAG = new ByteArrayOutputStream()
+    // BRANDING: Show clean "CS Launcher v2 Build 1.1.5" style version names.
+    // Never expose internal branch names like "copper-legacy" or git hashes to users.
     String semVer = "1.1.5"
-    // Used by the fallback for github actions
-    ByteArrayOutputStream TAG_PART_COMMIT = new ByteArrayOutputStream()
-    String TAG_STRING
-
+    
+    // Try to get a git tag for the full version
+    ByteArrayOutputStream TAG = new ByteArrayOutputStream()
     exec {
         try {
             commandLine 'git', 'describe', '--tags'
@@ -21,34 +20,17 @@ def getVersionName = {
             e.printStackTrace();
         }
     }
-
-    if (TAG.toString() == "") {
-        exec {
-            // Fallback for action builds
-            try {
-                commandLine 'git', 'describe', '--always', '--tags'
-                ignoreExitValue true
-                standardOutput = TAG_PART_COMMIT
-            } catch (Exception e) {
-            }
+    
+    String tagStr = TAG.toString().trim()
+    if (!tagStr.isEmpty()) {
+        // If the tag looks like a semver (e.g. "v1.1.5" or "1.1.5"), use it directly
+        if (tagStr ==~ /^v?\d+\.\d+\.\d+.*/) {
+            return tagStr
         }
     }
-
-
-    if(TAG.toString() != ""){
-        TAG_STRING = TAG.toString()
-    }else {
-        if(TAG_PART_COMMIT.toString().trim() == ""){
-             //Fallback no repo
-            return ("LOCAL-" + "${getDate()}")
-        }else {
-            // Used by github actions
-            TAG_STRING =  'copper-legacy-' + "${getDate()}" + "-" + TAG_PART_COMMIT.toString().trim()
-        }
-
-    }
-
-    return TAG_STRING.trim().replace("-g", "-") + "-" + semVer
+    
+    // Fallback: just return the semVer
+    return "v" + semVer
 }
 
 def getCFApiKey = {

@@ -68,7 +68,8 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
         View bar = rootView.findViewById(R.id.unsaved_changes_bar);
         if (bar == null) return;
         SharedPreferences p = getPreferenceManager().getSharedPreferences();
-        boolean autoSave = p != null && p.getBoolean("auto_save_fallback", false);
+        // Default to true so toggle switches auto-save immediately
+        boolean autoSave = p != null && p.getBoolean("auto_save_fallback", true);
         if (!autoSave && SettingsSaveManager.hasUnsavedChanges(getContext())) {
             bar.setVisibility(View.VISIBLE);
         } else {
@@ -143,13 +144,12 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences p, String s) {
-        boolean autoSave = p.getBoolean("auto_save_fallback", false);
+        // Always auto-save toggle/switch changes immediately so they survive restart
+        // The auto_save_fallback pref defaults to true for first-time users
+        boolean autoSave = p.getBoolean("auto_save_fallback", true);
         if (autoSave) {
             SettingsSaveManager.commitChanges(getContext());
             LauncherPreferences.loadPreferences(getContext());
-            try {
-                android.widget.Toast.makeText(getContext(), "Setting saved", android.widget.Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {}
             View bar = getView() != null ? getView().findViewById(R.id.unsaved_changes_bar) : null;
             if (bar != null) bar.setVisibility(View.GONE);
         } else {

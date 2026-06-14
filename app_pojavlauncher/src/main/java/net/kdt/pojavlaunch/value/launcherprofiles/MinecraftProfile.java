@@ -71,12 +71,19 @@ public class MinecraftProfile {
 	/**
 	 * True when this profile's instance gameDir shows no mod-loader footprint
 	 * (no mods/ folder, or it is empty) and the profile is not OptiFine.
-	 * Best-effort heuristic — it cannot detect loaders that have not yet
-	 * dropped a jar into mods/. Callers that need an authoritative answer
-	 * for the mod store should additionally check {@link #isOptiFine()}.
+	 * Also checks the version ID for loader names (fabric, forge, etc.)
+	 * so that e.g. a fresh Fabric install with zero mods is NOT marked vanilla.
 	 */
 	public boolean isVanilla() {
 		if (isOptiFine()) return false;
+		// Check the lastVersionId for known loader names
+		if (lastVersionId != null) {
+			String lower = lastVersionId.toLowerCase();
+			if (lower.contains("fabric") || lower.contains("forge") || lower.contains("neoforge") ||
+				lower.contains("quilt") || lower.contains("liteloader") || lower.contains("optifine")) {
+				return false;
+			}
+		}
 		try {
 			java.io.File gamedir = net.kdt.pojavlaunch.Tools.getGameDirPath(this);
 			if (gamedir == null) return true;
