@@ -20,6 +20,7 @@ public class NeoForgeDownloadTask implements Runnable, Tools.DownloaderFeedback 
     private final String mLoaderVersion;
 
     private final ModloaderDownloadListener mListener;
+    private net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper mProgressWrapper;
 
     public NeoForgeDownloadTask(ModloaderDownloadListener listener, @NonNull String loaderVersion) {
         this.mListener = listener;
@@ -39,11 +40,12 @@ public class NeoForgeDownloadTask implements Runnable, Tools.DownloaderFeedback 
 
     @Override
     public void updateProgress(int curr, int max) {
-        int progress100 = (int)(((float)curr / (float)max)*100f);
-        ProgressKeeper.submitProgress(ProgressLayout.INSTALL_MODPACK, progress100, R.string.forge_dl_progress, mLoaderVersion);
+        if (mProgressWrapper != null) mProgressWrapper.updateProgress(curr, max);
     }
 
     private void downloadNeoForge() {
+        mProgressWrapper = new net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper(R.string.forge_dl_progress, ProgressLayout.INSTALL_MODPACK);
+        mProgressWrapper.extraString = mLoaderVersion;
         ProgressKeeper.submitProgress(ProgressLayout.INSTALL_MODPACK, 0, R.string.forge_dl_progress, mLoaderVersion);
         try {
             File destinationFile = new File(Tools.DIR_CACHE, "neoforge-installer.jar");

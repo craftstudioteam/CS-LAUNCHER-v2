@@ -24,6 +24,7 @@ public class FabriclikeDownloadTask implements Runnable, Tools.DownloaderFeedbac
     private final String mGameVersion;
     private final String mLoaderVersion;
     private final boolean mCreateProfile;
+    private net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper mProgressWrapper;
     public FabriclikeDownloadTask(ModloaderDownloadListener modloaderDownloadListener, FabriclikeUtils utils, String mGameVersion, String mLoaderVersion, boolean mCreateProfile) {
         this.mModloaderDownloadListener = modloaderDownloadListener;
         this.mUtils = utils;
@@ -35,7 +36,9 @@ public class FabriclikeDownloadTask implements Runnable, Tools.DownloaderFeedbac
     @Override
     public void run() {
         android.util.Log.d("FabricInstall", "STEP 5: Downloading loader");
-        ProgressKeeper.submitProgress(ProgressLayout.INSTALL_MODPACK, 0, R.string.fabric_dl_progress);
+        mProgressWrapper = new net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper(R.string.fabric_dl_progress, ProgressLayout.INSTALL_MODPACK);
+        mProgressWrapper.extraString = mUtils.getName();
+        ProgressKeeper.submitProgress(ProgressLayout.INSTALL_MODPACK, 0, R.string.fabric_dl_progress, mUtils.getName());
         try {
             if(runCatching()) mModloaderDownloadListener.onDownloadFinished(null);
             else mModloaderDownloadListener.onDataNotAvailable();
@@ -166,7 +169,6 @@ public class FabriclikeDownloadTask implements Runnable, Tools.DownloaderFeedbac
 
     @Override
     public void updateProgress(int curr, int max) {
-        int progress100 = (int)(((float)curr / (float)max)*100f);
-        ProgressKeeper.submitProgress(ProgressLayout.INSTALL_MODPACK, progress100, R.string.fabric_dl_progress, mUtils.getName());
+        if (mProgressWrapper != null) mProgressWrapper.updateProgress(curr, max);
     }
 }
