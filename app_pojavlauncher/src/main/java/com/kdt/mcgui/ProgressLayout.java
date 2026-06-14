@@ -86,7 +86,7 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
         public void run() {
             ProgressLayout.this.animate()
                 .alpha(0f)
-                .translationY(-ProgressLayout.this.getHeight())
+                .translationY(ProgressLayout.this.getHeight())
                 .setDuration(500)
                 .withEndAction(() -> {
                     ProgressLayout.this.setVisibility(GONE);
@@ -192,8 +192,8 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
     @Override
     public void onUpdateTaskCount(int tc) {
         post(()->{
-            removeCallbacks(mFadeOutRunnable);
             if(tc > 0) {
+                removeCallbacks(mFadeOutRunnable);
                 mIsFinishing = false;
                 setAlpha(1f);
                 setTranslationY(0f);
@@ -232,6 +232,7 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
                     if (mEtaText != null) {
                         mEtaText.setVisibility(GONE);
                     }
+                    removeCallbacks(mFadeOutRunnable);
                     postDelayed(mFadeOutRunnable, 2500);
                 } else if (getVisibility() != VISIBLE) {
                     setVisibility(GONE);
@@ -256,6 +257,10 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
         final String progressKey;
         final TextProgressBar textView;
         final LinearLayout.LayoutParams params;
+        private ObjectAnimator mProgressAnimator;
+        private ValueAnimator mPercentageAnimator;
+        private int mTargetProgress = -1;
+
         public LayoutProgressListener(String progressKey) {
             this.progressKey = progressKey;
             textView = new TextProgressBar(getContext());
@@ -299,27 +304,28 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
                 // --- NEW COMPACT VIEW UPDATES ---
                 if (mProgressBar != null && progress >= 0) {
                     int currProgress = mProgressBar.getProgress();
-                    if (progress != currProgress) {
-                        // Smoothly animate the horizontal progress bar
-                        ObjectAnimator anim = ObjectAnimator.ofInt(mProgressBar, "progress", currProgress, progress);
-                        anim.setDuration(250);
-                        anim.setInterpolator(new android.view.animation.DecelerateInterpolator());
-                        anim.start();
+                    if (progress != mTargetProgress) {
+                        mTargetProgress = progress;
 
-                        // Smoothly count percentage text
-                        ValueAnimator valAnim = ValueAnimator.ofInt(currProgress, progress);
-                        valAnim.setDuration(250);
-                        valAnim.addUpdateListener(animation -> {
+                        if (mProgressAnimator != null && mProgressAnimator.isRunning()) {
+                            mProgressAnimator.cancel();
+                        }
+                        mProgressAnimator = ObjectAnimator.ofInt(mProgressBar, "progress", currProgress, progress);
+                        mProgressAnimator.setDuration(250);
+                        mProgressAnimator.setInterpolator(new android.view.animation.DecelerateInterpolator());
+                        mProgressAnimator.start();
+
+                        if (mPercentageAnimator != null && mPercentageAnimator.isRunning()) {
+                            mPercentageAnimator.cancel();
+                        }
+                        mPercentageAnimator = ValueAnimator.ofInt(currProgress, progress);
+                        mPercentageAnimator.setDuration(250);
+                        mPercentageAnimator.addUpdateListener(animation -> {
                             if (mPercentageText != null) {
                                 mPercentageText.setText(animation.getAnimatedValue() + "%");
                             }
                         });
-                        valAnim.start();
-                    } else {
-                        mProgressBar.setProgress(progress);
-                        if (mPercentageText != null) {
-                            mPercentageText.setText(progress + "%");
-                        }
+                        mPercentageAnimator.start();
                     }
 
                     // Gently pulse the card on update to feel alive

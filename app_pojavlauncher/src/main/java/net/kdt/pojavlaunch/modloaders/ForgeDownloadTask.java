@@ -18,6 +18,7 @@ public class ForgeDownloadTask implements Runnable, Tools.DownloaderFeedback {
     private String mLoaderVersion;
     private String mGameVersion;
     private final ModloaderDownloadListener mListener;
+    private net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper mProgressWrapper;
     public ForgeDownloadTask(ModloaderDownloadListener listener, String forgeVersion) {
         this.mListener = listener;
         this.mDownloadUrl = ForgeUtils.getInstallerUrl(forgeVersion);
@@ -39,11 +40,12 @@ public class ForgeDownloadTask implements Runnable, Tools.DownloaderFeedback {
 
     @Override
     public void updateProgress(int curr, int max) {
-        int progress100 = (int)(((float)curr / (float)max)*100f);
-        ProgressKeeper.submitProgress(ProgressLayout.INSTALL_MODPACK, progress100, R.string.forge_dl_progress, mFullVersion);
+        if (mProgressWrapper != null) mProgressWrapper.updateProgress(curr, max);
     }
 
     private void downloadForge() {
+        mProgressWrapper = new net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper(R.string.forge_dl_progress, ProgressLayout.INSTALL_MODPACK);
+        mProgressWrapper.extraString = mFullVersion;
         ProgressKeeper.submitProgress(ProgressLayout.INSTALL_MODPACK, 0, R.string.forge_dl_progress, mFullVersion);
         try {
             File destinationFile = new File(Tools.DIR_CACHE, "forge-installer.jar");

@@ -25,6 +25,7 @@ public class OptiFineDownloadTask implements Runnable, Tools.DownloaderFeedback,
     private final Object mMinecraftDownloadLock = new Object();
     private Throwable mDownloaderThrowable;
     private final Activity activity;
+    private net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper mProgressWrapper;
 
     public OptiFineDownloadTask(OptiFineUtils.OptiFineVersion mOptiFineVersion, ModloaderDownloadListener mListener, Activity activity) {
         this.mOptiFineVersion = mOptiFineVersion;
@@ -35,6 +36,8 @@ public class OptiFineDownloadTask implements Runnable, Tools.DownloaderFeedback,
 
     @Override
     public void run() {
+        mProgressWrapper = new net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper(R.string.of_dl_progress, ProgressLayout.INSTALL_MODPACK);
+        mProgressWrapper.extraString = mOptiFineVersion.versionName;
         ProgressKeeper.submitProgress(ProgressLayout.INSTALL_MODPACK, 0, R.string.of_dl_progress, mOptiFineVersion.versionName);
         try {
             if(runCatching()) mListener.onDownloadFinished(mDestinationFile);
@@ -104,8 +107,7 @@ public class OptiFineDownloadTask implements Runnable, Tools.DownloaderFeedback,
 
     @Override
     public void updateProgress(int curr, int max) {
-        int progress100 = (int)(((float)curr / (float)max)*100f);
-        ProgressKeeper.submitProgress(ProgressLayout.INSTALL_MODPACK, progress100, R.string.of_dl_progress, mOptiFineVersion.versionName);
+        if (mProgressWrapper != null) mProgressWrapper.updateProgress(curr, max);
     }
 
     @Override

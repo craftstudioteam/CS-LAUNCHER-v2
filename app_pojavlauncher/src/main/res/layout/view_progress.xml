@@ -143,7 +143,7 @@
     <!-- ✦ LEGACY COMPATIBILITY VIEWS (HIDDEN)  -->
     <!-- ═══════════════════════════════════════ -->
     <com.kdt.mcgui.KineticProgressView
-        android:id="@+id/kinetic_progress"
+        android:id="@+id/kinetic_progress_legacy"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"
