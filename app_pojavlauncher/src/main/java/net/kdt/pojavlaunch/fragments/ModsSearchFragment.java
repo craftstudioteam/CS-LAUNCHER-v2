@@ -304,41 +304,75 @@ public class ModsSearchFragment extends Fragment {
                         
         java.util.List<String> validKeys = new java.util.ArrayList<>();
         java.util.List<String> validNames = new java.util.ArrayList<>();
+        java.util.List<Boolean> compatStatus = new java.util.ArrayList<>();
         int currentSelection = -1;
 
         for (String key : profiles.keySet()) {
             net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile p = profiles.get(key);
             if (p == null) continue;
             
-            String profileVid = (p.lastVersionId != null) ? p.lastVersionId.toLowerCase() : "";
-            
+            // Use ProfileDetection for robust loader detection
+            boolean hasLoader = false;
             if ("mod".equals(contentType)) {
-                boolean hasLoader = profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge") || profileVid.contains("liteloader");
-                if (!hasLoader) continue;
+                hasLoader = net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "fabric") || 
+                            net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "forge") || 
+                            net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "quilt") || 
+                            net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "neoforge") || 
+                            net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "liteloader");
             } else if ("shader".equals(contentType)) {
-                boolean hasOptiOrLoader = profileVid.contains("optifine") || profileVid.contains("fabric") || profileVid.contains("forge") || profileVid.contains("quilt") || profileVid.contains("neoforge");
-                if (!hasOptiOrLoader) continue;
+                hasLoader = net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "optifine") || 
+                            net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "fabric") || 
+                            net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "forge") || 
+                            net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "quilt") || 
+                            net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "neoforge");
+            } else {
+                // Resourcepacks, worlds: any profile works
+                hasLoader = true;
             }
+            
+            if (!hasLoader) continue;
             
             validKeys.add(key);
             String safeName = (p.name != null && !p.name.isEmpty()) ? p.name : "Unnamed Profile";
             validNames.add(safeName);
+            compatStatus.add(true);
             if (key.equals(currentKey)) {
                 currentSelection = validKeys.size() - 1;
             }
         }
         
         if (validKeys.isEmpty()) {
-            android.widget.Toast.makeText(getContext(), "No compatible profiles found.", android.widget.Toast.LENGTH_LONG).show();
+            android.widget.Toast.makeText(getContext(), "No compatible profiles found.\nInstall Fabric/Forge/Quilt first.", android.widget.Toast.LENGTH_LONG).show();
             return;
         }
 
         String[] profileNames = validNames.toArray(new String[0]);
         String[] finalKeys = validKeys.toArray(new String[0]);
+        
+        // Build display items with MC version and loader info
+        String[] displayItems = new String[validNames.size()];
+        for (int i = 0; i < validNames.size(); i++) {
+            String key = finalKeys[i];
+            net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile p = profiles.get(key);
+            String mcVer = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(p);
+            String loaderInfo = "";
+            if (p.lastVersionId != null) {
+                String lower = p.lastVersionId.toLowerCase();
+                if (lower.contains("fabric")) loaderInfo = " [Fabric]";
+                else if (lower.contains("forge")) loaderInfo = " [Forge]";
+                else if (lower.contains("neoforge")) loaderInfo = " [NeoForge]";
+                else if (lower.contains("quilt")) loaderInfo = " [Quilt]";
+            }
+            if (!mcVer.isEmpty()) {
+                displayItems[i] = "🟢 " + profileNames[i] + " (" + mcVer + loaderInfo + ")";
+            } else {
+                displayItems[i] = "🟢 " + profileNames[i] + loaderInfo;
+            }
+        }
                         
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Select Profile to Install To")
-                .setSingleChoiceItems(profileNames, currentSelection, (dialog, which) -> {
+                .setTitle("Compatible Profiles")
+                .setSingleChoiceItems(displayItems, currentSelection, (dialog, which) -> {
                     dialog.dismiss();
                     net.kdt.pojavlaunch.fragments.ModDownloadHelper.downloadAndExtract(getContext(), name, url, contentType, finalKeys[which]);
                 })

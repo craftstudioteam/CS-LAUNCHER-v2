@@ -4,6 +4,7 @@ import com.kdt.mcgui.ProgressLayout;
 
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
+import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
 import net.kdt.pojavlaunch.utils.DownloadUtils;
 import net.kdt.pojavlaunch.utils.FileUtils;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 public class FabriclikeDownloadTask implements Runnable, Tools.DownloaderFeedback{
     private final ModloaderDownloadListener mModloaderDownloadListener;
@@ -57,16 +59,106 @@ public class FabriclikeDownloadTask implements Runnable, Tools.DownloaderFeedbac
         File versionJsonFile = new File(versionJsonDir, versionId+".json");
         FileUtils.ensureDirectory(versionJsonDir);
         Tools.write(versionJsonFile.getAbsolutePath(), fabricJson);
+        
+        // FABRIC/LOADER REWORK: Do NOT create a separate profile.
+        // Instead, update the existing profile's lastVersionId to use the loader.
         if(mCreateProfile) {
             LauncherProfiles.load();
-            MinecraftProfile fabricProfile = new MinecraftProfile();
-            fabricProfile.lastVersionId = versionId;
-            fabricProfile.name = mUtils.getName();
-            fabricProfile.icon = mUtils.getIconName();
-            LauncherProfiles.insertMinecraftProfile(fabricProfile);
+            String loaderName = mUtils.getName(); // "Fabric" or "Quilt"
+            
+            // 1) Try the currently selected profile first
+            MinecraftProfile profileToUpdate = null;
+            String profileKeyToUpdate = null;
+            String currentKey = LauncherPreferences.DEFAULT_PREF.getString(
+                    LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
+            if (currentKey != null && LauncherProfiles.mainProfileJson.profiles.containsKey(currentKey)) {
+                MinecraftProfile currentProfile = LauncherProfiles.mainProfileJson.profiles.get(currentKey);
+                if (currentProfile != null && isProfileForGameVersion(currentProfile, mGameVersion)) {
+                    profileToUpdate = currentProfile;
+                    profileKeyToUpdate = currentKey;
+                }
+            }
+
+            // 2) If current profile doesn't match, scan for any profile matching the game version
+            if (profileToUpdate == null) {
+                for (Map.Entry<String, MinecraftProfile> entry : LauncherProfiles.mainProfileJson.profiles.entrySet()) {
+                    MinecraftProfile p = entry.getValue();
+                    if (p != null && isProfileForGameVersion(p, mGameVersion)) {
+                        profileToUpdate = p;
+                        profileKeyToUpdate = entry.getKey();
+                        break;
+                    }
+                }
+            }
+
+            // 3) If still no match, update the current profile anyway (best effort)
+            if (profileToUpdate == null && currentKey != null) {
+                profileToUpdate = LauncherProfiles.mainProfileJson.profiles.get(currentKey);
+                profileKeyToUpdate = currentKey;
+            }
+
+            // 4) Clean up old-style duplicate profiles created by previous versions
+            //    E.g. "Fabric fabric-loader-0.19.3-1.21.10" — these were created as standalone
+            //    profiles before the rework. Remove them if we're updating/changing a profile now.
+            java.util.ArrayList<String> keysToRemove = new java.util.ArrayList<>();
+            String loaderLower = loaderName.toLowerCase();
+            for (Map.Entry<String, MinecraftProfile> entry : LauncherProfiles.mainProfileJson.profiles.entrySet()) {
+                MinecraftProfile p = entry.getValue();
+                if (p == null) continue;
+                String lvId = p.lastVersionId != null ? p.lastVersionId.toLowerCase() : "";
+                // Skip the profile we're updating
+                if (entry.getKey().equals(profileKeyToUpdate)) continue;
+                // Match: lastVersionId contains the loader name AND the MC version
+                if (lvId.contains(loaderLower) && lvId.contains(mGameVersion)) {
+                    // Check if this is a standalone loader profile (not a user profile that happens to use this loader)
+                    String pName = p.name != null ? p.name.toLowerCase() : "";
+                    if (pName.contains(loaderLower) || pName.contains("minecraft " + mGameVersion) || pName.equals(mGameVersion)) {
+                        keysToRemove.add(entry.getKey());
+                    }
+                }
+            }
+
+            if (profileToUpdate != null && profileKeyToUpdate != null) {
+                // Update the existing profile's lastVersionId to the loader version
+                profileToUpdate.lastVersionId = versionId;
+                profileToUpdate.icon = mUtils.getIconName();
+                // Only update name if it was a generic "Minecraft X.Y.Z" name
+                String lowerName = profileToUpdate.name != null ? profileToUpdate.name.toLowerCase() : "";
+                if (lowerName.isEmpty() || lowerName.startsWith("minecraft ") || lowerName.startsWith("default") || lowerName.equals(mGameVersion)) {
+                    profileToUpdate.name = loaderName + " " + mGameVersion;
+                }
+                LauncherProfiles.mainProfileJson.profiles.put(profileKeyToUpdate, profileToUpdate);
+                // Update the current profile preference
+                LauncherPreferences.DEFAULT_PREF.edit()
+                        .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, profileKeyToUpdate)
+                        .apply();
+            } else {
+                // Absolute fallback: create a new profile (should rarely happen)
+                MinecraftProfile fabricProfile = new MinecraftProfile();
+                fabricProfile.lastVersionId = versionId;
+                fabricProfile.name = loaderName + " " + mGameVersion;
+                fabricProfile.icon = mUtils.getIconName();
+                LauncherProfiles.insertMinecraftProfile(fabricProfile);
+            }
+
+            // Remove old duplicate profiles
+            for (String key : keysToRemove) {
+                LauncherProfiles.mainProfileJson.profiles.remove(key);
+            }
+
             LauncherProfiles.write();
         }
         return true;
+    }
+
+    /**
+     * Checks whether the given profile is associated with the specified game version.
+     * Compares the resolved MC version (via inheritsFrom chain) against the target.
+     */
+    private boolean isProfileForGameVersion(MinecraftProfile profile, String gameVersion) {
+        if (profile == null || profile.lastVersionId == null) return false;
+        String pmcVer = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(profile);
+        return pmcVer != null && pmcVer.equals(gameVersion);
     }
 
     @Override

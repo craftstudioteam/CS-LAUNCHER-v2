@@ -410,7 +410,7 @@ public class ModInstallFragment extends Fragment {
         Log.i("ModProfileFilter", "Compatible Profiles: " + validKeys.size());
         
         if (validKeys.isEmpty()) {
-            Toast.makeText(getContext(), "No compatible mod-loader profiles found for this version.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "No compatible mod-loader profiles found for this version.\nInstall Fabric/Forge/Quilt to this MC version first.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -422,10 +422,31 @@ public class ModInstallFragment extends Fragment {
 
         String[] profileNames = validNames.toArray(new String[0]);
         String[] finalKeys = validKeys.toArray(new String[0]);
+        
+        // Build custom list with profile names + MC version info
+        String[] displayItems = new String[validNames.size()];
+        for (int i = 0; i < validNames.size(); i++) {
+            String key = finalKeys[i];
+            net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile p = profiles.get(key);
+            String mcVer = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(p);
+            String loaderInfo = "";
+            if (p.lastVersionId != null) {
+                String lower = p.lastVersionId.toLowerCase();
+                if (lower.contains("fabric")) loaderInfo = " [Fabric]";
+                else if (lower.contains("forge")) loaderInfo = " [Forge]";
+                else if (lower.contains("neoforge")) loaderInfo = " [NeoForge]";
+                else if (lower.contains("quilt")) loaderInfo = " [Quilt]";
+            }
+            if (!mcVer.isEmpty()) {
+                displayItems[i] = "🟢 " + profileNames[i] + " (" + mcVer + loaderInfo + ")";
+            } else {
+                displayItems[i] = "🟢 " + profileNames[i] + loaderInfo;
+            }
+        }
                         
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Select Profile to Install To")
-                .setSingleChoiceItems(profileNames, currentSelection, (dialog, which) -> {
+                .setTitle("Compatible Profiles")
+                .setSingleChoiceItems(displayItems, currentSelection, (dialog, which) -> {
                     mProfileKey = finalKeys[which];
                     dialog.dismiss();
                     startDownload(url, fileName);

@@ -530,75 +530,111 @@ public class ModDetailFragment extends Fragment {
             modMcVer = mModDetail.mcVersionNames[versionIndex];
         }
 
-        boolean foundProfile = false;
-        boolean isIncompatible = true;
-
         LauncherProfiles.load();
         java.util.Map<String, MinecraftProfile> profiles = LauncherProfiles.mainProfileJson.profiles;
-        java.util.List<String> validProfiles = new java.util.ArrayList<>();
 
-        if (profiles != null) {
-            for (java.util.Map.Entry<String, MinecraftProfile> entry : profiles.entrySet()) {
-                MinecraftProfile p = entry.getValue();
-                if (p == null || p.lastVersionId == null) continue;
-
-                boolean isCompatible = false;
-                if (modLoaders != null && modLoaders.length > 0) {
-                    for (String loader : modLoaders) {
-                        if (net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, loader)) {
-                            isCompatible = true;
-                            break;
-                        }
-                    }
-                } else {
-                    isCompatible = net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "fabric") || 
-                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "forge") || 
-                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "quilt") || 
-                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "neoforge") || 
-                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "liteloader") || 
-                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "optifine");
-                }
-                
-                if (!isCompatible) continue;
-
-                if (modMcVer != null && !modMcVer.isEmpty()) {
-                    String pmcVer = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(p);
-                    if (!net.kdt.pojavlaunch.utils.ProfileDetection.isVersionCompatible(pmcVer, modMcVer)) continue;
-                }
-
-                isIncompatible = false;
-                foundProfile = true;
-                validProfiles.add((p.name != null && !p.name.isEmpty()) ? p.name : entry.getKey());
-            }
-        }
-
-        // Add badges
+        // ── Requirement badge ──────────────────────────────────────────────
         if (modLoaders != null && modLoaders.length > 0) {
             for (String loader : modLoaders) {
                 String verStr = (modMcVer != null && !modMcVer.isEmpty()) ? (" " + modMcVer) : "";
                 String capitalizedLoader = loader.substring(0, 1).toUpperCase() + loader.substring(1);
-                addBadge("⚠ Requires " + capitalizedLoader + verStr, "#FFA500");
+                addCompatibilityChip("⚡ " + capitalizedLoader + verStr, "#FFA500", "#FFA500");
             }
         } else if (modMcVer != null && !modMcVer.isEmpty()) {
-            addBadge("⚠ Requires " + modMcVer, "#FFA500");
+            addCompatibilityChip("⚡ Requires " + modMcVer, "#FFA500", "#FFA500");
         }
 
-        if (foundProfile) {
-            addBadge("✓ Compatible", "#39FF14");
-            for (String pName : validProfiles) {
-                addBadge("✓ Installed Profile Found: " + pName, "#39FF14");
+        // ── Scan all profiles ─────────────────────────────────────────────
+        if (profiles != null && !profiles.isEmpty()) {
+            // Header: "Compatible Profiles"
+            TextView header = new TextView(requireContext());
+            header.setText("Compatible Profiles");
+            header.setTextColor(android.graphics.Color.parseColor("#CCCCCC"));
+            header.setTextSize(13);
+            header.setTypeface(null, android.graphics.Typeface.BOLD);
+            header.setPadding(0, 12, 0, 6);
+            mCompatibilityBadges.addView(header);
+
+            boolean anyCompatible = false;
+
+            for (java.util.Map.Entry<String, MinecraftProfile> entry : profiles.entrySet()) {
+                MinecraftProfile p = entry.getValue();
+                if (p == null || p.lastVersionId == null) continue;
+
+                // Check loader compatibility
+                boolean loaderCompatible = false;
+                if (modLoaders != null && modLoaders.length > 0) {
+                    for (String loader : modLoaders) {
+                        if (net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, loader)) {
+                            loaderCompatible = true;
+                            break;
+                        }
+                    }
+                } else {
+                    // No specific loader required → any loader profile is fine
+                    loaderCompatible = net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "fabric") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "forge") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "quilt") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "neoforge") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "liteloader") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "optifine");
+                }
+
+                // Check version compatibility
+                boolean versionCompatible = true;
+                if (modMcVer != null && !modMcVer.isEmpty()) {
+                    String pmcVer = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(p);
+                    versionCompatible = net.kdt.pojavlaunch.utils.ProfileDetection.isVersionCompatible(pmcVer, modMcVer);
+                }
+
+                boolean isCompatible = loaderCompatible && versionCompatible;
+                if (isCompatible) anyCompatible = true;
+
+                String displayName = (p.name != null && !p.name.isEmpty()) ? p.name : entry.getKey();
+                String chipColor = isCompatible ? "#39FF14" : "#666666";
+                String bgColor = isCompatible ? "#1A39FF14" : "#1A666666";
+                String icon = isCompatible ? "🟢" : "⚪";
+                addCompatibilityChip(icon + " " + displayName, chipColor, bgColor);
             }
-        } else if (isIncompatible) {
-            addBadge("✗ Incompatible Version (No matching profile)", "#FF4444");
+
+            if (!anyCompatible) {
+                // Show a message but DON'T show "No profile found" when profiles exist
+                if (modMcVer != null && !modMcVer.isEmpty()) {
+                    addCompatibilityChip("ℹ No profile matches " + modMcVer + " with required loaders", "#999999", "#1A999999");
+                } else {
+                    addCompatibilityChip("ℹ No profile matches the required loaders", "#999999", "#1A999999");
+                }
+            }
+        } else {
+            addCompatibilityChip("⚠ No profiles found. Create one first.", "#FFA500", "#1AFFA500");
         }
     }
 
-    private void addBadge(String text, String colorHex) {
-        TextView badge = new TextView(requireContext());
-        badge.setText(text);
-        badge.setTextColor(android.graphics.Color.parseColor(colorHex));
-        badge.setTextSize(12);
-        badge.setPadding(0, 4, 0, 4);
-        mCompatibilityBadges.addView(badge);
+    private void addCompatibilityChip(String text, String textColorHex, String bgColorHex) {
+        TextView chip = new TextView(requireContext());
+        chip.setText(text);
+        chip.setTextColor(android.graphics.Color.parseColor(textColorHex));
+        chip.setTextSize(12);
+        chip.setPadding(12, 6, 12, 6);
+        chip.setIncludeFontPadding(false);
+
+        // Round background with slight transparency
+        android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
+        bg.setShape(android.graphics.drawable.GradientDrawable.RECTANGLE);
+        bg.setCornerRadius(24f);
+        try {
+            bg.setColor(android.graphics.Color.parseColor(bgColorHex));
+        } catch (Exception e) {
+            bg.setColor(0x1A666666);
+        }
+        chip.setBackground(bg);
+
+        android.widget.LinearLayout.LayoutParams lp = new android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 0, 0, 6);
+        chip.setLayoutParams(lp);
+
+        mCompatibilityBadges.addView(chip);
     }
 }
