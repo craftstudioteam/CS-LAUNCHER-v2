@@ -95,6 +95,7 @@
         android:title="Auto-save fallback"
         android:summary="Save changes automatically as you toggle them"
         android:key="auto_save_fallback"
+        android:defaultValue="true"
         android:layout="@layout/preference_item_modern"
         android:widgetLayout="@layout/preference_switch_modern"
         />

@@ -122,10 +122,13 @@ public class FabriclikeDownloadTask implements Runnable, Tools.DownloaderFeedbac
                 // Update the existing profile's lastVersionId to the loader version
                 profileToUpdate.lastVersionId = versionId;
                 profileToUpdate.icon = mUtils.getIconName();
-                // Only update name if it was a generic "Minecraft X.Y.Z" name
+                // Clean profile name: show "Minecraft 1.21.10" with Fabric as loader,
+                // NOT "Fabric fabric-loader-0.19.3-1.21.10"
                 String lowerName = profileToUpdate.name != null ? profileToUpdate.name.toLowerCase() : "";
-                if (lowerName.isEmpty() || lowerName.startsWith("minecraft ") || lowerName.startsWith("default") || lowerName.equals(mGameVersion)) {
-                    profileToUpdate.name = loaderName + " " + mGameVersion;
+                // Only rename if it was a generic name or old-style loader name
+                if (lowerName.isEmpty() || lowerName.startsWith("minecraft ") || lowerName.startsWith("default") ||
+                        lowerName.equals(mGameVersion) || lowerName.contains("fabric-loader") || lowerName.contains("quilt-loader")) {
+                    profileToUpdate.name = "Minecraft " + mGameVersion;
                 }
                 LauncherProfiles.mainProfileJson.profiles.put(profileKeyToUpdate, profileToUpdate);
                 // Update the current profile preference
@@ -136,7 +139,7 @@ public class FabriclikeDownloadTask implements Runnable, Tools.DownloaderFeedbac
                 // Absolute fallback: create a new profile (should rarely happen)
                 MinecraftProfile fabricProfile = new MinecraftProfile();
                 fabricProfile.lastVersionId = versionId;
-                fabricProfile.name = loaderName + " " + mGameVersion;
+                fabricProfile.name = "Minecraft " + mGameVersion;
                 fabricProfile.icon = mUtils.getIconName();
                 LauncherProfiles.insertMinecraftProfile(fabricProfile);
             }

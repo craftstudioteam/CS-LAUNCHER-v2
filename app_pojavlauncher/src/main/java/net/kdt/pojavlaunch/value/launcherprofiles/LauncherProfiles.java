@@ -118,36 +118,42 @@ public class LauncherProfiles {
                         MinecraftProfile profile = new MinecraftProfile();
                         profile.lastVersionId = versionId;
 
+                        // BRANDING: Show clean "Minecraft X.Y.Z" names, never expose internal
+                        // loader version strings like "fabric-loader-0.19.3-1.21.10" to users.
+                        // Extract the MC version for a clean display name.
+                        String mcVer = net.kdt.pojavlaunch.utils.ProfileDetection.extractMcFromVersionId(versionId);
+                        if (mcVer == null || mcVer.isEmpty()) mcVer = versionId;
+
                         if (lower.contains("neoforge")) {
-                            profile.name = "NeoForge " + versionId;
+                            profile.name = "Minecraft " + mcVer + " (NeoForge)";
                             profile.icon = "Forge";
                             profile.type = "custom";
                         } else if (lower.contains("forge")) {
-                            profile.name = "Forge " + versionId;
+                            profile.name = "Minecraft " + mcVer + " (Forge)";
                             profile.icon = "Forge";
                             profile.type = "custom";
                         } else if (lower.contains("fabric")) {
-                            profile.name = "Fabric " + versionId;
+                            profile.name = "Minecraft " + mcVer;
                             profile.icon = "Fabric";
                             profile.type = "custom";
                         } else if (lower.contains("optifine")) {
-                            profile.name = "OptiFine " + versionId;
+                            profile.name = "Minecraft " + mcVer + " (OptiFine)";
                             profile.icon = "OptiFine";
                             profile.type = "custom";
                         } else if (lower.contains("optix")) {
-                            profile.name = "Optix " + versionId;
+                            profile.name = "Minecraft " + mcVer + " (Optix)";
                             profile.icon = "Fabric";
                             profile.type = "custom";
                         } else if (lower.contains("quilt")) {
-                            profile.name = "Quilt " + versionId;
+                            profile.name = "Minecraft " + mcVer + " (Quilt)";
                             profile.icon = "Fabric";
                             profile.type = "custom";
                         } else if (lower.contains("liteloader")) {
-                            profile.name = "LiteLoader " + versionId;
+                            profile.name = "Minecraft " + mcVer + " (LiteLoader)";
                             profile.icon = "Grass";
                             profile.type = "custom";
                         } else {
-                            profile.name = "Minecraft " + versionId;
+                            profile.name = "Minecraft " + mcVer;
                             profile.icon = "Grass";
                             profile.type = "custom";
                         }
