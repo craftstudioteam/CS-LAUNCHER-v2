@@ -10,26 +10,28 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Custom Header -->
+        <!-- Compact Modern Toolbar -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="12dp">
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="16dp"
+            android:background="#121212"
+            android:elevation="4dp">
 
             <LinearLayout
                 android:id="@+id/settings_back_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:padding="8dp">
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp">
 
                 <ImageView
                     android:layout_width="20dp"
@@ -43,28 +45,39 @@
                     android:layout_height="wrap_content"
                     android:text="Back"
                     android:textColor="@color/accent_primary"
-                    android:textSize="15sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"
                     android:layout_marginStart="6dp" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/settings_title"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Settings"
-                android:textColor="@color/text_primary_white"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp" />
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="8dp">
 
-            <TextView
-                android:id="@+id/settings_subtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Customize your launcher experience"
-                android:textColor="@color/text_secondary_light"
-                android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/settings_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Settings"
+                    android:textColor="@color/text_primary_white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/settings_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Customize your launcher experience"
+                    android:textColor="@color/text_secondary_light"
+                    android:textSize="11sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- RecyclerView for Settings Cards -->
@@ -73,8 +86,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
             android:paddingBottom="80dp"
             android:clipToPadding="false"
             android:scrollbars="vertical" />

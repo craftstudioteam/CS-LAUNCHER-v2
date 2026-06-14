@@ -41,8 +41,8 @@ public class ModsSearchFragment extends Fragment {
 
     public static final String TAG = "ModsSearchFragment";
 
-    private static final String[] TAB_TITLES = {"Mods", "Modpacks", "Resource Packs", "Shaders", "Worlds"};
-    private static final String[] TAB_TYPES  = {"mod", "modpack", "resourcepack", "shader", "world"};
+    private static final String[] TAB_TITLES = {"Mods", "Resource Packs", "Shaders"};
+    private static final String[] TAB_TYPES  = {"mod", "resourcepack", "shader"};
 
     private EditText mSearchEditText;
     private ImageButton mFilterButton;

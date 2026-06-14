@@ -328,6 +328,7 @@ public class LauncherActivity extends BaseActivity {
         android.widget.Button btnClientFeatures = findViewById(R.id.btn_client_features);
         if (btnClientFeatures != null) {
             updateClientFeaturesButton(btnClientFeatures, mClientFeaturesManager.isEnabled());
+            startPremiumButtonPulse(btnClientFeatures);
         }
     }
 
@@ -505,9 +506,10 @@ public class LauncherActivity extends BaseActivity {
             updateClientFeaturesButton(btnClientFeatures, mClientFeaturesManager.isEnabled());
             btnClientFeatures.setOnClickListener(v -> {
                 Tools.swapFragment(this, ClientFeaturesFragment.class, ClientFeaturesFragment.TAG, null,
-                        R.anim.fade_scale_in, R.anim.fade_scale_out,
-                        R.anim.fade_scale_in, R.anim.fade_scale_out);
+                        R.anim.slide_in_right, R.anim.slide_out_left,
+                        R.anim.slide_in_left, R.anim.slide_out_right);
             });
+            startPremiumButtonPulse(btnClientFeatures);
         }
 
         if (navModStore != null) {
@@ -560,12 +562,33 @@ public class LauncherActivity extends BaseActivity {
         if (enabled) {
             btn.setText("✦");
             btn.setBackgroundResource(R.drawable.bg_client_features_btn_filled);
-            btn.setTextColor(android.graphics.Color.WHITE);
+            btn.setTextColor(0xFF0D0D0D);
         } else {
             btn.setText("✦");
             btn.setBackgroundResource(R.drawable.bg_client_features_btn);
-            btn.setTextColor(android.graphics.Color.parseColor("#B39DDB"));
+            btn.setTextColor(0xFF39FF14);
         }
+    }
+
+    private void startPremiumButtonPulse(View btn) {
+        if (btn == null) return;
+        android.view.animation.Animation pulse = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.pulse_animation);
+        btn.startAnimation(pulse);
+        btn.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case android.view.MotionEvent.ACTION_DOWN:
+                    v.clearAnimation();
+                    v.animate().scaleX(0.92f).scaleY(0.92f).setDuration(80).start();
+                    break;
+                case android.view.MotionEvent.ACTION_UP:
+                case android.view.MotionEvent.ACTION_CANCEL:
+                    v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).withEndAction(() -> {
+                        v.startAnimation(pulse);
+                    }).start();
+                    break;
+            }
+            return false;
+        });
     }
 
     public ClientFeaturesManager getClientFeaturesManager() {
