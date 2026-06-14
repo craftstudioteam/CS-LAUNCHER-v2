@@ -79,6 +79,12 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
         mRecyclerview = view.findViewById(R.id.search_mod_list);
         mStatusTextView = view.findViewById(R.id.search_mod_status_text);
         mFilterButton = view.findViewById(R.id.search_mod_filter);
+        
+        if (mSearchFilters.isModpack) {
+            TextView title = view.findViewById(R.id.mod_store_title);
+            if (title != null) title.setText("Download Modpacks");
+            mSearchEditText.setHint("Search modpacks...");
+        }
 
         mDefaultTextColor = mStatusTextView.getTextColors();
 
@@ -88,6 +94,9 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
             Bundle args = new Bundle();
             args.putSerializable("mod_item", item);
             args.putString(ManageModsFragment.BUNDLE_PROFILE_KEY, null);
+            if (mSearchFilters.isModpack) {
+                args.putString("content_type", "modpack");
+            }
             Fragment parent = getParentFragment();
             if (parent instanceof MainMenuFragment) {
                 ((MainMenuFragment) parent).openChildPane(ModVersionPickerFragment.class, ModVersionPickerFragment.TAG, args);

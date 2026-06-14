@@ -359,6 +359,45 @@ public class ModInstallFragment extends Fragment {
                 
                 if (!isCompatible) continue;
                 
+                
+                if (mModDetail != null && mModDetail.mcVersionNames != null && mModDetail.mcVersionNames.length > mVersionIndex) {
+                    String modMcVer = mModDetail.mcVersionNames[mVersionIndex];
+                    if (modMcVer != null && !modMcVer.isEmpty()) {
+                        String pmcVer = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(p);
+                        if (!net.kdt.pojavlaunch.utils.ProfileDetection.isVersionCompatible(pmcVer, modMcVer)) {
+                            continue;
+                        }
+                    }
+                }
+            } else if ("modpack".equals(mContentType)) {
+                boolean isCompatible = false;
+                if (mModDetail != null && mModDetail.versionLoaders != null && mModDetail.versionLoaders.length > mVersionIndex) {
+                    String[] modLoaders = mModDetail.versionLoaders[mVersionIndex];
+                    if (modLoaders != null && modLoaders.length > 0) {
+                        for (String loader : modLoaders) {
+                            if (net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, loader)) {
+                                isCompatible = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        isCompatible = net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "fabric") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "forge") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "quilt") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "neoforge") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "liteloader") || 
+                                       net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "optifine");
+                    }
+                } else {
+                    isCompatible = net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "fabric") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "forge") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "quilt") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "neoforge") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "liteloader") || 
+                                   net.kdt.pojavlaunch.utils.ProfileDetection.hasLoader(p, "optifine");
+                }
+                if (!isCompatible) continue;
+                
                 if (mModDetail != null && mModDetail.mcVersionNames != null && mModDetail.mcVersionNames.length > mVersionIndex) {
                     String modMcVer = mModDetail.mcVersionNames[mVersionIndex];
                     if (modMcVer != null && !modMcVer.isEmpty()) {
@@ -409,12 +448,12 @@ public class ModInstallFragment extends Fragment {
         }
         Log.i("ModProfileFilter", "Compatible Profiles: " + validKeys.size());
         
-        if (validKeys.isEmpty()) {
+        if (validKeys.isEmpty() && !"modpack".equals(mContentType)) {
             Toast.makeText(getContext(), "No compatible mod-loader profiles found for this version.\nInstall Fabric/Forge/Quilt to this MC version first.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if (validKeys.size() == 1) {
+        if (validKeys.size() == 1 && !"modpack".equals(mContentType)) {
             mProfileKey = validKeys.get(0);
             startDownload(url, fileName);
             return;
@@ -423,8 +462,12 @@ public class ModInstallFragment extends Fragment {
         String[] profileNames = validNames.toArray(new String[0]);
         String[] finalKeys = validKeys.toArray(new String[0]);
         
-        // Build custom list with profile names + MC version info
-        String[] displayItems = new String[validNames.size()];
+        int listSize = validNames.size();
+        if ("modpack".equals(mContentType)) {
+            listSize += 1;
+        }
+        
+        CharSequence[] displayItems = new CharSequence[listSize];
         for (int i = 0; i < validNames.size(); i++) {
             String key = finalKeys[i];
             net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile p = profiles.get(key);
@@ -437,17 +480,36 @@ public class ModInstallFragment extends Fragment {
                 else if (lower.contains("neoforge")) loaderInfo = " [NeoForge]";
                 else if (lower.contains("quilt")) loaderInfo = " [Quilt]";
             }
+            String rawText;
             if (!mcVer.isEmpty()) {
-                displayItems[i] = "🟢 " + profileNames[i] + " (" + mcVer + loaderInfo + ")";
+                rawText = "✓ " + profileNames[i] + " (" + mcVer + loaderInfo + ")";
             } else {
-                displayItems[i] = "🟢 " + profileNames[i] + loaderInfo;
+                rawText = "✓ " + profileNames[i] + loaderInfo;
+            }
+            android.text.SpannableString span = new android.text.SpannableString(rawText);
+            span.setSpan(new android.text.style.ForegroundColorSpan(android.graphics.Color.GREEN), 0, rawText.length(), android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            displayItems[i] = span;
+        }
+        
+        if ("modpack".equals(mContentType)) {
+            displayItems[listSize - 1] = "Create New Profile";
+            if (validKeys.isEmpty()) {
+                // If no compatible profile exists: Show: Create New Profile and automatically create one.
+                Toast.makeText(getContext(), "No compatible profile exists. Creating a new one...", Toast.LENGTH_SHORT).show();
+                mProfileKey = null;
+                startDownload(url, fileName);
+                return;
             }
         }
                         
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Compatible Profiles")
                 .setSingleChoiceItems(displayItems, currentSelection, (dialog, which) -> {
-                    mProfileKey = finalKeys[which];
+                    if ("modpack".equals(mContentType) && which == displayItems.length - 1) {
+                        mProfileKey = null;
+                    } else {
+                        mProfileKey = finalKeys[which];
+                    }
                     dialog.dismiss();
                     startDownload(url, fileName);
                 })
