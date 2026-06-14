@@ -563,7 +563,7 @@ public class ModDetailFragment extends Fragment {
 
                 if (modMcVer != null && !modMcVer.isEmpty()) {
                     String pmcVer = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(p);
-                    if (!pmcVer.contains(modMcVer.toLowerCase())) continue;
+                    if (!net.kdt.pojavlaunch.utils.ProfileDetection.isVersionCompatible(pmcVer, modMcVer)) continue;
                 }
 
                 isIncompatible = false;
@@ -584,6 +584,7 @@ public class ModDetailFragment extends Fragment {
         }
 
         if (foundProfile) {
+            addBadge("✓ Compatible", "#39FF14");
             for (String pName : validProfiles) {
                 addBadge("✓ Installed Profile Found: " + pName, "#39FF14");
             }

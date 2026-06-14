@@ -369,6 +369,7 @@ public abstract class FabriclikeInstallFragment extends Fragment implements Modl
         Tools.runOnUiThread(()->{
             if (!isFragmentUiAvailable()) return;
             Log.d("CSLauncher", "Installation Finished");
+            net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles.load();
             ModloaderListenerProxy proxy = getListenerProxy();
             if (proxy != null) proxy.detachListener();
             setListenerProxy(null);

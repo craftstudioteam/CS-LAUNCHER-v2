@@ -363,7 +363,7 @@ public class ModInstallFragment extends Fragment {
                     String modMcVer = mModDetail.mcVersionNames[mVersionIndex];
                     if (modMcVer != null && !modMcVer.isEmpty()) {
                         String pmcVer = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(p);
-                        if (!pmcVer.contains(modMcVer.toLowerCase())) {
+                        if (!net.kdt.pojavlaunch.utils.ProfileDetection.isVersionCompatible(pmcVer, modMcVer)) {
                             continue;
                         }
                     }
@@ -382,6 +382,21 @@ public class ModInstallFragment extends Fragment {
             validNames.add(safeName);
             if (key.equals(currentKey)) {
                 currentSelection = validKeys.size() - 1;
+            }
+        }
+
+        // Try to automatically highlight/select a profile that exactly matches modMcVer
+        if (mModDetail != null && mModDetail.mcVersionNames != null && mModDetail.mcVersionNames.length > mVersionIndex) {
+            String modMcVer = mModDetail.mcVersionNames[mVersionIndex];
+            if (modMcVer != null && !modMcVer.isEmpty()) {
+                for (int i = 0; i < validKeys.size(); i++) {
+                    net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile p = profiles.get(validKeys.get(i));
+                    String pmcVer = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(p);
+                    if (pmcVer.equalsIgnoreCase(modMcVer)) {
+                        currentSelection = i;
+                        break;
+                    }
+                }
             }
         }
         

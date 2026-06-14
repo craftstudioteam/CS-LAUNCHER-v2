@@ -42,6 +42,7 @@ public class CursorCustomizationFragment extends Fragment {
     private int mHotspotY = 0;
     private int mGlowRadius = 0;
     private int mSizeScale = 100;
+    private int mOpacity = 100;
 
     // Activity result launcher for file picker
     private final ActivityResultLauncher<String> mFilePickerLauncher =
@@ -60,6 +61,7 @@ public class CursorCustomizationFragment extends Fragment {
         mUploadZone = view.findViewById(R.id.upload_zone);
         View importButton = view.findViewById(R.id.btn_import_png);
         View saveButton = view.findViewById(R.id.btn_save_cursor);
+        View resetButton = view.findViewById(R.id.btn_reset_cursor);
         View backButton = view.findViewById(R.id.cursor_back_button);
 
         // Setup seekbars
@@ -67,17 +69,20 @@ public class CursorCustomizationFragment extends Fragment {
         SeekBar glowSeek = view.findViewById(R.id.seek_glow_strength);
         SeekBar hotspotXSeek = view.findViewById(R.id.seek_hotspot_x);
         SeekBar hotspotYSeek = view.findViewById(R.id.seek_hotspot_y);
+        SeekBar opacitySeek = view.findViewById(R.id.seek_cursor_opacity);
 
         TextView scaleText = view.findViewById(R.id.scale_value_text);
         TextView glowText = view.findViewById(R.id.glow_value_text);
         TextView hotspotXText = view.findViewById(R.id.hotspot_x_value_text);
         TextView hotspotYText = view.findViewById(R.id.hotspot_y_value_text);
+        TextView opacityText = view.findViewById(R.id.opacity_value_text);
 
         // Load existing preferences
         mGlowRadius = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_glow_radius", 0);
         mHotspotX = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_x", 0);
         mHotspotY = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_y", 0);
         mSizeScale = (int) net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getFloat("custom_cursor_scale", 100f);
+        mOpacity = net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_opacity", 100);
 
         scaleSeek.setProgress(mSizeScale);
         scaleText.setText(mSizeScale + "%");
@@ -90,6 +95,17 @@ public class CursorCustomizationFragment extends Fragment {
 
         hotspotYSeek.setProgress(mHotspotY);
         hotspotYText.setText(mHotspotY + " px");
+
+        opacitySeek.setProgress(mOpacity);
+        opacityText.setText(mOpacity + "%");
+
+        // Setup initial preview scaling and alpha
+        if (mPreviewImage != null) {
+            mPreviewImage.setScaleX(mSizeScale / 100f);
+            mPreviewImage.setScaleY(mSizeScale / 100f);
+            mPreviewImage.setAlpha(mOpacity / 100f);
+        }
+        updatePreviewStatusText(view);
 
         // Load and preview current cursor if it exists
         if (net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_PATH != null) {
@@ -133,6 +149,11 @@ public class CursorCustomizationFragment extends Fragment {
                 }
                 mSizeScale = progress;
                 scaleText.setText(progress + "%");
+                if (mPreviewImage != null) {
+                    mPreviewImage.setScaleX(progress / 100f);
+                    mPreviewImage.setScaleY(progress / 100f);
+                }
+                updatePreviewStatusText(view);
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -165,8 +186,24 @@ public class CursorCustomizationFragment extends Fragment {
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
+        opacitySeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mOpacity = progress;
+                opacityText.setText(progress + "%");
+                if (mPreviewImage != null) {
+                    mPreviewImage.setAlpha(progress / 100f);
+                }
+                updatePreviewStatusText(view);
+            }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
         // Save button
         saveButton.setOnClickListener(v -> saveCursor());
+
+        // Reset button
+        resetButton.setOnClickListener(v -> showResetMenu());
 
         // Back button
         backButton.setOnClickListener(v -> {
@@ -179,6 +216,132 @@ public class CursorCustomizationFragment extends Fragment {
         applyPressAnimation(backButton);
         applyPressAnimation(importButton);
         applyPressAnimation(saveButton);
+        applyPressAnimation(resetButton);
+    }
+
+    private void updatePreviewStatusText(View root) {
+        TextView statusText = root.findViewById(R.id.cursor_preview_status);
+        if (statusText != null) {
+            statusText.setText("Scale: " + mSizeScale + "% | Opacity: " + mOpacity + "%");
+        }
+    }
+
+    private void showResetMenu() {
+        String[] options = {
+            "Reset Size",
+            "Reset Position",
+            "Reset Transparency",
+            "Reset Cursor Style",
+            "Full Reset"
+        };
+        
+        new android.app.AlertDialog.Builder(requireContext())
+            .setTitle("Reset Cursor Options")
+            .setItems(options, (dialog, which) -> {
+                SeekBar scaleSeek = getView().findViewById(R.id.seek_cursor_size);
+                SeekBar glowSeek = getView().findViewById(R.id.seek_glow_strength);
+                SeekBar hotspotXSeek = getView().findViewById(R.id.seek_hotspot_x);
+                SeekBar hotspotYSeek = getView().findViewById(R.id.seek_hotspot_y);
+                SeekBar opacitySeek = getView().findViewById(R.id.seek_cursor_opacity);
+                
+                TextView scaleText = getView().findViewById(R.id.scale_value_text);
+                TextView glowText = getView().findViewById(R.id.glow_value_text);
+                TextView hotspotXText = getView().findViewById(R.id.hotspot_x_value_text);
+                TextView hotspotYText = getView().findViewById(R.id.hotspot_y_value_text);
+                TextView opacityText = getView().findViewById(R.id.opacity_value_text);
+                
+                switch (which) {
+                    case 0: // Reset Size
+                        mSizeScale = 100;
+                        if (scaleSeek != null) scaleSeek.setProgress(100);
+                        if (scaleText != null) scaleText.setText("100%");
+                        if (mPreviewImage != null) {
+                            mPreviewImage.setScaleX(1.0f);
+                            mPreviewImage.setScaleY(1.0f);
+                        }
+                        break;
+                    case 1: // Reset Position
+                        mHotspotX = 0;
+                        mHotspotY = 0;
+                        if (hotspotXSeek != null) hotspotXSeek.setProgress(0);
+                        if (hotspotYSeek != null) hotspotYSeek.setProgress(0);
+                        if (hotspotXText != null) hotspotXText.setText("0 px");
+                        if (hotspotYText != null) hotspotYText.setText("0 px");
+                        break;
+                    case 2: // Reset Transparency
+                        mOpacity = 100;
+                        mGlowRadius = 0;
+                        if (opacitySeek != null) opacitySeek.setProgress(100);
+                        if (glowSeek != null) glowSeek.setProgress(0);
+                        if (opacityText != null) opacityText.setText("100%");
+                        if (glowText != null) glowText.setText("0%");
+                        if (mPreviewImage != null) {
+                            mPreviewImage.setAlpha(1.0f);
+                        }
+                        break;
+                    case 3: // Reset Cursor Style
+                        net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.edit()
+                            .putBoolean("custom_cursor_enabled", false)
+                            .apply();
+                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED = false;
+                        if (mPreviewImage != null) {
+                            mPreviewImage.setImageResource(R.drawable.ic_mouse_pointer);
+                            mPreviewImage.setPadding(6, 6, 6, 6);
+                        }
+                        TextView label = getView().findViewById(R.id.cursor_preview_label);
+                        if (label != null) label.setText("DEFAULT");
+                        break;
+                    case 4: // Full Reset
+                        mSizeScale = 100;
+                        mHotspotX = 0;
+                        mHotspotY = 0;
+                        mOpacity = 100;
+                        mGlowRadius = 0;
+                        
+                        if (scaleSeek != null) scaleSeek.setProgress(100);
+                        if (hotspotXSeek != null) hotspotXSeek.setProgress(0);
+                        if (hotspotYSeek != null) hotspotYSeek.setProgress(0);
+                        if (opacitySeek != null) opacitySeek.setProgress(100);
+                        if (glowSeek != null) glowSeek.setProgress(0);
+                        
+                        if (scaleText != null) scaleText.setText("100%");
+                        if (hotspotXText != null) hotspotXText.setText("0 px");
+                        if (hotspotYText != null) hotspotYText.setText("0 px");
+                        if (opacityText != null) opacityText.setText("100%");
+                        if (glowText != null) glowText.setText("0%");
+                        
+                        net.kdt.pojavlaunch.prefs.LauncherPreferences.DEFAULT_PREF.edit()
+                            .putBoolean("custom_cursor_enabled", false)
+                            .putString("custom_cursor_path", null)
+                            .putInt("custom_cursor_hotspot_x", 0)
+                            .putInt("custom_cursor_hotspot_y", 0)
+                            .putFloat("custom_cursor_scale", 100f)
+                            .putInt("custom_cursor_glow_radius", 0)
+                            .putInt("custom_cursor_opacity", 100)
+                            .apply();
+                        
+                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED = false;
+                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_PATH = null;
+                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS = 0;
+                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_SCALE = 100f;
+                        net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_OPACITY = 1f;
+                        
+                        if (mPreviewImage != null) {
+                            mPreviewImage.setImageResource(R.drawable.ic_mouse_pointer);
+                            mPreviewImage.setPadding(6, 6, 6, 6);
+                            mPreviewImage.setScaleX(1.0f);
+                            mPreviewImage.setScaleY(1.0f);
+                            mPreviewImage.setAlpha(1.0f);
+                        }
+                        TextView lbl = getView().findViewById(R.id.cursor_preview_label);
+                        if (lbl != null) lbl.setText("DEFAULT");
+                        break;
+                }
+                updatePreviewStatusText(getView());
+                Toast.makeText(getContext(), "Reset applied successfully!", Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton(android.R.string.cancel, null)
+            .show();
     }
 
     private void animateEntry(View root) {
@@ -346,6 +509,7 @@ public class CursorCustomizationFragment extends Fragment {
                 .putInt("custom_cursor_hotspot_y", mHotspotY)
                 .putFloat("custom_cursor_scale", (float) mSizeScale)
                 .putInt("custom_cursor_glow_radius", mGlowRadius)
+                .putInt("custom_cursor_opacity", mOpacity)
                 .apply();
 
             // Load variables
@@ -353,6 +517,7 @@ public class CursorCustomizationFragment extends Fragment {
             net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_ENABLED = true;
             net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS = mGlowRadius;
             net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_SCALE = (float) mSizeScale;
+            net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_CUSTOM_CURSOR_OPACITY = mOpacity / 100f;
 
             // Update/refresh cursor in touchpad if active
             net.kdt.pojavlaunch.extra.ExtraCore.setValue(net.kdt.pojavlaunch.extra.ExtraConstants.REFRESH_CURSOR, null);

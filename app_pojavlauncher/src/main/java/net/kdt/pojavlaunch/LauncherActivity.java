@@ -322,6 +322,7 @@ public class LauncherActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         ContextExecutor.setActivity(this);
+        net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles.load();
         mInstallTracker.attach();
         updateNavSkinIcon();
         android.widget.Button btnClientFeatures = findViewById(R.id.btn_client_features);
