@@ -20,7 +20,7 @@ public class LocaleUtils extends ContextWrapper {
 
     public static ContextWrapper setLocale(Context context) {
         if (DEFAULT_PREF == null) {
-            DEFAULT_PREF = PreferenceManager.getDefaultSharedPreferences(context);
+            DEFAULT_PREF = context.getSharedPreferences("cslauncher_settings", Context.MODE_PRIVATE);
             // Too early to initialize all prefs here, as this is called by PojavApplication
             // before storage checks are done and before the storage paths are initialized.
             // So only initialize PREF_FORCE_ENGLISH for the check below.

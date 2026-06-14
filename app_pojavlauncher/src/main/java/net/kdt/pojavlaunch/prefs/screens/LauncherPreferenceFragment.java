@@ -172,7 +172,7 @@ public class LauncherPreferenceFragment extends Fragment {
     }
 
     private void initializeDraft(Context context) {
-        SharedPreferences mainPrefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences mainPrefs = context.getSharedPreferences("cslauncher_settings", Context.MODE_PRIVATE);
         SharedPreferences draftPrefs = SettingsSaveManager.getDraftPrefs(context);
         SharedPreferences.Editor editor = draftPrefs.edit();
         editor.clear();
@@ -353,7 +353,7 @@ public class LauncherPreferenceFragment extends Fragment {
                                 .setMessage("Are you sure you want to reset all settings to defaults?")
                                 .setPositiveButton("Reset", (dialog, which) -> {
                                     mDraftPrefs.edit().clear().commit();
-                                    androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().clear().commit();
+                                    requireContext().getSharedPreferences("cslauncher_settings", Context.MODE_PRIVATE).edit().clear().commit();
                                     LauncherPreferences.loadPreferences(requireContext());
                                     Toast.makeText(requireContext(), "Settings reset successfully", Toast.LENGTH_SHORT).show();
                                     requireActivity().recreate();
@@ -461,7 +461,7 @@ public class LauncherPreferenceFragment extends Fragment {
         Context context = getContext();
         if (context == null) return;
 
-        SharedPreferences mainPrefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences mainPrefs = context.getSharedPreferences("cslauncher_settings", Context.MODE_PRIVATE);
 
         boolean prevEnglish = mainPrefs.getBoolean("force_english", false);
         boolean prevGradient = mainPrefs.getBoolean(ThemeManager.KEY_GRADIENT, false);
@@ -503,7 +503,7 @@ public class LauncherPreferenceFragment extends Fragment {
     }
 
     private boolean verifySavedSettings(Context context) {
-        SharedPreferences mainPrefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences mainPrefs = context.getSharedPreferences("cslauncher_settings", Context.MODE_PRIVATE);
         SharedPreferences draftPrefs = SettingsSaveManager.getDraftPrefs(context);
         Map<String, ?> mainMap = mainPrefs.getAll();
         Map<String, ?> draftMap = draftPrefs.getAll();

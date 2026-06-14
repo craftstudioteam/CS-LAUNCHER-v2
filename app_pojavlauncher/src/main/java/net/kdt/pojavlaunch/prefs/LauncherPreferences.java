@@ -90,7 +90,7 @@ public class LauncherPreferences {
         boolean isDevicePowerful = isDevicePowerful(ctx);
 
         if (DEFAULT_PREF == null) {
-            DEFAULT_PREF = androidx.preference.PreferenceManager.getDefaultSharedPreferences(ctx);
+            DEFAULT_PREF = ctx.getSharedPreferences("cslauncher_settings", Context.MODE_PRIVATE);
         }
 
         PREF_BUTTONSIZE = DEFAULT_PREF.getInt("buttonscale", 100);
