@@ -12,6 +12,9 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.widget.ProgressBar;
 import android.graphics.Color;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import net.kdt.pojavlaunch.modloaders.modpacks.imagecache.ModIconCache;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -76,16 +79,19 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
     private TextView mPercentageText;
     private TextView mEtaText;
     private View mDownloadCard;
+    private ImageView mProgressIcon;
     private boolean mIsFinishing = false;
     private final Runnable mFadeOutRunnable = new Runnable() {
         @Override
         public void run() {
             ProgressLayout.this.animate()
                 .alpha(0f)
+                .translationY(-ProgressLayout.this.getHeight())
                 .setDuration(500)
                 .withEndAction(() -> {
                     ProgressLayout.this.setVisibility(GONE);
                     ProgressLayout.this.setAlpha(1f);
+                    ProgressLayout.this.setTranslationY(0f);
                     mIsFinishing = false;
                 })
                 .start();
@@ -122,6 +128,27 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
         mPercentageText = findViewById(R.id.progress_percentage_text);
         mEtaText = findViewById(R.id.progress_eta_text);
         mDownloadCard = findViewById(R.id.download_card);
+        mProgressIcon = findViewById(R.id.progress_icon);
+
+        if (mKineticProgress != null) {
+            mKineticProgress.setHideText(true);
+        }
+
+        if (mDownloadCard != null) {
+            mDownloadCard.setOnClickListener(v -> {
+                if (mIsFinishing || ProgressKeeper.getTaskCount() == 0) {
+                    removeCallbacks(mFadeOutRunnable);
+                    ProgressLayout.this.animate().cancel();
+                    ProgressLayout.this.setAlpha(0f);
+                    ProgressLayout.this.setVisibility(GONE);
+                    ProgressLayout.this.setAlpha(1f);
+                    ProgressLayout.this.setTranslationY(0f);
+                    mIsFinishing = false;
+                } else {
+                    ProgressLayout.this.onClick(ProgressLayout.this);
+                }
+            });
+        }
 
         setBackgroundColor(Color.TRANSPARENT);
         setOnClickListener(this);
@@ -148,8 +175,18 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        mLinearLayout.setVisibility(mLinearLayout.getVisibility() == GONE ? VISIBLE : GONE);
-        mFlipArrow.setRotation(mLinearLayout.getVisibility() == GONE? 0 : 180);
+        if (mIsFinishing || ProgressKeeper.getTaskCount() == 0) {
+            removeCallbacks(mFadeOutRunnable);
+            this.animate().cancel();
+            this.setAlpha(0f);
+            this.setVisibility(GONE);
+            this.setAlpha(1f);
+            this.setTranslationY(0f);
+            mIsFinishing = false;
+        } else {
+            mLinearLayout.setVisibility(mLinearLayout.getVisibility() == GONE ? VISIBLE : GONE);
+            mFlipArrow.setRotation(mLinearLayout.getVisibility() == GONE? 0 : 180);
+        }
     }
 
     @Override
@@ -159,6 +196,16 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
             if(tc > 0) {
                 mIsFinishing = false;
                 setAlpha(1f);
+                setTranslationY(0f);
+                if (mProgressBar != null) {
+                    mProgressBar.setProgressTintList(null);
+                }
+                if (mStatusText != null) {
+                    mStatusText.setTextColor(0xFFFFFFFF);
+                }
+                if (mPercentageText != null) {
+                    mPercentageText.setTextColor(0xFF39FF14);
+                }
                 mTaskNumberDisplayer.setText(getContext().getString(R.string.progresslayout_tasks_in_progress, tc));
                 setVisibility(VISIBLE);
             } else {
@@ -170,9 +217,11 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
                     }
                     if (mPercentageText != null) {
                         mPercentageText.setText("100%");
+                        mPercentageText.setTextColor(0xFF39FF14); // neon green
                     }
                     if (mProgressBar != null) {
                         mProgressBar.setProgress(100);
+                        mProgressBar.setProgressTintList(ColorStateList.valueOf(0xFF39FF14));
                     }
                     if (mDetailText != null) {
                         mDetailText.setVisibility(GONE);
@@ -189,6 +238,18 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
                 }
             }
         });
+    }
+
+    private static String formatRemainingTime(double seconds) {
+        if (seconds < 0) return "";
+        int totalSecs = (int) seconds;
+        int mins = totalSecs / 60;
+        int secs = totalSecs % 60;
+        if (mins > 0) {
+            return mins + "m " + secs + "s remaining";
+        } else {
+            return secs + "s remaining";
+        }
     }
 
     class LayoutProgressListener implements ProgressListener {
@@ -225,7 +286,7 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
                     textView.setProgress(progress);
                 }
                 if(resid != -1) textView.setText(getContext().getString(resid, va));
-                else if(va.length > 0 && va[0] != null)textView.setText((String)va[0]);
+                else if(va != null && va.length > 0 && va[0] != null)textView.setText((String)va[0]);
                 else textView.setText("");
 
                 // Update the kinetic progress circle and detail texts
@@ -277,84 +338,155 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
                 String etaStr = "";
                 String statusTitle = "";
 
-                if (this.progressKey != null) {
-                    switch (this.progressKey) {
-                        case DOWNLOAD_MINECRAFT:
-                            statusTitle = "Downloading Minecraft";
-                            break;
-                        case UNPACK_RUNTIME:
-                            statusTitle = "Unpacking Runtime";
-                            break;
-                        case INSTALL_MODPACK:
-                            statusTitle = "Installing Modpack";
-                            break;
-                        case EXTRACT_COMPONENTS:
-                            statusTitle = "Extracting Components";
-                            break;
-                        case EXTRACT_SINGLE_FILES:
-                            statusTitle = "Extracting Files";
-                            break;
-                        default:
-                            if (resid != -1) {
-                                statusTitle = getContext().getString(resid);
-                            } else if (va.length > 0 && va[0] instanceof String) {
-                                statusTitle = (String) va[0];
-                            } else {
-                                statusTitle = "Downloading...";
-                            }
-                            break;
-                    }
-                }
+                String modName = null;
+                String modVersion = null;
+                String modIconUrl = null;
+                String contentType = null;
 
-                if (resid == R.string.newdl_downloading_game_files_size && va.length >= 3) {
+                if (va != null && va.length >= 9) {
                     try {
-                        double currentMB = ((Number) va[0]).doubleValue();
-                        double totalMB = ((Number) va[1]).doubleValue();
-                        speed = ((Number) va[2]).doubleValue();
-                        detailStr = String.format(java.util.Locale.US, "%.1f MB / %.1f MB", currentMB, totalMB);
-                        if (speed > 0) {
-                            double remainingMB = totalMB - currentMB;
-                            double etaSeconds = remainingMB / speed;
-                            if (etaSeconds < 60) {
-                                etaStr = "ETA: " + (int) etaSeconds + "s";
-                            } else {
-                                etaStr = "ETA: " + ((int) etaSeconds / 60) + "m " + ((int) etaSeconds % 60) + "s";
-                            }
-                        } else {
-                            etaStr = "ETA: --";
+                        modName = (String) va[5];
+                        modVersion = (String) va[6];
+                        modIconUrl = (String) va[7];
+                        contentType = (String) va[8];
+
+                        double currentMB = ((Number) va[1]).doubleValue();
+                        double totalMB = ((Number) va[2]).doubleValue();
+                        speed = ((Number) va[3]).doubleValue();
+                        double remainingSec = ((Number) va[4]).doubleValue();
+
+                        if (totalMB > 0) {
+                            detailStr = String.format(java.util.Locale.US, "%.1f MB / %.1f MB", currentMB, totalMB);
+                        }
+                        if (remainingSec >= 0) {
+                            etaStr = formatRemainingTime(remainingSec);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if (resid == R.string.newdl_downloading_game_files && va.length >= 3) {
-                    try {
-                        long currentFiles = ((Number) va[0]).longValue();
-                        long totalFiles = ((Number) va[1]).longValue();
-                        speed = ((Number) va[2]).doubleValue();
-                        detailStr = currentFiles + " / " + totalFiles + " files";
-                        etaStr = "ETA: --";
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                }
+
+                if (mProgressIcon != null) {
+                    if (modIconUrl != null && !modIconUrl.isEmpty()) {
+                        String cacheTag = modName != null ? modName : modIconUrl.substring(modIconUrl.lastIndexOf('/') + 1);
+                        new ModIconCache().getImage(bitmap -> {
+                            post(() -> {
+                                if (mProgressIcon != null && bitmap != null) {
+                                    mProgressIcon.setImageBitmap(bitmap);
+                                }
+                            });
+                        }, cacheTag, modIconUrl);
+                    } else {
+                        mProgressIcon.setImageResource(R.drawable.ic_download);
                     }
-                } else if (va.length >= 2 && va[0] instanceof Number && va[1] instanceof Number) {
-                    try {
-                        double currentMB = ((Number) va[0]).doubleValue();
-                        double totalMB = ((Number) va[1]).doubleValue();
-                        detailStr = String.format(java.util.Locale.US, "%.1f MB / %.1f MB", currentMB, totalMB);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                }
+
+                if (this.progressKey != null) {
+                    if (resid == R.string.fabric_dl_progress) {
+                        statusTitle = "Downloading Fabric" + (va != null && va.length > 0 && va[0] != null ? " " + va[0] : "");
+                    } else if (resid == R.string.forge_dl_progress) {
+                        String loaderName = "Forge";
+                        String verSuffix = "";
+                        if (va != null && va.length > 0 && va[0] != null) {
+                            String verStr = String.valueOf(va[0]);
+                            if (verStr.toLowerCase().contains("neoforge")) {
+                                loaderName = ""; // The version string itself already contains NeoForge, e.g. "neoforge-20.4.80" or "NeoForge 20.4.80"
+                            }
+                            verSuffix = " " + verStr;
+                        }
+                        statusTitle = "Downloading " + loaderName + verSuffix;
+                    } else if (resid == R.string.of_dl_progress) {
+                        statusTitle = "Downloading OptiFine" + (va != null && va.length > 0 && va[0] != null ? " " + va[0] : "");
+                    } else if (resid == R.string.neoforge_dl_searching) {
+                        statusTitle = "Searching NeoForge...";
+                    } else if (resid == R.string.forge_dl_searching) {
+                        statusTitle = "Searching Forge...";
+                    } else {
+                        switch (this.progressKey) {
+                            case DOWNLOAD_MINECRAFT:
+                                statusTitle = "Downloading Minecraft";
+                                break;
+                            case UNPACK_RUNTIME:
+                                statusTitle = "Unpacking Runtime";
+                                break;
+                            case INSTALL_MODPACK:
+                                if (contentType != null) {
+                                    String typeStr = contentType.substring(0, 1).toUpperCase() + contentType.substring(1);
+                                    if ("resourcepack".equals(contentType)) typeStr = "Resource Pack";
+                                    statusTitle = "Downloading " + typeStr + ": " + modName;
+                                } else {
+                                    statusTitle = "Installing Modpack";
+                                }
+                                break;
+                            case EXTRACT_COMPONENTS:
+                                statusTitle = "Extracting Components";
+                                break;
+                            case EXTRACT_SINGLE_FILES:
+                                statusTitle = "Extracting Files";
+                                break;
+                            default:
+                                if (resid != -1) {
+                                    statusTitle = getContext().getString(resid);
+                                } else if (va != null && va.length > 0 && va[0] instanceof String) {
+                                    statusTitle = (String) va[0];
+                                } else {
+                                    statusTitle = "Downloading...";
+                                }
+                                break;
+                        }
                     }
-                } else if (va.length >= 3 && va[1] instanceof Number && va[2] instanceof Number) {
-                    try {
-                        double currentMB = ((Number) va[1]).doubleValue();
-                        double totalMB = ((Number) va[2]).doubleValue();
-                        detailStr = String.format(java.util.Locale.US, "%.1f MB / %.1f MB", currentMB, totalMB);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    if (va.length > 1 && va[1] != null) {
-                        detailStr = String.valueOf(va[1]);
+                }
+
+                // If not using new format, perform fallback legacy parsing
+                if (detailStr.isEmpty() && va != null) {
+                    if (resid == R.string.newdl_downloading_game_files_size && va.length >= 3) {
+                        try {
+                            double currentMB = ((Number) va[0]).doubleValue();
+                            double totalMB = ((Number) va[1]).doubleValue();
+                            speed = ((Number) va[2]).doubleValue();
+                            detailStr = String.format(java.util.Locale.US, "%.1f MB / %.1f MB", currentMB, totalMB);
+                            if (speed > 0) {
+                                double remainingMB = totalMB - currentMB;
+                                double etaSeconds = remainingMB / speed;
+                                etaStr = formatRemainingTime(etaSeconds);
+                            } else {
+                                etaStr = "";
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else if (resid == R.string.newdl_downloading_game_files && va.length >= 3) {
+                        try {
+                            long currentFiles = ((Number) va[0]).longValue();
+                            long totalFiles = ((Number) va[1]).longValue();
+                            speed = ((Number) va[2]).doubleValue();
+                            detailStr = currentFiles + " / " + totalFiles + " files";
+                            etaStr = "";
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else if (va.length >= 2 && va[0] instanceof Number && va[1] instanceof Number) {
+                        try {
+                            double currentMB = ((Number) va[0]).doubleValue();
+                            double totalMB = ((Number) va[1]).doubleValue();
+                            detailStr = String.format(java.util.Locale.US, "%.1f MB / %.1f MB", currentMB, totalMB);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else if (va.length >= 3 && va[1] instanceof Number && va[2] instanceof Number) {
+                        try {
+                            double currentMB = ((Number) va[1]).doubleValue();
+                            double totalMB = ((Number) va[2]).doubleValue();
+                            detailStr = String.format(java.util.Locale.US, "%.1f MB / %.1f MB", currentMB, totalMB);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        if (va.length > 1 && va[1] != null) {
+                            detailStr = String.valueOf(va[1]);
+                        } else if (va.length > 0 && va[0] != null) {
+                            detailStr = String.valueOf(va[0]);
+                        }
                     }
                 }
 
@@ -372,7 +504,7 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
                 }
                 if (mSpeedText != null) {
                     if (speed >= 0) {
-                        mSpeedText.setText(String.format(java.util.Locale.US, "%.2f MB/s", speed));
+                        mSpeedText.setText(String.format(java.util.Locale.US, "%.1f MB/s", speed));
                         mSpeedText.setVisibility(VISIBLE);
                     } else {
                         mSpeedText.setVisibility(GONE);

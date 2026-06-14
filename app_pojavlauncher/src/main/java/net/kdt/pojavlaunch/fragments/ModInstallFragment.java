@@ -508,7 +508,19 @@ public class ModInstallFragment extends Fragment {
         PojavApplication.sExecutorService.execute(() -> {
             try {
                 File targetFile = new File(targetDir, fileName);
-                DownloadUtils.downloadFile(url, targetFile);
+                
+                String title = mModItem != null ? mModItem.title : "Mod";
+                String ver = (mModDetail != null && mModDetail.versionNames != null && mVersionIndex >= 0 && mVersionIndex < mModDetail.versionNames.length) ? mModDetail.versionNames[mVersionIndex] : "";
+                String imgUrl = mModItem != null ? mModItem.imageUrl : null;
+                
+                net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper monitor = 
+                    new net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper(
+                        R.string.modpack_download_downloading_mods, 
+                        ProgressLayout.INSTALL_MODPACK, 
+                        title, ver, imgUrl, mContentType
+                    );
+
+                DownloadUtils.downloadFileMonitored(url, targetFile, null, monitor);
 
                 // For worlds, extract ZIP and delete archive
                 if ("world".equals(mContentType)) {
@@ -582,7 +594,15 @@ public class ModInstallFragment extends Fragment {
             String depName = depUrl.substring(depUrl.lastIndexOf('/') + 1);
             if (depName.contains("?")) depName = depName.substring(0, depName.indexOf('?'));
             if (!depName.endsWith(".jar")) depName += ".jar";
-            DownloadUtils.downloadFile(depUrl, new File(depDir, depName));
+            
+            String depTitle = depItem.title != null && !depItem.title.isEmpty() ? depItem.title : projectId;
+            net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper depMonitor = 
+                new net.kdt.pojavlaunch.progresskeeper.DownloaderProgressWrapper(
+                    R.string.modpack_download_downloading_mods, 
+                    ProgressLayout.INSTALL_MODPACK, 
+                    depTitle, "", depItem.imageUrl, mContentType
+                );
+            DownloadUtils.downloadFileMonitored(depUrl, new File(depDir, depName), null, depMonitor);
         } catch (Exception e) {
             Log.w(TAG, "Failed to download dependency " + projectId);
         }

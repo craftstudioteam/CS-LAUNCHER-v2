@@ -23,6 +23,31 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <!-- Left Container for Progress Ring & Icon -->
+        <FrameLayout
+            android:id="@+id/progress_indicator_container"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <com.kdt.mcgui.KineticProgressView
+                android:id="@+id/kinetic_progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:id="@+id/progress_icon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_download"
+                android:tint="#FFFFFF"
+                tools:ignore="UseAppTint" />
+        </FrameLayout>
+
         <!-- Status / Title -->
         <TextView
             android:id="@+id/progress_status_text"
@@ -34,8 +59,9 @@
             android:textStyle="bold"
             android:ellipsize="end"
             android:maxLines="1"
+            android:layout_marginStart="12dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/progress_indicator_container"
             app:layout_constraintEnd_toStartOf="@+id/progress_percentage_text"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Downloading Minecraft"/>
@@ -57,13 +83,14 @@
         <ProgressBar
             android:id="@+id/progress_horizontal_bar"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="7dp"
             android:layout_marginTop="8dp"
+            android:layout_marginStart="12dp"
             android:max="100"
             android:progress="0"
             android:progressDrawable="@drawable/bg_download_progress_bar"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/progress_indicator_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/progress_status_text"/>
 
@@ -76,9 +103,10 @@
             android:textColor="#AAAAAA"
             android:textSize="10.5sp"
             android:layout_marginTop="6dp"
+            android:layout_marginStart="12dp"
             android:ellipsize="end"
             android:maxLines="1"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/progress_indicator_container"
             app:layout_constraintEnd_toStartOf="@+id/progress_speed_text"
             app:layout_constraintTop_toBottomOf="@id/progress_horizontal_bar"
             tools:text="141 MB / 513 MB"/>
