@@ -432,7 +432,7 @@ public class LauncherPreferenceFragment extends Fragment {
                 "Clear Shader & Temporary Caches", "Free up storage by deleting temporary rendering files", null)
                 .setAction(() -> {
                     try {
-                        Tools.clearCache(requireContext());
+                        clearCacheLocal(requireContext());
                         Toast.makeText(getContext(), "Caches cleared successfully", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Toast.makeText(getContext(), "Failed to clear cache", Toast.LENGTH_SHORT).show();
@@ -664,6 +664,28 @@ public class LauncherPreferenceFragment extends Fragment {
                 .getChildFragmentManager()
                 .findFragmentByTag(RightPaneHomeFragment.TAG);
         if (home != null) home.reloadBackground();
+    }
+
+    private void clearCacheLocal(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteRecursive(dir);
+        } catch (Exception e) {
+            Log.e("LauncherPreferenceFragment", "Failed to clear cache", e);
+        }
+    }
+
+    private void deleteRecursive(File file) {
+        if (file == null) return;
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File child : files) {
+                    deleteRecursive(child);
+                }
+            }
+        }
+        file.delete();
     }
 
     // ── RecyclerView Adapter & ViewHolder ─────────────────────────────────────
