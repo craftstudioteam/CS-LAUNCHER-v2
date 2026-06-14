@@ -66,7 +66,7 @@
             <!-- 1. 3D Player Preview Card -->
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="240dp"
+                android:layout_height="260dp"
                 android:background="@drawable/bg_fastclient_card"
                 android:padding="8dp"
                 android:layout_marginBottom="16dp">
@@ -89,6 +89,66 @@
                     android:paddingVertical="6dp"
                     android:layout_gravity="top|start"
                     android:layout_margin="12dp"/>
+
+                <!-- Camera Controls overlay -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="#AA090D10"
+                    android:padding="6dp"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <Button
+                        android:id="@+id/btn_cam_reset"
+                        android:layout_width="54dp"
+                        android:layout_height="32dp"
+                        android:text="R-CAM"
+                        android:textSize="9sp"
+                        android:textColor="#FFFFFF"
+                        android:background="@drawable/bg_profile_button"
+                        android:layout_marginEnd="4dp" />
+
+                    <Button
+                        android:id="@+id/btn_cam_rot_reset"
+                        android:layout_width="54dp"
+                        android:layout_height="32dp"
+                        android:text="R-ROT"
+                        android:textSize="9sp"
+                        android:textColor="#FFFFFF"
+                        android:background="@drawable/bg_profile_button"
+                        android:layout_marginEnd="4dp" />
+
+                    <Button
+                        android:id="@+id/btn_cam_auto_rot"
+                        android:layout_width="54dp"
+                        android:layout_height="32dp"
+                        android:text="AUTO"
+                        android:textSize="9sp"
+                        android:textColor="#39FF14"
+                        android:background="@drawable/bg_profile_button"
+                        android:layout_marginEnd="4dp" />
+
+                    <Button
+                        android:id="@+id/btn_cam_zoom_in"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:text="+"
+                        android:textSize="12sp"
+                        android:textColor="#FFFFFF"
+                        android:background="@drawable/bg_profile_button"
+                        android:layout_marginEnd="4dp" />
+
+                    <Button
+                        android:id="@+id/btn_cam_zoom_out"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:text="-"
+                        android:textSize="12sp"
+                        android:textColor="#FFFFFF"
+                        android:background="@drawable/bg_profile_button" />
+                </LinearLayout>
             </FrameLayout>
 
             <!-- 3. Skin Settings Card -->

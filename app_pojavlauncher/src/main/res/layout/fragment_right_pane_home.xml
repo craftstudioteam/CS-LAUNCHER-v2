@@ -50,4 +50,27 @@
             android:contentDescription="Create Profile" />
     </FrameLayout>
 
+    <!-- Refresh Profiles button -->
+    <FrameLayout
+        android:id="@+id/btn_refresh_profiles"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/background_image_rounded"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_redo"
+            android:tint="@color/accent_primary"
+            android:contentDescription="Refresh Profiles" />
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -47,6 +47,8 @@ public class LauncherProfiles {
         if (mainProfileJson.profiles.size() == 0)
             mainProfileJson.profiles.put(UUID.randomUUID().toString(), MinecraftProfile.getDefaultProfile());
 
+        autoScanProfiles();
+
         // Normalize profile names from mod installers
         if(normalizeProfileIds(mainProfileJson)){
             write();
@@ -57,6 +59,131 @@ public class LauncherProfiles {
                 if (listener != null) Tools.runOnUiThread(listener);
             }
         }
+    }
+
+    public static void autoScanProfiles() {
+        if (mainProfileJson == null || mainProfileJson.profiles == null) return;
+        boolean changed = false;
+
+        // 1. Scan versions directory
+        File versionsDir = new File(Tools.DIR_GAME_NEW, "versions");
+        if (versionsDir.exists() && versionsDir.isDirectory()) {
+            File[] files = versionsDir.listFiles(File::isDirectory);
+            if (files != null) {
+                for (File dir : files) {
+                    String versionId = dir.getName();
+                    // Check if any profile uses this lastVersionId
+                    boolean exists = false;
+                    for (MinecraftProfile p : mainProfileJson.profiles.values()) {
+                        if (versionId.equals(p.lastVersionId)) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists) {
+                        // Create a profile for this version!
+                        MinecraftProfile profile = new MinecraftProfile();
+                        profile.lastVersionId = versionId;
+
+                        String lower = versionId.toLowerCase();
+                        if (lower.contains("neoforge")) {
+                            profile.name = "NeoForge " + versionId;
+                            profile.icon = "Forge";
+                            profile.type = "custom";
+                        } else if (lower.contains("forge")) {
+                            profile.name = "Forge " + versionId;
+                            profile.icon = "Forge";
+                            profile.type = "custom";
+                        } else if (lower.contains("fabric")) {
+                            profile.name = "Fabric " + versionId;
+                            profile.icon = "Fabric";
+                            profile.type = "custom";
+                        } else if (lower.contains("optifine")) {
+                            profile.name = "OptiFine " + versionId;
+                            profile.icon = "OptiFine";
+                            profile.type = "custom";
+                        } else if (lower.contains("optix")) {
+                            profile.name = "Optix " + versionId;
+                            profile.icon = "Fabric";
+                            profile.type = "custom";
+                        } else {
+                            profile.name = "Minecraft " + versionId;
+                            profile.icon = "Grass";
+                            profile.type = "custom";
+                        }
+
+                        mainProfileJson.profiles.put(UUID.randomUUID().toString(), profile);
+                        changed = true;
+                    }
+                }
+            }
+        }
+
+        // 2. Scan custom_instances directory
+        File instancesDir = new File(Tools.DIR_GAME_NEW, "custom_instances");
+        if (instancesDir.exists() && instancesDir.isDirectory()) {
+            File[] files = instancesDir.listFiles(File::isDirectory);
+            if (files != null) {
+                for (File dir : files) {
+                    String instName = dir.getName();
+                    String relativePath = "./custom_instances/" + instName;
+                    // Check if any profile uses this gameDir
+                    boolean exists = false;
+                    for (MinecraftProfile p : mainProfileJson.profiles.values()) {
+                        if (p.gameDir != null && (p.gameDir.equals(relativePath) || p.gameDir.toLowerCase().contains(instName.toLowerCase()))) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists) {
+                        // Create profile for this custom instance
+                        MinecraftProfile profile = new MinecraftProfile();
+                        profile.gameDir = relativePath;
+                        profile.type = "modpack";
+
+                        String lower = instName.toLowerCase();
+                        if (lower.contains("optix")) {
+                            profile.name = "Optix Client Instance";
+                            profile.icon = "Fabric";
+                            profile.lastVersionId = findBestVersionForInstance("fabric");
+                        } else if (lower.contains("client")) {
+                            profile.name = "Client Feature Instance";
+                            profile.icon = "Fabric";
+                            profile.lastVersionId = findBestVersionForInstance("fabric");
+                        } else {
+                            profile.name = "Modpack " + instName;
+                            profile.icon = "Grass";
+                            profile.lastVersionId = findBestVersionForInstance(null);
+                        }
+
+                        mainProfileJson.profiles.put(UUID.randomUUID().toString(), profile);
+                        changed = true;
+                    }
+                }
+            }
+        }
+
+        if (changed) {
+            write();
+        }
+    }
+
+    private static String findBestVersionForInstance(String keyword) {
+        File versionsDir = new File(Tools.DIR_GAME_NEW, "versions");
+        if (versionsDir.exists() && versionsDir.isDirectory()) {
+            File[] files = versionsDir.listFiles(File::isDirectory);
+            if (files != null && files.length > 0) {
+                if (keyword != null) {
+                    for (File dir : files) {
+                        if (dir.getName().toLowerCase().contains(keyword)) {
+                            return dir.getName();
+                        }
+                    }
+                }
+                return files[0].getName();
+            }
+        }
+        return "1.21.10";
     }
 
     /** Apply the current configuration into a file */

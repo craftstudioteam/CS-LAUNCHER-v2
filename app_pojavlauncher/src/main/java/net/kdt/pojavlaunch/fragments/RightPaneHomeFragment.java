@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -73,6 +74,14 @@ public class RightPaneHomeFragment extends Fragment {
                             ProfileTypeSelectFragment.class,
                             ProfileTypeSelectFragment.TAG, null);
                 }
+            });
+        }
+
+        View refreshBtn = view.findViewById(R.id.btn_refresh_profiles);
+        if (refreshBtn != null) {
+            refreshBtn.setOnClickListener(v -> {
+                setupProfileAdapter();
+                Toast.makeText(getContext(), "Profiles refreshed", Toast.LENGTH_SHORT).show();
             });
         }
     }

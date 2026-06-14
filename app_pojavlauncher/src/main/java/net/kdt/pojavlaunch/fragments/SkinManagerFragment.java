@@ -237,13 +237,40 @@ public class SkinManagerFragment extends Fragment {
                     if (spinner != null) {
                         spinner.reloadAccounts(true, spinner.getSelectedItemPosition());
                     }
-                    if (getActivity() instanceof LauncherActivity) {
-                        ((LauncherActivity) getActivity()).updateNavSkinIcon();
-                    }
+        // Camera Control Listeners
+        view.findViewById(R.id.btn_cam_reset).setOnClickListener(v -> {
+            if (mSkinRenderer != null) {
+                mSkinRenderer.mAngleX = 0f;
+                mSkinRenderer.mAngleY = 0f;
+                mSkinRenderer.mZoomFactor = 1.0f;
+                mSkinRenderer.mAutoRotate = false;
+                View autoBtn = view.findViewById(R.id.btn_cam_auto_rot);
+                if (autoBtn instanceof Button) {
+                    ((Button) autoBtn).setTextColor(Color.WHITE);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(requireContext(), "Failed to save textures: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+        view.findViewById(R.id.btn_cam_rot_reset).setOnClickListener(v -> {
+            if (mSkinRenderer != null) {
+                mSkinRenderer.mAngleX = 0f;
+                mSkinRenderer.mAngleY = 0f;
+            }
+        });
+        view.findViewById(R.id.btn_cam_auto_rot).setOnClickListener(v -> {
+            if (mSkinRenderer != null) {
+                mSkinRenderer.mAutoRotate = !mSkinRenderer.mAutoRotate;
+                Button autoBtn = (Button) v;
+                autoBtn.setTextColor(mSkinRenderer.mAutoRotate ? 0xFF39FF14 : Color.WHITE);
+            }
+        });
+        view.findViewById(R.id.btn_cam_zoom_in).setOnClickListener(v -> {
+            if (mSkinRenderer != null) {
+                mSkinRenderer.mZoomFactor = Math.min(2.5f, mSkinRenderer.mZoomFactor + 0.1f);
+            }
+        });
+        view.findViewById(R.id.btn_cam_zoom_out).setOnClickListener(v -> {
+            if (mSkinRenderer != null) {
+                mSkinRenderer.mZoomFactor = Math.max(0.4f, mSkinRenderer.mZoomFactor - 0.1f);
             }
         });
 
@@ -335,7 +362,9 @@ public class SkinManagerFragment extends Fragment {
     private void updatePreview() {
         Bitmap skinBitmap = loadBitmapFromUri(mPendingSkinUri);
         if (skinBitmap == null) {
-            skinBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_steve);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inScaled = false;
+            skinBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_steve, options);
         }
         Bitmap capeBitmap = loadBitmapFromUri(mPendingCapeUri);
 
@@ -396,6 +425,8 @@ public class SkinManagerFragment extends Fragment {
         
         public volatile float mAngleX = 0f;
         public volatile float mAngleY = 0f;
+        public volatile float mZoomFactor = 1.0f;
+        public volatile boolean mAutoRotate = false;
         public volatile boolean mIsSlim = false;
 
         private int mProgram;
@@ -532,10 +563,15 @@ public class SkinManagerFragment extends Fragment {
                 mCape = null;
             }
 
+            if (mAutoRotate) {
+                mAngleX += 1.0f;
+            }
+
             Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, 40f, 0f, 0f, 0f, 0f, 1.0f, 0f);
             Matrix.setIdentityM(mModelMatrix, 0);
             Matrix.rotateM(mModelMatrix, 0, mAngleY, 1f, 0f, 0f);
             Matrix.rotateM(mModelMatrix, 0, mAngleX, 0f, 1f, 0f);
+            Matrix.scaleM(mModelMatrix, 0, mZoomFactor, mZoomFactor, mZoomFactor);
 
             GLES20.glUseProgram(mProgram);
             

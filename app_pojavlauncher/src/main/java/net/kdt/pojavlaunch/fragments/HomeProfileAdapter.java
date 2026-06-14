@@ -66,6 +66,9 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
         }
         holder.tvMeta.setText(meta.toString());
 
+        int modCount = profile.getInstalledModsCount();
+        holder.tvModCount.setText("Installed Mods: " + modCount);
+
         bindIcon(holder.imgIcon, profileKey, profile);
 
         holder.cardRoot.setOnClickListener(v -> {
@@ -128,6 +131,7 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
         final ImageView imgIcon;
         final TextView tvName;
         final TextView tvMeta;
+        final TextView tvModCount;
         final FrameLayout btnPlay;
 
         ViewHolder(View itemView) {
@@ -136,6 +140,7 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
             imgIcon = itemView.findViewById(R.id.img_profile_icon);
             tvName = itemView.findViewById(R.id.tv_profile_name);
             tvMeta = itemView.findViewById(R.id.tv_profile_meta);
+            tvModCount = itemView.findViewById(R.id.tv_profile_mod_count);
             btnPlay = itemView.findViewById(R.id.btn_profile_play);
         }
     }

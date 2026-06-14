@@ -26,6 +26,18 @@ public class ModVersionAdapter extends RecyclerView.Adapter<ModVersionAdapter.Vi
     }
 
     public void setVersions(List<ModrinthVersion> versions) {
+        if (versions != null) {
+            java.util.Collections.sort(versions, (a, b) -> {
+                String da = a.date_published != null ? a.date_published : "";
+                String db = b.date_published != null ? b.date_published : "";
+                int cmp = db.compareTo(da);
+                if (cmp != 0) return cmp;
+
+                String va = a.version_number != null ? a.version_number : "";
+                String vb = b.version_number != null ? b.version_number : "";
+                return vb.compareTo(va);
+            });
+        }
         mVersions = versions;
         notifyDataSetChanged();
     }
@@ -70,6 +82,16 @@ public class ModVersionAdapter extends RecyclerView.Adapter<ModVersionAdapter.Vi
             holder.tvBadgeStable.setText(type.substring(0, 1).toUpperCase() + type.substring(1));
             holder.tvBadgeStable.setTextColor(0xFFFFC107);
             holder.tvBadgeStable.setBackgroundResource(R.drawable.bg_badge_pill);
+        }
+
+        String date = version.date_published != null ? version.date_published : "";
+        if (date.length() >= 10) {
+            date = date.substring(0, 10);
+        } else {
+            date = "Unknown Date";
+        }
+        if (holder.tvBadgeDate != null) {
+            holder.tvBadgeDate.setText(date);
         }
 
         View.OnClickListener clickListener = v -> {
@@ -125,7 +147,7 @@ public class ModVersionAdapter extends RecyclerView.Adapter<ModVersionAdapter.Vi
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvBadgeVersion, tvBadgeMc, tvBadgeLoader, tvBadgeStable;
+        TextView tvName, tvBadgeVersion, tvBadgeMc, tvBadgeLoader, tvBadgeStable, tvBadgeDate;
         View btnInstall;
 
         public ViewHolder(@NonNull View itemView) {
@@ -135,6 +157,7 @@ public class ModVersionAdapter extends RecyclerView.Adapter<ModVersionAdapter.Vi
             tvBadgeMc = itemView.findViewById(R.id.tv_badge_mc);
             tvBadgeLoader = itemView.findViewById(R.id.tv_badge_loader);
             tvBadgeStable = itemView.findViewById(R.id.tv_badge_stable);
+            tvBadgeDate = itemView.findViewById(R.id.tv_badge_date);
             btnInstall = itemView.findViewById(R.id.btn_card_install);
         }
     }
@@ -144,6 +167,7 @@ public class ModVersionAdapter extends RecyclerView.Adapter<ModVersionAdapter.Vi
         public String name;
         public String version_number;
         public String version_type;
+        public String date_published;
         public List<String> game_versions;
         public List<String> loaders;
         public List<ModrinthFile> files;
