@@ -237,6 +237,15 @@ public class SkinManagerFragment extends Fragment {
                     if (spinner != null) {
                         spinner.reloadAccounts(true, spinner.getSelectedItemPosition());
                     }
+                    if (getActivity() instanceof LauncherActivity) {
+                        ((LauncherActivity) getActivity()).updateNavSkinIcon();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(requireContext(), "Failed to save textures: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
         // Camera Control Listeners
         view.findViewById(R.id.btn_cam_reset).setOnClickListener(v -> {
             if (mSkinRenderer != null) {
