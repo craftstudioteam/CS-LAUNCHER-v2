@@ -400,9 +400,9 @@ public class ProfileEditorFragment extends Fragment implements CropperUtils.Crop
 
                 bindPacksAdapters(modsDir, resourcePacksDir, shaderPacksDir);
 
-                // Hide Mods section for Vanilla & OptiFine profiles — mod loading would crash.
+                // Hide Mods section for Vanilla & OptiFine profiles only if no mod files exist.
                 if (mTempProfile != null) {
-                    boolean hideMods = mTempProfile.isOptiFine() || mTempProfile.isVanilla();
+                    boolean hideMods = (mTempProfile.isOptiFine() || mTempProfile.isVanilla()) && mTempProfile.getInstalledModsCount() == 0;
                     int visibility = hideMods ? View.GONE : View.VISIBLE;
                     if (mModsHeader != null) mModsHeader.setVisibility(visibility);
                     if (mModsImport != null) mModsImport.setVisibility(visibility);

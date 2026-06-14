@@ -100,4 +100,18 @@ public class MinecraftProfile {
 			return null;
 		}
 	}
+
+	public int getInstalledModsCount() {
+		try {
+			java.io.File gameDir = resolveGameDir();
+			if (gameDir == null) return 0;
+			java.io.File modsDir = new java.io.File(gameDir, "mods");
+			if (!modsDir.exists() || !modsDir.isDirectory()) return 0;
+			java.io.File[] files = modsDir.listFiles(f -> f.isFile() &&
+					(f.getName().toLowerCase().endsWith(".jar") || f.getName().toLowerCase().endsWith(".jar.disabled")));
+			return files != null ? files.length : 0;
+		} catch (Throwable t) {
+			return 0;
+		}
+	}
 }

@@ -19,12 +19,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import net.kdt.pojavlaunch.LauncherActivity;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
+import net.kdt.pojavlaunch.prefs.SettingsSaveManager;
 
 /**
  * Preference for the main screen, any sub-screen should inherit this class for consistent behavior,
  * overriding only onCreatePreferences
  */
 public class LauncherPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        SettingsSaveManager.initDraft(getContext());
+        getPreferenceManager().setSharedPreferencesName(SettingsSaveManager.DRAFT_PREFS_NAME);
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -38,6 +46,30 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
             list.scheduleLayoutAnimation();
             list.setItemAnimator(new DefaultItemAnimator());
             list.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        }
+
+        View saveBtn = view.findViewById(R.id.btn_save_settings);
+        if (saveBtn != null) {
+            saveBtn.setOnClickListener(v -> {
+                SettingsSaveManager.commitChanges(getContext());
+                LauncherPreferences.loadPreferences(getContext());
+                View bar = view.findViewById(R.id.unsaved_changes_bar);
+                if (bar != null) bar.setVisibility(View.GONE);
+            });
+        }
+        showSaveBarIfDirty(view);
+    }
+
+    private void showSaveBarIfDirty(View rootView) {
+        if (rootView == null) return;
+        View bar = rootView.findViewById(R.id.unsaved_changes_bar);
+        if (bar == null) return;
+        SharedPreferences p = getPreferenceManager().getSharedPreferences();
+        boolean autoSave = p != null && p.getBoolean("auto_save_fallback", false);
+        if (!autoSave && SettingsSaveManager.hasUnsavedChanges(getContext())) {
+            bar.setVisibility(View.VISIBLE);
+        } else {
+            bar.setVisibility(View.GONE);
         }
     }
 
@@ -96,6 +128,7 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
         super.onResume();
         SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
         if(sharedPreferences != null) sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        showSaveBarIfDirty(getView());
     }
 
     @Override
@@ -107,10 +140,18 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences p, String s) {
-        LauncherPreferences.loadPreferences(getContext());
-        try {
-            android.widget.Toast.makeText(getContext(), "Setting saved", android.widget.Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {}
+        boolean autoSave = p.getBoolean("auto_save_fallback", false);
+        if (autoSave) {
+            SettingsSaveManager.commitChanges(getContext());
+            LauncherPreferences.loadPreferences(getContext());
+            try {
+                android.widget.Toast.makeText(getContext(), "Setting saved", android.widget.Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {}
+            View bar = getView() != null ? getView().findViewById(R.id.unsaved_changes_bar) : null;
+            if (bar != null) bar.setVisibility(View.GONE);
+        } else {
+            showSaveBarIfDirty(getView());
+        }
 
         if ("force_english".equals(s)) {
             Activity activity = getActivity();

@@ -99,6 +99,18 @@
                     android:textStyle="bold"
                     android:background="@drawable/bg_stable_pill"
                     android:paddingHorizontal="6dp"
+                    android:paddingVertical="2dp"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:id="@+id/tv_badge_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#B8B8B8"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_badge_pill"
+                    android:paddingHorizontal="6dp"
                     android:paddingVertical="2dp" />
 
             </LinearLayout>

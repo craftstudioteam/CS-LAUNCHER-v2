@@ -56,7 +56,7 @@ public class InstalledModAdapter extends RecyclerView.Adapter<InstalledModAdapte
         mEmptyListener = listener;
         if (modsDir != null && modsDir.isDirectory()) {
             File[] files = modsDir.listFiles(f -> f.isFile() &&
-                    (f.getName().endsWith(".jar") || f.getName().endsWith(".jar.disabled")));
+                    (f.getName().toLowerCase().endsWith(".jar") || f.getName().toLowerCase().endsWith(".jar.disabled")));
             if (files != null) {
                 Arrays.sort(files, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
                 for (File f : files) mMods.add(new ModEntry(f));
@@ -112,34 +112,60 @@ public class InstalledModAdapter extends RecyclerView.Adapter<InstalledModAdapte
 
         void bind(ModEntry entry) {
             name.setText(entry.displayName());
-            
-            String sizeStr = "";
-            long bytes = entry.file.length();
-            if (bytes < 1024) sizeStr = bytes + " B";
-            else if (bytes < 1024 * 1024) sizeStr = String.format("%.1f KB", bytes / 1024.0);
-            else sizeStr = String.format("%.1f MB", bytes / (1024.0 * 1024.0));
-            
-            version.setText(entry.file.getName() + " (" + sizeStr + ")");
+            version.setText("Loading...");
 
             // Tag the ImageView with the file path so we can verify it hasn't been recycled
             icon.setTag(entry.file.getAbsolutePath());
             icon.setImageResource(R.drawable.ic_add_modded);
 
             final String expectedTag = entry.file.getAbsolutePath();
-            final WeakReference<ImageView> iconRef = new WeakReference<>(icon);
-            final File jarFile = entry.file;
+            final WeakReference<ModViewHolder> holderRef = new WeakReference<>(this);
 
-            PojavApplication.sExecutorService.execute(() -> {
-                Bitmap bmp = extractModIcon(jarFile);
-                if (bmp == null) return;
-                mMainHandler.post(() -> {
-                    ImageView iv = iconRef.get();
-                    // Only update if the view still belongs to the same mod
-                    if (iv != null && expectedTag.equals(iv.getTag())) {
-                        iv.setImageBitmap(bmp);
+            if (entry.metadataLoaded) {
+                name.setText(entry.parsedName);
+                String verText = entry.parsedVersion.isEmpty() ? "Unknown version" : entry.parsedVersion;
+                version.setText(verText + " (" + entry.getFileSizeString() + ")");
+                if (entry.cachedIcon != null) {
+                    icon.setImageBitmap(entry.cachedIcon);
+                }
+            } else {
+                PojavApplication.sExecutorService.execute(() -> {
+                    ModMetadata meta = parseModMetadata(entry.file);
+                    Bitmap bmp = null;
+                    if (meta.iconPath != null) {
+                        try (ZipFile zip = new ZipFile(entry.file)) {
+                            bmp = loadEntryAsBitmap(zip, meta.iconPath);
+                        } catch (Exception ignored) {}
                     }
+                    if (bmp == null) {
+                        // Fallback scan
+                        try (ZipFile zip = new ZipFile(entry.file)) {
+                            for (String fallback : new String[]{"pack.png", "icon.png", "logo.png"}) {
+                                bmp = loadEntryAsBitmap(zip, fallback);
+                                if (bmp != null) break;
+                            }
+                        } catch (Exception ignored) {}
+                    }
+
+                    final Bitmap finalBmp = bmp;
+                    entry.parsedName = meta.name;
+                    entry.parsedVersion = meta.version;
+                    entry.cachedIcon = bmp;
+                    entry.metadataLoaded = true;
+
+                    mMainHandler.post(() -> {
+                        ModViewHolder holder = holderRef.get();
+                        if (holder != null && expectedTag.equals(holder.icon.getTag())) {
+                            holder.name.setText(entry.parsedName);
+                            String verText = entry.parsedVersion.isEmpty() ? "Unknown version" : entry.parsedVersion;
+                            holder.version.setText(verText + " (" + entry.getFileSizeString() + ")");
+                            if (finalBmp != null) {
+                                holder.icon.setImageBitmap(finalBmp);
+                            }
+                        }
+                    });
                 });
-            });
+            }
 
             toggle.setOnCheckedChangeListener(null);
             toggle.setChecked(entry.enabled);
@@ -169,6 +195,10 @@ public class InstalledModAdapter extends RecyclerView.Adapter<InstalledModAdapte
     static class ModEntry {
         File file;
         boolean enabled;
+        String parsedName;
+        String parsedVersion;
+        Bitmap cachedIcon;
+        boolean metadataLoaded = false;
 
         ModEntry(File f) {
             this.file = f;
@@ -176,10 +206,18 @@ public class InstalledModAdapter extends RecyclerView.Adapter<InstalledModAdapte
         }
 
         String displayName() {
+            if (metadataLoaded && parsedName != null) return parsedName;
             String n = file.getName();
             if (n.endsWith(".jar.disabled")) n = n.substring(0, n.length() - 13);
             else if (n.endsWith(".jar"))      n = n.substring(0, n.length() - 4);
             return n;
+        }
+
+        String getFileSizeString() {
+            long bytes = file.length();
+            if (bytes < 1024) return bytes + " B";
+            else if (bytes < 1024 * 1024) return String.format("%.1f KB", bytes / 1024.0);
+            else return String.format("%.1f MB", bytes / (1024.0 * 1024.0));
         }
 
         void setEnabled(boolean enable) {
@@ -194,27 +232,128 @@ public class InstalledModAdapter extends RecyclerView.Adapter<InstalledModAdapte
         }
     }
 
-    // ── Icon extraction ───────────────────────────────────────────────────
+    static class ModMetadata {
+        String name;
+        String version;
+        String iconPath;
+    }
+
+    @NonNull
+    private static ModMetadata parseModMetadata(File jarFile) {
+        ModMetadata meta = new ModMetadata();
+        meta.name = jarFile.getName();
+        if (meta.name.endsWith(".jar.disabled")) meta.name = meta.name.substring(0, meta.name.length() - 13);
+        else if (meta.name.endsWith(".jar"))      meta.name = meta.name.substring(0, meta.name.length() - 4);
+        meta.version = "";
+
+        try (ZipFile zip = new ZipFile(jarFile)) {
+            // 1. Fabric
+            String content = readEntry(zip, "fabric.mod.json");
+            if (content != null) {
+                try {
+                    JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
+                    if (obj.has("name")) {
+                        meta.name = obj.get("name").getAsString();
+                    }
+                    if (obj.has("version")) {
+                        meta.version = obj.get("version").getAsString();
+                    }
+                    if (obj.has("icon")) {
+                        meta.iconPath = resolveIconPathFromJson(obj.get("icon"));
+                    }
+                    return meta;
+                } catch (Exception ignored) {}
+            }
+
+            // 2. Quilt
+            content = readEntry(zip, "quilt.mod.json");
+            if (content != null) {
+                try {
+                    JsonObject root = JsonParser.parseString(content).getAsJsonObject();
+                    JsonObject ql = root.has("quilt_loader") ? root.getAsJsonObject("quilt_loader") : null;
+                    if (ql != null) {
+                        if (ql.has("version")) {
+                            meta.version = ql.get("version").getAsString();
+                        }
+                        if (ql.has("metadata")) {
+                            JsonObject m = ql.getAsJsonObject("metadata");
+                            if (m.has("name")) meta.name = m.get("name").getAsString();
+                            if (m.has("icon")) meta.iconPath = resolveIconPathFromJson(m.get("icon"));
+                        }
+                    }
+                    return meta;
+                } catch (Exception ignored) {}
+            }
+
+            // 3. Forge legacy (mcmod.info)
+            content = readEntry(zip, "mcmod.info");
+            if (content != null) {
+                try {
+                    JsonElement el = JsonParser.parseString(content);
+                    JsonObject modObj = null;
+                    if (el.isJsonArray()) {
+                        JsonArray arr = el.getAsJsonArray();
+                        if (arr.size() > 0 && arr.get(0).isJsonObject()) {
+                            modObj = arr.get(0).getAsJsonObject();
+                        }
+                    } else if (el.isJsonObject()) {
+                        JsonObject root = el.getAsJsonObject();
+                        if (root.has("modList") && root.get("modList").isJsonArray()) {
+                            JsonArray arr = root.getAsJsonArray("modList");
+                            if (arr.size() > 0 && arr.get(0).isJsonObject()) {
+                                modObj = arr.get(0).getAsJsonObject();
+                            }
+                        } else {
+                            modObj = root;
+                        }
+                    }
+                    if (modObj != null) {
+                        if (modObj.has("name")) meta.name = modObj.get("name").getAsString();
+                        if (modObj.has("version")) meta.version = modObj.get("version").getAsString();
+                        if (modObj.has("logoFile")) meta.iconPath = modObj.get("logoFile").getAsString();
+                    }
+                    return meta;
+                } catch (Exception ignored) {}
+            }
+
+            // 4. Forge/NeoForge (TOML)
+            for (String tomlPath : new String[]{"META-INF/neoforge.mods.toml", "META-INF/mods.toml"}) {
+                content = readEntry(zip, tomlPath);
+                if (content != null) {
+                    String dName = tomlStringField(content, "displayName");
+                    if (dName != null) meta.name = dName;
+                    String ver = tomlStringField(content, "version");
+                    if (ver != null) meta.version = ver;
+                    String logo = tomlStringField(content, "logoFile");
+                    if (logo != null) meta.iconPath = logo;
+                    return meta;
+                }
+            }
+        } catch (Exception ignored) {}
+
+        return meta;
+    }
 
     @Nullable
-    private static Bitmap extractModIcon(File jarFile) {
-        try (ZipFile zip = new ZipFile(jarFile)) {
-            String iconPath = resolveIconPath(zip);
-            Log.d(TAG, jarFile.getName() + " → icon path: " + iconPath);
-
-            if (iconPath != null) {
-                Bitmap bmp = loadEntryAsBitmap(zip, iconPath);
-                if (bmp != null) return bmp;
-                Log.w(TAG, "Icon path resolved but bitmap failed: " + iconPath);
+    private static String resolveIconPathFromJson(JsonElement iconEl) {
+        if (iconEl.isJsonPrimitive()) {
+            return iconEl.getAsString();
+        } else if (iconEl.isJsonObject()) {
+            JsonObject sizeMap = iconEl.getAsJsonObject();
+            String best = null;
+            int bestSize = 0;
+            for (String key : sizeMap.keySet()) {
+                try {
+                    int sz = Integer.parseInt(key);
+                    if (sz > bestSize) {
+                        bestSize = sz;
+                        best = sizeMap.get(key).getAsString();
+                    }
+                } catch (NumberFormatException ignored) {
+                    best = sizeMap.get(key).getAsString();
+                }
             }
-
-            // Fallback scan — some old mods don't declare icon in metadata
-            for (String fallback : new String[]{"pack.png", "icon.png", "logo.png"}) {
-                Bitmap bmp = loadEntryAsBitmap(zip, fallback);
-                if (bmp != null) return bmp;
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "Failed to open JAR: " + jarFile.getName() + " — " + e.getMessage());
+            return best;
         }
         return null;
     }
