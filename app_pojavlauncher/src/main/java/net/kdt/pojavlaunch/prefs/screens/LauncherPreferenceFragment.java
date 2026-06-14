@@ -53,22 +53,41 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
         Activity activity = getActivity();
         if(activity instanceof LauncherActivity) {
             LauncherActivity launcherActivity = (LauncherActivity)activity;
-            if (mRequestNotificationPermissionPreference != null) {
-                mRequestNotificationPermissionPreference.setVisible(!launcherActivity.checkForNotificationPermission());
-                mRequestNotificationPermissionPreference.setOnPreferenceClickListener(preference -> {
-                    launcherActivity.askForNotificationPermission(()->mRequestNotificationPermissionPreference.setVisible(false));
-                    return true;
+            if (mRequestNotificationPermissionPreference instanceof androidx.preference.TwoStatePreference) {
+                androidx.preference.TwoStatePreference pref = (androidx.preference.TwoStatePreference) mRequestNotificationPermissionPreference;
+                pref.setVisible(true);
+                pref.setChecked(launcherActivity.checkForNotificationPermission());
+                pref.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean val = (Boolean) newValue;
+                    if (val) {
+                        launcherActivity.askForNotificationPermission(() -> {
+                            pref.setChecked(launcherActivity.checkForNotificationPermission());
+                        });
+                    }
+                    return false; // update checked state manually
                 });
+            }
+            if (mMicrophonePermissionPreference instanceof androidx.preference.TwoStatePreference) {
+                androidx.preference.TwoStatePreference pref = (androidx.preference.TwoStatePreference) mMicrophonePermissionPreference;
+                pref.setVisible(true);
+                pref.setChecked(launcherActivity.checkForMicrophonePermission());
+                pref.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean val = (Boolean) newValue;
+                    if (val) {
+                        launcherActivity.askForMicrophonePermission(() -> {
+                            pref.setChecked(launcherActivity.checkForMicrophonePermission());
+                        });
+                    }
+                    return false; // update checked state manually
+                });
+            }
+        }else {
+            if (mRequestNotificationPermissionPreference != null) {
+                mRequestNotificationPermissionPreference.setVisible(false);
             }
             if (mMicrophonePermissionPreference != null) {
-                mMicrophonePermissionPreference.setVisible(!launcherActivity.checkForMicrophonePermission());
-                mMicrophonePermissionPreference.setOnPreferenceClickListener(preference -> {
-                    launcherActivity.askForMicrophonePermission(()->mMicrophonePermissionPreference.setVisible(false));
-                    return true;
-                });
+                mMicrophonePermissionPreference.setVisible(false);
             }
-        }else if (mRequestNotificationPermissionPreference != null) {
-            mRequestNotificationPermissionPreference.setVisible(false);
         }
     }
 
@@ -89,6 +108,16 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
     @Override
     public void onSharedPreferenceChanged(SharedPreferences p, String s) {
         LauncherPreferences.loadPreferences(getContext());
+        try {
+            android.widget.Toast.makeText(getContext(), "Setting saved", android.widget.Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {}
+
+        if ("force_english".equals(s)) {
+            Activity activity = getActivity();
+            if (activity != null) {
+                activity.recreate();
+            }
+        }
     }
 
     protected Preference requirePreference(CharSequence key) {

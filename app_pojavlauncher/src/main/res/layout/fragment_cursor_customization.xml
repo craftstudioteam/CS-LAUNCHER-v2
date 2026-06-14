@@ -107,6 +107,17 @@
                     android:paddingHorizontal="6dp"
                     android:paddingVertical="2dp"
                     android:layout_margin="6dp"/>
+
+                <TextView
+                    android:id="@+id/cursor_preview_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:text="Scale: 100% | Opacity: 100%"
+                    android:textColor="#888888"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:layout_margin="6dp"/>
             </FrameLayout>
 
             <!-- ═══════════════════════════════════════ -->
@@ -288,6 +299,46 @@
                     android:thumbTint="#00FF41"
                     android:progressBackgroundTint="#2A2A2A"/>
 
+                <!-- Cursor Opacity -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="CURSOR OPACITY"
+                        android:textColor="#00FF41"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:id="@+id/opacity_value_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100%"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seek_cursor_opacity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="2dp"
+                    android:max="100"
+                    android:progress="100"
+                    android:progressTint="#00FF41"
+                    android:thumbTint="#00FF41"
+                    android:progressBackgroundTint="#2A2A2A"/>
+
                 <!-- Hotspot X -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -380,6 +431,22 @@
                 android:background="@drawable/bg_save_button_neon"
                 android:text="SAVE CURSOR"
                 android:textColor="#000000"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:stateListAnimator="@null"
+                android:layout_marginBottom="10dp"/>
+
+            <!-- ═══════════════════════════════════════ -->
+            <!-- ✦ RESET BUTTON                          -->
+            <!-- ═══════════════════════════════════════ -->
+            <com.kdt.mcgui.MineButton
+                android:id="@+id/btn_reset_cursor"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_delete_button"
+                android:text="RESET CURSOR"
+                android:textColor="#FFFFFF"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.08"

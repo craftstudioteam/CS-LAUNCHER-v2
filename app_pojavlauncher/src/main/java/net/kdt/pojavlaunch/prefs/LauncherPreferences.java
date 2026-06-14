@@ -82,11 +82,16 @@ public class LauncherPreferences {
     public static int PREF_CUSTOM_CURSOR_GLOW_RADIUS = 0;
     public static int PREF_CUSTOM_CURSOR_GLOW_COLOR = Color.parseColor("#A6FF3D");
     public static float PREF_CUSTOM_CURSOR_SCALE = 100f; // stored as percentage (25 to 300)
+    public static float PREF_CUSTOM_CURSOR_OPACITY = 1f; // stored as float (0.0 to 1.0)
 
     public static void loadPreferences(Context ctx) {
         //Required for CTRLDEF_FILE and MultiRT
         Tools.initStorageConstants(ctx);
         boolean isDevicePowerful = isDevicePowerful(ctx);
+
+        if (DEFAULT_PREF == null) {
+            DEFAULT_PREF = androidx.preference.PreferenceManager.getDefaultSharedPreferences(ctx);
+        }
 
         PREF_BUTTONSIZE = DEFAULT_PREF.getInt("buttonscale", 100);
         PREF_MOUSESCALE = DEFAULT_PREF.getInt("mousescale", 100)/100f;
@@ -127,7 +132,7 @@ public class LauncherPreferences {
         PREF_FORCE_ENABLE_TOUCHCONTROLLER = DEFAULT_PREF.getBoolean("forceEnableTouchController", false);
         PREF_TOUCHCONTROLLER_VIBRATE_LENGTH = DEFAULT_PREF.getInt("touchControllerVibrateLength", 100);
         PREF_MOUSE_GRAB_FORCE = DEFAULT_PREF.getBoolean("always_grab_mouse", false);
-
+ 
         String argLwjglLibname = "-Dorg.lwjgl.opengl.libname=";
         for (String arg : JREUtils.parseJavaArguments(PREF_CUSTOM_JAVA_ARGS)) {
             if (arg.startsWith(argLwjglLibname)) {
@@ -146,12 +151,13 @@ public class LauncherPreferences {
             PREF_DEFAULT_RUNTIME = MultiRTUtils.getInstalledRuntimes().get(0).name;
             LauncherPreferences.DEFAULT_PREF.edit().putString("defaultRuntime",LauncherPreferences.PREF_DEFAULT_RUNTIME).apply();
         }
-
+ 
         PREF_CUSTOM_CURSOR_PATH = DEFAULT_PREF.getString("custom_cursor_path", null);
         PREF_CUSTOM_CURSOR_ENABLED = DEFAULT_PREF.getBoolean("custom_cursor_enabled", false);
         PREF_CUSTOM_CURSOR_GLOW_RADIUS = DEFAULT_PREF.getInt("custom_cursor_glow_radius", 0);
         PREF_CUSTOM_CURSOR_GLOW_COLOR = DEFAULT_PREF.getInt("custom_cursor_glow_color", Color.parseColor("#A6FF3D"));
         PREF_CUSTOM_CURSOR_SCALE = DEFAULT_PREF.getFloat("custom_cursor_scale", 100f);
+        PREF_CUSTOM_CURSOR_OPACITY = DEFAULT_PREF.getInt("custom_cursor_opacity", 100) / 100f;
     }
 
     /**

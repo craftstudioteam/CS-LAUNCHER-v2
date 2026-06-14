@@ -105,61 +105,70 @@ public abstract class QuickSettingSideDialog extends com.kdt.SideDialogView {
             PREF_ENABLE_GYRO = isChecked;
             onGyroStateChanged();
             updateGyroVisibility(isChecked);
-            mEditor.putBoolean("enableGyro", isChecked);
+            mEditor.putBoolean("enableGyro", isChecked).apply();
+            showSaveFeedback(buttonView.getContext());
         });
 
         mGyroXSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             PREF_GYRO_INVERT_X = isChecked;
             onGyroStateChanged();
-            mEditor.putBoolean("gyroInvertX", isChecked);
+            mEditor.putBoolean("gyroInvertX", isChecked).apply();
+            showSaveFeedback(buttonView.getContext());
         });
 
         mGyroYSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             PREF_GYRO_INVERT_Y = isChecked;
             onGyroStateChanged();
-            mEditor.putBoolean("gyroInvertY", isChecked);
+            mEditor.putBoolean("gyroInvertY", isChecked).apply();
+            showSaveFeedback(buttonView.getContext());
         });
 
         mGestureSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             PREF_DISABLE_GESTURES = isChecked;
             updateGestureVisibility(isChecked);
-            mEditor.putBoolean("disableGestures", isChecked);
+            mEditor.putBoolean("disableGestures", isChecked).apply();
+            showSaveFeedback(buttonView.getContext());
         });
 
         mMouseGrabSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             PREF_MOUSE_GRAB_FORCE = isChecked;
-            mEditor.putBoolean("always_grab_mouse", isChecked);
+            mEditor.putBoolean("always_grab_mouse", isChecked).apply();
+            showSaveFeedback(buttonView.getContext());
         });
 
         mGyroSensitivityBar.setOnSeekBarChangeListener((SimpleSeekBarListener) (seekBar, progress, fromUser) -> {
             PREF_GYRO_SENSITIVITY = progress / 100f;
-            mEditor.putInt("gyroSensitivity", progress);
+            mEditor.putInt("gyroSensitivity", progress).apply();
             setSeekTextPercent(mGyroSensitivityText, progress);
+            if (fromUser) showSaveFeedback(seekBar.getContext());
         });
         mGyroSensitivityBar.setProgress((int) (mOriginalGyroSensitivity * 100f));
         setSeekTextPercent(mGyroSensitivityText, mGyroSensitivityBar.getProgress());
 
         mMouseSpeedBar.setOnSeekBarChangeListener((SimpleSeekBarListener) (seekBar, progress, fromUser) -> {
             PREF_MOUSESPEED = progress / 100f;
-            mEditor.putInt("mousespeed", progress);
+            mEditor.putInt("mousespeed", progress).apply();
             setSeekTextPercent(mMouseSpeedText, progress);
+            if (fromUser) showSaveFeedback(seekBar.getContext());
         });
         mMouseSpeedBar.setProgress((int) (mOriginalMouseSpeed * 100f));
         setSeekTextPercent(mMouseSpeedText, mMouseSpeedBar.getProgress());
 
         mGestureDelayBar.setOnSeekBarChangeListener((SimpleSeekBarListener) (seekBar, progress, fromUser) -> {
             PREF_LONGPRESS_TRIGGER = progress;
-            mEditor.putInt("timeLongPressTrigger", progress);
+            mEditor.putInt("timeLongPressTrigger", progress).apply();
             setSeekTextMillisecond(mGestureDelayText, progress);
+            if (fromUser) showSaveFeedback(seekBar.getContext());
         });
         mGestureDelayBar.setProgress(mOriginalGestureDelay);
         setSeekTextMillisecond(mGestureDelayText, mGestureDelayBar.getProgress());
 
         mResolutionBar.setOnSeekBarChangeListener((SimpleSeekBarListener) (seekBar, progress, fromUser) -> {
             PREF_SCALE_FACTOR = progress/100f;
-            mEditor.putInt("resolutionRatio", progress);
+            mEditor.putInt("resolutionRatio", progress).apply();
             setSeekTextPercent(mResolutionText, progress);
             onResolutionChanged();
+            if (fromUser) showSaveFeedback(seekBar.getContext());
         });
         mResolutionBar.setProgress((int) (mOriginalResolution * 100));
         setSeekTextPercent(mResolutionText, mResolutionBar.getProgress());
@@ -168,6 +177,12 @@ public abstract class QuickSettingSideDialog extends com.kdt.SideDialogView {
         updateMouseGrabVisibility();
         updateGyroVisibility(mOriginalGyroEnabled);
         updateGestureVisibility(mOriginalGestureDisabled);
+    }
+
+    private void showSaveFeedback(Context context) {
+        try {
+            android.widget.Toast.makeText(context, "Setting saved", android.widget.Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {}
     }
 
     private static void setSeekTextMillisecond(TextView target, int value) {
@@ -225,7 +240,6 @@ public abstract class QuickSettingSideDialog extends com.kdt.SideDialogView {
     }
 
     private void setupCancelButton() {
-        setStartButtonListener(android.R.string.cancel, v -> cancel());
         setEndButtonListener(android.R.string.ok, v -> {
             mEditor.apply();
             disappear(true);

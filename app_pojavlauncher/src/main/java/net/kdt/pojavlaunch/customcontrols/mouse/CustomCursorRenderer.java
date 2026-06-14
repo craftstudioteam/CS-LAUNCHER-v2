@@ -31,6 +31,7 @@ public class CustomCursorRenderer {
     private static int mLastHotspotX = -1;
     private static int mLastHotspotY = -1;
     private static float mLastScale = -1f;
+    private static float mLastOpacity = -1f;
     
     private static long mAnimationStartTime = 0;
     private static boolean mIsRunning = false;
@@ -101,6 +102,7 @@ public class CustomCursorRenderer {
         mLastHotspotX = -1;
         mLastHotspotY = -1;
         mLastScale = -1f;
+        mLastOpacity = -1f;
     }
     
     public static synchronized PointerIcon getActivePointerIcon() {
@@ -122,13 +124,15 @@ public class CustomCursorRenderer {
         int hotspotX = LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_x", 0);
         int hotspotY = LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_hotspot_y", 0);
         float scale = LauncherPreferences.PREF_CUSTOM_CURSOR_SCALE / 100f;
+        float opacity = LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_opacity", 100) / 100f;
         
         boolean pathChanged = !path.equals(mLastLoadedPath);
         boolean glowChanged = glowRadius != mLastGlowRadius || glowColor != mLastGlowColor;
         boolean hotspotChanged = hotspotX != mLastHotspotX || hotspotY != mLastHotspotY;
         boolean scaleChanged = scale != mLastScale;
+        boolean opacityChanged = opacity != mLastOpacity;
         
-        if (pathChanged || glowChanged || hotspotChanged || scaleChanged) {
+        if (pathChanged || glowChanged || hotspotChanged || scaleChanged || opacityChanged) {
             // Reset and reload custom cursor
             reset();
             mLastLoadedPath = path;
@@ -137,6 +141,7 @@ public class CustomCursorRenderer {
             mLastHotspotX = hotspotX;
             mLastHotspotY = hotspotY;
             mLastScale = scale;
+            mLastOpacity = opacity;
             
             File file = new File(path);
             if (!file.exists()) {
@@ -160,6 +165,7 @@ public class CustomCursorRenderer {
                     } else {
                         Log.e(TAG, "Failed to decode GIF movie from: " + path);
                     }
+                } else {
                     // Static image
                     Bitmap src = BitmapFactory.decodeFile(path);
                     if (src != null) {
@@ -181,6 +187,15 @@ public class CustomCursorRenderer {
                         } else {
                             bitmapToUse = src;
                         }
+                        
+                        if (opacity < 1.0f) {
+                            Bitmap opaqueBmp = applyOpacity(bitmapToUse, opacity);
+                            if (bitmapToUse != src) {
+                                bitmapToUse.recycle();
+                            }
+                            bitmapToUse = opaqueBmp;
+                        }
+                        
                         mStaticBitmap = bitmapToUse;
                         
                         int scaledHotspotX = (int)(hotspotX * scale);
@@ -223,6 +238,12 @@ public class CustomCursorRenderer {
                 frame = glowingFrame;
             }
             
+            if (mLastOpacity < 1.0f) {
+                Bitmap opaqueFrame = applyOpacity(frame, mLastOpacity);
+                if (frame != mGifBitmap) frame.recycle();
+                frame = opaqueFrame;
+            }
+            
             int scaledHotspotX = (int)(hotspotX * mLastScale);
             int scaledHotspotY = (int)(hotspotY * mLastScale);
             int hX = Math.max(0, Math.min(frame.getWidth() - 1, scaledHotspotX));
@@ -251,6 +272,7 @@ public class CustomCursorRenderer {
             int glowRadius = LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_RADIUS;
             int glowColor = LauncherPreferences.PREF_CUSTOM_CURSOR_GLOW_COLOR;
             float scale = LauncherPreferences.PREF_CUSTOM_CURSOR_SCALE / 100f;
+            float opacity = LauncherPreferences.DEFAULT_PREF.getInt("custom_cursor_opacity", 100) / 100f;
             
             Bitmap frame = mGifBitmap;
             if (scale != 1.0f && scale > 0.1f) {
@@ -264,11 +286,27 @@ public class CustomCursorRenderer {
             if (glowRadius > 0) {
                 Bitmap glowingFrame = CursorManager.applyGlow(frame, (int)(glowRadius * scale), glowColor);
                 if (frame != mGifBitmap) frame.recycle();
-                return glowingFrame;
+                frame = glowingFrame;
+            }
+
+            if (opacity < 1.0f) {
+                Bitmap opaqueFrame = applyOpacity(frame, opacity);
+                if (frame != mGifBitmap) frame.recycle();
+                frame = opaqueFrame;
             }
             return frame;
         }
         
         return mStaticBitmap;
+    }
+
+    public static Bitmap applyOpacity(Bitmap src, float opacity) {
+        if (opacity >= 1.0f) return src;
+        Bitmap result = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(result);
+        android.graphics.Paint paint = new android.graphics.Paint();
+        paint.setAlpha((int) (opacity * 255));
+        canvas.drawBitmap(src, 0, 0, paint);
+        return result;
     }
 }

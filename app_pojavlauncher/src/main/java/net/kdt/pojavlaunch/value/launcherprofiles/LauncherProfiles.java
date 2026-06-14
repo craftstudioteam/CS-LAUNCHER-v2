@@ -51,6 +51,11 @@ public class LauncherProfiles {
         if(normalizeProfileIds(mainProfileJson)){
             write();
             load();
+        } else {
+            // Notify listeners when profiles are reloaded/rescanned
+            for (Runnable listener : new java.util.ArrayList<>(sProfileUpdateListeners)) {
+                if (listener != null) Tools.runOnUiThread(listener);
+            }
         }
     }
 
