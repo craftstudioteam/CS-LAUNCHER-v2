@@ -1,13 +1,16 @@
 package net.kdt.pojavlaunch.prefs.screens;
 
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
-
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,15 +26,24 @@ import net.kdt.pojavlaunch.prefs.SettingsSaveManager;
 
 /**
  * Preference for the main screen, any sub-screen should inherit this class for consistent behavior,
- * overriding only onCreatePreferences
+ * overriding only onCreatePreferences.
+ *
+ * SETTINGS PAGE REWORK:
+ * - Removed auto_save_fallback dependency
+ * - Changes go to draft, Save button commits to main SharedPreferences
+ * - Floating save bar with dirty-state indicator
+ * - Auto-saves on fragment destroy to prevent data loss
  */
 public class LauncherPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    /** Tracks whether any unsaved changes exist */
+    private boolean mIsDirty = false;
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SettingsSaveManager.initDraft(getContext());
-        // getPreferenceManager() is only valid AFTER super.onCreate()
         if (getPreferenceManager() != null) {
             getPreferenceManager().setSharedPreferencesName(SettingsSaveManager.DRAFT_PREFS_NAME);
         }
@@ -51,29 +63,114 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
             list.setOverScrollMode(View.OVER_SCROLL_NEVER);
         }
 
-        View saveBtn = view.findViewById(R.id.btn_save_settings);
-        if (saveBtn != null) {
-            saveBtn.setOnClickListener(v -> {
-                SettingsSaveManager.commitChanges(getContext());
-                LauncherPreferences.loadPreferences(getContext());
-                View bar = view.findViewById(R.id.unsaved_changes_bar);
-                if (bar != null) bar.setVisibility(View.GONE);
-            });
-        }
-        showSaveBarIfDirty(view);
+        setupSaveButton(view);
+        updateSaveBar(view);
     }
 
-    private void showSaveBarIfDirty(View rootView) {
-        if (rootView == null) return;
+    /** Wire up the modern floating SAVE CHANGES button */
+    private void setupSaveButton(@NonNull View rootView) {
+        Button saveBtn = rootView.findViewById(R.id.btn_save_settings);
+        if (saveBtn == null) return;
+
+        saveBtn.setOnClickListener(v -> {
+            saveChanges();
+            // Bounce animation on press
+            v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(80)
+                    .withEndAction(() -> v.animate().scaleX(1f).scaleY(1f).setDuration(120).start())
+                    .start();
+        });
+    }
+
+    /** Persist all draft changes to main SharedPreferences */
+    private void saveChanges() {
+        if (!mIsDirty) return;
+        SettingsSaveManager.commitChanges(getContext());
+        LauncherPreferences.loadPreferences(getContext());
+        mIsDirty = false;
+
+        View root = getView();
+        if (root != null) {
+            updateSaveBar(root);
+            // Show saved indicator briefly
+            showSavedIndicator(root);
+        }
+
+        Toast.makeText(getContext(), "Settings saved successfully", Toast.LENGTH_SHORT).show();
+    }
+
+    /** Show a brief green "✓ Saved" toast on the save bar */
+    private void showSavedIndicator(@NonNull View rootView) {
         View bar = rootView.findViewById(R.id.unsaved_changes_bar);
         if (bar == null) return;
-        SharedPreferences p = getPreferenceManager().getSharedPreferences();
-        // Default to true so toggle switches auto-save immediately
-        boolean autoSave = p != null && p.getBoolean("auto_save_fallback", true);
-        if (!autoSave && SettingsSaveManager.hasUnsavedChanges(getContext())) {
-            bar.setVisibility(View.VISIBLE);
+        TextView statusText = bar.findViewById(R.id.save_status_text);
+        if (statusText == null) return;
+
+        final String originalText = statusText.getText().toString();
+        statusText.setText("\u2713 Saved");
+        statusText.setTextColor(android.graphics.Color.parseColor("#39FF14"));
+
+        mHandler.postDelayed(() -> {
+            if (!isAdded()) return;
+            statusText.setText(originalText);
+            statusText.setTextColor(android.graphics.Color.parseColor("#FFA500"));
+        }, 2000);
+    }
+
+    /** Update save bar visibility and dirty indicator based on state */
+    private void updateSaveBar(@NonNull View rootView) {
+        View bar = rootView.findViewById(R.id.unsaved_changes_bar);
+        if (bar == null) return;
+        Button saveBtn = rootView.findViewById(R.id.btn_save_settings);
+        TextView statusText = rootView.findViewById(R.id.save_status_text);
+
+        boolean hasUnsaved = mIsDirty || SettingsSaveManager.hasUnsavedChanges(getContext());
+
+        if (hasUnsaved) {
+            if (bar.getVisibility() != View.VISIBLE) {
+                bar.setVisibility(View.VISIBLE);
+                bar.setAlpha(0f);
+                bar.setTranslationY(80f);
+                bar.animate()
+                        .alpha(1f)
+                        .translationY(0f)
+                        .setDuration(300)
+                        .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f))
+                        .start();
+            }
+            if (saveBtn != null && !saveBtn.isEnabled()) {
+                saveBtn.setEnabled(true);
+                saveBtn.animate().alpha(1f).setDuration(200).start();
+            }
+            if (statusText != null) {
+                statusText.setText("\u25CF Unsaved Changes");
+                statusText.setTextColor(android.graphics.Color.parseColor("#FFA500"));
+            }
         } else {
-            bar.setVisibility(View.GONE);
+            if (bar.getVisibility() == View.VISIBLE) {
+                bar.animate()
+                        .alpha(0f)
+                        .translationY(40f)
+                        .setDuration(200)
+                        .withEndAction(() -> bar.setVisibility(View.GONE))
+                        .start();
+            }
+            if (saveBtn != null) {
+                saveBtn.setEnabled(false);
+                saveBtn.animate().alpha(0.5f).setDuration(200).start();
+            }
+            if (statusText != null) {
+                statusText.setText("\u2713 Saved");
+                statusText.setTextColor(android.graphics.Color.parseColor("#39FF14"));
+            }
+        }
+    }
+
+    /** Mark settings as dirty and update the save bar */
+    private void markDirty() {
+        mIsDirty = true;
+        View root = getView();
+        if (root != null) {
+            updateSaveBar(root);
         }
     }
 
@@ -100,6 +197,7 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
                             pref.setChecked(launcherActivity.checkForNotificationPermission());
                         });
                     }
+                    markDirty();
                     return false; // update checked state manually
                 });
             }
@@ -114,10 +212,11 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
                             pref.setChecked(launcherActivity.checkForMicrophonePermission());
                         });
                     }
+                    markDirty();
                     return false; // update checked state manually
                 });
             }
-        }else {
+        } else {
             if (mRequestNotificationPermissionPreference != null) {
                 mRequestNotificationPermissionPreference.setVisible(false);
             }
@@ -132,7 +231,8 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
         super.onResume();
         SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
         if(sharedPreferences != null) sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-        showSaveBarIfDirty(getView());
+        View root = getView();
+        if (root != null) updateSaveBar(root);
     }
 
     @Override
@@ -143,18 +243,20 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences p, String s) {
-        // Always auto-save toggle/switch changes immediately so they survive restart
-        // The auto_save_fallback pref defaults to true for first-time users
-        boolean autoSave = p.getBoolean("auto_save_fallback", true);
-        if (autoSave) {
+    public void onDestroyView() {
+        // Auto-save any pending changes to prevent data loss
+        if (mIsDirty) {
             SettingsSaveManager.commitChanges(getContext());
             LauncherPreferences.loadPreferences(getContext());
-            View bar = getView() != null ? getView().findViewById(R.id.unsaved_changes_bar) : null;
-            if (bar != null) bar.setVisibility(View.GONE);
-        } else {
-            showSaveBarIfDirty(getView());
+            mIsDirty = false;
         }
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences p, String s) {
+        // Any preference change marks the page as dirty
+        markDirty();
 
         if ("force_english".equals(s)) {
             Activity activity = getActivity();
