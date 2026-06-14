@@ -65,6 +65,10 @@ public class LauncherProfiles {
         if (mainProfileJson == null || mainProfileJson.profiles == null) return;
         boolean changed = false;
 
+        // Helper: check if a version ID looks like a loader version (not a raw MC version)
+        java.util.regex.Pattern loaderPattern = java.util.regex.Pattern.compile(
+                "(?i)(fabric|forge|neoforge|quilt|optifine|optix|liteloader)");
+
         // 1. Scan versions directory
         File versionsDir = new File(Tools.DIR_GAME_NEW, "versions");
         if (versionsDir.exists() && versionsDir.isDirectory()) {
@@ -72,7 +76,16 @@ public class LauncherProfiles {
             if (files != null) {
                 for (File dir : files) {
                     String versionId = dir.getName();
-                    // Check if any profile uses this lastVersionId
+                    String lower = versionId.toLowerCase();
+
+                    // FABRIC/LOADER REWORK: Skip auto-creating profiles for loader versions.
+                    // Fabric, Forge, NeoForge, Quilt, OptiFine etc. are loaders, not standalone
+                    // game versions. They should already be handled by the installer which updates
+                    // an existing profile. If there's no corresponding profile, check if any
+                    // existing profile's resolved MC version matches.
+                    boolean isLoaderVersion = loaderPattern.matcher(lower).find();
+
+                    // Check if any profile already uses this lastVersionId
                     boolean exists = false;
                     for (MinecraftProfile p : mainProfileJson.profiles.values()) {
                         if (versionId.equals(p.lastVersionId)) {
@@ -80,12 +93,31 @@ public class LauncherProfiles {
                             break;
                         }
                     }
+
+                    if (isLoaderVersion) {
+                        // For loader versions, check if the underlying MC version already has a profile
+                        String mcVersion = net.kdt.pojavlaunch.utils.ProfileDetection.extractMcFromVersionId(versionId);
+                        boolean hasMcProfile = false;
+                        if (mcVersion != null && !mcVersion.isEmpty()) {
+                            for (MinecraftProfile p : mainProfileJson.profiles.values()) {
+                                String resolved = net.kdt.pojavlaunch.utils.ProfileDetection.getMcVersion(p);
+                                if (mcVersion.equals(resolved) || mcVersion.equals(p.lastVersionId)) {
+                                    hasMcProfile = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (hasMcProfile && !exists) {
+                            // There's already a profile for this MC version, skip auto-creation
+                            continue;
+                        }
+                    }
+
                     if (!exists) {
-                        // Create a profile for this version!
+                        // Create a profile for this version
                         MinecraftProfile profile = new MinecraftProfile();
                         profile.lastVersionId = versionId;
 
-                        String lower = versionId.toLowerCase();
                         if (lower.contains("neoforge")) {
                             profile.name = "NeoForge " + versionId;
                             profile.icon = "Forge";
@@ -105,6 +137,14 @@ public class LauncherProfiles {
                         } else if (lower.contains("optix")) {
                             profile.name = "Optix " + versionId;
                             profile.icon = "Fabric";
+                            profile.type = "custom";
+                        } else if (lower.contains("quilt")) {
+                            profile.name = "Quilt " + versionId;
+                            profile.icon = "Fabric";
+                            profile.type = "custom";
+                        } else if (lower.contains("liteloader")) {
+                            profile.name = "LiteLoader " + versionId;
+                            profile.icon = "Grass";
                             profile.type = "custom";
                         } else {
                             profile.name = "Minecraft " + versionId;
