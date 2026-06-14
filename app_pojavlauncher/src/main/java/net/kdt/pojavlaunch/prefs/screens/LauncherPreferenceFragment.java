@@ -29,9 +29,12 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        SettingsSaveManager.initDraft(getContext());
-        getPreferenceManager().setSharedPreferencesName(SettingsSaveManager.DRAFT_PREFS_NAME);
         super.onCreate(savedInstanceState);
+        SettingsSaveManager.initDraft(getContext());
+        // getPreferenceManager() is only valid AFTER super.onCreate()
+        if (getPreferenceManager() != null) {
+            getPreferenceManager().setSharedPreferencesName(SettingsSaveManager.DRAFT_PREFS_NAME);
+        }
     }
 
     @Override
