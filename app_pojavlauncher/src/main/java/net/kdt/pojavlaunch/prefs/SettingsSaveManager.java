@@ -15,7 +15,7 @@ public class SettingsSaveManager {
 
     public static void initDraft(Context context) {
         if (sInitialized) return;
-        SharedPreferences mainPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences mainPrefs = context.getSharedPreferences("cslauncher_settings", Context.MODE_PRIVATE);
         SharedPreferences draftPrefs = getDraftPrefs(context);
         
         SharedPreferences.Editor editor = draftPrefs.edit();
@@ -30,7 +30,7 @@ public class SettingsSaveManager {
     }
 
     public static void saveToMain(Context context, String key) {
-        SharedPreferences mainPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences mainPrefs = context.getSharedPreferences("cslauncher_settings", Context.MODE_PRIVATE);
         SharedPreferences draftPrefs = getDraftPrefs(context);
         SharedPreferences.Editor editor = mainPrefs.edit();
         
@@ -44,7 +44,7 @@ public class SettingsSaveManager {
     }
 
     public static void commitChanges(Context context) {
-        SharedPreferences mainPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences mainPrefs = context.getSharedPreferences("cslauncher_settings", Context.MODE_PRIVATE);
         SharedPreferences draftPrefs = getDraftPrefs(context);
         
         SharedPreferences.Editor editor = mainPrefs.edit();
@@ -58,7 +58,7 @@ public class SettingsSaveManager {
     }
 
     public static boolean hasUnsavedChanges(Context context) {
-        SharedPreferences mainPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences mainPrefs = context.getSharedPreferences("cslauncher_settings", Context.MODE_PRIVATE);
         SharedPreferences draftPrefs = getDraftPrefs(context);
         
         Map<String, ?> mainMap = mainPrefs.getAll();
