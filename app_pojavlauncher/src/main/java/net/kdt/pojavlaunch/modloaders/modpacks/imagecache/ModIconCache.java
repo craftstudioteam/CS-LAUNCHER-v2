@@ -65,6 +65,16 @@ public class ModIconCache {
         return new File(Tools.DIR_CACHE, "mod_icons");
     }
 
+    /** @return the cache directory path */
+    public File getCachePath() {
+        return cachePath;
+    }
+
+    /** @return the thread pool used for loading images */
+    public ThreadPoolExecutor getCacheLoaderPool() {
+        return cacheLoaderPool;
+    }
+
     /**
      * Get an image for a mod with the associated tag and URL to download it in case if its not cached
      * @param imageReceiver the receiver interface that would get called when the image loads

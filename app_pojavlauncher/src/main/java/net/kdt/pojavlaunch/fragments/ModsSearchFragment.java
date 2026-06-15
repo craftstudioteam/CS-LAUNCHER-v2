@@ -57,6 +57,7 @@ public class ModsSearchFragment extends Fragment {
     private String mProfileKey;
 
     private final Handler mSearchHandler = new Handler(Looper.getMainLooper());
+    private String mPendingSearchQuery = "";
 
     // Reusable Runnable for debounced search — avoids allocation per keystroke
     private final Runnable mSearchRunnable = () -> {
@@ -65,7 +66,6 @@ public class ModsSearchFragment extends Fragment {
             dlf.filter(mPendingSearchQuery, mSearchFilters.mcVersion, mSearchFilters.modLoader);
         }
     };
-    private String mPendingSearchQuery = "";
 
     // Cached filter dialog arrays — avoid allocation on every dialog open
     private static final String[] LOADER_LABELS = {"Any loader", "Fabric", "Forge", "Quilt", "NeoForge"};
