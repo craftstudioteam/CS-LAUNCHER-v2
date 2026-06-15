@@ -34,9 +34,11 @@ public class MinecraftAccount {
     
     void updateSkinFace(String uuid) {
         try {
+            // Discard stale cache so the next getSkinFace() call re-decodes from the downloaded file
+            clearFaceCache();
             File skinFile = getSkinFaceFile(username);
             Tools.downloadFile("https://mc-heads.net/head/" + uuid + "/100", skinFile.getAbsolutePath());
-            
+
             Log.i("SkinLoader", "Update skin face success");
         } catch (IOException e) {
             // Skin refresh limit, no internet connection, etc...
@@ -213,7 +215,7 @@ public class MinecraftAccount {
             }
             return null;
         } else {
-            if(mFaceCache == null) {
+            if(mFaceCache == null || mFaceCache.isRecycled()) {
                 Bitmap cached = BitmapFactory.decodeFile(skinFaceFile.getAbsolutePath());
                 if (cached != null) {
                     mFaceCache = roundBitmap(cached, 64, 10f);

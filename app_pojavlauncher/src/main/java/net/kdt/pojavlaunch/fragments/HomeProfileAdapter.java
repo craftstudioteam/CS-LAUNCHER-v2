@@ -112,7 +112,7 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
         MinecraftProfile profile = mProfileList.get(position);
         String profileKey = mProfileKeys.get(position);
 
-        holder.tvName.setText(profile.name);
+        holder.tvName.setText(profile.name != null ? profile.name : "");
 
         StringBuilder meta = new StringBuilder();
         if (profile.lastVersionId != null && !profile.lastVersionId.isEmpty()) {

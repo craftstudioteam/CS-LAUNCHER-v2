@@ -234,13 +234,13 @@ public class CustomCursorRenderer {
             
             if (glowRadius > 0) {
                 Bitmap glowingFrame = CursorManager.applyGlow(frame, (int)(glowRadius * mLastScale), glowColor);
-                if (frame != mGifBitmap) frame.recycle(); // Recycle scaled frame if we applied glow
+                if (frame != null && frame != mGifBitmap) frame.recycle(); // Recycle scaled frame if we applied glow
                 frame = glowingFrame;
             }
             
             if (mLastOpacity < 1.0f) {
                 Bitmap opaqueFrame = applyOpacity(frame, mLastOpacity);
-                if (frame != mGifBitmap) frame.recycle();
+                if (frame != null && frame != mGifBitmap) frame.recycle();
                 frame = opaqueFrame;
             }
             
@@ -285,13 +285,13 @@ public class CustomCursorRenderer {
             
             if (glowRadius > 0) {
                 Bitmap glowingFrame = CursorManager.applyGlow(frame, (int)(glowRadius * scale), glowColor);
-                if (frame != mGifBitmap) frame.recycle();
+                if (frame != null && frame != mGifBitmap) frame.recycle();
                 frame = glowingFrame;
             }
 
             if (opacity < 1.0f) {
                 Bitmap opaqueFrame = applyOpacity(frame, opacity);
-                if (frame != mGifBitmap) frame.recycle();
+                if (frame != null && frame != mGifBitmap) frame.recycle();
                 frame = opaqueFrame;
             }
             return frame;

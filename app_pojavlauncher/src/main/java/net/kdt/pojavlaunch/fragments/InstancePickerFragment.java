@@ -47,7 +47,18 @@ public class InstancePickerFragment extends Fragment {
 
         LauncherProfiles.load();
         Map<String, MinecraftProfile> profiles = LauncherProfiles.mainProfileJson.profiles;
-        List<String> keys = new ArrayList<>(profiles.keySet());
+        List<String> keys = new ArrayList<>();
+        // Validate profiles — skip null keys, null/empty names
+        if (profiles != null) {
+            for (Map.Entry<String, MinecraftProfile> entry : profiles.entrySet()) {
+                String key = entry.getKey();
+                MinecraftProfile p = entry.getValue();
+                if (key == null || key.isEmpty()) continue;
+                if (p == null) continue;
+                if (p.name == null || p.name.trim().isEmpty()) continue;
+                keys.add(key);
+            }
+        }
         String selected = LauncherPreferences.DEFAULT_PREF
                 .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, "");
 

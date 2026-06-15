@@ -373,7 +373,11 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
         }
 
         if(oldBitmapDrawable != null){
-            oldBitmapDrawable.getBitmap().recycle();
+            Bitmap oldBitmap = oldBitmapDrawable.getBitmap();
+            Bitmap newBitmap = mHeadDrawable != null ? mHeadDrawable.getBitmap() : null;
+            if(oldBitmap != null && oldBitmap != newBitmap) {
+                oldBitmap.recycle();
+            }
         }
     }
 

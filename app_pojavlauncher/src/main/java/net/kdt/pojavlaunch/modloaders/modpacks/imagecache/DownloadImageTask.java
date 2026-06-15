@@ -49,7 +49,7 @@ class DownloadImageTask implements Runnable {
             try (FileOutputStream fileOutputStream = new FileOutputStream(mParentTask.cacheFile)) {
                 resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, fileOutputStream);
             } finally {
-                resizedBitmap.recycle();
+                if(resizedBitmap != null) resizedBitmap.recycle();
             }
             return true;
         }catch (IOException e) {

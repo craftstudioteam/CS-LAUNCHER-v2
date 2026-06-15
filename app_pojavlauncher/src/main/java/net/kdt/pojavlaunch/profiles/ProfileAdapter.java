@@ -16,7 +16,6 @@ import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,8 +73,19 @@ public class ProfileAdapter extends BaseAdapter {
 
     @Override
     public void notifyDataSetChanged() {
-        mProfiles = new HashMap<>(LauncherProfiles.mainProfileJson.profiles);
-        mProfileList = new ArrayList<>(Arrays.asList(mProfiles.keySet().toArray(new String[0])));
+        mProfiles = new HashMap<>();
+        mProfileList = new ArrayList<>();
+        if (LauncherProfiles.mainProfileJson != null && LauncherProfiles.mainProfileJson.profiles != null) {
+            for (Map.Entry<String, MinecraftProfile> entry : LauncherProfiles.mainProfileJson.profiles.entrySet()) {
+                String key = entry.getKey();
+                MinecraftProfile profile = entry.getValue();
+                if (key == null || key.isEmpty()) continue;
+                if (profile == null) continue;
+                if (profile.name == null || profile.name.trim().isEmpty()) continue;
+                mProfileList.add(key);
+                mProfiles.put(key, profile);
+            }
+        }
         super.notifyDataSetChanged();
     }
 
@@ -138,11 +148,9 @@ public class ProfileAdapter extends BaseAdapter {
         }
     }
 
-    /** Reload profiles from the file */
+    /** Reload profiles from the file, re-reading JSON from disk */
     public void reloadProfiles(){
         LauncherProfiles.load();
-        mProfiles = new HashMap<>(LauncherProfiles.mainProfileJson.profiles);
-        mProfileList = new ArrayList<>(Arrays.asList(mProfiles.keySet().toArray(new String[0])));
         notifyDataSetChanged();
     }
 

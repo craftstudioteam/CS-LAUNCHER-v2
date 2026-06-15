@@ -30,7 +30,10 @@ public class LauncherProfiles {
         sProfileUpdateListeners.remove(listener);
     }
 
-    /** Reload the profile from the file, creating a default one if necessary */
+    /** Reload the profile from the file, creating a default one if necessary.
+     *  Does NOT auto-scan version directories — that only happens on explicit
+     *  {@link #rescanProfiles()} calls, to prevent deleted profiles from
+     *  being recreated behind the user's back. */
     public static void load(){
         if (launcherProfilesFile.exists()) {
             try {
@@ -44,21 +47,77 @@ public class LauncherProfiles {
         // Fill with default
         if (mainProfileJson == null) mainProfileJson = new MinecraftLauncherProfiles();
         if (mainProfileJson.profiles == null) mainProfileJson.profiles = new HashMap<>();
+
+        // Strip invalid/corrupted profiles and persist the cleanup immediately
+        boolean purged = purgeInvalidProfiles();
+        if (purged) {
+            write();
+            // Re-read to get clean state — avoids stale entries in listeners
+            load();
+            return;
+        }
+
         if (mainProfileJson.profiles.size() == 0)
             mainProfileJson.profiles.put(UUID.randomUUID().toString(), MinecraftProfile.getDefaultProfile());
-
-        autoScanProfiles();
 
         // Normalize profile names from mod installers
         if(normalizeProfileIds(mainProfileJson)){
             write();
             load();
         } else {
-            // Notify listeners when profiles are reloaded/rescanned
+            // Notify listeners when profiles are reloaded
             for (Runnable listener : new java.util.ArrayList<>(sProfileUpdateListeners)) {
                 if (listener != null) Tools.runOnUiThread(listener);
             }
         }
+    }
+
+    /**
+     * Remove profiles with null keys, null/empty names, or otherwise corrupted data.
+     * This prevents ghost entries from showing up in the UI.
+     * @return true if any profiles were removed
+     */
+    private static boolean purgeInvalidProfiles() {
+        if (mainProfileJson == null || mainProfileJson.profiles == null) return false;
+        java.util.ArrayList<String> invalidKeys = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<String, MinecraftProfile> entry : mainProfileJson.profiles.entrySet()) {
+            String key = entry.getKey();
+            MinecraftProfile profile = entry.getValue();
+            if (key == null || key.isEmpty()) {
+                invalidKeys.add(key);
+                continue;
+            }
+            if (profile == null) {
+                invalidKeys.add(key);
+                continue;
+            }
+            if (profile.name == null || profile.name.trim().isEmpty()) {
+                invalidKeys.add(key);
+                continue;
+            }
+        }
+        for (String k : invalidKeys) {
+            mainProfileJson.profiles.remove(k);
+        }
+        if (!invalidKeys.isEmpty()) {
+            Log.w("LauncherProfiles", "Purged " + invalidKeys.size() + " invalid profiles");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Explicitly re-scan version directories and custom instances, creating
+     * profiles for any that don't have a matching entry yet.
+     * Safe to call when the user explicitly asks to discover new versions.
+     */
+    public static void rescanProfiles() {
+        if (mainProfileJson == null) {
+            load();
+            return;
+        }
+        autoScanProfiles();
+        write();
     }
 
     /**

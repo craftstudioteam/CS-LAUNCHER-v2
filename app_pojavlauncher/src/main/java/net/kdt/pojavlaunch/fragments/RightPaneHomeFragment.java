@@ -122,14 +122,21 @@ public class RightPaneHomeFragment extends Fragment {
             if (profilesMap != null) {
                 List<Map.Entry<String, MinecraftProfile>> entries =
                         new ArrayList<>(profilesMap.entrySet());
+                // Sort by lastUsed descending (most recently used first)
                 Collections.sort(entries, (a, b) -> {
                     String ua = a.getValue().lastUsed != null ? a.getValue().lastUsed : "";
                     String ub = b.getValue().lastUsed != null ? b.getValue().lastUsed : "";
                     return ub.compareTo(ua);
                 });
                 for (Map.Entry<String, MinecraftProfile> entry : entries) {
-                    keys.add(entry.getKey());
-                    profiles.add(entry.getValue());
+                    String key = entry.getKey();
+                    MinecraftProfile profile = entry.getValue();
+                    // Skip invalid/corrupted profiles
+                    if (key == null || key.isEmpty()) continue;
+                    if (profile == null) continue;
+                    if (profile.name == null || profile.name.trim().isEmpty()) continue;
+                    keys.add(key);
+                    profiles.add(profile);
                 }
             }
 

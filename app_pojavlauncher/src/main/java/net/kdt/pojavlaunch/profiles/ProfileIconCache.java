@@ -81,9 +81,15 @@ public class ProfileIconCache {
     }
 
     private static Drawable fetchStaticIcon(Resources resources, String key, @Nullable String icon) {
+        if (icon == null) {
+            Drawable fallback = fetchFallbackIcon(resources);
+            sIconCache.put(key, fallback);
+            return fallback;
+        }
+
         Drawable staticIcon = sStaticIconCache.get(icon);
         if(staticIcon == null) {
-            if(icon != null) staticIcon = getStaticIcon(resources, icon);
+            staticIcon = getStaticIcon(resources, icon);
             if(staticIcon == null) staticIcon = fetchFallbackIcon(resources);
             Drawable existing = sStaticIconCache.putIfAbsent(icon, staticIcon);
             if (existing != null) staticIcon = existing; // Another thread won the race, reuse.
