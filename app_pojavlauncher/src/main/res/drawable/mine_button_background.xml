@@ -36,7 +36,7 @@
         <layer-list>
             <item>
                 <shape android:shape="rectangle">
-                    <solid android:color="?attr/copperAccent"/>
+                    <solid android:color="?attr/themeAccent"/>
                     <corners android:radius="12dp"/>
                 </shape>
             </item>
@@ -46,7 +46,7 @@
                 android:right="1dp"
                 android:bottom="1dp">
                 <shape android:shape="rectangle">
-                    <solid android:color="?attr/copperAccent"/>
+                    <solid android:color="?attr/themeAccent"/>
                     <corners android:radius="11dp"/>
                 </shape>
             </item>

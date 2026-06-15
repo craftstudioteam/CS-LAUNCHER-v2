@@ -61,6 +61,21 @@ public class LauncherProfiles {
         }
     }
 
+    /**
+     * Load profiles on a background thread, then run the callback on the UI thread.
+     * Use this instead of {@link #load()} when called from the UI thread to avoid
+     * blocking on file I/O and version directory scanning.
+     * @param onComplete Runnable to execute on the UI thread after loading completes. May be null.
+     */
+    public static void loadAsync(@androidx.annotation.Nullable Runnable onComplete) {
+        net.kdt.pojavlaunch.PojavApplication.sExecutorService.execute(() -> {
+            load();
+            if (onComplete != null) {
+                net.kdt.pojavlaunch.Tools.runOnUiThread(onComplete);
+            }
+        });
+    }
+
     public static void autoScanProfiles() {
         if (mainProfileJson == null || mainProfileJson.profiles == null) return;
         boolean changed = false;

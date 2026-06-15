@@ -19,21 +19,48 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ModIconCache {
-    ThreadPoolExecutor cacheLoaderPool = new ThreadPoolExecutor(10,
-            10,
-            1000,
-            TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>());
-    File cachePath;
-    private final List<WeakReference<ImageReceiver>> mCancelledReceivers = new ArrayList<>();
-    public ModIconCache() {
-        cachePath = getImageCachePath();
-        if(!cachePath.exists() && !cachePath.isFile() && Tools.DIR_CACHE.canWrite()) {
-            if(!cachePath.mkdirs())
-                throw new RuntimeException("Failed to create icon cache directory");
-        }
+    /** Singleton instance — prevents per-fragment thread pool explosions. */
+    private static volatile ModIconCache sInstance;
 
+    private final ThreadPoolExecutor cacheLoaderPool;
+    private final File cachePath;
+    private final List<WeakReference<ImageReceiver>> mCancelledReceivers = new ArrayList<>();
+
+    /** Returns the application-wide singleton ModIconCache. */
+    public static ModIconCache getInstance() {
+        if (sInstance == null) {
+            synchronized (ModIconCache.class) {
+                if (sInstance == null) {
+                    sInstance = new ModIconCache();
+                }
+            }
+        }
+        return sInstance;
     }
+
+    private ModIconCache() {
+        // I/O-bound image loading: use fewer threads on low-end devices to avoid thrashing.
+        int cores = Runtime.getRuntime().availableProcessors();
+        int threadCount;
+        if (cores <= 2) {
+            threadCount = 2; // low-end: minimal threads
+        } else if (cores <= 4) {
+            threadCount = 3; // mid-range
+        } else {
+            threadCount = Math.min(cores, 6); // high-end cap at 6
+        }
+        cacheLoaderPool = new ThreadPoolExecutor(
+                Math.max(1, threadCount / 2), threadCount,
+                15, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>());
+        cachePath = getImageCachePath();
+        if (!cachePath.exists() && !cachePath.isFile() && Tools.DIR_CACHE.canWrite()) {
+            if (!cachePath.mkdirs()) {
+                Log.w("ModIconCache", "Failed to create icon cache directory");
+            }
+        }
+    }
+
     static File getImageCachePath() {
         return new File(Tools.DIR_CACHE, "mod_icons");
     }

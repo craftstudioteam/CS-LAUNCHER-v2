@@ -13,19 +13,27 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import net.kdt.pojavlaunch.PojavApplication;
 import net.kdt.pojavlaunch.R;
+import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.profiles.ProfileIconCache;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.ViewHolder> {
 
     private static final String TAG = "HomeProfileAdapter";
 
+    private static final int PAYLOAD_MOD_COUNT = 1;
+
     private final List<MinecraftProfile> mProfileList;
     private final List<String> mProfileKeys;
     private final OnProfileActionListener mListener;
+    // Pre-computed mod counts (0 = not loaded yet or no mods). Populated on background thread.
+    private final int[] mModCountCache;
+    private boolean mModCountsReady;
 
     public interface OnProfileActionListener {
         void onProfilePlay(String profileKey, MinecraftProfile profile);
@@ -37,6 +45,41 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
         mProfileKeys = profileKeys;
         mProfileList = profiles;
         mListener = listener;
+        mModCountCache = new int[profiles.size()];
+        setHasStableIds(true);
+        // Kick off background loading of mod counts
+        preloadModCounts();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return mProfileKeys.get(position).hashCode();
+    }
+
+    /** Pre-compute mod counts on a background thread so onBindViewHolder never blocks on I/O. */
+    private void preloadModCounts() {
+        if (mProfileList.isEmpty()) return;
+        PojavApplication.sExecutorService.execute(() -> {
+            for (int i = 0; i < mProfileList.size(); i++) {
+                MinecraftProfile profile = mProfileList.get(i);
+                int count = 0;
+                try {
+                    java.io.File gameDir = profile.resolveGameDir();
+                    if (gameDir != null) {
+                        java.io.File modsDir = new java.io.File(gameDir, "mods");
+                        if (modsDir.exists() && modsDir.isDirectory()) {
+                            java.io.File[] files = modsDir.listFiles(f -> f.isFile() &&
+                                    (f.getName().toLowerCase().endsWith(".jar") || f.getName().toLowerCase().endsWith(".jar.disabled")));
+                            count = files != null ? files.length : 0;
+                        }
+                    }
+                } catch (Throwable ignored) {}
+                mModCountCache[i] = count;
+            }
+            mModCountsReady = true;
+            // Use payload update so only mod count TextView rebinds, not the full card
+            Tools.runOnUiThread(() -> notifyItemRangeChanged(0, mProfileList.size(), PAYLOAD_MOD_COUNT));
+        });
     }
 
     @NonNull
@@ -49,6 +92,23 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        onBindViewHolder(holder, position, null);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position,
+                                 @NonNull List<Object> payloads) {
+        // Payload-based partial binding: skip expensive icon binding when only mod count changed
+        if (!payloads.isEmpty()) {
+            for (Object payload : payloads) {
+                if (payload instanceof Integer && (Integer) payload == PAYLOAD_MOD_COUNT) {
+                    int modCount = mModCountCache[position];
+                    holder.tvModCount.setText("Installed Mods: " + modCount);
+                    return;
+                }
+            }
+        }
+
         MinecraftProfile profile = mProfileList.get(position);
         String profileKey = mProfileKeys.get(position);
 
@@ -66,7 +126,8 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
         }
         holder.tvMeta.setText(meta.toString());
 
-        int modCount = profile.getInstalledModsCount();
+        // Read from pre-computed cache — never blocks on I/O
+        int modCount = mModCountCache[position];
         holder.tvModCount.setText("Installed Mods: " + modCount);
 
         bindIcon(holder.imgIcon, profileKey, profile);
@@ -78,6 +139,13 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
         holder.btnPlay.setOnClickListener(v -> {
             if (mListener != null) mListener.onProfilePlay(profileKey, profile);
         });
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull ViewHolder holder) {
+        super.onViewRecycled(holder);
+        // Clear image drawable reference to help GC and avoid stale bitmap retention
+        holder.imgIcon.setImageDrawable(null);
     }
 
     /**
@@ -145,4 +213,3 @@ public class HomeProfileAdapter extends RecyclerView.Adapter<HomeProfileAdapter.
         }
     }
 }
-

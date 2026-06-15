@@ -12,6 +12,8 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -60,6 +62,16 @@ public class SkinManagerFragment extends Fragment {
     private String mPendingCapeUri;
 
     private SkinRenderer mSkinRenderer;
+    private final Handler mAutoRotateHandler = new Handler(Looper.getMainLooper());
+    private final Runnable mAutoRotateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mSkinRenderer != null && mSkinRenderer.mAutoRotate && isAdded()) {
+                mSkinPreviewSurface.requestRender();
+                mAutoRotateHandler.postDelayed(this, 33); // ~30fps for smooth rotation
+            }
+        }
+    };
 
     @Nullable
     @Override
@@ -89,7 +101,7 @@ public class SkinManagerFragment extends Fragment {
         mSkinPreviewSurface.setEGLContextClientVersion(2);
         mSkinRenderer = new SkinRenderer(requireContext());
         mSkinPreviewSurface.setRenderer(mSkinRenderer);
-        mSkinPreviewSurface.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        mSkinPreviewSurface.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
         // Load skin/cape and model type locally associated with the current profile
         File skinsDir = new File(Tools.DIR_DATA + "/skins");
@@ -179,6 +191,7 @@ public class SkinManagerFragment extends Fragment {
                             mSkinRenderer.mAngleX += dx * 0.5f;
                             mSkinRenderer.mAngleY += dy * 0.5f;
                         }
+                        mSkinPreviewSurface.requestRender();
                         break;
                 }
                 previousX = x;
@@ -258,12 +271,15 @@ public class SkinManagerFragment extends Fragment {
                 if (autoBtn instanceof Button) {
                     ((Button) autoBtn).setTextColor(Color.WHITE);
                 }
+                mAutoRotateHandler.removeCallbacks(mAutoRotateRunnable);
+                mSkinPreviewSurface.requestRender();
             }
         });
         view.findViewById(R.id.btn_cam_rot_reset).setOnClickListener(v -> {
             if (mSkinRenderer != null) {
                 mSkinRenderer.mAngleX = 0f;
                 mSkinRenderer.mAngleY = 0f;
+                mSkinPreviewSurface.requestRender();
             }
         });
         view.findViewById(R.id.btn_cam_auto_rot).setOnClickListener(v -> {
@@ -271,16 +287,24 @@ public class SkinManagerFragment extends Fragment {
                 mSkinRenderer.mAutoRotate = !mSkinRenderer.mAutoRotate;
                 Button autoBtn = (Button) v;
                 autoBtn.setTextColor(mSkinRenderer.mAutoRotate ? 0xFF39FF14 : Color.WHITE);
+                if (mSkinRenderer.mAutoRotate) {
+                    mAutoRotateHandler.post(mAutoRotateRunnable);
+                } else {
+                    mAutoRotateHandler.removeCallbacks(mAutoRotateRunnable);
+                }
+                mSkinPreviewSurface.requestRender();
             }
         });
         view.findViewById(R.id.btn_cam_zoom_in).setOnClickListener(v -> {
             if (mSkinRenderer != null) {
                 mSkinRenderer.mZoomFactor = Math.min(2.5f, mSkinRenderer.mZoomFactor + 0.1f);
+                mSkinPreviewSurface.requestRender();
             }
         });
         view.findViewById(R.id.btn_cam_zoom_out).setOnClickListener(v -> {
             if (mSkinRenderer != null) {
                 mSkinRenderer.mZoomFactor = Math.max(0.4f, mSkinRenderer.mZoomFactor - 0.1f);
+                mSkinPreviewSurface.requestRender();
             }
         });
 
@@ -381,6 +405,7 @@ public class SkinManagerFragment extends Fragment {
         if (mSkinRenderer != null) {
             mSkinRenderer.mIsSlim = mSwitchModelType.isChecked();
             mSkinRenderer.setTexture(skinBitmap, capeBitmap);
+            mSkinPreviewSurface.requestRender();
         }
     }
 
@@ -388,11 +413,10 @@ public class SkinManagerFragment extends Fragment {
         if (uriStr == null) return null;
         try {
             Uri uri = Uri.parse(uriStr);
-            InputStream is = requireContext().getContentResolver().openInputStream(uri);
-            if (is != null) {
-                Bitmap bitmap = BitmapFactory.decodeStream(is);
-                is.close();
-                return bitmap;
+            try (InputStream is = requireContext().getContentResolver().openInputStream(uri)) {
+                if (is != null) {
+                    return BitmapFactory.decodeStream(is);
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "Failed to load bitmap from URI: " + uriStr, e);
@@ -415,6 +439,7 @@ public class SkinManagerFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        mAutoRotateHandler.removeCallbacks(mAutoRotateRunnable);
         if (mSkinPreviewSurface != null) {
             try {
                 mSkinPreviewSurface.onPause();
@@ -470,6 +495,8 @@ public class SkinManagerFragment extends Fragment {
         private Bitmap mPendingCapeBitmap;
         private int mSkinTextureId = 0;
         private int mCapeTextureId = 0;
+        private final int[] mTextureGenArray = new int[1];
+        private final int[] mTextureDeleteArray = new int[1];
 
         private final String vertexShaderCode =
             "uniform mat4 uMVPMatrix;\n" +
@@ -496,6 +523,13 @@ public class SkinManagerFragment extends Fragment {
         }
 
         public synchronized void setTexture(Bitmap skin, Bitmap cape) {
+            // Recycle old bitmaps before replacing to free native memory promptly
+            if (mPendingSkinBitmap != null && mPendingSkinBitmap != skin) {
+                mPendingSkinBitmap.recycle();
+            }
+            if (mPendingCapeBitmap != null && mPendingCapeBitmap != cape) {
+                mPendingCapeBitmap.recycle();
+            }
             this.mPendingSkinBitmap = skin;
             this.mPendingCapeBitmap = cape;
             this.mSkinTextureNeedsUpdate = true;
@@ -546,12 +580,18 @@ public class SkinManagerFragment extends Fragment {
 
             synchronized (this) {
                 if (mSkinTextureNeedsUpdate) {
-                    if (mSkinTextureId != 0) GLES20.glDeleteTextures(1, new int[]{mSkinTextureId}, 0);
+                    if (mSkinTextureId != 0) {
+                        mTextureDeleteArray[0] = mSkinTextureId;
+                        GLES20.glDeleteTextures(1, mTextureDeleteArray, 0);
+                    }
                     if (mPendingSkinBitmap != null) mSkinTextureId = loadGLTexture(mPendingSkinBitmap);
                     mSkinTextureNeedsUpdate = false;
                 }
                 if (mCapeTextureNeedsUpdate) {
-                    if (mCapeTextureId != 0) GLES20.glDeleteTextures(1, new int[]{mCapeTextureId}, 0);
+                    if (mCapeTextureId != 0) {
+                        mTextureDeleteArray[0] = mCapeTextureId;
+                        GLES20.glDeleteTextures(1, mTextureDeleteArray, 0);
+                    }
                     if (mPendingCapeBitmap != null) mCapeTextureId = loadGLTexture(mPendingCapeBitmap);
                     mCapeTextureNeedsUpdate = false;
                 }
@@ -661,15 +701,14 @@ public class SkinManagerFragment extends Fragment {
         }
 
         private int loadGLTexture(Bitmap bitmap) {
-            int[] textureIds = new int[1];
-            GLES20.glGenTextures(1, textureIds, 0);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[0]);
+            GLES20.glGenTextures(1, mTextureGenArray, 0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureGenArray[0]);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-            return textureIds[0];
+            return mTextureGenArray[0];
         }
 
         private void checkRebuildCuboids(int texW, int texH, boolean slim) {

@@ -115,7 +115,7 @@ public class ModInstallFragment extends Fragment {
             mModTitle.setText(mModItem.title);
 
             // Load icon asynchronously
-            ModIconCache iconCache = new ModIconCache();
+            ModIconCache iconCache = ModIconCache.getInstance();
             iconCache.getImage(
                     bitmap -> {
                         if (bitmap != null && isAdded()) {

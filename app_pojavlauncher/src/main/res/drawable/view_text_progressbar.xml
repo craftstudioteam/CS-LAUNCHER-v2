@@ -10,7 +10,7 @@
     <item android:id="@android:id/progress">
         <clip>
             <shape android:shape="rectangle">
-                <solid android:color="?attr/copperAccent"/>
+                <solid android:color="?attr/themeAccent"/>
             </shape>
         </clip>
     </item>

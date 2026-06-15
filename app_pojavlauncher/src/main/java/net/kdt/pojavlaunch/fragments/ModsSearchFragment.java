@@ -58,6 +58,22 @@ public class ModsSearchFragment extends Fragment {
 
     private final Handler mSearchHandler = new Handler(Looper.getMainLooper());
 
+    // Reusable Runnable for debounced search — avoids allocation per keystroke
+    private final Runnable mSearchRunnable = () -> {
+        DownloadListFragment dlf = getListFragment(TAB_TYPES[mCurrentTab]);
+        if (dlf != null) {
+            dlf.filter(mPendingSearchQuery, mSearchFilters.mcVersion, mSearchFilters.modLoader);
+        }
+    };
+    private String mPendingSearchQuery = "";
+
+    // Cached filter dialog arrays — avoid allocation on every dialog open
+    private static final String[] LOADER_LABELS = {"Any loader", "Fabric", "Forge", "Quilt", "NeoForge"};
+    private static final String[] LOADER_VALUES = {"", "fabric", "forge", "quilt", "neoforge"};
+
+    // Stored reference to lifecycle callback so it can be unregistered in onDestroyView
+    private FragmentManager.FragmentLifecycleCallbacks mFragmentLifecycleCallbacks;
+
     public ModsSearchFragment() {
         super(R.layout.fragment_mod_search_tabbed);
     }
@@ -111,18 +127,11 @@ public class ModsSearchFragment extends Fragment {
         mSearchEditText.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void afterTextChanged(Editable s) {}
-
-            private Runnable searchRunnable;
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (searchRunnable != null) mSearchHandler.removeCallbacks(searchRunnable);
-                searchRunnable = () -> {
-                    DownloadListFragment dlf = getListFragment(TAB_TYPES[mCurrentTab]);
-                    if (dlf != null) {
-                        dlf.filter(s.toString(), mSearchFilters.mcVersion, mSearchFilters.modLoader);
-                    }
-                };
-                mSearchHandler.postDelayed(searchRunnable, 400);
+                mPendingSearchQuery = s.toString();
+                mSearchHandler.removeCallbacks(mSearchRunnable);
+                mSearchHandler.postDelayed(mSearchRunnable, 400);
             }
         });
 
@@ -141,25 +150,25 @@ public class ModsSearchFragment extends Fragment {
         mSearchEditText.setHint(R.string.hint_search_mod);
 
         // Wire up click listeners — handles fragment creation and recreation
-        getChildFragmentManager().registerFragmentLifecycleCallbacks(
-                new FragmentManager.FragmentLifecycleCallbacks() {
-                    @Override
-                    public void onFragmentViewCreated(@NonNull FragmentManager fm, @NonNull Fragment f,
-                                                      @NonNull View v, @Nullable Bundle savedInstanceState) {
-                        if (f instanceof DownloadListFragment) {
-                            DownloadListFragment dlf = (DownloadListFragment) f;
-                            String type = dlf.getContentType();
-                            for (int i = 0; i < TAB_TYPES.length; i++) {
-                                if (TAB_TYPES[i].equals(type)) {
-                                    final int tabPos = i;
-                                    dlf.setOnModItemClickListener(
-                                            item -> onModItemClick(item, TAB_TYPES[tabPos]));
-                                    break;
-                                }
-                            }
+        mFragmentLifecycleCallbacks = new FragmentManager.FragmentLifecycleCallbacks() {
+            @Override
+            public void onFragmentViewCreated(@NonNull FragmentManager fm, @NonNull Fragment f,
+                                              @NonNull View v, @Nullable Bundle savedInstanceState) {
+                if (f instanceof DownloadListFragment) {
+                    DownloadListFragment dlf = (DownloadListFragment) f;
+                    String type = dlf.getContentType();
+                    for (int i = 0; i < TAB_TYPES.length; i++) {
+                        if (TAB_TYPES[i].equals(type)) {
+                            final int tabPos = i;
+                            dlf.setOnModItemClickListener(
+                                    item -> onModItemClick(item, TAB_TYPES[tabPos]));
+                            break;
                         }
                     }
-                }, true);
+                }
+            }
+        };
+        getChildFragmentManager().registerFragmentLifecycleCallbacks(mFragmentLifecycleCallbacks, true);
     }
 
     private void setupTabs() {
@@ -396,16 +405,14 @@ public class ModsSearchFragment extends Fragment {
             assert mApplyButton != null;
 
             if (mLoaderSpinner != null) {
-                String[] loaderLabels = {"Any loader", "Fabric", "Forge", "Quilt", "NeoForge"};
-                final String[] loaderValues = {"", "fabric", "forge", "quilt", "neoforge"};
                 android.widget.ArrayAdapter<String> loaderAdapter = new android.widget.ArrayAdapter<>(
-                        requireContext(), android.R.layout.simple_spinner_item, loaderLabels);
+                        requireContext(), android.R.layout.simple_spinner_item, LOADER_LABELS);
                 loaderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 mLoaderSpinner.setAdapter(loaderAdapter);
 
                 String currentLoader = mSearchFilters.modLoader != null ? mSearchFilters.modLoader : "";
-                for (int i = 0; i < loaderValues.length; i++) {
-                    if (loaderValues[i].equals(currentLoader)) {
+                for (int i = 0; i < LOADER_VALUES.length; i++) {
+                    if (LOADER_VALUES[i].equals(currentLoader)) {
                         mLoaderSpinner.setSelection(i);
                         break;
                     }
@@ -420,7 +427,7 @@ public class ModsSearchFragment extends Fragment {
                 mApplyButton.setOnClickListener(v -> {
                     mSearchFilters.mcVersion = mSelectedVersion.getText().toString();
                     int pos = mLoaderSpinner.getSelectedItemPosition();
-                    mSearchFilters.modLoader = loaderValues[pos];
+                    mSearchFilters.modLoader = LOADER_VALUES[pos];
                     DownloadListFragment dlf = getListFragment(TAB_TYPES[mCurrentTab]);
                     if (dlf != null) {
                         dlf.filter(mSearchEditText.getText().toString(),
@@ -459,6 +466,16 @@ public class ModsSearchFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mSearchHandler.removeCallbacks(mSearchRunnable);
+        if (mFragmentLifecycleCallbacks != null) {
+            getChildFragmentManager().unregisterFragmentLifecycleCallbacks(mFragmentLifecycleCallbacks);
+            mFragmentLifecycleCallbacks = null;
+        }
     }
 
     /**
