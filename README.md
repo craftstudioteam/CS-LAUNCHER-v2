@@ -161,15 +161,15 @@ scripts\languagelist_updater.bat
 ## 📊 Project Status
 
 ```text
-██████████████████████░░░░░░░░  ~75% Complete
+██████████████████  ~100% Complete
 ```
 
 | Task | Status |
 |:---|:---:|
 | 🎨 New UI | ✅ **Done** |
 | 🐛 Bug fixes | ✅ **Done** |
-| 🔧 Fix GL4ES & KW in older versions | 🚧 **In Progress** |
-| 🖼️ Add more renderers | 📋 **Planned** |
+| 🔧 Fix GL4ES & KW in older versions | 🚧 **Done** |
+| 🖼️ Add more renderers | 📋 **done** |
 
 <br>
 
