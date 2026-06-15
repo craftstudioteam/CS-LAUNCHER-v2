@@ -67,6 +67,14 @@ android {
             keyAlias "androiddebugkey"
             keyPassword "android"
         }
+        if (System.getenv("KEYSTORE_PATH") != null) {
+            release {
+                storeFile file(System.getenv("KEYSTORE_PATH"))
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+                storePassword System.getenv("STORE_PASSWORD")
+            }
+        }
     }
 
     defaultConfig {
@@ -115,6 +123,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             // defaultConfig already set
             // multiDexEnabled = true
+            if (System.getenv("KEYSTORE_PATH") != null) {
+                signingConfig signingConfigs.release
+            }
             resValue "string", "app_name", "CS LAUNCHER V2"
             resValue "string", "app_short_name", "CS LAUNCHER V2"
             resValue 'string', 'storageProviderAuthorities', 'com.craftstudio.cslauncher.gamefolder'
