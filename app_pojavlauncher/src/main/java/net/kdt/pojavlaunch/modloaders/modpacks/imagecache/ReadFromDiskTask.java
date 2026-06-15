@@ -16,12 +16,12 @@ public class ReadFromDiskTask implements Runnable {
     ReadFromDiskTask(ModIconCache iconCache, ImageReceiver imageReceiver, String cacheTag, String imageUrl) {
         this.iconCache = iconCache;
         this.imageReceiver = imageReceiver;
-        this.cacheFile = new File(iconCache.cachePath, cacheTag+".ca");
+        this.cacheFile = new File(iconCache.getCachePath(), cacheTag+".ca");
         this.imageUrl = imageUrl;
     }
 
     public void runDownloadTask() {
-        iconCache.cacheLoaderPool.execute(new DownloadImageTask(this));
+        iconCache.getCacheLoaderPool().execute(new DownloadImageTask(this));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ReadFromDiskTask implements Runnable {
                 return;
             }
         }
-        if(iconCache.cachePath.canWrite() &&
+        if(iconCache.getCachePath().canWrite() &&
                 !taskCancelled()) { // don't run the download task if the task got canceled
             runDownloadTask();
         }
