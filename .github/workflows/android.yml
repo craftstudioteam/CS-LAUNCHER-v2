@@ -30,18 +30,6 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      # ── LTW (CS Launcher fork) ──────────────────────────────────────────────
-      # NOTE: Replace the URL below with your own LTW fork once you have one.
-      #       The original CopperLauncher/LTW repo has been removed per requirement 1.
-      - name: Download LTW
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y wget
-          mkdir -p app_pojavlauncher/libs
-          cd app_pojavlauncher/libs
-          wget -q "${{ secrets.LTW_RELEASE_URL || 'https://github.com/YOUR_ORG/LTW/releases/latest/download/ltw-release.aar' }}" \
-               -O ltw-release.aar
-        # ↑ Set LTW_RELEASE_URL in repo secrets, or hard-code your fork URL above.
-
       # ── JRE 8 Runtime ───────────────────────────────────────────────────────
       - name: Download JRE 8
         uses: dawidd6/action-download-artifact@v6
