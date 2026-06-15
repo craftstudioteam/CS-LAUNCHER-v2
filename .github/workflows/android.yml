@@ -13,6 +13,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
     env:
       CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
 
@@ -144,3 +146,29 @@ jobs:
           name: cs-launcher-v2-build-${{ github.run_number }}
           path: out/*
           retention-days: 30
+
+      # ── GitHub Release (push / manual only) ─────────────────────────────────
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        with:
+          artifacts: "out/CS-LAUNCHER-V2.apk,out/CS-LAUNCHER-V2.md5,out/CS-LAUNCHER-V2.sha256,out/CS-LAUNCHER-V2-NO-RUNTIME.apk,out/CS-LAUNCHER-V2-NO-RUNTIME.md5,out/CS-LAUNCHER-V2-NO-RUNTIME.sha256"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: "v2.${{ github.run_number }}"
+          name: "CS Launcher V2 — Build ${{ github.run_number }}"
+          body: |
+            ## CS Launcher V2 — Build ${{ github.run_number }}
+
+            **Branch:** `${{ github.ref_name }}`
+            **Commit:** `${{ github.sha }}`
+
+            ### Downloads
+            | File | Description |
+            |------|-------------|
+            | `CS-LAUNCHER-V2.apk` | ✅ **Recommended** — Signed release build with bundled JRE 8 |
+            | `CS-LAUNCHER-V2-NO-RUNTIME.apk` | Signed release build without bundled runtime (smaller, requires device JRE) |
+
+            > ℹ️ Verify your download with the `.md5` / `.sha256` checksum files.
+          allowUpdates: true
+          omitBodyDuringUpdate: false
+          replacesArtifacts: true
