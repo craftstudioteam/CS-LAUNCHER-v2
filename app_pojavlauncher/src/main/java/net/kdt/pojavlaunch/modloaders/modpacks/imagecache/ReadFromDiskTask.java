@@ -30,7 +30,6 @@ public class ReadFromDiskTask implements Runnable {
             return;
         }
         if(cacheFile.canRead()) {
-            IconCacheJanitor.waitForJanitorToFinish();
             Bitmap bitmap = BitmapFactory.decodeFile(cacheFile.getAbsolutePath());
             if(bitmap != null) {
                 Tools.runOnUiThread(()->{

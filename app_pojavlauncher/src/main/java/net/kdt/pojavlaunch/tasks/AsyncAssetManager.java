@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
 
 public class AsyncAssetManager {
 
@@ -82,19 +83,20 @@ public class AsyncAssetManager {
         ProgressLayout.setProgress(ProgressLayout.EXTRACT_COMPONENTS, 0);
         sExecutorService.execute(() -> {
             try {
-                unpackComponent(ctx, "caciocavallo", false);
-                unpackComponent(ctx, "caciocavallo17", false);
-                // Since the Java module system doesn't allow multiple JARs to declare the same module,
-                // we repack them to a single file here
-                unpackLwjglNatives(ctx);
-                unpackComponent(ctx, "lwjgl3/3.3.3", false);
-                unpackComponent(ctx, "lwjgl3/3.4.1", false);
-                unpackComponent(ctx, "security", true);
-                unpackComponent(ctx, "arc_dns_injector", true);
-                unpackComponent(ctx, "methods_injector_agent", true);
-                unpackComponent(ctx, "forge_installer", true);
-                unpackComponent(ctx, "authlib-injector", true);
-            } catch (IOException e) {
+                CompletableFuture<?>[] futures = new CompletableFuture<?>[]{
+                        CompletableFuture.runAsync(() -> { try { unpackComponent(ctx, "caciocavallo", false); } catch (IOException e) { throw new RuntimeException(e); } }, sExecutorService),
+                        CompletableFuture.runAsync(() -> { try { unpackComponent(ctx, "caciocavallo17", false); } catch (IOException e) { throw new RuntimeException(e); } }, sExecutorService),
+                        CompletableFuture.runAsync(() -> { try { unpackLwjglNatives(ctx); } catch (IOException e) { throw new RuntimeException(e); } }, sExecutorService),
+                        CompletableFuture.runAsync(() -> { try { unpackComponent(ctx, "lwjgl3/3.3.3", false); } catch (IOException e) { throw new RuntimeException(e); } }, sExecutorService),
+                        CompletableFuture.runAsync(() -> { try { unpackComponent(ctx, "lwjgl3/3.4.1", false); } catch (IOException e) { throw new RuntimeException(e); } }, sExecutorService),
+                        CompletableFuture.runAsync(() -> { try { unpackComponent(ctx, "security", true); } catch (IOException e) { throw new RuntimeException(e); } }, sExecutorService),
+                        CompletableFuture.runAsync(() -> { try { unpackComponent(ctx, "arc_dns_injector", true); } catch (IOException e) { throw new RuntimeException(e); } }, sExecutorService),
+                        CompletableFuture.runAsync(() -> { try { unpackComponent(ctx, "methods_injector_agent", true); } catch (IOException e) { throw new RuntimeException(e); } }, sExecutorService),
+                        CompletableFuture.runAsync(() -> { try { unpackComponent(ctx, "forge_installer", true); } catch (IOException e) { throw new RuntimeException(e); } }, sExecutorService),
+                        CompletableFuture.runAsync(() -> { try { unpackComponent(ctx, "authlib-injector", true); } catch (IOException e) { throw new RuntimeException(e); } }, sExecutorService),
+                };
+                CompletableFuture.allOf(futures).join();
+            } catch (Exception e) {
                 Log.e("AsyncAssetManager", "Failed to unpack components !",e );
             }
             ProgressLayout.clearProgress(ProgressLayout.EXTRACT_COMPONENTS);
@@ -110,16 +112,18 @@ public class AsyncAssetManager {
         String[] lwjglVersions = {"3.3.3", "3.4.1"};
         for (String lwjglVer : lwjglVersions) {
             File versionFile = new File(Tools.DIR_GAME_HOME + String.format("/lwjgl3/%s/version", lwjglVer));
-            InputStream is = am.open("components/lwjgl3/" + lwjglVer + "/version");
             String pathToLwjglNatives = String.format("lwjgl-%s-natives/", lwjglVer) + sArch;
 
             boolean shouldUpdate = true;
-            if (versionFile.exists()) {
-                FileInputStream fis = new FileInputStream(versionFile);
-                String release1 = Tools.read(is);
-                String release2 = Tools.read(fis);
-                if (release1.equals(release2))
-                    shouldUpdate = false;
+            try (InputStream is = am.open("components/lwjgl3/" + lwjglVer + "/version")) {
+                if (versionFile.exists()) {
+                    try (FileInputStream fis = new FileInputStream(versionFile)) {
+                        String release1 = Tools.read(is);
+                        String release2 = Tools.read(fis);
+                        if (release1.equals(release2))
+                            shouldUpdate = false;
+                    }
+                }
             }
 
             if (shouldUpdate) {
@@ -139,34 +143,36 @@ public class AsyncAssetManager {
         String rootDir = privateDirectory ? Tools.DIR_DATA : Tools.DIR_GAME_HOME;
 
         File versionFile = new File(rootDir + "/" + component + "/version");
-        InputStream is = am.open("components/" + component + "/version");
-        if(!versionFile.exists()) {
-            if (versionFile.getParentFile().exists() && versionFile.getParentFile().isDirectory()) {
-                FileUtils.deleteDirectory(versionFile.getParentFile());
-            }
-            versionFile.getParentFile().mkdir();
-
-            Log.i("UnpackPrep", component + ": Pack was installed manually, or does not exist, unpacking new...");
-            String[] fileList = am.list("components/" + component);
-            for(String s : fileList) {
-                Tools.copyAssetFile(ctx, "components/" + component + "/" + s, rootDir + "/" + component, true);
-            }
-        } else {
-            FileInputStream fis = new FileInputStream(versionFile);
-            String release1 = Tools.read(is);
-            String release2 = Tools.read(fis);
-            if (!release1.equals(release2)) {
+        try (InputStream is = am.open("components/" + component + "/version")) {
+            if (!versionFile.exists()) {
                 if (versionFile.getParentFile().exists() && versionFile.getParentFile().isDirectory()) {
                     FileUtils.deleteDirectory(versionFile.getParentFile());
                 }
                 versionFile.getParentFile().mkdir();
 
+                Log.i("UnpackPrep", component + ": Pack was installed manually, or does not exist, unpacking new...");
                 String[] fileList = am.list("components/" + component);
-                for (String fileName : fileList) {
-                    Tools.copyAssetFile(ctx, "components/" + component + "/" + fileName, rootDir + "/" + component, true);
+                for (String s : fileList) {
+                    Tools.copyAssetFile(ctx, "components/" + component + "/" + s, rootDir + "/" + component, true);
                 }
             } else {
-                Log.i("UnpackPrep", component + ": Pack is up-to-date with the launcher, continuing...");
+                try (FileInputStream fis = new FileInputStream(versionFile)) {
+                    String release1 = Tools.read(is);
+                    String release2 = Tools.read(fis);
+                    if (!release1.equals(release2)) {
+                        if (versionFile.getParentFile().exists() && versionFile.getParentFile().isDirectory()) {
+                            FileUtils.deleteDirectory(versionFile.getParentFile());
+                        }
+                        versionFile.getParentFile().mkdir();
+
+                        String[] fileList = am.list("components/" + component);
+                        for (String fileName : fileList) {
+                            Tools.copyAssetFile(ctx, "components/" + component + "/" + fileName, rootDir + "/" + component, true);
+                        }
+                    } else {
+                        Log.i("UnpackPrep", component + ": Pack is up-to-date with the launcher, continuing...");
+                    }
+                }
             }
         }
     }

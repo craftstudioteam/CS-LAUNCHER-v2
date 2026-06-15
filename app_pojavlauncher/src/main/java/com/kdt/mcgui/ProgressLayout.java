@@ -375,7 +375,7 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
                 if (mProgressIcon != null) {
                     if (modIconUrl != null && !modIconUrl.isEmpty()) {
                         String cacheTag = modName != null ? modName : modIconUrl.substring(modIconUrl.lastIndexOf('/') + 1);
-                        new ModIconCache().getImage(bitmap -> {
+                        ModIconCache.getInstance().getImage(bitmap -> {
                             post(() -> {
                                 if (mProgressIcon != null && bitmap != null) {
                                     mProgressIcon.setImageBitmap(bitmap);

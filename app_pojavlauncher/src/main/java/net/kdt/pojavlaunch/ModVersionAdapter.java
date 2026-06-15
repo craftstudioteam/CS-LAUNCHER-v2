@@ -53,17 +53,68 @@ public class ModVersionAdapter extends RecyclerView.Adapter<ModVersionAdapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mod_version, parent, false);
-        return new ViewHolder(view);
+        ViewHolder holder = new ViewHolder(view);
+
+        // Click and touch listeners set once in onCreateViewHolder to avoid allocation per bind
+        View.OnClickListener clickListener = v -> {
+            int pos = holder.getAdapterPosition();
+            if (pos == RecyclerView.NO_POSITION) return;
+            int oldPos = mSelectedPosition;
+            mSelectedPosition = pos;
+            notifyItemChanged(oldPos);
+            notifyItemChanged(mSelectedPosition);
+            if (mListener != null) {
+                mListener.onVersionSelected(mVersions.get(pos));
+            }
+        };
+        holder.itemView.setOnClickListener(clickListener);
+
+        if (holder.btnInstall != null) {
+            holder.btnInstall.setOnClickListener(clickListener);
+            holder.btnInstall.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case android.view.MotionEvent.ACTION_DOWN:
+                        v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(120)
+                                .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
+                        break;
+                    case android.view.MotionEvent.ACTION_UP:
+                        v.performClick();
+                        // fall through to reset scale
+                    case android.view.MotionEvent.ACTION_CANCEL:
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(150)
+                                .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
+                        break;
+                }
+                return true; // consume touch to prevent double-animation on itemView
+            });
+        }
+
+        holder.itemView.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case android.view.MotionEvent.ACTION_DOWN:
+                    v.animate().scaleX(0.97f).scaleY(0.97f).setDuration(120)
+                            .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
+                    break;
+                case android.view.MotionEvent.ACTION_UP:
+                case android.view.MotionEvent.ACTION_CANCEL:
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(150)
+                            .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
+                    break;
+            }
+            return false;
+        });
+
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ModrinthVersion version = mVersions.get(position);
-        holder.tvName.setText("Optix Client");
-        
+        holder.tvName.setText(version.name != null ? version.name : "Unknown");
+
         String verNum = version.version_number != null ? version.version_number : "Unknown";
         holder.tvBadgeVersion.setText("v" + verNum);
-        
+
         String mcVer = (version.game_versions != null && !version.game_versions.isEmpty() ? version.game_versions.get(0) : "Unknown MC");
         holder.tvBadgeMc.setText(mcVer);
 
@@ -93,50 +144,6 @@ public class ModVersionAdapter extends RecyclerView.Adapter<ModVersionAdapter.Vi
         if (holder.tvBadgeDate != null) {
             holder.tvBadgeDate.setText(date);
         }
-
-        View.OnClickListener clickListener = v -> {
-            int oldPos = mSelectedPosition;
-            mSelectedPosition = holder.getAdapterPosition();
-            notifyItemChanged(oldPos);
-            notifyItemChanged(mSelectedPosition);
-            if (mListener != null) {
-                mListener.onVersionSelected(version);
-            }
-        };
-
-        holder.itemView.setOnClickListener(clickListener);
-        if (holder.btnInstall != null) {
-            holder.btnInstall.setOnClickListener(clickListener);
-            holder.btnInstall.setOnTouchListener((v, event) -> {
-                switch (event.getAction()) {
-                    case android.view.MotionEvent.ACTION_DOWN:
-                        v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(120)
-                            .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
-                        break;
-                    case android.view.MotionEvent.ACTION_UP:
-                    case android.view.MotionEvent.ACTION_CANCEL:
-                        v.animate().scaleX(1f).scaleY(1f).setDuration(150)
-                            .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
-                        break;
-                }
-                return false;
-            });
-        }
-
-        holder.itemView.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case android.view.MotionEvent.ACTION_DOWN:
-                    v.animate().scaleX(0.97f).scaleY(0.97f).setDuration(120)
-                        .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
-                    break;
-                case android.view.MotionEvent.ACTION_UP:
-                case android.view.MotionEvent.ACTION_CANCEL:
-                    v.animate().scaleX(1f).scaleY(1f).setDuration(150)
-                        .setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
-                    break;
-            }
-            return false;
-        });
 
         holder.itemView.setSelected(mSelectedPosition == position);
     }

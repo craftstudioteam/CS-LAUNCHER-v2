@@ -104,7 +104,7 @@ public class ModDetailFragment extends Fragment {
             mProfileKey = LauncherPreferences.DEFAULT_PREF
                     .getString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, null);
         }
-        mIconCache = new ModIconCache();
+        mIconCache = ModIconCache.getInstance();
     }
 
     @Override

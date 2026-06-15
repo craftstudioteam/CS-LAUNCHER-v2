@@ -7,18 +7,18 @@ import net.kdt.pojavlaunch.PojavApplication;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * This image is intended to keep the mod icon cache tidy (aka under 100 megabytes)
+ * This image is intended to keep the mod icon cache tidy (aka under 100 megabytes).
+ * Runs non-blocking — never blocks image loading threads.
  */
 public class IconCacheJanitor implements Runnable{
     public static final long CACHE_SIZE_LIMIT = 104857600; // The cache size limit, 100 megabytes
     public static final long CACHE_BRINGDOWN = 52428800; // The size to which the cache should be brought
     // in case of an overflow, 50 mb
-    private static Future<?> sJanitorFuture;
-    private static boolean sJanitorRan = false;
+    private static final AtomicBoolean sJanitorRunning = new AtomicBoolean(false);
+    private static volatile boolean sJanitorRan = false;
     private IconCacheJanitor() {
         // don't allow others to create this
     }
@@ -38,6 +38,8 @@ public class IconCacheJanitor implements Runnable{
         }
         if(directoryFileSize < CACHE_SIZE_LIMIT)  {
             Log.i("IconCacheJanitor", "Skipping cleanup because there's not enough to clean up");
+            sJanitorRan = true;
+            sJanitorRunning.set(false);
             return;
         }
         Arrays.sort(modIconFiles,
@@ -53,34 +55,26 @@ public class IconCacheJanitor implements Runnable{
             }
         }
         Log.i("IconCacheJanitor", "Cleaned up "+filesCleanedUp+ " files");
-        synchronized (IconCacheJanitor.class) {
-            sJanitorFuture = null;
-            sJanitorRan = true;
-        }
+        sJanitorRan = true;
+        sJanitorRunning.set(false);
     }
 
     /**
-     * Runs the janitor task, unless there was one running already or one has ran already
+     * Runs the janitor task in the background. Never blocks callers.
+     * Safe to call multiple times — only one janitor run will execute.
      */
     public static void runJanitor() {
-        synchronized (IconCacheJanitor.class) {
-            if (sJanitorFuture != null || sJanitorRan) return;
-            sJanitorFuture = PojavApplication.sExecutorService.submit(new IconCacheJanitor());
+        if (sJanitorRan) return;
+        if (sJanitorRunning.compareAndSet(false, true)) {
+            PojavApplication.sExecutorService.submit(new IconCacheJanitor());
         }
     }
 
     /**
-     * Waits for the janitor task to finish, if there is one running already
-     * Note that the thread waiting must not be interrupted.
+     * Non-blocking check — returns true once a janitor cycle has completed.
+     * Image loading threads should NOT wait for the janitor.
      */
-    public static void waitForJanitorToFinish() {
-        synchronized (IconCacheJanitor.class) {
-            if (sJanitorFuture == null) return;
-            try {
-                sJanitorFuture.get();
-            } catch (ExecutionException | InterruptedException e) {
-                throw new RuntimeException("Should not happen!", e);
-            }
-        }
+    public static boolean hasJanitorRun() {
+        return sJanitorRan;
     }
 }

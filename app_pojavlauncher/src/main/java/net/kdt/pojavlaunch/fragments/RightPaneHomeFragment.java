@@ -55,11 +55,14 @@ public class RightPaneHomeFragment extends Fragment {
             fab.setScaleX(0.6f);
             fab.setScaleY(0.6f);
             fab.setAlpha(0f);
+            // Enable hardware layer during animation to reduce jank on low-end devices
+            fab.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             fab.animate()
                     .scaleX(1f).scaleY(1f)
                     .alpha(1f)
                     .setDuration(200)
                     .setInterpolator(new DecelerateInterpolator())
+                    .withEndAction(() -> fab.setLayerType(View.LAYER_TYPE_NONE, null))
                     .start();
 
             fab.setOnClickListener(v -> {
@@ -98,56 +101,60 @@ public class RightPaneHomeFragment extends Fragment {
     }
 
     private void setupProfileAdapter() {
-        LauncherProfiles.load();
-        Map<String, MinecraftProfile> profilesMap = LauncherProfiles.mainProfileJson != null
-                ? LauncherProfiles.mainProfileJson.profiles : null;
+        // Load profiles on background thread to avoid blocking the UI thread on file I/O
+        LauncherProfiles.loadAsync(() -> {
+            if (!isAdded() || getContext() == null) return;
 
-        // Force icon cache refresh — guarantees fresh base64 decode for any
-        // profile whose icon payload was updated since last reload.
-        if (profilesMap != null) {
-            for (String key : profilesMap.keySet()) {
-                ProfileIconCache.dropIcon(key);
+            Map<String, MinecraftProfile> profilesMap = LauncherProfiles.mainProfileJson != null
+                    ? LauncherProfiles.mainProfileJson.profiles : null;
+
+            // Force icon cache refresh — guarantees fresh base64 decode for any
+            // profile whose icon payload was updated since last reload.
+            if (profilesMap != null) {
+                for (String key : profilesMap.keySet()) {
+                    ProfileIconCache.dropIcon(key);
+                }
             }
-        }
 
-        List<String> keys = new ArrayList<>();
-        List<MinecraftProfile> profiles = new ArrayList<>();
+            List<String> keys = new ArrayList<>();
+            List<MinecraftProfile> profiles = new ArrayList<>();
 
-        if (profilesMap != null) {
-            List<Map.Entry<String, MinecraftProfile>> entries =
-                    new ArrayList<>(profilesMap.entrySet());
-            Collections.sort(entries, (a, b) -> {
-                String ua = a.getValue().lastUsed != null ? a.getValue().lastUsed : "";
-                String ub = b.getValue().lastUsed != null ? b.getValue().lastUsed : "";
-                return ub.compareTo(ua);
+            if (profilesMap != null) {
+                List<Map.Entry<String, MinecraftProfile>> entries =
+                        new ArrayList<>(profilesMap.entrySet());
+                Collections.sort(entries, (a, b) -> {
+                    String ua = a.getValue().lastUsed != null ? a.getValue().lastUsed : "";
+                    String ub = b.getValue().lastUsed != null ? b.getValue().lastUsed : "";
+                    return ub.compareTo(ua);
+                });
+                for (Map.Entry<String, MinecraftProfile> entry : entries) {
+                    keys.add(entry.getKey());
+                    profiles.add(entry.getValue());
+                }
+            }
+
+            mAdapter = new HomeProfileAdapter(keys, profiles,
+                    new HomeProfileAdapter.OnProfileActionListener() {
+                @Override
+                public void onProfilePlay(String profileKey, MinecraftProfile profile) {
+                    LauncherPreferences.DEFAULT_PREF.edit()
+                            .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, profileKey)
+                            .apply();
+                    ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
+                }
+
+                @Override
+                public void onProfileEdit(String profileKey, MinecraftProfile profile) {
+                    LauncherPreferences.DEFAULT_PREF.edit()
+                            .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, profileKey)
+                            .apply();
+                    Tools.swapFragment(requireActivity(),
+                            ProfileEditorFragment.class, ProfileEditorFragment.TAG, null);
+                }
             });
-            for (Map.Entry<String, MinecraftProfile> entry : entries) {
-                keys.add(entry.getKey());
-                profiles.add(entry.getValue());
-            }
-        }
 
-        mAdapter = new HomeProfileAdapter(keys, profiles,
-                new HomeProfileAdapter.OnProfileActionListener() {
-            @Override
-            public void onProfilePlay(String profileKey, MinecraftProfile profile) {
-                LauncherPreferences.DEFAULT_PREF.edit()
-                        .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, profileKey)
-                        .apply();
-                ExtraCore.setValue(ExtraConstants.LAUNCH_GAME, true);
-            }
-
-            @Override
-            public void onProfileEdit(String profileKey, MinecraftProfile profile) {
-                LauncherPreferences.DEFAULT_PREF.edit()
-                        .putString(LauncherPreferences.PREF_KEY_CURRENT_PROFILE, profileKey)
-                        .apply();
-                Tools.swapFragment(requireActivity(),
-                        ProfileEditorFragment.class, ProfileEditorFragment.TAG, null);
-            }
+            mRecyclerView.setAdapter(mAdapter);
         });
-
-        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void loadCustomWallpaper(@NonNull View view) {

@@ -322,9 +322,12 @@ public class LauncherActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         ContextExecutor.setActivity(this);
-        net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles.load();
+        // Load profiles on background thread to keep UI responsive during resume
+        net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles.loadAsync(() -> {
+            if (isDestroyed() || isFinishing()) return;
+            updateNavSkinIcon();
+        });
         mInstallTracker.attach();
-        updateNavSkinIcon();
         android.widget.Button btnClientFeatures = findViewById(R.id.btn_client_features);
         if (btnClientFeatures != null) {
             updateClientFeaturesButton(btnClientFeatures, mClientFeaturesManager.isEnabled());

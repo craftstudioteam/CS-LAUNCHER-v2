@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Base64;
 import android.util.Log;
+import android.util.LruCache;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,16 +15,25 @@ import androidx.core.content.res.ResourcesCompat;
 
 import net.kdt.pojavlaunch.R;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ProfileIconCache {
     // Data header format: data:<mime>;<encoding>,<data>
     private static final String DATA_HEADER = "data:";
     private static final String FALLBACK_ICON_NAME = "default";
-    private static final Map<String, Drawable> sIconCache = new HashMap<>();
-    private static final Map<String, Drawable> sStaticIconCache = new HashMap<>();
+
+    // Bounded LRU cache for decoded data icons — prevents unbounded heap growth.
+    // 32 entries is generous: most users have <10 profiles.
+    private static final int MAX_ICON_CACHE_SIZE = 32;
+    private static final LruCache<String, Drawable> sIconCache = new LruCache<String, Drawable>(MAX_ICON_CACHE_SIZE) {
+        @Override
+        protected void entryRemoved(boolean evicted, String key, Drawable oldValue, Drawable newValue) {
+            recycleBitmapDrawable(oldValue);
+        }
+    };
+    // Static icons (built-in resource drawables) are lightweight references; ConcurrentHashMap avoids
+    // ConcurrentModificationException when accessed from multiple threads.
+    private static final ConcurrentHashMap<String, Drawable> sStaticIconCache = new ConcurrentHashMap<>();
 
     /**
      * Fetch an icon from the cache, or load it if it's not cached.
@@ -40,12 +50,24 @@ public class ProfileIconCache {
     }
 
     /**
-     * Drop an icon from the icon cache. When dropped, it's Drawable will be re-read from the
-     * data string (or re-fetched from the static cache)
+     * Drop an icon from the icon cache. When dropped, its Drawable will be re-read from the
+     * data string (or re-fetched from the static cache). The underlying Bitmap is recycled
+     * to free native memory promptly.
      * @param key the profile key
      */
     public static void dropIcon(@NonNull String key) {
-        sIconCache.remove(key);
+        Drawable removed = sIconCache.remove(key);
+        recycleBitmapDrawable(removed);
+    }
+
+    /** Recycle the backing Bitmap of a BitmapDrawable to free native memory. */
+    private static void recycleBitmapDrawable(@Nullable Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+            if (bitmap != null && !bitmap.isRecycled()) {
+                bitmap.recycle();
+            }
+        }
     }
 
     private static Drawable fetchDataIcon(Resources resources, String key, @NonNull String icon) {
@@ -63,7 +85,8 @@ public class ProfileIconCache {
         if(staticIcon == null) {
             if(icon != null) staticIcon = getStaticIcon(resources, icon);
             if(staticIcon == null) staticIcon = fetchFallbackIcon(resources);
-            sStaticIconCache.put(icon, staticIcon);
+            Drawable existing = sStaticIconCache.putIfAbsent(icon, staticIcon);
+            if (existing != null) staticIcon = existing; // Another thread won the race, reuse.
         }
         sIconCache.put(key, staticIcon);
         return staticIcon;
@@ -72,8 +95,9 @@ public class ProfileIconCache {
     private static @NonNull Drawable fetchFallbackIcon(Resources resources) {
         Drawable fallbackIcon = sStaticIconCache.get(FALLBACK_ICON_NAME);
         if(fallbackIcon == null) {
-            fallbackIcon = Objects.requireNonNull(getStaticIcon(resources, FALLBACK_ICON_NAME));
-            sStaticIconCache.put(FALLBACK_ICON_NAME, fallbackIcon);
+            fallbackIcon = androidx.core.util.ObjectsCompat.requireNonNull(getStaticIcon(resources, FALLBACK_ICON_NAME));
+            Drawable existing = sStaticIconCache.putIfAbsent(FALLBACK_ICON_NAME, fallbackIcon);
+            if (existing != null) fallbackIcon = existing;
         }
         return fallbackIcon;
     }
@@ -100,12 +124,42 @@ public class ProfileIconCache {
                     (icon.length() > 50 ? icon.substring(0, 50) : icon) + ")");
             return null;
         }
-        Bitmap iconBitmap = BitmapFactory.decodeByteArray(iconData, 0, iconData.length);
+
+        // Decode bounds first to compute inSampleSize for memory-efficient loading
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(iconData, 0, iconData.length, opts);
+
+        int targetSize = 128; // Profile icons displayed at ~48dp; 128px is more than sufficient
+        opts.inSampleSize = computeInSampleSize(opts, targetSize, targetSize);
+        opts.inJustDecodeBounds = false;
+        opts.inMutable = false; // Immutable bitmaps are more memory-efficient on some platforms
+        opts.inPreferredConfig = Bitmap.Config.RGB_565; // No alpha needed for profile icons
+
+        Bitmap iconBitmap = BitmapFactory.decodeByteArray(iconData, 0, iconData.length, opts);
         if(iconBitmap == null) {
-            Log.w("ProfileIconCache", "readDataIcon: BitmapFactory.decodeByteArray returned null (bytes=" + iconData.length + ")");
+            Log.w("ProfileIconCache", "readDataIcon: BitmapFactory.decodeByteArray returned null (bytes=" + iconData.length + ", inSampleSize=" + opts.inSampleSize + ")");
             return null;
         }
         return new BitmapDrawable(resources, iconBitmap);
+    }
+
+    /**
+     * Compute a power-of-two inSampleSize that scales the image down to at most target dimensions.
+     */
+    private static int computeInSampleSize(BitmapFactory.Options options, int targetWidth, int targetHeight) {
+        int rawWidth = options.outWidth;
+        int rawHeight = options.outHeight;
+        int inSampleSize = 1;
+        if (rawHeight > targetHeight || rawWidth > targetWidth) {
+            int halfHeight = rawHeight / 2;
+            int halfWidth = rawWidth / 2;
+            while ((halfHeight / inSampleSize) >= targetHeight
+                    && (halfWidth / inSampleSize) >= targetWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 
     private static byte[] extractIconData(String inputString) {

@@ -12,8 +12,8 @@
     <color name="cu_bg_bottom_bar">#0A110D</color>
     <color name="cu_divider">#1A39FF14</color>
 
-    <!-- BACKGROUND SYSTEM (COPPER METAL THEME) -->
-    <!-- Dark copper layered surfaces -->
+    <!-- BACKGROUND SYSTEM (DARK THEME) -->
+    <!-- Dark layered surfaces -->
 
     <color name="background_app">#121212</color>
     <color name="background_overlay">#464646</color>      

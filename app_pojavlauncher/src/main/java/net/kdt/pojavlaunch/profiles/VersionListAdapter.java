@@ -14,18 +14,20 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.utils.FilteredSubList;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class VersionListAdapter extends BaseExpandableListAdapter implements ExpandableListAdapter {
-    
+
     private final LayoutInflater mLayoutInflater;
 
     private final String[] mGroups;
-    private final String[] mInstalledVersions;
+    private String[] mInstalledVersions;
     private final List<?>[] mData;
     private final boolean mHideCustomVersions;
     private final int mSnapshotListPosition;
+    private boolean mInstalledVersionsLoaded;
 
     public VersionListAdapter(JMinecraftVersionList.Version[] versionList, boolean hideCustomVersions, Context ctx){
         mHideCustomVersions = hideCustomVersions;
@@ -33,33 +35,33 @@ public class VersionListAdapter extends BaseExpandableListAdapter implements Exp
 
         List<JMinecraftVersionList.Version> releaseList = new FilteredSubList<>(versionList, item -> item.type.equals("release"));
         List<JMinecraftVersionList.Version> snapshotList = new FilteredSubList<>(versionList, item -> item.type.equals("snapshot"));
-        List<JMinecraftVersionList.Version> betaList = new FilteredSubList<>(versionList, item -> item.type.equals("old_beta"));
-        List<JMinecraftVersionList.Version> alphaList = new FilteredSubList<>(versionList, item -> item.type.equals("old_alpha"));
+        List<JMinecraftVersionList.Version> betaList    = new FilteredSubList<>(versionList, item -> item.type.equals("old_beta"));
+        List<JMinecraftVersionList.Version> alphaList   = new FilteredSubList<>(versionList, item -> item.type.equals("old_alpha"));
 
-        // Query installed versions
+        // Always show all 5 groups; the "Installed" group is populated lazily on first access.
+        // This defers the blocking File.list() call off the constructor (UI thread).
+        mGroups = new String[]{
+                ctx.getString(R.string.mcl_setting_veroption_installed),
+                ctx.getString(R.string.mcl_setting_veroption_release),
+                ctx.getString(R.string.mcl_setting_veroption_snapshot),
+                ctx.getString(R.string.mcl_setting_veroption_oldbeta),
+                ctx.getString(R.string.mcl_setting_veroption_oldalpha)
+        };
+        mData = new List[]{new ArrayList<>(), releaseList, snapshotList, betaList, alphaList};
+        mSnapshotListPosition = 2;
+    }
+
+    /** Lazily load the list of installed versions from disk, cached for the session. */
+    private void ensureInstalledVersionsLoaded() {
+        if (mInstalledVersionsLoaded) return;
+        mInstalledVersionsLoaded = true;
         mInstalledVersions = new File(Tools.DIR_GAME_NEW + "/versions").list();
-        if(mInstalledVersions != null)
+        if (mInstalledVersions != null) {
             Arrays.sort(mInstalledVersions);
-
-        if(!areInstalledVersionsAvailable()){
-            mGroups = new String[]{
-                    ctx.getString(R.string.mcl_setting_veroption_release),
-                    ctx.getString(R.string.mcl_setting_veroption_snapshot),
-                    ctx.getString(R.string.mcl_setting_veroption_oldbeta),
-                    ctx.getString(R.string.mcl_setting_veroption_oldalpha)
-            };
-            mData = new List[]{ releaseList, snapshotList, betaList, alphaList};
-            mSnapshotListPosition = 1;
-        }else{
-            mGroups = new String[]{
-                    ctx.getString(R.string.mcl_setting_veroption_installed),
-                    ctx.getString(R.string.mcl_setting_veroption_release),
-                    ctx.getString(R.string.mcl_setting_veroption_snapshot),
-                    ctx.getString(R.string.mcl_setting_veroption_oldbeta),
-                    ctx.getString(R.string.mcl_setting_veroption_oldalpha)
-            };
-            mData = new List[]{Arrays.asList(mInstalledVersions), releaseList, snapshotList, betaList, alphaList};
-            mSnapshotListPosition = 2;
+            // Populate the data list so getChildrenCount returns the right value.
+            @SuppressWarnings("unchecked")
+            List<String> installedList = (List<String>) mData[0];
+            installedList.addAll(Arrays.asList(mInstalledVersions));
         }
     }
 
@@ -70,6 +72,9 @@ public class VersionListAdapter extends BaseExpandableListAdapter implements Exp
 
     @Override
     public int getChildrenCount(int groupPosition) {
+        if (groupPosition == 0 && !mHideCustomVersions) {
+            ensureInstalledVersionsLoaded();
+        }
         return mData[groupPosition].size();
     }
 
@@ -80,8 +85,9 @@ public class VersionListAdapter extends BaseExpandableListAdapter implements Exp
 
     @Override
     public String getChild(int groupPosition, int childPosition) {
-        if(isInstalledVersionSelected(groupPosition)){
-            return mInstalledVersions[childPosition];
+        if (groupPosition == 0) {
+            ensureInstalledVersionsLoaded();
+            return mInstalledVersions != null ? mInstalledVersions[childPosition] : "";
         }
         return ((JMinecraftVersionList.Version)mData[groupPosition].get(childPosition)).id;
     }
@@ -128,12 +134,7 @@ public class VersionListAdapter extends BaseExpandableListAdapter implements Exp
         return groupPosition == mSnapshotListPosition;
     }
 
-    private boolean areInstalledVersionsAvailable(){
-        if(mHideCustomVersions) return false;
-        return !(mInstalledVersions == null || mInstalledVersions.length == 0);
-    }
-
-    private boolean isInstalledVersionSelected(int groupPosition){
-        return groupPosition == 0 && areInstalledVersionsAvailable();
+    public boolean isInstalledVersionSelected(int groupPosition){
+        return groupPosition == 0;
     }
 }

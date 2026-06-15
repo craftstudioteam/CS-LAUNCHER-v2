@@ -34,7 +34,7 @@ public class ModItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int VIEW_TYPE_LOADING = 1;
 
     // unused
-    private final ModIconCache mIconCache = new ModIconCache();
+    private final ModIconCache mIconCache = ModIconCache.getInstance();
     private final SearchResultCallback mSearchResultCallback;
     private ModItem[] mModItems;
     private final ModpackApi mModpackApi;

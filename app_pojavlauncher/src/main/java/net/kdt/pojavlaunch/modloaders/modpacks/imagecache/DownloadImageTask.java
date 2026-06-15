@@ -31,7 +31,6 @@ class DownloadImageTask implements Runnable {
 
     public boolean runCatching() {
         try {
-            IconCacheJanitor.waitForJanitorToFinish();
             DownloadUtils.downloadFile(mParentTask.imageUrl, mParentTask.cacheFile);
             Bitmap bitmap = BitmapFactory.decodeFile(mParentTask.cacheFile.getAbsolutePath());
             if(bitmap == null) return false;

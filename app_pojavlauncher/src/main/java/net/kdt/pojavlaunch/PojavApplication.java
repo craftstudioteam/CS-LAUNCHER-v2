@@ -26,7 +26,24 @@ import net.kdt.pojavlaunch.utils.FileUtils;
 
 public class PojavApplication extends Application {
 	public static final String CRASH_REPORT_TAG = "PojavCrashReport";
-	public static final ExecutorService sExecutorService = new ThreadPoolExecutor(4, 4, 500, TimeUnit.MILLISECONDS,  new LinkedBlockingQueue<>());
+
+	/**
+	 * Adaptive thread pool for background tasks.
+	 * - Core threads: ceil(CPU cores * 1.5) for I/O-bound operations.
+	 * - Max threads: CPU cores * 2 + 1 to handle bursts.
+	 * - Keep-alive: 5 seconds to reclaim idle threads quickly on low-end devices.
+	 * - Daemon threads: don't block process shutdown.
+	 */
+	public static final ExecutorService sExecutorService = new ThreadPoolExecutor(
+			Math.max(2, (Runtime.getRuntime().availableProcessors() * 3) / 2),
+			Math.max(4, Runtime.getRuntime().availableProcessors() * 2 + 1),
+			5, TimeUnit.SECONDS,
+			new LinkedBlockingQueue<>(),
+			r -> {
+				Thread t = new Thread(r, "CSL-Worker");
+				t.setDaemon(true);
+				return t;
+			});
 	
 	@Override
 	public void onCreate() {

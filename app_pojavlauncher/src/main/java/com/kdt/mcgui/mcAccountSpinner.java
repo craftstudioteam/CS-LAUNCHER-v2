@@ -129,7 +129,7 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
 
     /* Triggered when we need to do microsoft login */
     private final ExtraListener<Uri> mMicrosoftLoginListener = (key, value) -> {
-        mLoginBarPaint.setColor(getThemeColor(net.kdt.pojavlaunch.R.attr.copperAccent));
+        mLoginBarPaint.setColor(getThemeColor(net.kdt.pojavlaunch.R.attr.themeAccent));
         new MicrosoftBackgroundLogin(false, value.getQueryParameter("code")).performLogin(
                 mProgressListener, mDoneListener, mErrorListener);
         return false;
@@ -156,7 +156,7 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
     private void init(){
         // Set visual properties
         setBackgroundColor(getThemeColor(net.kdt.pojavlaunch.R.attr.colorBgStatusBar));
-        mLoginBarPaint.setColor(getThemeColor(net.kdt.pojavlaunch.R.attr.copperAccent));
+        mLoginBarPaint.setColor(getThemeColor(net.kdt.pojavlaunch.R.attr.themeAccent));
         mLoginBarPaint.setStrokeWidth(getResources().getDimensionPixelOffset(R.dimen._2sdp));
 
         // Set behavior
@@ -288,7 +288,7 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
         }
         if(minecraftAccount.isLocal()) return;
 
-        mLoginBarPaint.setColor(getThemeColor(net.kdt.pojavlaunch.R.attr.copperAccent));
+        mLoginBarPaint.setColor(getThemeColor(net.kdt.pojavlaunch.R.attr.themeAccent));
         if(minecraftAccount.isMicrosoft){
             if(System.currentTimeMillis() > minecraftAccount.expiresAt){
                 // Perform login only if needed
@@ -456,7 +456,7 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
         }
     }
 
-    /** Resolve a theme colour attribute (e.g. R.attr.copperAccent) to an int colour. */
+    /** Resolve a theme colour attribute (e.g. R.attr.themeAccent) to an int colour. */
     private int getThemeColor(int attr) {
         TypedValue tv = new TypedValue();
         getContext().getTheme().resolveAttribute(attr, tv, true);

@@ -5,8 +5,7 @@ plugins {
 static def getDate() { return new Date().format('yyyyMMdd') }
 
 def getVersionName = {
-    // BRANDING: Show clean "CS Launcher v2 Build 1.1.5" style version names.
-    // Never expose internal branch names like "copper-legacy" or git hashes to users.
+    // Show clean "CS Launcher v2 Build 1.1.5" style version names.
     String semVer = "1.1.5"
     
     // Try to get a git tag for the full version
@@ -93,7 +92,7 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.customDebug
-            resValue "string", "app_name", "CS LAUNCHER V2 (Debug)"
+            resValue "string", "app_name", "CS LAUNCHER V2"
             resValue "string", "app_short_name", "CS LAUNCHER V2"
             resValue 'string', 'application_package', 'com.craftstudio.cslauncher.debug'
             resValue 'string', 'storageProviderAuthorities', 'com.craftstudio.cslauncher.scoped.gamefolder.debug'
@@ -110,12 +109,12 @@ android {
         }
 
         release {
-            // Don't set to true or java.awt will be a.a or something similar.
+            // Do not enable minification — it obfuscates java.awt classes.
             minifyEnabled false
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             // defaultConfig already set
             // multiDexEnabled = true
-            // debuggable = true
             resValue "string", "app_name", "CS LAUNCHER V2"
             resValue "string", "app_short_name", "CS LAUNCHER V2"
             resValue 'string', 'storageProviderAuthorities', 'com.craftstudio.cslauncher.gamefolder'
