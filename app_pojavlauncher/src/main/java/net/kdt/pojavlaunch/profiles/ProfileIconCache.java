@@ -25,10 +25,14 @@ public class ProfileIconCache {
     // Bounded LRU cache for decoded data icons — prevents unbounded heap growth.
     // 32 entries is generous: most users have <10 profiles.
     private static final int MAX_ICON_CACHE_SIZE = 32;
+    // NOTE: We intentionally do NOT recycle BitmapDrawables on eviction.
+    // A recycled bitmap will crash any ImageView that is still drawing it
+    // (e.g. a RecyclerView item that hasn't been recycled yet).
+    // Android's GC reclaims native memory once all Java references are dropped.
     private static final LruCache<String, Drawable> sIconCache = new LruCache<String, Drawable>(MAX_ICON_CACHE_SIZE) {
         @Override
         protected void entryRemoved(boolean evicted, String key, Drawable oldValue, Drawable newValue) {
-            recycleBitmapDrawable(oldValue);
+            // No-op: bitmap must remain usable by any ImageView still referencing it.
         }
     };
     // Static icons (built-in resource drawables) are lightweight references; ConcurrentHashMap avoids
@@ -42,7 +46,11 @@ public class ProfileIconCache {
      * @param icon the profile icon data (stored in the icon field of MinecraftProfile)
      * @return an icon drawable
      */
-    public static @NonNull Drawable fetchIcon(Resources resources, @NonNull String key, @Nullable String icon) {
+    public static @NonNull Drawable fetchIcon(Resources resources, @Nullable String key, @Nullable String icon) {
+        if (key == null) {
+            Log.w("ProfileIconCache", "fetchIcon called with null key, returning fallback");
+            return fetchFallbackIcon(resources);
+        }
         Drawable cachedIcon = sIconCache.get(key);
         if(cachedIcon != null) return cachedIcon;
         if(icon != null && icon.startsWith(DATA_HEADER)) return fetchDataIcon(resources, key, icon);
@@ -51,39 +59,30 @@ public class ProfileIconCache {
 
     /**
      * Drop an icon from the icon cache. When dropped, its Drawable will be re-read from the
-     * data string (or re-fetched from the static cache). The underlying Bitmap is recycled
-     * to free native memory promptly.
+     * data string (or re-fetched from the static cache) on the next fetchIcon call.
+     * The underlying Bitmap is NOT recycled here — it may still be referenced by an ImageView
+     * (e.g. a RecyclerView item that hasn't been recycled yet).
      * @param key the profile key
      */
-    public static void dropIcon(@NonNull String key) {
-        Drawable removed = sIconCache.remove(key);
-        recycleBitmapDrawable(removed);
+    public static void dropIcon(@Nullable String key) {
+        if (key == null) return;
+        sIconCache.remove(key);
     }
 
-    /** Recycle the backing Bitmap of a BitmapDrawable to free native memory. */
-    private static void recycleBitmapDrawable(@Nullable Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-            if (bitmap != null && !bitmap.isRecycled()) {
-                bitmap.recycle();
-            }
-        }
-    }
-
-    private static Drawable fetchDataIcon(Resources resources, String key, @NonNull String icon) {
+    private static Drawable fetchDataIcon(Resources resources, @Nullable String key, @NonNull String icon) {
         Drawable dataIcon = readDataIcon(resources, icon);
         if(dataIcon == null) {
             Log.w("ProfileIconCache", "fetchDataIcon decode failed for " + key + " (icon length=" + icon.length() + ")");
             dataIcon = fetchFallbackIcon(resources);
         }
-        sIconCache.put(key, dataIcon);
+        if (key != null) sIconCache.put(key, dataIcon);
         return dataIcon;
     }
 
-    private static Drawable fetchStaticIcon(Resources resources, String key, @Nullable String icon) {
+    private static Drawable fetchStaticIcon(Resources resources, @Nullable String key, @Nullable String icon) {
         if (icon == null) {
             Drawable fallback = fetchFallbackIcon(resources);
-            sIconCache.put(key, fallback);
+            if (key != null) sIconCache.put(key, fallback);
             return fallback;
         }
 
@@ -94,7 +93,7 @@ public class ProfileIconCache {
             Drawable existing = sStaticIconCache.putIfAbsent(icon, staticIcon);
             if (existing != null) staticIcon = existing; // Another thread won the race, reuse.
         }
-        sIconCache.put(key, staticIcon);
+        if (key != null) sIconCache.put(key, staticIcon);
         return staticIcon;
     }
 

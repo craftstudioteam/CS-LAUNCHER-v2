@@ -28,6 +28,8 @@ public class MinecraftProfile {
 		MinecraftProfile TEMPLATE = new MinecraftProfile();
 		TEMPLATE.name = "";
 		TEMPLATE.lastVersionId = LATEST_RELEASE;
+		TEMPLATE.icon = "default";
+		TEMPLATE.type = "custom";
 		return TEMPLATE;
 	}
 
@@ -35,6 +37,8 @@ public class MinecraftProfile {
 		MinecraftProfile defaultProfile = new MinecraftProfile();
 		defaultProfile.name = "Default";
 		defaultProfile.lastVersionId = "1.7.10";
+		defaultProfile.icon = "default";
+		defaultProfile.type = "custom";
 		return defaultProfile;
 	}
 

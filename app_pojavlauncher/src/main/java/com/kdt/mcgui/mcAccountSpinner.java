@@ -342,7 +342,6 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
     }
 
     private void setImageFromSelectedAccount(){
-        BitmapDrawable oldBitmapDrawable = mHeadDrawable;
 
         if(mSelectecAccount != null){
             View layout = getSelectedView();
@@ -372,13 +371,11 @@ public class mcAccountSpinner extends AppCompatSpinner implements AdapterView.On
             }
         }
 
-        if(oldBitmapDrawable != null){
-            Bitmap oldBitmap = oldBitmapDrawable.getBitmap();
-            Bitmap newBitmap = mHeadDrawable != null ? mHeadDrawable.getBitmap() : null;
-            if(oldBitmap != null && oldBitmap != newBitmap) {
-                oldBitmap.recycle();
-            }
-        }
+        // NOTE: We intentionally do NOT recycle oldBitmap here.
+        // The old drawable's bitmap may still be referenced by a View that
+        // is in the process of being drawn. Recycling it would cause a
+        // "Canvas: trying to use a recycled bitmap" crash.
+        // Android's GC will reclaim the native memory once all references are dropped.
     }
 
     private class AccountAdapter extends ArrayAdapter<String> {

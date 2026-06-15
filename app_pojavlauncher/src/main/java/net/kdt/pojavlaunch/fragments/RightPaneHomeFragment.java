@@ -18,7 +18,6 @@ import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
-import net.kdt.pojavlaunch.profiles.ProfileIconCache;
 import net.kdt.pojavlaunch.value.launcherprofiles.LauncherProfiles;
 import net.kdt.pojavlaunch.value.launcherprofiles.MinecraftProfile;
 
@@ -108,13 +107,11 @@ public class RightPaneHomeFragment extends Fragment {
             Map<String, MinecraftProfile> profilesMap = LauncherProfiles.mainProfileJson != null
                     ? LauncherProfiles.mainProfileJson.profiles : null;
 
-            // Force icon cache refresh — guarantees fresh base64 decode for any
-            // profile whose icon payload was updated since last reload.
-            if (profilesMap != null) {
-                for (String key : profilesMap.keySet()) {
-                    ProfileIconCache.dropIcon(key);
-                }
-            }
+            // Note: Do NOT drop all cached icons here — doing so recycles the underlying
+            // bitmaps while RecyclerView items may still be drawing them, causing
+            // "Canvas: trying to use a recycled bitmap" crashes.
+            // Per-profile icon invalidation happens in ProfileEditorFragment.dropIcon()
+            // when the user actually edits a profile's icon.
 
             List<String> keys = new ArrayList<>();
             List<MinecraftProfile> profiles = new ArrayList<>();

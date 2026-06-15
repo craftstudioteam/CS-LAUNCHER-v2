@@ -157,7 +157,7 @@ public class MinecraftAccount {
             return rounded;
         } catch (Exception e) {
             Log.w("MinecraftAccount", "Error rounding bitmap", e);
-            return src;
+            return null; // Never return src — caller unconditionally recycles the source bitmap.
         }
     }
 
