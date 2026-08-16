@@ -1,0 +1,20 @@
+CS CLIENT V1 PROPRIETARY LICENSE
+Copyright (c) 2026 Craft Studio. All rights reserved.
+
+You may download and use an official, unmodified copy of CS Client V1 for
+personal, non-commercial gameplay.
+
+Without prior written permission from Craft Studio, you may not copy,
+modify, adapt, translate, reverse engineer, decompile, redistribute,
+re-upload, sell, sublicense, or create derivative works from CS Client V1.
+You may link to the official download page instead of redistributing files.
+
+Any source code made viewable is provided for inspection only. It is
+source-available, not open source, and no permission to edit or publish a
+modified version is granted.
+
+Third-party components are excluded from these restrictions and remain
+under their original licenses, as identified in NOTICES.md and LICENSES/.
+Nothing here limits rights that applicable law grants despite this license.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
